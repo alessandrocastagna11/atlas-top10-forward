@@ -135,7 +135,7 @@ def do_strategy(folder,asof,data):
     freshness='EXACT' if audit_today and all(x['bar_date']==asof for x in audit_today) else 'VALUATION_WITH_STALE_QUOTES'
     out={
        'price_freshness':freshness,'engine':cfg['name'],'asof_requested':asof,'last_verified_valuation':nav['date'],
-       'report_status': ('COMPLETE' if nav['date']==asof and not attempts else 'PENDING_DATA'),
+       'report_status': ('PENDING_FIRST_REAL_CLOSE' if not state['initialized'] else ('COMPLETE' if nav['date']==asof and not attempts else 'PENDING_DATA')),
        'source_status':nav.get('source_status',''),
        'initialized':state['initialized'],'virtual_capital_start_eur':cfg['initial_capital_eur'],
        'portfolio_eur':nav['portfolio_nav_eur'],'benchmark_eur':nav['benchmark_nav_eur'],
