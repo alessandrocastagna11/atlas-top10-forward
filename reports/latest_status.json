@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-03",
+  "status": "PENDING_FIRST_REAL_CLOSE",
+  "results": {
+    "MA10_Official": {
+      "report_status": "PENDING_FIRST_REAL_CLOSE",
+      "regime": "RISK_ON",
+      "portfolio_eur": 10000.0,
+      "benchmark_eur": 10000.0,
+      "portfolio_cumulative_pct": 0.0,
+      "benchmark_cumulative_pct": 0.0,
+      "excess_pp": 0.0,
+      "buys": 0,
+      "sells": 0
+    },
+    "MA6_MA12_Challenger": {
+      "report_status": "PENDING_FIRST_REAL_CLOSE",
+      "regime": "PENDING_DUAL_SIGNAL",
+      "portfolio_eur": 10000.0,
+      "benchmark_eur": 10000.0,
+      "portfolio_cumulative_pct": 0.0,
+      "benchmark_cumulative_pct": 0.0,
+      "excess_pp": 0.0,
+      "buys": 0,
+      "sells": 0
+    }
+  }
+}

@@ -1,0 +1,3 @@
+<PARSED TEXT FOR SHEET: 1 / 1 TABS
+TAB NAME: MA10_Official_orders.csv>
+index,date,symbol,side,shares,price_local,currency,eur_per_local,gross_eur,commission_eur,slippage_eur,tax_eur,realized_pnl_eur,cash_after_eur,reason

@@ -1,0 +1,38 @@
+name: Atlas Top 10 daily paper engine
+on:
+  workflow_dispatch:
+  schedule:
+    # 22:35 UTC => after the US close in both winter and summer.
+    # In Italian summer time it runs at 00:35 the following calendar day;
+    # the script uses the NY date to pick the proper completed US session.
+    - cron: '35 22 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: atlas-top10-paper
+  cancel-in-progress: false
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - run: python -m pip install -r requirements.txt
+      - name: Check state
+        run: python daily_runner.py --check
+      - name: Update EOD (unavailable data means no trades)
+        run: python daily_runner.py
+      - name: Verify saved state
+        run: python daily_runner.py --check
+      - name: Commit dated ledger and report
+        run: |
+          git config user.name "Atlas Paper Bot"
+          git config user.email "atlas-paper-bot@users.noreply.github.com"
+          git add -A strategies reports market_data
+          git diff --cached --quiet || (git commit -m "Atlas EOD paper update $(date -u +%F)" && git push)

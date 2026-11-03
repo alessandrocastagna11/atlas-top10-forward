@@ -1,0 +1,36 @@
+{
+  "started_at": "2026-11-03",
+  "initialized": false,
+  "last_update": "2026-11-03",
+  "cash_eur": 10000.0,
+  "positions": {},
+  "order_count": 0,
+  "risk_on": true,
+  "last_regime_month": "2026-10",
+  "liabilities_eur": 0.0,
+  "tax_losses": [],
+  "benchmark": {
+    "shares": 0.0,
+    "cash_eur": 10000.0,
+    "cost_basis_eur": 0.0,
+    "liabilities_eur": 0.0
+  },
+  "nav_history": [
+    {
+      "date": "2026-11-03",
+      "portfolio_nav_eur": 10000,
+      "benchmark_nav_eur": 10000,
+      "portfolio_return_pct": 0,
+      "benchmark_return_pct": 0,
+      "excess_return_pp": 0,
+      "cash_eur": 10000,
+      "invested_eur": 0,
+      "regime": "RISK_ON",
+      "positions": 0,
+      "cumulative_orders": 0,
+      "source_status": "PENDING_FIRST_REAL_CLOSE"
+    }
+  ],
+  "order_history": [],
+  "quote_history": []
+}
