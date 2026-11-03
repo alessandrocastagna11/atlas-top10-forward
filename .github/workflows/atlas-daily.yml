@@ -1,5 +1,12 @@
 name: Atlas Top 10 daily paper engine
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/atlas-daily.yml'
+      - 'daily_runner.py'
+      - 'engine.py'
+      - 'test_*.py'
   workflow_dispatch:
   schedule:
     # 22:35 UTC => after the US close in both winter and summer.
