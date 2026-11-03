@@ -1,8 +1,8 @@
 {
   "asof": "2026-11-03",
   "source": "YAHOO_CHART",
-  "digest_sha256": "2cc79b0389d9e3722a959c92a7e0cd726bd2c951f89dc632c07e88cb83f0e9ca",
-  "downloaded_at_utc": "2026-11-03T22:52:09.040915+00:00",
+  "digest_sha256": "6ecf78d9f503d2249c31e3844e5a0306de452413d7ca61044e4de140ca8cf976",
+  "downloaded_at_utc": "2026-11-03T22:53:00.637432+00:00",
   "data": {
     "AAPL": {
       "symbol": "AAPL",
@@ -313,7 +313,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-03T22:52:08.072006+00:00"
+      "retrieved_utc": "2026-11-03T22:52:59.259521+00:00"
     },
     "NVDA": {
       "symbol": "NVDA",
@@ -625,7 +625,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-03T22:52:08.155156+00:00"
+      "retrieved_utc": "2026-11-03T22:52:59.359106+00:00"
     },
     "MSFT": {
       "symbol": "MSFT",
@@ -936,7 +936,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-03T22:52:08.237243+00:00"
+      "retrieved_utc": "2026-11-03T22:52:59.466245+00:00"
     },
     "GOOG": {
       "symbol": "GOOG",
@@ -1248,7 +1248,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-03T22:52:08.308133+00:00"
+      "retrieved_utc": "2026-11-03T22:52:59.555105+00:00"
     },
     "AMZN": {
       "symbol": "AMZN",
@@ -1554,7 +1554,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-03T22:52:08.370882+00:00"
+      "retrieved_utc": "2026-11-03T22:52:59.706411+00:00"
     },
     "TSM": {
       "symbol": "TSM",
@@ -1866,7 +1866,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-03T22:52:08.458506+00:00"
+      "retrieved_utc": "2026-11-03T22:52:59.860257+00:00"
     },
     "SPCX": {
       "symbol": "SPCX",
@@ -1976,7 +1976,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-03T22:52:08.529680+00:00"
+      "retrieved_utc": "2026-11-03T22:52:59.959758+00:00"
     },
     "2222.SR": {
       "symbol": "2222.SR",
@@ -2284,7 +2284,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-03T22:52:08.653880+00:00"
+      "retrieved_utc": "2026-11-03T22:53:00.071985+00:00"
     },
     "TSLA": {
       "symbol": "TSLA",
@@ -2590,7 +2590,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-03T22:52:08.726389+00:00"
+      "retrieved_utc": "2026-11-03T22:53:00.164794+00:00"
     },
     "META": {
       "symbol": "META",
@@ -2902,7 +2902,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-03T22:52:08.796987+00:00"
+      "retrieved_utc": "2026-11-03T22:53:00.259546+00:00"
     },
     "IUSQ.DE": {
       "symbol": "IUSQ.DE",
@@ -3209,7 +3209,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-03T22:52:08.894984+00:00"
+      "retrieved_utc": "2026-11-03T22:53:00.425363+00:00"
     },
     "EURUSD=X": {
       "symbol": "EURUSD=X",
@@ -3519,12 +3519,12 @@
         "2026-10-29": 1.1155734062194824,
         "2026-10-30": 1.1182805299758911,
         "2026-11-02": 1.1156854629516602,
-        "2026-11-03": 1.119444727897644
+        "2026-11-03": 1.1191942691802979
       },
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-03T22:52:08.964705+00:00"
+      "retrieved_utc": "2026-11-03T22:53:00.515314+00:00"
     },
     "EURSAR=X": {
       "symbol": "EURSAR=X",
@@ -3839,7 +3839,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-03T22:52:09.037713+00:00"
+      "retrieved_utc": "2026-11-03T22:53:00.634353+00:00"
     }
   }
 }

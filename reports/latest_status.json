@@ -1,14 +1,14 @@
 {
   "asof": "2026-11-03",
   "source": "YAHOO_CHART",
-  "digest_sha256": "2cc79b0389d9e3722a959c92a7e0cd726bd2c951f89dc632c07e88cb83f0e9ca",
+  "digest_sha256": "6ecf78d9f503d2249c31e3844e5a0306de452413d7ca61044e4de140ca8cf976",
   "results": {
     "MA10_Official": {
       "price_freshness": "VALUATION_WITH_STALE_QUOTES",
       "engine": "Atlas Top 10 Global A — MA10_Official",
       "asof_requested": "2026-11-03",
       "last_verified_valuation": "2026-11-03",
-      "report_status": "COMPLETE",
+      "report_status": "PENDING_FIRST_REAL_CLOSE",
       "source_status": "PENDING_FIRST_REAL_CLOSE",
       "initialized": false,
       "virtual_capital_start_eur": 10000.0,
@@ -72,7 +72,7 @@
           "asof_date": "2026-11-03",
           "symbol": "EURUSD=X",
           "bar_date": "2026-11-03",
-          "close": 1.119444727897644,
+          "close": 1.1191942691802979,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart"
         },
@@ -148,7 +148,7 @@
       "engine": "Atlas Top 10 Global A — MA6_MA12_Challenger",
       "asof_requested": "2026-11-03",
       "last_verified_valuation": "2026-11-03",
-      "report_status": "COMPLETE",
+      "report_status": "PENDING_FIRST_REAL_CLOSE",
       "source_status": "PENDING_FIRST_REAL_CLOSE",
       "initialized": false,
       "virtual_capital_start_eur": 10000.0,
@@ -212,7 +212,7 @@
           "asof_date": "2026-11-03",
           "symbol": "EURUSD=X",
           "bar_date": "2026-11-03",
-          "close": 1.119444727897644,
+          "close": 1.1191942691802979,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart"
         },
