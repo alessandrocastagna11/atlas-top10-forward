@@ -1,4 +1,2 @@
-<PARSED TEXT FOR SHEET: 1 / 1 TABS
-TAB NAME: MA10_Official_daily_nav.csv>
-index,date,portfolio_nav_eur,benchmark_nav_eur,portfolio_return_pct,benchmark_return_pct,excess_return_pp,cash_eur,invested_eur,regime,positions,cumulative_orders,source_status
-0,2026-11-03,10000,10000,0,0,0,10000,0,RISK_ON,0,0,PENDING_FIRST_REAL_CLOSE
+date,portfolio_nav_eur,benchmark_nav_eur,portfolio_return_pct,benchmark_return_pct,excess_return_pp,cash_eur,invested_eur,regime,positions,cumulative_orders,source_status
+2026-11-03,10000,10000,0,0,0,10000,0,RISK_ON,0,0,PENDING_FIRST_REAL_CLOSE
