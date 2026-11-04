@@ -1,0 +1,41 @@
+name: Atlas SEC Fundamentals PIT Research (isolated)
+on:
+  push:
+    branches: ['research/atlas-quant-v1']
+    paths:
+      - '.github/workflows/atlas-pit-research.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: atlas-sec-pit-isolated-research
+  cancel-in-progress: false
+jobs:
+  sec-pit-research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/atlas-quant-v1
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install standalone research packages
+        run: python -m pip install -r research/atlas_fundamental_pit_v1/requirements.txt
+      - name: Validate PIT and accounting invariants
+        working-directory: research/atlas_fundamental_pit_v1
+        run: python -m unittest test_pit -v
+      - name: SEC as-filed annual financials plus split events (RESEARCH BRANCH ONLY)
+        working-directory: research/atlas_fundamental_pit_v1
+        run: python -u sec_fetch.py
+      - name: Re-run PIT quality/value/momentum backtest
+        working-directory: research/atlas_fundamental_pit_v1
+        run: python -u pit_backtest.py
+      - name: Validate research files and commit on research branch only
+        run: |
+          git config user.name "Atlas SEC Research Bot"
+          git config user.email "atlas-sec-research-bot@users.noreply.github.com"
+          git add research/atlas_fundamental_pit_v1/data/sec_pit_facts.json.gz research/atlas_fundamental_pit_v1/data/sec_download_audit.json research/atlas_fundamental_pit_v1/reports/
+          git diff --cached --quiet || (git commit -m "SEC PIT fundamentals exploratory backtest $(date -u +%F)" && git push origin HEAD:research/atlas-quant-v1)
