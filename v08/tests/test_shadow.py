@@ -125,6 +125,24 @@ class RiskTests(unittest.TestCase):
         self.assertGreater(purchases,0)
         self.assertGreater(sales,0)
         self.assertLess(abs(purchases-sales),20)
+    def test_unchanged_signal_no_automatic_monthly_turnover(self):
+        d=fixture();s=e.seed('MA10_Open')
+        e.advance(s,d,'2026-11-05')
+        before=len(s['orders'])
+        s['bollo_liability']=200.
+        t=date(2026,11,6)
+        while t<=date(2026,12,1):
+            if any(str(t) in d[n]['bars'] for n in e.BASKET+[e.BENCH]):
+                e.advance(s,d,str(t))
+            t+=timedelta(days=1)
+        self.assertEqual(before,len(s['orders']))
+    def test_annual_replacement_does_not_rebalance_winners(self):
+        d=fixture();s=e.seed('MA10_Open');e.advance(s,d,'2026-11-05')
+        roster=e.BASKET[1:]+['NEW_A']
+        sig=e.target_risk('MA10_Open',d,'2026-11-06')
+        tasks=e.exposure_tasks(s,d,'2026-11-06',sig,roster,exposure_changed=False)
+        self.assertEqual({x['symbol'] for x in tasks if x['side']=='SELL'},{'AAPL'})
+        self.assertEqual({x['symbol'] for x in tasks if x['side']=='BUY'},{'NEW_A'})
     def test_missing_fx_fails_open(self):
         d=fixture();d['EURUSD=X']['bars']={'2026-11-05':{'open':1.1,'close':1.1}}
         s=e.seed('MA10_Open')
