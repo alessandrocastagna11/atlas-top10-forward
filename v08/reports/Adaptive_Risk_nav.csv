@@ -1,0 +1,4 @@
+<PARSED TEXT FOR SHEET: 1 / 1 TABS
+TAB NAME: 14_Adaptive_Risk_nav.csv>
+index,benchmark,benchmark_return_pct,cash,date,exposure,invested,nav,orders,return_pct,status
+0,10000.0,0.0,10000.0,2026-11-04,0.0,0.0,10000.0,0,0.0,SEED

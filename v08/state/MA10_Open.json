@@ -1,0 +1,96 @@
+{
+  "benchmark": {
+    "bollo": 0.0,
+    "cash": 10000.0,
+    "shares": 0.0
+  },
+  "bollo_liability": 0.0,
+  "canceled_tasks": [],
+  "cash": 10000.0,
+  "corporate_events": [],
+  "dividend_events": [],
+  "dividend_tax": 0.0,
+  "first_trade_eligible": "2026-11-05",
+  "initialized": false,
+  "last_date": "2026-11-04",
+  "last_signal_month": "",
+  "nav": [
+    {
+      "benchmark": 10000.0,
+      "benchmark_return_pct": 0.0,
+      "cash": 10000.0,
+      "date": "2026-11-04",
+      "exposure": 0.0,
+      "invested": 0.0,
+      "nav": 10000.0,
+      "orders": 0,
+      "return_pct": 0.0,
+      "status": "SEED"
+    }
+  ],
+  "orders": [],
+  "pending": [],
+  "pending_roster": false,
+  "positions": {},
+  "schema": 8,
+  "security_ids": {
+    "2222.SR": {
+      "currency": "SAR",
+      "issuer_key": "SAUDI_ARAMCO_SA",
+      "venue": "TADAWUL"
+    },
+    "AAPL": {
+      "currency": "USD",
+      "issuer_key": "APPLE_US",
+      "venue": "NASDAQ_OR_NYSE"
+    },
+    "AMZN": {
+      "currency": "USD",
+      "issuer_key": "AMAZON_US",
+      "venue": "NASDAQ_OR_NYSE"
+    },
+    "GOOG": {
+      "currency": "USD",
+      "issuer_key": "ALPHABET_US",
+      "venue": "NASDAQ_OR_NYSE"
+    },
+    "META": {
+      "currency": "USD",
+      "issuer_key": "META_US",
+      "venue": "NASDAQ_OR_NYSE"
+    },
+    "MSFT": {
+      "currency": "USD",
+      "issuer_key": "MICROSOFT_US",
+      "venue": "NASDAQ_OR_NYSE"
+    },
+    "NVDA": {
+      "currency": "USD",
+      "issuer_key": "NVIDIA_US",
+      "venue": "NASDAQ_OR_NYSE"
+    },
+    "SPCX": {
+      "currency": "USD",
+      "first_listed": "2026-06-12",
+      "isin": "US84615Q1031",
+      "issuer_key": "SPACEX_US_2026",
+      "venue": "NASDAQ_OR_NYSE"
+    },
+    "TSLA": {
+      "currency": "USD",
+      "issuer_key": "TESLA_US",
+      "venue": "NASDAQ_OR_NYSE"
+    },
+    "TSM": {
+      "currency": "USD",
+      "issuer_key": "TSMC_TW_ADR",
+      "venue": "NASDAQ_OR_NYSE"
+    }
+  },
+  "seed_date": "2026-11-04",
+  "signal_log": [],
+  "strategy": "MA10_Open",
+  "target_exposure": 0.0,
+  "tax_losses": [],
+  "warnings": []
+}

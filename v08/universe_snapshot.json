@@ -1,0 +1,9 @@
+{
+  "asof": "2026-11-03",
+  "source": "https://companiesmarketcap.com/",
+  "verification_note": "Ranking snapshot fixed in Atlas v0.7. Not a vendor-licensed certified PIT historical universe; do not reuse backwards.",
+  "first_allowed_shadow_execution": "2026-11-05",
+  "symbols": ["AAPL", "NVDA", "MSFT", "GOOG", "AMZN", "TSM", "SPCX", "2222.SR", "TSLA", "META"],
+  "spcx": {"issuer": "Space Exploration Technologies Corp.", "isin": "US84615Q1031", "first_listed": "2026-06-12", "primary_market": "Nasdaq", "historical_symbol_reuse_warning": true, "sources": ["https://nasdaqtrader.com/TraderNews.aspx?id=DTN2026-8", "https://ir.spacex.com/faqs-and-contact/"]},
+  "saudi_exchange": {"symbol": "2222.SR", "exchange": "Tadawul", "calendar": "Sunday-Thursday, excluding holidays", "source": "https://www.saudiexchange.sa/wps/portal/saudiexchange/rules-guidance/capital-market-overview/trading-cycle-and-times"}
+}
