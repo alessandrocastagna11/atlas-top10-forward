@@ -1,0 +1,11 @@
+{
+  "min_sec_coverage": 43,
+  "median_sec_coverage": 74.0,
+  "max_sec_pub_date_le_decision": true,
+  "first_month": "2016-02",
+  "last_month": "2025-11",
+  "n_decision_snapshots": 40,
+  "source_market_sha256": "a4ae448185afe67005516519eee692069e802207489310397b6ba6076dd24511",
+  "filing_data_sha256": "ea1af99425af900f29e33344667c1e9d0d2140e2a74583fbdc32fe932ed71c53",
+  "warning": "US SEC subset only; annual reconstructed membership NOT independently PIT certified. Monthly DD understates intramonth risk. Analyst consensus revisions absent. Yahoo split and dividend data are vendor sourced."
+}

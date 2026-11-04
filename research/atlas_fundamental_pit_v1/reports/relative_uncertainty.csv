@@ -1,0 +1,5 @@
+strategy,comparator,annualized_log_return_diff_pp,bootstrap_ci_95_low_pp,bootstrap_ci_95_high_pp,monthly_observations,method
+Quant20_QualityValue,Quant20_Price,-1.656,-5.734,2.508,117,circular block bootstrap 12 months; 2000 replications; exploratory; NOT multiplicity corrected
+Quant20_QVM,Quant20_Price,-2.8,-5.741,0.209,117,circular block bootstrap 12 months; 2000 replications; exploratory; NOT multiplicity corrected
+Quant20_Price,Top10_US_BuyHold,-4.026,-11.327,3.254,117,circular block bootstrap 12 months; 2000 replications; exploratory; NOT multiplicity corrected
+Quant20_QVM_MA6_12,Quant20_QVM,-1.901,-4.203,0.409,117,circular block bootstrap 12 months; 2000 replications; exploratory; NOT multiplicity corrected
