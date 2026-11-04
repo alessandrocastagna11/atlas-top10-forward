@@ -25,3 +25,4 @@
 ## Adaptive_Risk
 - Valutazione più recente: **2026-11-04**, richiesta: **2026-11-04**; peso primi tre: **0.0%**.
 - Acquisti 0, vendite 0; imposte plusvalenze €0.00; bollo maturato €0.00.
+
