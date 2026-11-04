@@ -1,0 +1,28 @@
+{
+  "requested": 139,
+  "mapped_to_sec": 138,
+  "facts_ok": 121,
+  "split_history_ok": 121,
+  "no_sec_ticker": 1,
+  "failed_or_no_annual": {
+    "ABEV": "NO_ANNUAL_FACTS",
+    "AMX": "NO_ANNUAL_FACTS",
+    "ARM": "NO_ANNUAL_FACTS",
+    "ASML": "NO_ANNUAL_FACTS",
+    "AZN": "NO_ANNUAL_FACTS",
+    "BABA": "NO_ANNUAL_FACTS",
+    "BIDU": "NO_ANNUAL_FACTS",
+    "HDB": "NO_ANNUAL_FACTS",
+    "INFY": "NO_ANNUAL_FACTS",
+    "JD": "NO_ANNUAL_FACTS",
+    "IBN": "SEC_ERROR",
+    "PDD": "NO_ANNUAL_FACTS",
+    "SAP": "NO_ANNUAL_FACTS",
+    "SE": "NO_ANNUAL_FACTS",
+    "SHEL": "NO_ANNUAL_FACTS",
+    "TSM": "NO_ANNUAL_FACTS",
+    "XOM": "NO_ANNUAL_FACTS"
+  },
+  "raw_sha256": "ae66a5baf2ba4b3934b6e361294653c37fe194cddf94e8f80dd9d0ee65de89d5",
+  "compressed_bytes": 188220
+}
