@@ -29,10 +29,14 @@ jobs:
         run: python -m unittest test_pit -v
       - name: SEC as-filed annual financials plus split events (RESEARCH BRANCH ONLY)
         working-directory: research/atlas_fundamental_pit_v1
-        run: python -u sec_fetch.py
+        run: |
+          if [ ! -s data/sec_pit_facts.json.gz ]; then python -u sec_fetch.py; else echo 'Reusing frozen SEC as-filed snapshot'; fi
       - name: Re-run PIT quality/value/momentum backtest
         working-directory: research/atlas_fundamental_pit_v1
         run: python -u pit_backtest.py
+      - name: Stress and subperiod diagnostics (research only)
+        working-directory: research/atlas_fundamental_pit_v1
+        run: python -u pit_diagnostics.py
       - name: Validate research files and commit on research branch only
         run: |
           git config user.name "Atlas SEC Research Bot"
