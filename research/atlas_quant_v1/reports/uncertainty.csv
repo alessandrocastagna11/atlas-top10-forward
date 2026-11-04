@@ -1,0 +1,4 @@
+alternative,reference,months,annualized_log_excess_pp,ci95_low,ci95_high,bootstrap_block_months,caution
+Quant20_Momentum,Top10_Eligible_BH,118,-6.442462159064319,-12.758191457581622,0.7128596696888237,12,"descriptive, no multiple-test correction, no blind holdout"
+Quant20_TrendVol,Top10_Eligible_MA6_12,118,-6.683565326142614,-12.59677970444742,-1.1305186684399444,12,"descriptive, no multiple-test correction, no blind holdout"
+Quant20_Momentum,Global_proxy_60_30_10,118,-1.1217128357041022,-5.017273771431101,2.443813824579872,12,"descriptive, no multiple-test correction, no blind holdout"

@@ -1,0 +1,13 @@
+{
+  "project": "Atlas Quant Research v1.0; study executed 2026-11-04; research-only",
+  "upstream_h4_global_frozen_archive": "H4_GLOBAL_DATASET_FROZEN_2026-09-12.zip",
+  "upstream_sha256": "254a316239603c62e8bee954c3f27bc4fade778b9a828dbda4e88f29eb3bcdec",
+  "subset_prices_zip_sha256": "a4ae448185afe67005516519eee692069e802207489310397b6ba6076dd24511",
+  "fx_sha256": "b1e452eec24422e30efee2c99af1873366f78b79cef6a8b5cf742dde2bc8e3fe",
+  "price_currencies_included": [
+    "USD",
+    "EUR"
+  ],
+  "roster_PIT_certified": false,
+  "live_source_modified": false
+}
