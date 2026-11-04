@@ -50,3 +50,14 @@ Per i file annuali, usare:
 ### Corporate action e distribuzioni
 
 Il sistema legge anche gli eventi di split del provider, adegua le quote senza generare compravendite imponibili e registra gli eventi in `corporate_actions.csv`. I dividendi vengono accreditati nel cash al netto della stima d'imposta e registrati in `dividend_history.csv`; il pagamento è simulato alla data ex-dividend per mancanza di una data di incasso affidabile. Questi limiti sono distinti dalle plusvalenze realizzate sulle vendite.
+## v0.8 — Ricerca SHADOW con Adaptive Risk (4 novembre 2026)
+
+La **strategia ufficiale v0.7 non è stata modificata**. Dal **5 novembre 2026** il workflow può aggiornare tre nuovi conti virtuali **indipendenti** da 10.000 € ciascuno, con prezzi di apertura della seduta successiva e benchmark IUSQ:
+
+- MA10_Open (singola MA10 ±1%)
+- MA6_MA12_Open (cross mensile MA6/MA12 ±1%)
+- Adaptive_Risk (dual MA6/MA12 + MA3 + volatilità IUSQ a 20 sedute, budget vol 16%)
+
+[Ultimo report v0.8](v08/reports/latest.md) · [Stato machine-readable v0.8](v08/reports/latest_status.json) · [Motore e avvertenze](v08/README.md) · [Ipotesi pre-registrate](v08/RESEARCH_PLAN.md)
+
+Le quote di mercato sono fornite da Yahoo Chart con ritardo e possono essere incomplete. Non c'è broker né denaro reale. I risultati dei test sintetici non sono risultati finanziari. Una classifica annuale non verificata blocca le nuove rotazioni. La simulazione al prezzo OPEN più slippage non garantisce un'esecuzione reale. Il workflow è configurato per girare dopo la chiusura dei mercati USA, ma la disponibilità effettiva dei dati va verificata a ogni run.
