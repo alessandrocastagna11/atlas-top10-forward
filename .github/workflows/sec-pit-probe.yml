@@ -21,6 +21,7 @@ jobs:
             'https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json',
             'https://www.sec.gov/files/company_tickers.json',
             'https://data.sec.gov/submissions/CIK0000320193.json',
+            'https://query1.finance.yahoo.com/v8/finance/chart/AAPL?period1=1451606400&period2=1798761600&interval=1mo&events=splits',
           ]
           for url in sites:
               req=urllib.request.Request(url,headers={'User-Agent':'AtlasQuantResearch lab-research@example.org','Accept-Encoding':'gzip, deflate','Accept':'application/json'})
