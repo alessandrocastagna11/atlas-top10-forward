@@ -1,0 +1,10 @@
+{
+  "historical_source/atlas_top10_v03.py": "2dbc1b511b9460f592843e689cc7a862e1ff85476dcf25f735029f2030c5a445",
+  "historical_source/atlas_top10_v05.py": "ed7c1b4b4e26559a1abd2a86f15ce2a559e186f69249474e12454156733a6693",
+  "historical_source/data/A_top10_matched_universe_roster.csv": "348c94aa9c0e05f6947cb09d3a8ab57ef6a7b338391dbc7cda8c1c429515979d",
+  "historical_source/data/C_dividend_events.csv.gz": "07c447a2af90a235582023d3058e2829e7f0f04f3bf2c6ca99069d19421f6b58",
+  "historical_source/data/C_selected_price_eur.csv.gz": "67bfcb83cfb433e72d3db0ae5da1ef541bea135880b97bda1ca0914a41230af5",
+  "historical_source/data/dexuseu_usd_per_eur.csv": "b1e452eec24422e30efee2c99af1873366f78b79cef6a8b5cf742dde2bc8e3fe",
+  "historical_source/data/global_benchmark_proxy.csv": "cb47ee56dd956cfd556e3ae9aa7dcfd1f30a80b9d49738e3016813d1788ca396",
+  "historical_source/data/net_cash_rate_archived.csv": "209075fdcb99d53ee20ff8cde0adf3c2824a750d23569771a605ce69020aacba"
+}
