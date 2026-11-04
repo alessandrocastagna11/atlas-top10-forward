@@ -61,3 +61,9 @@ La **strategia ufficiale v0.7 non è stata modificata**. Dal **5 novembre 2026**
 [Ultimo report v0.8](v08/reports/latest.md) · [Stato machine-readable v0.8](v08/reports/latest_status.json) · [Motore e avvertenze](v08/README.md) · [Ipotesi pre-registrate](v08/RESEARCH_PLAN.md)
 
 Le quote di mercato sono fornite da Yahoo Chart con ritardo e possono essere incomplete. Non c'è broker né denaro reale. I risultati dei test sintetici non sono risultati finanziari. Una classifica annuale non verificata blocca le nuove rotazioni. La simulazione al prezzo OPEN più slippage non garantisce un'esecuzione reale. Il workflow è configurato per girare dopo la chiusura dei mercati USA, ma la disponibilità effettiva dei dati va verificata a ogni run.
+
+## Backtest v0.8 (esplorativo, non ufficiale)
+
+[Rapporto e confronto storico delle sei strategie](backtests/v08_close_proxy/FINAL_REPORT.md) · [Rendimenti netti in CSV](backtests/v08_close_proxy/COMPARISON.csv) · [Analisi di sensitività](backtests/v08_close_proxy/SENSITIVITY.csv).
+
+**Avviso:** lo storico archiviato usa prezzi di chiusura (non OPEN) e proxy globale SPY/EFA/EEM (non ETF IUSQ), ranking ricostruiti non certificati point-in-time. Le tre strategie v0.8 shadow e i due conti ufficiali v0.7 restano distinti e NON sono stati retroattivamente modificati dai calcoli di backtest.
