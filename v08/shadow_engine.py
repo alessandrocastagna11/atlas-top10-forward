@@ -164,7 +164,7 @@ def value_positions(state,data,day):
     return v
 
 
-def exposure_tasks(state,data,day,signal,roster=BASKET):
+def exposure_tasks(state,data,day,signal,roster=BASKET,exposure_changed=True):
     """Create tasks from PREVIOUS close; DO NOT use today's OPEN/CLOSE."""
     prev=state['last_date']
     vals=value_positions(state,data,prev) if state['positions'] else {}
@@ -176,6 +176,15 @@ def exposure_tasks(state,data,day,signal,roster=BASKET):
     ongoing={k:v for k,v in vals.items() if k in roster}
     current=sum(ongoing.values())
     newcomers=sorted(set(roster)-set(vals))
+    # A pure annual roster substitution must not liquidate continuing winners
+    # merely to restore equal weights. Redeploy only departing sale proceeds.
+    if not exposure_changed:
+        new_money=sum(vals[n] for n in outgoing)
+        if newcomers and new_money>len(newcomers)*1.01:
+            for sym in newcomers:
+                tasks.append(dict(symbol=sym,side='BUY',full=False,
+                    budget_eur=new_money/len(newcomers),created=day,reason='annual replacement'))
+        return tasks
     newcomer_budget=desired*len(newcomers)/len(roster) if desired>1 and roster else 0.
     incumbent_budget=max(0.,desired-newcomer_budget)
     if incumbent_budget<=1e-8:
@@ -286,12 +295,19 @@ def advance(state,data,day,roster=BASKET,roster_verified=True):
             state['pending']=[]
         else:
             signal=target_risk(state['strategy'],data,day,prior_risk=bool(state['target_exposure']))
+            old_exposure=float(state['target_exposure'])
+            changed=(not state['initialized'] or abs(signal['exposure']-old_exposure)>1e-8)
             state['target_exposure']=signal['exposure']
             state['signal_log'].append(signal)
             state['last_signal_month']=day[:7]
-            if state['pending']:
-                state['canceled_tasks'].extend([{**p,'canceled':day,'reason_cancel':'new signal'} for p in state['pending']])
-            state['pending']=exposure_tasks(state,data,day,signal,roster)
+            desired_symbols=set(roster) if signal['exposure']>0 else set()
+            current_symbols=set(state['positions'])
+            # A repeated monthly signal must never turn accrued bollo or
+            # tiny residual cash into an unintended new trade.
+            if changed or (desired_symbols!=current_symbols and not state['pending']):
+                if state['pending']:
+                    state['canceled_tasks'].extend([{**p,'canceled':day,'reason_cancel':'changed target'} for p in state['pending']])
+                state['pending']=exposure_tasks(state,data,day,signal,roster,exposure_changed=changed)
             state['initialized']=True
     # Split occurs BEFORE market open. The pending share budget was calculated
     # at the previous close and is unaffected by the post-split share count.
