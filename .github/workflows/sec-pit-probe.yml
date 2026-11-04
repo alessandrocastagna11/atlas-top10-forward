@@ -1,0 +1,32 @@
+name: Atlas SEC PIT accessibility probe (research only)
+on:
+  push:
+    branches: ['research/atlas-quant-v1']
+    paths: ['.github/workflows/sec-pit-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test public SEC XBRL and metadata endpoints
+        shell: bash
+        run: |
+          python - <<'PY'
+          import urllib.request,urllib.error,json
+          sites=[
+            'https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json',
+            'https://www.sec.gov/files/company_tickers.json',
+            'https://data.sec.gov/submissions/CIK0000320193.json',
+          ]
+          for url in sites:
+              req=urllib.request.Request(url,headers={'User-Agent':'AtlasQuantResearch lab-research@example.org','Accept-Encoding':'gzip, deflate','Accept':'application/json'})
+              try:
+                  with urllib.request.urlopen(req,timeout=15) as r:
+                      data=r.read(5000)
+                      print('SEC_PROBE',url,'HTTP',r.status,'SAMPLE_BYTES',len(data),'HEAD',data[:80])
+              except Exception as e:print('SEC_PROBE_ERROR',url,type(e).__name__,str(e)[:300])
+          PY
