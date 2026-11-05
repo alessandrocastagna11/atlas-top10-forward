@@ -66,7 +66,10 @@ jobs:
         run: |
           git config user.name "Atlas V4 Paper Bot"
           git config user.email "atlas-v4-paper-bot@users.noreply.github.com"
-          git add -A strict_shadow/live_v4/state strict_shadow/live_v4/reports strict_shadow/live_v4/market_data
+          git add -A strict_shadow/live_v4/state strict_shadow/live_v4/reports
+          if [ -d strict_shadow/live_v4/market_data ]; then
+            git add -A strict_shadow/live_v4/market_data
+          fi
           if ! git diff --cached --quiet; then
             git commit -m "Atlas V4 PAPER monitoring $(date -u +%F)"
             git push origin HEAD:atlas-v4-confidence70-live-paper
