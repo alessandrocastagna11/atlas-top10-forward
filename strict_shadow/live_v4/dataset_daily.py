@@ -166,6 +166,12 @@ def update_history(provider,symbol,kind,today,base_date,overlap_days=10):
     inserted=0;revised=0;upgraded=0
     for d,b in sorted(candles.items()):
         if d<base_date or d>today:continue
+        # US/Canada Chart daily candles can be provisional until provider settlement.
+        # The dataset must not promote an intraday partial candle to a final close.
+        ny=dt.datetime.now(dt.timezone.utc).astimezone(NY)
+        north_america=('.' not in symbol or symbol.endswith(('.TO','.V')))
+        if kind=='prices' and north_america and d==ny.date() and ny.time()<dt.time(17,30):
+            continue
         row={'date':d.isoformat(),'symbol':symbol,'open':format(b.open,'.10g'),
             'close':format(b.close,'.10g'),'volume':format(b.volume,'.10g'),'currency':b.currency,
             'unit_scale':str(b.unit_scale),'source_sha256':b.source_sha256}
