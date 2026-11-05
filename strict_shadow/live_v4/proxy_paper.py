@@ -58,7 +58,7 @@ def execute(now=None,provider=None):
             for t,sym in names.items():
                 rec=provider.eur_quote(sym,exe,'open')
                 quotes[t]=rec['price_eur'];metadata[t]=rec
-            new,trade=execute_paper(state,signal,quotes)
+            new,trade=execute_paper(state,signal,quotes,rebalance_fraction=0.01)
             new['research_model_variant']=MODEL
             json_save(STATE,new)
             json_save(FORWARD/'execution_receipt.json',{
