@@ -1,0 +1,73 @@
+name: Atlas V4 Confidence70 — isolated live PAPER
+
+on:
+  push:
+    branches: [atlas-v4-confidence70-live-paper]
+    paths:
+      - '.github/workflows/atlas-v4-confidence70-paper.yml'
+      - 'strict_shadow/live_v4/*.py'
+      - 'strict_shadow/live_v4/tests/**'
+      - 'strict_shadow/live_v4/inbox/**'
+  workflow_dispatch:
+
+# No schedule here: GitHub scheduled Actions only run on the default branch.
+# Do not touch official Atlas Top10 workflows or main.
+permissions:
+  contents: write
+
+concurrency:
+  group: atlas-v4-confidence70-live-paper
+  cancel-in-progress: false
+
+jobs:
+  paper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: atlas-v4-confidence70-live-paper
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify synthetic tests before any paper state change
+        run: python -m unittest discover -s strict_shadow/live_v4/tests -p 'test_*.py' -v
+      - name: Check paper ledger invariant
+        run: python strict_shadow/live_v4/run.py --check
+      - name: Fetch complete EOD benchmark and run fail-closed V4 PAPER
+        run: python strict_shadow/live_v4/run.py
+      - name: Verify ledger invariant again
+        run: python strict_shadow/live_v4/run.py --check
+      - name: Write audit summary (a passing workflow does NOT mean orders executed)
+        if: always()
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path('strict_shadow/live_v4/reports/latest_status.json')
+          if not p.exists():
+              print('::warning title=V4 runner::No report produced')
+          else:
+              d=json.loads(p.read_text(encoding='utf-8'))
+              msg='\n'.join(['## Atlas V4 Confidence70 | independent PAPER',
+                             '- State: **'+str(d.get('status'))+'**',
+                             '- Reason: '+str(d.get('reason')),
+                             '- Market data: '+str(d.get('market_data_status')),
+                             '- Paper orders cumulative: '+str(d.get('total_paper_orders')),
+                             '- Real-money orders: **0**',
+                             '- Official main: **unchanged**',''])
+              with open(os.environ['GITHUB_STEP_SUMMARY'],'a',encoding='utf-8') as f:f.write(msg)
+              if d.get('status')!='PAPER_EXECUTED':
+                  print('::warning title=V4 no executed paper decision::'+str(d.get('status'))+' '+str(d.get('reason')))
+          PY
+      - name: Commit V4 research paper ledgers on shadow branch ONLY
+        if: success()
+        run: |
+          git config user.name "Atlas V4 Paper Bot"
+          git config user.email "atlas-v4-paper-bot@users.noreply.github.com"
+          git add -A strict_shadow/live_v4/state strict_shadow/live_v4/reports strict_shadow/live_v4/market_data
+          if ! git diff --cached --quiet; then
+            git commit -m "Atlas V4 PAPER monitoring $(date -u +%F)"
+            git push origin HEAD:atlas-v4-confidence70-live-paper
+          fi
