@@ -1,14 +1,14 @@
 {
   "asof": "2026-11-04",
   "source": "YAHOO_CHART",
-  "digest_sha256": "37a627bfb6f3e7e50b888f763bb30d7559b41f239debf204df60e9d4d55565ac",
+  "digest_sha256": "39c7c7801226647608bfb5e62e7845463039c0e802a863f728f17e6c32e54be8",
   "results": {
     "MA10_Official": {
-      "price_freshness": "VALUATION_WITH_STALE_QUOTES",
+      "price_freshness": "EXACT",
       "engine": "Atlas Top 10 Global A — MA10_Official",
       "asof_requested": "2026-11-04",
       "last_verified_valuation": "2026-11-03",
-      "report_status": "PENDING_DATA",
+      "report_status": "PENDING_FIRST_REAL_CLOSE",
       "source_status": "PENDING_FIRST_REAL_CLOSE",
       "initialized": false,
       "virtual_capital_start_eur": 10000.0,
@@ -33,29 +33,15 @@
       "total_slippage_eur": 0,
       "pending_transition": null,
       "data_warning": null,
-      "missing_exact_closes": [
-        {
-          "symbol": "2222.SR",
-          "last_close_date": "2026-11-03"
-        },
-        {
-          "symbol": "IUSQ.DE",
-          "last_close_date": "2026-11-03"
-        }
-      ],
+      "missing_exact_closes": [],
       "new_valuations": 0,
-      "execution_attempts_blocked": [
-        {
-          "date": "2026-11-04",
-          "reason": "No exact close for 2026-11-04; last=2026-11-03"
-        }
-      ],
+      "execution_attempts_blocked": [],
       "asof_price_audit": [
         {
           "asof_date": "2026-11-04",
           "symbol": "2222.SR",
-          "bar_date": "2026-11-03",
-          "close": 26.15999984741211,
+          "bar_date": "2026-11-04",
+          "close": 26.239999771118164,
           "currency": "SAR",
           "feed": "Yahoo Finance delayed daily chart"
         },
@@ -102,10 +88,10 @@
         {
           "asof_date": "2026-11-04",
           "symbol": "IUSQ.DE",
-          "bar_date": "2026-11-03",
-          "close": 107.72000122070312,
+          "bar_date": "2026-11-04",
+          "close": 108.9,
           "currency": "EUR",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "MULTI_SOURCE_VERIFIED_POST_SESSION"
         },
         {
           "asof_date": "2026-11-04",
@@ -159,11 +145,11 @@
       "last_update_source": "Yahoo daily chart (delayed), provider time stamped; cash 0%"
     },
     "MA6_MA12_Challenger": {
-      "price_freshness": "VALUATION_WITH_STALE_QUOTES",
+      "price_freshness": "EXACT",
       "engine": "Atlas Top 10 Global A — MA6_MA12_Challenger",
       "asof_requested": "2026-11-04",
       "last_verified_valuation": "2026-11-03",
-      "report_status": "PENDING_DATA",
+      "report_status": "PENDING_FIRST_REAL_CLOSE",
       "source_status": "PENDING_FIRST_REAL_CLOSE",
       "initialized": false,
       "virtual_capital_start_eur": 10000.0,
@@ -188,29 +174,15 @@
       "total_slippage_eur": 0,
       "pending_transition": null,
       "data_warning": null,
-      "missing_exact_closes": [
-        {
-          "symbol": "2222.SR",
-          "last_close_date": "2026-11-03"
-        },
-        {
-          "symbol": "IUSQ.DE",
-          "last_close_date": "2026-11-03"
-        }
-      ],
+      "missing_exact_closes": [],
       "new_valuations": 0,
-      "execution_attempts_blocked": [
-        {
-          "date": "2026-11-04",
-          "reason": "No exact close for 2026-11-04; last=2026-11-03"
-        }
-      ],
+      "execution_attempts_blocked": [],
       "asof_price_audit": [
         {
           "asof_date": "2026-11-04",
           "symbol": "2222.SR",
-          "bar_date": "2026-11-03",
-          "close": 26.15999984741211,
+          "bar_date": "2026-11-04",
+          "close": 26.239999771118164,
           "currency": "SAR",
           "feed": "Yahoo Finance delayed daily chart"
         },
@@ -257,10 +229,10 @@
         {
           "asof_date": "2026-11-04",
           "symbol": "IUSQ.DE",
-          "bar_date": "2026-11-03",
-          "close": 107.72000122070312,
+          "bar_date": "2026-11-04",
+          "close": 108.9,
           "currency": "EUR",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "MULTI_SOURCE_VERIFIED_POST_SESSION"
         },
         {
           "asof_date": "2026-11-04",
