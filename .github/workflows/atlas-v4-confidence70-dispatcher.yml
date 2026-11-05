@@ -30,7 +30,11 @@ jobs:
       - name: Validate previous virtual ledger
         run: python strict_shadow/live_v4/run.py --check
       - name: Incrementally refresh historical symbol quotes, FX and dated forward universe
-        run: python strict_shadow/live_v4/dataset_daily.py --limit 300 --start 2025-12-01
+        run: python strict_shadow/live_v4/dataset_daily.py --limit 300 --start 2024-01-01
+      - name: Settle last verified forward research proxy at actual next-session opens
+        run: python strict_shadow/live_v4/proxy_paper.py
+      - name: Generate new research forward signal (NOT original parity)
+        run: python strict_shadow/live_v4/forward_signal.py
       - name: Run strict V4 shadow EOD and optional verified paper execution
         run: python strict_shadow/live_v4/run.py
       - name: Validate next virtual ledger
@@ -59,6 +63,9 @@ jobs:
           git add -A strict_shadow/live_v4/state strict_shadow/live_v4/reports
           if [ -d strict_shadow/live_v4/dataset ]; then
             git add -A strict_shadow/live_v4/dataset
+          fi
+          if [ -d strict_shadow/live_v4/forward ]; then
+            git add -A strict_shadow/live_v4/forward
           fi
           if [ -d strict_shadow/live_v4/market_data ]; then
             git add -A strict_shadow/live_v4/market_data
