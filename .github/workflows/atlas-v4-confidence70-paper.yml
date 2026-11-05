@@ -7,6 +7,7 @@ on:
       - '.github/workflows/atlas-v4-confidence70-paper.yml'
       - 'strict_shadow/live_v4/*.py'
       - 'strict_shadow/live_v4/tests/**'
+      - 'strict_shadow/live_v4/dataset_daily.py'
       - 'strict_shadow/live_v4/inbox/**'
   workflow_dispatch:
 
@@ -35,6 +36,8 @@ jobs:
         run: python -m unittest discover -s strict_shadow/live_v4/tests -p 'test_*.py' -v
       - name: Check paper ledger invariant
         run: python strict_shadow/live_v4/run.py --check
+      - name: Incrementally refresh historical symbols, rolling daily prices, FX and forward ETF snapshots
+        run: python strict_shadow/live_v4/dataset_daily.py --limit 90 --start 2025-12-01
       - name: Fetch complete EOD benchmark and run fail-closed V4 PAPER
         run: python strict_shadow/live_v4/run.py
       - name: Verify ledger invariant again
@@ -67,6 +70,9 @@ jobs:
           git config user.name "Atlas V4 Paper Bot"
           git config user.email "atlas-v4-paper-bot@users.noreply.github.com"
           git add -A strict_shadow/live_v4/state strict_shadow/live_v4/reports
+          if [ -d strict_shadow/live_v4/dataset ]; then
+            git add -A strict_shadow/live_v4/dataset
+          fi
           if [ -d strict_shadow/live_v4/market_data ]; then
             git add -A strict_shadow/live_v4/market_data
           fi
