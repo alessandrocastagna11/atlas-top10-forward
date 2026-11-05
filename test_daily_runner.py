@@ -57,6 +57,12 @@ class DailyTests(unittest.TestCase):
         r2=dr.do_strategy(self.folder,'2026-11-05',synthetic())
         self.assertEqual(r2['order_count'],10)
         self.assertEqual(len(json.loads((self.folder/'state.json').read_text())['order_history']),11)
+    def test_late_backfill_cannot_create_fictitious_past_orders(self):
+        d=synthetic()
+        r=dr.do_strategy(self.folder,'2026-11-05',d)
+        self.assertEqual(r['order_count'],10)
+        st=json.loads((self.folder/'state.json').read_text())
+        self.assertTrue(all(o['date']=='2026-11-05' for o in st['order_history']))
     def test_missing_first_day_uses_next_real_day(self):
         r=dr.do_strategy(self.folder,'2026-11-05',synthetic(missing=True))
         self.assertEqual(r['order_count'],10)

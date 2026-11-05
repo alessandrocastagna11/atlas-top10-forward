@@ -33,6 +33,16 @@ class RunnerTests(unittest.TestCase):
         self.assertTrue(all(v['benchmark_eur']>0 for v in o.values()))
         self.assertEqual(r.load('MA10_Open')['last_date'],'2026-11-05')
         self.assertEqual(r.load('Adaptive_Risk')['last_date'],'2026-11-05')
+    def test_no_retroactive_initial_fills_after_delayed_feed(self):
+        d=fixture()
+        for sy in list(d):
+            for key in ('bars','dividends','splits'):
+                d[sy][key]={dt:v for dt,v in d[sy].get(key,{}).items()
+                             if dt<='2026-11-05'}
+        # First available opportunity arrives late (e.g. Nov 6).
+        res=r.replay('2026-11-06',d)
+        self.assertEqual(len(r.load('MA10_Open')['orders']),0)
+        self.assertTrue(all(o.get('date')!='2026-11-05' for o in r.load('MA10_Open')['orders']))
     def test_replay_no_duplicate_orders(self):
         d=fixture();r.replay('2026-11-05',d)
         n=len(r.load('MA10_Open')['orders'])

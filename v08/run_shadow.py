@@ -78,6 +78,10 @@ def replay(asof,data,errors=None):
         before=json.dumps(state,sort_keys=True)
         failed=[];processed=0
         for d in date_range(state['last_date'],asof):
+            # Never fill initial orders at a past open after a delayed quote
+            # arrives. The earliest credible paper execution is current asof.
+            if not state['initialized'] and d < asof:
+                continue
             # Missing data means no fabricated price or fill. Still permit a
             # partial session when a single instrument feed is unavailable by
             # retaining any last known market data snapshot.
@@ -97,7 +101,7 @@ def replay(asof,data,errors=None):
         if state['last_date']!=json.loads(before)['last_date']:
             save_json(STATE/f'{name}.json',state)
         last=state['nav'][-1]
-        report_status='PENDING_FIRST_OPEN' if not state['initialized'] else ('PENDING_DATA' if failed or last['date']<asof and processed==0 else last['status'])
+        report_status=('PENDING_DATA' if failed else 'PENDING_FIRST_OPEN') if not state['initialized'] else ('PENDING_DATA' if failed or last['date']<asof and processed==0 else last['status'])
         weights={}
         if state['positions']:
             try:

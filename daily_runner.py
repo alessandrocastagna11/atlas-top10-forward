@@ -101,6 +101,11 @@ def do_strategy(folder,asof,data):
     attempts=[]
     new=[]
     for date in dates_between(last_start,asof):
+        # The first live entry cannot be retrospectively filled at an older
+        # session's close just because a delayed provider published it later.
+        # Only the current verified EOD asof can establish a new account.
+        if not state['initialized'] and date < asof:
+            continue
         pending_before=copy.deepcopy(state)
         try:
             orders,nav=E.step(state,cfg,data,date)
