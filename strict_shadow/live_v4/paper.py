@@ -57,8 +57,10 @@ def validate_targets(snapshot):
     if w>0.99+1e-9 or any(x>0.30+1e-9 for x in sec.values()):raise PaperBlocked('exposure or sector cap breached')
     return {x['ticker']:x for x in targets}
 
-def execute_paper(state,snapshot,quotes):
+def execute_paper(state,snapshot,quotes,rebalance_fraction=0.05):
     """Atomic next-session OPEN execution. quotes: {ticker: verified EUR opening price}."""
+    rebalance_fraction=finite(rebalance_fraction,'rebalance_fraction',0)
+    if rebalance_fraction>0.1:raise PaperBlocked('rebalance threshold too large')
     old=validate_state(copy.deepcopy(state))
     if snapshot.get('engine_id')!=ENGINE or snapshot.get('mode')!='SHADOW':raise PaperBlocked('wrong signal source')
     tar=validate_targets(snapshot)
@@ -80,7 +82,7 @@ def execute_paper(state,snapshot,quotes):
     for t,pos in holdings.items():
         current=pos['shares']*prices[t]; desired=estimated_target.get(t,0)
         excess=current-desired
-        if excess<=max(nav*0.05,3.):continue
+        if excess<=max(nav*rebalance_fraction,3.):continue
         held=(execution-dt.date.fromisoformat(pos['first_entry_date'])).days
         if held<35:raise PaperBlocked(f'minimum holding 35 days for {t}: {held} elapsed')
         shares=min(pos['shares'],excess/prices[t])
@@ -103,7 +105,7 @@ def execute_paper(state,snapshot,quotes):
     for t,p in tar.items():
         cur=holdings.get(t,{}).get('shares',0)*prices[t]
         difference=estimated_target[t]-cur
-        if difference>max(nav*0.05,3.):need.append((t,difference))
+        if difference>max(nav*rebalance_fraction,3.):need.append((t,difference))
     required=sum(v for _,v in need)
     free=max(0,cash-0.01*nav-len(need)*FEE)
     scale=min(1.,free/required) if required>0 else 0
