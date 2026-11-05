@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-05",
+  "purpose": "EXPLAIN_RESEARCH_DATA_TERMINAL_SECURITIES_NOT_PRICE_SYNTHESIS",
+  "events": [
+    {
+      "symbol": "WBD",
+      "issuer": "Warner Bros. Discovery Inc.",
+      "event": "MERGER_DELISTING",
+      "counterparty": "Paramount Skydance Corporation (PSKY)",
+      "last_trading_date": "2026-10-05",
+      "market_effective_date": "2026-10-07",
+      "merger_closed_date": "2026-10-06",
+      "consideration_per_share_usd": 31.01666668,
+      "source": "NASDAQ Corporate Actions Alert 2026-710",
+      "source_url": "https://www.nasdaqtrader.com/TraderNews.aspx?id=ECA2026-710",
+      "date_published": "2026-10-01",
+      "classification": "TERMINAL_NO_FUTURE_DAILY_BARS",
+      "historical_prices_after_2025": "MAY_REMAIN_INCOMPLETE_REQUIRES_PROVENANCE; DO_NOT_SUBSTITUTE_MERGER_CONSIDERATION_AS_QUOTE",
+      "active_for_new_paper_orders": false
+    }
+  ]
+}
