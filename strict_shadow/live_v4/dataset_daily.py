@@ -195,7 +195,7 @@ def update_history(provider,symbol,kind,today,base_date,overlap_days=10):
 def choose_symbols(historical,universe,limit,status):
     # Revisit a few liquid symbols every day; rotate remaining set through every run.
     active=[r['symbol'] for r in universe] if universe else []
-    combined=list(dict.fromkeys(active+historical))
+    combined=list(dict.fromkeys(['ACWI']+active+historical))
     pinned=list(dict.fromkeys(['ACWI','AAPL','MSFT','NVDA','XOM']+active[:20]))
     pinned=[s for s in pinned if s in combined]
     remaining=[s for s in combined if s not in pinned]
