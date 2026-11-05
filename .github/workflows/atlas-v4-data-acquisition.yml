@@ -1,0 +1,39 @@
+name: Atlas V4 historical data acquisition (research)
+on:
+  workflow_dispatch:
+  push:
+    branches: [atlas-strict-v12-shadow]
+    paths:
+      - 'strict_shadow/acquisition/**'
+      - '.github/workflows/atlas-v4-data-acquisition.yml'
+permissions:
+  contents: read
+jobs:
+  acquire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas requests
+      - name: Check historical membership input
+        run: |
+          test -s strict_shadow/acquisition/input/global_top200_annual_pit.csv || { echo "::error::Missing historical membership CSV. Do not substitute current Top500."; exit 1; }
+      - name: Acquire historical prices and FX
+        run: python strict_shadow/acquisition/acquire.py --input strict_shadow/acquisition/input/global_top200_annual_pit.csv --out downloaded --start 2010-01-01 --end 2025-12-11
+      - name: Audit price coverage
+        if: always()
+        run: |
+          if [ -s strict_shadow/acquisition/input/global_top200_annual_pit.csv ]; then
+            python strict_shadow/acquisition/audit.py --input strict_shadow/acquisition/input/global_top200_annual_pit.csv --data downloaded
+          fi
+      - name: Archive acquired research data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-v4-research-data-${{ github.run_id }}
+          path: downloaded/
+          retention-days: 30
+          if-no-files-found: warn
