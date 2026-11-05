@@ -4,7 +4,7 @@ from pathlib import Path
 import pandas as pd
 p=argparse.ArgumentParser();p.add_argument('--input',required=True);p.add_argument('--data',default='downloaded');a=p.parse_args()
 m=pd.read_csv(a.input);root=Path(a.data);rows=[]
-for sym,g in m.groupby('primary_symbol'):
+for sym,g in m.assign(primary_symbol=m['symbol'],effective_year='UNKNOWN_RESEARCH').groupby('primary_symbol'):
     f=root/'prices'/(str(sym).replace('/','_').replace('=','__EQ__')+'.csv')
     r={'symbol':sym,'membership_years':','.join(map(str,sorted(g.effective_year.unique()))),'status':'MISSING','rows':0,'sha256':''}
     if f.exists():
