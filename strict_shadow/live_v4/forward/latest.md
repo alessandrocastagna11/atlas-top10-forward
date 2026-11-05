@@ -10,4 +10,4 @@ No broker access. Original exact V4 paper account is unchanged.
 Latest decision session: n/a
 Targets: 0
 Exposure: 0%
-Issue: ACWI benchmark history missing
+Issue: US session not closed yet; no forward signal

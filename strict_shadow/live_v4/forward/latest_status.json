@@ -1,9 +1,9 @@
 {
-  "checked_at_utc": "2026-11-05T21:06:51.964494+00:00",
+  "checked_at_utc": "2026-11-05T21:09:37.621817+00:00",
   "historical_model_parity": "NOT_CLAIMED",
   "mode": "RESEARCH_PROXY_PAPER_ONLY",
   "model_variant": "V4_CONF70_FORWARD_COHORT_PROXY_V1",
   "real_broker_orders": 0,
-  "reason": "ACWI benchmark history missing",
+  "reason": "US session not closed yet; no forward signal",
   "status": "PENDING_FORWARD_DATA"
 }
