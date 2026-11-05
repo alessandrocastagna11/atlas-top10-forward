@@ -1,0 +1,35 @@
+"""Offline provider tests: exact session and FX lookahead protections."""
+import datetime as dt
+import sys
+import unittest
+from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+from provider import YahooChart, Bar, DataUnavailable
+
+D=dt.date.fromisoformat
+class InMemory(YahooChart):
+    def __init__(self,series):self.series=series
+    def history(self,symbol,start,end):return {d:b for d,b in self.series.get(symbol,{}).items() if start<=d<=end}
+
+class ProviderTests(unittest.TestCase):
+    def test_open_uses_prior_day_fx(self):
+        data={'TST':{D('2026-11-06'):Bar(D('2026-11-06'),120.,125.,'USD','TST','mkt')},
+              'EURUSD=X':{
+                  D('2026-11-05'):Bar(D('2026-11-05'),1.1,1.2,'USD','EURUSD=X','fxprior'),
+                  D('2026-11-06'):Bar(D('2026-11-06'),1.3,1.5,'USD','EURUSD=X','fxfuture')}}
+        q=InMemory(data).eur_quote('TST',D('2026-11-06'),'open')
+        self.assertAlmostEqual(q['price_eur'],100.)
+        self.assertEqual(q['fx_session'],'2026-11-05')
+    def test_exact_session_required(self):
+        provider=InMemory({'ABC':{D('2026-11-05'):Bar(D('2026-11-05'),1,2,'EUR','ABC','h')}})
+        with self.assertRaises(DataUnavailable):provider.bar('ABC',D('2026-11-06'))
+    def test_stale_fx_rejected(self):
+        data={'ABC':{D('2026-11-15'):Bar(D('2026-11-15'),1,2,'USD','ABC','m')},
+              'EURUSD=X':{D('2026-11-05'):Bar(D('2026-11-05'),1,1.2,'USD','EURUSD=X','fx')}}
+        with self.assertRaises(DataUnavailable):InMemory(data).eur_quote('ABC',D('2026-11-15'),'close')
+    def test_pence_metadata_factor(self):
+        data={'ABC.L':{D('2026-11-05'):Bar(D('2026-11-05'),200,202,'GBP','ABC.L','m',0.01)},
+              'EURGBP=X':{D('2026-11-05'):Bar(D('2026-11-05'),0.8,0.8,'GBP','EURGBP=X','fx')}}
+        q=InMemory(data).eur_quote('ABC.L',D('2026-11-05'),'close')
+        self.assertAlmostEqual(q['price_eur'],2.525)
+if __name__=='__main__':unittest.main()
