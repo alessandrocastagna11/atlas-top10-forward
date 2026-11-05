@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import csv
 import datetime as dt
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -102,6 +103,14 @@ def run(root=ROOT,now=None,fetch=True):
         try:
             s=json.loads(signalfile.read_text())
             dec,exe=validate_signal(s,now)
+            # The producer must attach actual source bytes; self-reported hashes alone are insufficient.
+            for label,expected in s['provenance']['live_source_sha256'].items():
+                if label not in ('prices','fx','universe','scores'):raise SignalBlocked('unexpected source name: '+label)
+                source=root/'inbox'/'sources'/(label+'.csv')
+                if not source.is_file():raise SignalBlocked('source evidence missing: '+str(source.name))
+                if source.stat().st_size<20:raise SignalBlocked('empty source evidence: '+label)
+                if hashlib.sha256(source.read_bytes()).hexdigest()!=expected:
+                    raise SignalBlocked('source evidence hash mismatch: '+label)
             if last_session is None:raise DataUnavailable('complete benchmark EOD not verified')
             if dec>last_session:raise DataUnavailable('decision after last complete US close')
             if exe>now.astimezone(NY).date():raise DataUnavailable('execution session not yet started')
