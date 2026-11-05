@@ -75,3 +75,26 @@ Il replay storico viene da un archivio ricostruito (284 serie globali, USA canon
 - Collegare feed PIT per aggiornare realmente classifiche/ranking USA+RoW e tutti i segnali senza hindsight; non usare Top500 corrente retroattivamente.
 - Verificare end-to-end un segnale fresco, i dati di apertura e almeno una simulazione reale con i controlli superati.
 - Trigger periodico attivato su `main` senza alterare il forward ufficiale; monitorare periodicamente quote e log.
+
+
+## Forward operativo aggiunto il 5 novembre 2026
+
+Il repository contiene **due percorsi distinti** e nessuno opera su denaro reale:
+
+1. **Confidence70 esatto, congelato**: `run.py`, `state/portfolio.json`, `reports/latest_status.json`. Rimane `PENDING_SIGNAL` finché il motore storico portato esattamente al 2026 non fornisce punteggi e ranking PIT verificati.
+2. **Confidence70 Forward Cohort Proxy v1 (ricerca)**: `forward_signal.py` aggiorna un nuovo ranking usando la fotografia ETF ACWI **registrata prima** della decisione, 100 società USA e fino a 200 non-USA; usa prezzi/volumi disponibili fino a quella seduta, momentum 12-1/6-1/3-1, residui approssimati mercato/settore, trend SMA50/200, volatilità 63 sedute, filtri di liquidità e rotazione 10/0,8/2,6/4,4/6. Applica beta=0,70 ai pesi, cap 15% emittente/30% settore, e distingue esplicitamente gli input da un ranking PIT per capitalizzazione.
+
+`proxy_paper.py` gestisce un **secondo conto virtuale, indipendente, da 10.000 EUR**, con segnali in `forward/pending_signal.json`, esecuzione simulata solo dopo verifica dell'**apertura reale** della seduta USA successiva, e 35 giorni minimi di detenzione. Commissioni e tasse sono proxy. Non invia ordini al broker e non può aggiornare il capitale del conto Confidence70 esatto.
+
+Risultati:
+- [Stato segnali forward sperimentali](forward/latest_status.json)
+- [Report selezione forward](forward/latest.md)
+- [Stato conto paper proxy](forward/proxy_paper_status.json)
+- [Report conto paper proxy](forward/proxy_paper_latest.md)
+- [Audit copertura dataset giornaliero](dataset/audit/latest.json)
+
+I prezzi sono aggiornati in `dataset/prices/*.csv` con **volumi giornalieri** e warm-up dal **1 gennaio 2024**, con tracciamento delle revisioni; le FX sono archiviate per data. Il file di universi è uno **snapshot di holdings di ETF**, non la classifica mondiale per capitalizzazione dell'engine originale. I titoli appena quotati possono non avere 252 sedute di warm-up e sono esclusi.
+
+**Limite metodologico esplicito**: la formula forward usa una proxy dei residui rispetto al mercato/settore e un regime SMA; NON è un port numericamente equivalente del motore `CorrectedAtlas` del backtest 2012–2025. La semplice disponibilità di 558 quotazioni e 17 coppie FX non prova la validità PIT del ranking. I risultati forward proxy non vanno confusi con il CAGR storico 10,8779%, e non costituiscono indicazioni d'investimento.
+
+GitHub Actions: il dispatcher `.github/workflows/atlas-v4-confidence70-dispatcher.yml` presente in `main` esegue in sequenza raccolta incremental, simulazione delle aperture dovute, elaborazione del nuovo segnale di ricerca, quindi il controllo della strategia esatta separata. **Workflow verde != nuovi ordini**: consultare gli stati dei due conti. Gli input insufficienti producono `PENDING_FORWARD_DATA`; i segnali in attesa non generano esecuzioni retroattive arbitrarie.
