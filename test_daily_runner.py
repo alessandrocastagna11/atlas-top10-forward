@@ -3,6 +3,7 @@ import copy,datetime as dt,json,tempfile,unittest
 from pathlib import Path
 from unittest.mock import patch
 import engine as e
+import verified_quotes
 import daily_runner as dr
 
 HERE=Path(__file__).resolve().parent
@@ -46,6 +47,26 @@ class DailyTests(unittest.TestCase):
         r=dr.do_strategy(self.folder,'2026-11-04',d)
         self.assertEqual({v['symbol'] for v in r['missing_exact_closes']},{'2222.SR','IUSQ.DE'})
         self.assertEqual(r['report_status'],'PENDING_DATA')
+    def test_verified_eod_supplement_and_no_overwrite(self):
+        d=synthetic()
+        d['IUSQ.DE']['bars'].pop('2026-11-04')
+        d['2222.SR']['bars'].pop('2026-11-04')
+        samples={'schema':1,'quotes':[]}
+        for sym,price,currency in [('IUSQ.DE',108.9,'EUR'),('2222.SR',26.24,'SAR')]:
+            samples['quotes'].append({'symbol':sym,'date':'2026-11-04','currency':currency,
+              'close':price,'open':price,'venue':'SYNTHETIC',
+              'verified_on':'2026-11-05','source_urls':['https://first.test/evidence','https://second.test/evidence']})
+        verified_quotes.apply_verified(d,'2026-11-04',supplements=samples)
+        self.assertEqual(d['IUSQ.DE']['bars']['2026-11-04'],108.9)
+        self.assertEqual(d['2222.SR']['bars']['2026-11-04'],26.24)
+        d['IUSQ.DE']['bars']['2026-11-04']=109
+        verified_quotes.apply_verified(d,'2026-11-04',supplements=samples)
+        self.assertEqual(d['IUSQ.DE']['bars']['2026-11-04'],109)
+    def test_no_initial_late_fill_when_supplement_arrives(self):
+        d=synthetic()
+        r=dr.do_strategy(self.folder,'2026-11-04',d,allow_initial_trade=False)
+        self.assertEqual(r['order_count'],0)
+        self.assertFalse(r['initialized'])
     def test_gap_replay_and_idempotence(self):
         r=dr.do_strategy(self.folder,'2026-11-05',synthetic())
         self.assertEqual(r['report_status'],'COMPLETE')

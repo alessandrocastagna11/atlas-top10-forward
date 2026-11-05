@@ -13,6 +13,7 @@ import argparse,copy,csv,datetime as dt,hashlib,json,os,traceback
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import engine as E
+import verified_quotes
 
 ROOT=Path(__file__).resolve().parent
 DATA=ROOT/'market_data'
@@ -58,7 +59,7 @@ def fetch_data(asof):
     data={}
     for sym in dict.fromkeys(symbols):
         data[sym]=E.fetch_yahoo(sym,start='2025-09-01',end=asof)
-    return snapshot_valid(data,asof)
+    return snapshot_valid(verified_quotes.apply_verified(data,asof,shape='close'),asof)
 
 
 def dates_between(last,asof):
@@ -87,13 +88,14 @@ def price_audit(data,date):
     for sym,record in sorted(data.items()):
         try:
             d,p=E.latest(record['bars'],date)
-            out.append(dict(asof_date=date,symbol=sym,bar_date=d,close=p,currency=record.get('currency',''),feed=record.get('feed','')))
+            feed='MULTI_SOURCE_VERIFIED_POST_SESSION' if d in record.get('verified_supplements',{}) else record.get('feed','')
+            out.append(dict(asof_date=date,symbol=sym,bar_date=d,close=p,currency=record.get('currency',''),feed=feed))
         except (ValueError,KeyError):
             pass
     return out
 
 
-def do_strategy(folder,asof,data):
+def do_strategy(folder,asof,data,allow_initial_trade=True):
     configure_paths(folder)
     cfg=json.loads(E.CONFIG.read_text())
     state=json.loads(E.STATE.read_text())
@@ -104,7 +106,7 @@ def do_strategy(folder,asof,data):
         # The first live entry cannot be retrospectively filled at an older
         # session's close just because a delayed provider published it later.
         # Only the current verified EOD asof can establish a new account.
-        if not state['initialized'] and date < asof:
+        if not state['initialized'] and (date < asof or not allow_initial_trade):
             continue
         pending_before=copy.deepcopy(state)
         try:
@@ -286,7 +288,7 @@ def main():
                 'downloaded_at_utc':dt.datetime.now(dt.timezone.utc).isoformat(), 'data':data})
     reports={}
     for key in LABELS:
-        reports[key]=do_strategy(STRATEGIES/key,args.asof,data)
+        reports[key]=do_strategy(STRATEGIES/key,args.asof,data,allow_initial_trade=(args.asof==ny_now.date().isoformat()))
     render_report(args.asof,reports,data_hash)
     from master_dashboard import update as refresh_master
     refresh_master()

@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "description": "Independent after-session historical OHLC for dates absent from Yahoo. Not evidence that an order was executed on that date. Yahoo price takes precedence on same date.",
+  "quotes": [
+    {
+      "symbol": "IUSQ.DE",
+      "date": "2026-11-04",
+      "currency": "EUR",
+      "venue": "XETRA",
+      "close": 108.9,
+      "open": 107.38,
+      "verified_on": "2026-11-05",
+      "source_urls": [
+        "https://twelvedata.com/markets/843163/etf/xetr/iusq/historical-data",
+        "https://it.investing.com/etfs/ishares-v-msci-acwi-historical-data?cid=46483"
+      ]
+    },
+    {
+      "symbol": "2222.SR",
+      "date": "2026-11-04",
+      "currency": "SAR",
+      "venue": "TADAWUL",
+      "close": 26.24,
+      "open": 26.16,
+      "verified_on": "2026-11-05",
+      "source_urls": [
+        "https://sa.marketscreener.com/quote/stock/ARAMCO-103505448/quotes/",
+        "https://it.investing.com/equities/saudi-aramco-historical-data"
+      ]
+    }
+  ]
+}

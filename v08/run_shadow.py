@@ -5,6 +5,8 @@ from datetime import date,datetime,timedelta,time,timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import shadow_engine as se
+sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
+import verified_quotes
 
 ROOT=Path(__file__).resolve().parent
 STATE=ROOT/'state';REPORTS=ROOT/'reports';MARKET=ROOT/'market_data';ROSTERS=ROOT/'rosters'
@@ -64,13 +66,13 @@ def download(asof):
     for sym in ticker_list:
         try:out[sym]=se.retrieve_yahoo(sym,end=asof)
         except Exception as e:errors[sym]=str(e)[:220]
-    return out,errors
+    return verified_quotes.apply_verified(out,asof,shape='ohlc'),errors
 
 def source_status(errors,asof):
     return {'asof':asof,'feed':'Yahoo delayed chart public data, non certified',
             'missing_symbols':errors}
 
-def replay(asof,data,errors=None):
+def replay(asof,data,errors=None,allow_initial_trade=True):
     init();errors=errors or {}
     result={}
     for name in se.STRATEGIES:
@@ -80,7 +82,7 @@ def replay(asof,data,errors=None):
         for d in date_range(state['last_date'],asof):
             # Never fill initial orders at a past open after a delayed quote
             # arrives. The earliest credible paper execution is current asof.
-            if not state['initialized'] and d < asof:
+            if not state['initialized'] and (d < asof or not allow_initial_trade):
                 continue
             # Missing data means no fabricated price or fill. Still permit a
             # partial session when a single instrument feed is unavailable by
@@ -204,7 +206,7 @@ def main(argv=None):
             data[sym]={'bars':{},'currency':se.CURRENCIES[sym],'dividends':{},'splits':{},'feed':'MISSING_PROVIDER'}
     raw=json.dumps(data,sort_keys=True,ensure_ascii=False).encode('utf8')
     digest=hashlib.sha256(raw).hexdigest()
-    res=replay(args.asof,data,errors)
+    res=replay(args.asof,data,errors,allow_initial_trade=(args.asof==now.date().isoformat()))
     src=source_status(errors,args.asof);src['sha256']=digest
     # Immutable daily source digest + exact raw quotes used to mark that day.
     audit=MARKET/'audit';audit.mkdir(parents=True,exist_ok=True)

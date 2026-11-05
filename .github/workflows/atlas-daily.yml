@@ -5,6 +5,8 @@ on:
     paths:
       - '.github/workflows/atlas-daily.yml'
       - 'daily_runner.py'
+      - 'verified_quotes.py'
+      - 'market_data/verified_quotes.json'
       - 'engine.py'
       - 'test_*.py'
       - 'v08/shadow_engine.py'
