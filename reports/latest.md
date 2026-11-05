@@ -3,7 +3,7 @@
 **Capitale virtuale:** 10.000 € per ciascuna simulazione; nessun ordine reale.
 **Benchmark:** IUSQ.DE (MSCI ACWI ETF in EUR), conto virtuale indipendente.
 **Prezzi:** Yahoo daily end-of-day; nessuna esecuzione con prezzi ipotetici.
-**Impronta snapshot:** `81473090ab025dca7d02ba9ae53b30d82db9dd96be1f2d530347e6e69e37dacd`.
+**Impronta snapshot:** `1cfa14cec0627557a50811fbe7e1cbb273eaa126b4662076454de258e17dc5c5`.
 
 | Strategia | Stato | NAV € | IUSQ € | Cum. % | IUSQ cum. % | Excess pp | Acquisti | Vendite |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
@@ -19,6 +19,7 @@
 - Patrimonio 10,000.00 €, benchmark 10,000.00 €; variazione dall'ultima osservazione: +0.000% vs +0.000%.
 - Operazioni: 0 acquisti + 0 vendite = 0 ordini; nella data richiesta: 0.
 - Commissioni accumulate 0.00 €; slippage 0.00 €; imposte plusvalenze 0.00 €; imposte dividendi proxy 0.00 €; bollo maturato 0.00 €.
+- **Chiusure mancanti per la data richiesta:** 2222.SR (ultima 2026-11-03), IUSQ.DE (ultima 2026-11-03)
 - **Dati mancanti/esecuzione bloccata:** 2026-11-04: No exact close for 2026-11-04; last=2026-11-03
 
 ## MA6_MA12_Challenger
@@ -26,6 +27,7 @@
 - Patrimonio 10,000.00 €, benchmark 10,000.00 €; variazione dall'ultima osservazione: +0.000% vs +0.000%.
 - Operazioni: 0 acquisti + 0 vendite = 0 ordini; nella data richiesta: 0.
 - Commissioni accumulate 0.00 €; slippage 0.00 €; imposte plusvalenze 0.00 €; imposte dividendi proxy 0.00 €; bollo maturato 0.00 €.
+- **Chiusure mancanti per la data richiesta:** 2222.SR (ultima 2026-11-03), IUSQ.DE (ultima 2026-11-03)
 - **Dati mancanti/esecuzione bloccata:** 2026-11-04: No exact close for 2026-11-04; last=2026-11-03
 
 **Avvertenza:** se ultima data NAV è precedente alla richiesta, il valore è storico e NON rappresenta una nuova quotazione giornaliera.

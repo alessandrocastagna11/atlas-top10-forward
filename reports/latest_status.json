@@ -1,7 +1,7 @@
 {
   "asof": "2026-11-04",
   "source": "YAHOO_CHART",
-  "digest_sha256": "81473090ab025dca7d02ba9ae53b30d82db9dd96be1f2d530347e6e69e37dacd",
+  "digest_sha256": "1cfa14cec0627557a50811fbe7e1cbb273eaa126b4662076454de258e17dc5c5",
   "results": {
     "MA10_Official": {
       "price_freshness": "VALUATION_WITH_STALE_QUOTES",
@@ -33,6 +33,16 @@
       "total_slippage_eur": 0,
       "pending_transition": null,
       "data_warning": null,
+      "missing_exact_closes": [
+        {
+          "symbol": "2222.SR",
+          "last_close_date": "2026-11-03"
+        },
+        {
+          "symbol": "IUSQ.DE",
+          "last_close_date": "2026-11-03"
+        }
+      ],
       "new_valuations": 0,
       "execution_attempts_blocked": [
         {
@@ -178,6 +188,16 @@
       "total_slippage_eur": 0,
       "pending_transition": null,
       "data_warning": null,
+      "missing_exact_closes": [
+        {
+          "symbol": "2222.SR",
+          "last_close_date": "2026-11-03"
+        },
+        {
+          "symbol": "IUSQ.DE",
+          "last_close_date": "2026-11-03"
+        }
+      ],
       "new_valuations": 0,
       "execution_attempts_blocked": [
         {
