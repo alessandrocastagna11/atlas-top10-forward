@@ -38,7 +38,7 @@ def execute(now=None,provider=None):
             exe=dt.date.fromisoformat(signal['execution_session'])
             if exe<=dec or dec>ny.date() or (ny.date()-dec).days>7:
                 raise PaperBlocked('stale/future proxy signal')
-            if exe>ny.date() or ny.time()<dt.time(16,45) and exe==ny.date():
+            if exe>ny.date() or ny.time()<dt.time(17,30) and exe==ny.date():
                 raise DataUnavailable('next execution session is not complete')
             if state.get('last_execution_session') and exe<=dt.date.fromisoformat(state['last_execution_session']):
                 raise PaperBlocked('already executed, refusing duplicate')
@@ -79,7 +79,7 @@ def execute(now=None,provider=None):
         try:
             # Mark all positions only when a matching exact market session can be established.
             hist=provider.history('ACWI',ny.date()-dt.timedelta(days=12),ny.date())
-            eligible=[d for d in hist if d<=ny.date() and (d!=ny.date() or ny.time()>=dt.time(16,45))]
+            eligible=[d for d in hist if d<=ny.date() and (d!=ny.date() or ny.time()>=dt.time(17,30))]
             if not eligible:raise DataUnavailable('benchmark EOD unavailable')
             session=max(eligible)
             quotes={t:provider.eur_quote(p['market_symbol'],session,'close')['price_eur']
