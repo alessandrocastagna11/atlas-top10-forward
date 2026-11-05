@@ -34,6 +34,20 @@ def rows_load(path):
 def csv_write(path,rows,fields):
     f=io.StringIO();w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(rows)
     atomic(path,f.getvalue().encode('utf-8'))
+def terminal_symbols(today):
+    """A verified delisting means no NEW session exists, not a made-up close."""
+    path=DATA/'corporate_actions/known_events.json'
+    if not path.exists():return set()
+    raw=json.loads(path.read_text(encoding='utf-8'))
+    if raw.get('schema_version')!=1:raise ValueError('unsupported corporate action registry')
+    terminal=set()
+    for item in raw.get('events',[]):
+        if item.get('classification')!='TERMINAL_NO_FUTURE_DAILY_BARS':continue
+        if not item.get('source_url') or not item.get('last_trading_date'):raise ValueError('missing corporate-action evidence')
+        if dt.date.fromisoformat(item['market_effective_date'])<=today:
+            terminal.add(item['symbol'])
+    return terminal
+
 def old_symbols():
     rows=rows_load(LIST);symbols=list(dict.fromkeys(str(x.get('symbol','')).strip() for x in rows))
     if len(symbols)!=288 or any(not x for x in symbols):raise ValueError('Original recovered 288-symbol inventory missing or modified')
@@ -187,6 +201,7 @@ def main():
     base=dt.date.fromisoformat(args.start)
     if base>today:raise ValueError('start is future')
     historic=old_symbols()
+    terminal=terminal_symbols(today)
     old_status_file=DATA/'audit'/'latest.json'
     try:old_status=json.loads(old_status_file.read_text()) if old_status_file.exists() else {}
     except (ValueError, OSError):old_status={}
@@ -202,7 +217,8 @@ def main():
     active_currencies|={str(row.get('currency','')).upper().strip() for row in rows_load(DATA/'universe/global500_latest.csv')}
     required_fx=list(dict.fromkeys(FX+sorted('EUR'+curr+'=X' for curr in active_currencies
                               if len(curr)==3 and curr.isalpha() and curr not in ('EUR','SAR'))))
-    symbols,total,cursor=choose_symbols(historic,universe,args.limit,old_status)
+    active_universe=[r for r in universe if r['symbol'] not in terminal]
+    symbols,total,cursor=choose_symbols([s for s in historic if s not in terminal],active_universe,args.limit,old_status)
     provider=YahooChart()
     metrics=[];errors=[]
     for fx in required_fx:
@@ -232,17 +248,19 @@ def main():
     cached_fx_set={r['symbol'] for r in cached_fx}
     missing_fx=sorted(required_fx_set-cached_fx_set)
     price_set={r['symbol'] for r in cached_price}
-    missing=[s for s in historic if s not in price_set]
-    all_required=set(historic)|{r['symbol'] for r in universe}
+    missing=[s for s in historic if s not in price_set and s not in terminal]
+    all_required=(set(historic)|{r['symbol'] for r in universe})-terminal
     complete=len(all_required-price_set)==0
     recent=sum(1 for r in cached_price if r['symbol'] in all_required and
                (today-dt.date.fromisoformat(r['last'])).days<=7)
     meta={'checked_at_utc':dt.datetime.now(dt.timezone.utc).isoformat(),'source':'Yahoo Chart unofficial',
           'dataset_use':'FORWARD_RESEARCH_NOT_PIT_CERTIFIED','base_date':str(base),
           'historic_inventory_count':len(historic),'forward_universe':universe_meta,
+          'verified_terminal_delisted_symbols':sorted(terminal),
+          'historical_originals_accounted_for_including_verified_delistings':len(historic)-len(missing),
           'total_candidate_symbols':total,'round_robin_cursor':cursor,
           'cached_required_quotes_complete':complete,
-          'quotes_cache_status':'ALL_SYMBOLS_HAVE_SOME_DATA' if complete else 'PARTIAL_DATA',
+          'quotes_cache_status':'ALL_ACTIVE_SYMBOLS_HAVE_SOME_DATA' if complete else 'PARTIAL_DATA',
           'required_symbols_fresh_7_calendar_days':recent,
           'processed_price_symbols':len(symbols),'price_symbols_cached':len(cached_price),
           'original_288_symbols_cached':len(historic)-len(missing),
