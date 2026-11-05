@@ -211,7 +211,7 @@ def generate(now=None):
         acwi,bench_sha=prices('ACWI',ny.date())
         if not acwi:raise ValueError('ACWI benchmark history missing')
         decision=max(x[0] for x in acwi)
-        if decision==ny.date() and (ny.hour,ny.minute)<(16,45):
+        if decision==ny.date() and (ny.hour,ny.minute)<(17,30):
             raise ValueError('US session not closed yet; no forward signal')
         if (ny.date()-decision).days>5:raise ValueError('Stale benchmark close')
         status['decision_session']=str(decision)
