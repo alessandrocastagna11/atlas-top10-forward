@@ -223,10 +223,17 @@ def main():
         except (OSError,KeyError):continue
     price_set={r['symbol'] for r in cached_price}
     missing=[s for s in historic if s not in price_set]
+    all_required=set(historic)|{r['symbol'] for r in universe}
+    complete=len(all_required-price_set)==0
+    recent=sum(1 for r in cached_price if r['symbol'] in all_required and
+               (today-dt.date.fromisoformat(r['last'])).days<=7)
     meta={'checked_at_utc':dt.datetime.now(dt.timezone.utc).isoformat(),'source':'Yahoo Chart unofficial',
           'dataset_use':'FORWARD_RESEARCH_NOT_PIT_CERTIFIED','base_date':str(base),
           'historic_inventory_count':len(historic),'forward_universe':universe_meta,
           'total_candidate_symbols':total,'round_robin_cursor':cursor,
+          'cached_required_quotes_complete':complete,
+          'quotes_cache_status':'ALL_SYMBOLS_HAVE_SOME_DATA' if complete else 'PARTIAL_DATA',
+          'required_symbols_fresh_7_calendar_days':recent,
           'processed_price_symbols':len(symbols),'price_symbols_cached':len(cached_price),
           'original_288_symbols_cached':len(historic)-len(missing),
           'original_288_symbols_missing':missing,'fx_symbols_cached':len(cached_fx),
@@ -239,6 +246,8 @@ def main():
            f'Checked: {meta["checked_at_utc"]}',f'Original symbols cached: {meta["original_288_symbols_cached"]}/288',
            f'All cached prices: {len(cached_price)} / {total}',f'FX cached: {len(cached_fx)} / {len(FX)}',
            f'Provider errors: {len(errors)}',
+           f'Unique symbols with a quote dated within 7 days: {recent}/{total}',
+           f'Cache status: {meta["quotes_cache_status"]}',
            f'Forward universe: {universe_meta.get("source_as_of",universe_meta.get("status","UNKNOWN"))}',
            'Confidence70 live forward signal: **NOT READY** (fail closed).',
            'iShares universe ranks are holding-value proxies, not historical market cap ranks.',
