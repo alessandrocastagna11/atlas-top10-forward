@@ -149,23 +149,25 @@ def universe_snapshot(today):
     csv_write(latest,allrows,fields)
     return allrows,meta
 
-FIELDS=['date','symbol','open','close','currency','unit_scale','source_sha256']
+FIELDS=['date','symbol','open','close','volume','currency','unit_scale','source_sha256']
 def update_history(provider,symbol,kind,today,base_date,overlap_days=10):
     folder=DATA/kind
     file=folder/symbol_filename(symbol)
     past=rows_load(file)
     if past:
         last=max(dt.date.fromisoformat(row['date']) for row in past)
-        start=max(base_date,last-dt.timedelta(days=overlap_days))
+        first=min(dt.date.fromisoformat(row['date']) for row in past)
+        # A backtest-grade warm-up must predate the latest 252-session signals.
+        start=base_date if first>base_date+dt.timedelta(days=30) else max(base_date,last-dt.timedelta(days=overlap_days))
     else:start=base_date
     if start>today:return {'symbol':symbol,'kind':kind,'status':'UP_TO_DATE','records':len(past),'first':past[0]['date'],'last':past[-1]['date']}
     candles=provider.history(symbol,start,today)
     old={r['date']:r for r in past}
-    inserted=0;revised=0
+    inserted=0;revised=0;upgraded=0
     for d,b in sorted(candles.items()):
         if d<base_date or d>today:continue
         row={'date':d.isoformat(),'symbol':symbol,'open':format(b.open,'.10g'),
-            'close':format(b.close,'.10g'),'currency':b.currency,
+            'close':format(b.close,'.10g'),'volume':format(b.volume,'.10g'),'currency':b.currency,
             'unit_scale':str(b.unit_scale),'source_sha256':b.source_sha256}
         prev=old.get(row['date'])
         if prev is None:old[row['date']]=row;inserted+=1
@@ -180,10 +182,13 @@ def update_history(provider,symbol,kind,today,base_date,overlap_days=10):
                             'previous_sha256':prev.get('source_sha256',''),'new_sha256':row['source_sha256']})
             csv_write(audit,changes,['observed_at','symbol','date','previous_open','previous_close','new_open','new_close','previous_sha256','new_sha256'])
             old[row['date']]=row
+        elif prev.get('volume','')!=row['volume']:
+            # The first backfill provides daily volume for liquidity filters.
+            old[row['date']]=row;upgraded+=1
     ordered=[old[d] for d in sorted(old)]
-    if inserted or revised or not file.exists():csv_write(file,ordered,FIELDS)
+    if inserted or revised or upgraded or not file.exists():csv_write(file,ordered,FIELDS)
     if not ordered:raise DataUnavailable('provider returned no valid rows: '+symbol)
-    return {'symbol':symbol,'kind':kind,'status':'OK','inserted':inserted,'revised':revised,
+    return {'symbol':symbol,'kind':kind,'status':'OK','inserted':inserted,'revised':revised,'volume_rows_updated':upgraded,
             'records':len(ordered),'first':ordered[0]['date'],'last':ordered[-1]['date'],
             'latest_file_sha256':sha(file.read_bytes())}
 
@@ -205,7 +210,7 @@ def choose_symbols(historical,universe,limit,status):
 def main():
     p=argparse.ArgumentParser()
     p.add_argument('--limit',type=int,default=90)
-    p.add_argument('--start',default='2025-12-01')
+    p.add_argument('--start',default='2024-01-01')
     p.add_argument('--no-universe',action='store_true')
     args=p.parse_args()
     if args.limit<25 or args.limit>650:raise ValueError('25..650 symbols per run')
