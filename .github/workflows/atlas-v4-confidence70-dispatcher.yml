@@ -29,7 +29,7 @@ jobs:
       - name: Validate previous virtual ledger
         run: python strict_shadow/live_v4/run.py --check
       - name: Incrementally refresh historical symbol quotes, FX and dated forward universe
-        run: python strict_shadow/live_v4/dataset_daily.py --limit 90 --start 2025-12-01
+        run: python strict_shadow/live_v4/dataset_daily.py --limit 300 --start 2025-12-01
       - name: Run strict V4 shadow EOD and optional verified paper execution
         run: python strict_shadow/live_v4/run.py
       - name: Validate next virtual ledger
