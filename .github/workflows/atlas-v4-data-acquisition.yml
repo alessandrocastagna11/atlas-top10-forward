@@ -18,16 +18,16 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install pandas requests
-      - name: Check historical membership input
+      - name: Check recovered historical symbol list
         run: |
-          test -s strict_shadow/acquisition/input/global_top200_annual_pit.csv || { echo "::error::Missing historical membership CSV. Do not substitute current Top500."; exit 1; }
+          test -s strict_shadow/acquisition/input/global200_symbols_recovered.csv || { echo "::error::Missing recovered historical symbol list."; exit 1; }
       - name: Acquire historical prices and FX
-        run: python strict_shadow/acquisition/acquire.py --input strict_shadow/acquisition/input/global_top200_annual_pit.csv --out downloaded --start 2010-01-01 --end 2025-12-11
+        run: python strict_shadow/acquisition/acquire.py --input strict_shadow/acquisition/input/global200_symbols_recovered.csv --out downloaded --start 2010-01-01 --end 2025-12-11
       - name: Audit price coverage
         if: always()
         run: |
-          if [ -s strict_shadow/acquisition/input/global_top200_annual_pit.csv ]; then
-            python strict_shadow/acquisition/audit.py --input strict_shadow/acquisition/input/global_top200_annual_pit.csv --data downloaded
+          if [ -s strict_shadow/acquisition/input/global200_symbols_recovered.csv ]; then
+            python strict_shadow/acquisition/audit.py --input strict_shadow/acquisition/input/global200_symbols_recovered.csv --data downloaded
           fi
       - name: Archive acquired research data
         if: always()
