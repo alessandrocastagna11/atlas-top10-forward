@@ -11,9 +11,11 @@ from provider import YahooChart,DataUnavailable
 ROOT=Path(__file__).resolve().parent
 LIST=ROOT.parent/'acquisition/input/global200_symbols_recovered.csv'
 DATA=ROOT/'dataset'
-FX=['EURUSD=X','USDJPY=X','GBPUSD=X','USDCHF=X','USDCAD=X','AUDUSD=X','USDDKK=X',
-    'USDHKD=X','USDINR=X','USDKRW=X','USDSAR=X','USDSEK=X','USDSGD=X','USDTWD=X',
-    'USDNOK=X','USDBRL=X','USDZAR=X']
+# Pair names match the valuation adapter: EUR -> local currency; SAR falls back through USDSAR.
+FX=['EURUSD=X','EURJPY=X','EURGBP=X','EURCHF=X','EURCAD=X','EURAUD=X',
+    'EURDKK=X','EURHKD=X','EURINR=X','EURKRW=X','USDSAR=X','EURSEK=X',
+    'EURSGD=X','EURTWD=X','EURNOK=X','EURBRL=X','EURZAR=X']
+
 ISHARES='https://www.ishares.com/us/products/239600/ishares-msci-acwi-etf/latest-holdings.csv'
 NY=ZoneInfo('America/New_York')
 
@@ -195,10 +197,15 @@ def main():
     if not universe:
         universe=rows_load(DATA/'universe/global500_latest.csv')
         universe_meta={'status':'LAST_CACHED_UNIVERSE_ONLY' if universe else 'MISSING','error':universe_error}
+    # The instrument currency, not the ticker country, determines EUR conversion requirements.
+    active_currencies={str(row.get('currency','')).upper().strip() for row in universe}
+    active_currencies|={str(row.get('currency','')).upper().strip() for row in rows_load(DATA/'universe/global500_latest.csv')}
+    required_fx=list(dict.fromkeys(FX+sorted('EUR'+curr+'=X' for curr in active_currencies
+                              if len(curr)==3 and curr.isalpha() and curr not in ('EUR','SAR'))))
     symbols,total,cursor=choose_symbols(historic,universe,args.limit,old_status)
     provider=YahooChart()
     metrics=[];errors=[]
-    for fx in FX:
+    for fx in required_fx:
         try:metrics.append(update_history(provider,fx,'fx',today,base))
         except (DataUnavailable,OSError,ValueError) as e:errors.append({'kind':'fx','symbol':fx,'error':str(e)[:220]})
         time.sleep(0.15)
@@ -221,6 +228,9 @@ def main():
             rows=rows_load(file)
             if rows:cached_fx.append({'symbol':rows[0]['symbol'],'first':rows[0]['date'],'last':rows[-1]['date'],'rows':len(rows)})
         except (OSError,KeyError):continue
+    required_fx_set=set(required_fx)
+    cached_fx_set={r['symbol'] for r in cached_fx}
+    missing_fx=sorted(required_fx_set-cached_fx_set)
     price_set={r['symbol'] for r in cached_price}
     missing=[s for s in historic if s not in price_set]
     all_required=set(historic)|{r['symbol'] for r in universe}
@@ -236,15 +246,17 @@ def main():
           'required_symbols_fresh_7_calendar_days':recent,
           'processed_price_symbols':len(symbols),'price_symbols_cached':len(cached_price),
           'original_288_symbols_cached':len(historic)-len(missing),
-          'original_288_symbols_missing':missing,'fx_symbols_cached':len(cached_fx),
-          'fx_symbols_expected':len(FX),'provider_errors':errors,
+          'original_288_symbols_missing':missing,'fx_symbols_cached':len(required_fx_set & cached_fx_set),
+          'fx_symbols_expected':len(required_fx_set),'fx_symbols_missing_required':missing_fx,
+          'fx_validation':'YAHOO_SPOT_UNOFFICIAL_NOT_HISTORICAL_PIT',
+          'provider_errors':errors,
           'data_ready_for_confidence70_model':False,
           'reason_not_model_ready':'PIT validated forward USA100 rankings, RoW issuer scores, full technical features, independent daily FX provenance and true engine forward signal still missing'}
     json_save(old_status_file,meta)
     csv_write(DATA/'audit/coverage.csv',sorted(cached_price,key=lambda r:r['symbol']),['symbol','first','last','rows'])
     lines=['# Atlas V4 daily research dataset', '',
            f'Checked: {meta["checked_at_utc"]}',f'Original symbols cached: {meta["original_288_symbols_cached"]}/288',
-           f'All cached prices: {len(cached_price)} / {total}',f'FX cached: {len(cached_fx)} / {len(FX)}',
+           f'All cached prices: {len(cached_price)} / {total}',f'FX cached: {len(required_fx_set & cached_fx_set)} / {len(required_fx_set)}',
            f'Provider errors: {len(errors)}',
            f'Unique symbols with a quote dated within 7 days: {recent}/{total}',
            f'Cache status: {meta["quotes_cache_status"]}',
