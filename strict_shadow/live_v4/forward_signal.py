@@ -199,7 +199,7 @@ def weighted_allocation(chosen,exposure,beta=.70):
             targets[t]+=add;sects[sector]=sects.get(sector,0.)+add;applied+=add
         remaining-=applied
         if applied<1e-9:break
-    return {k:round(v,8) for k,v in targets.items() if v>=.005}
+    return {k:math.floor(v*1e8)/1e8 for k,v in targets.items() if v>=.005}
 def generate(now=None):
     now=now or dt.datetime.now(dt.timezone.utc)
     if now.tzinfo is None:raise ValueError('timezone required')
