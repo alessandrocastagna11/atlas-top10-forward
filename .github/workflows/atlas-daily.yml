@@ -49,6 +49,34 @@ jobs:
         run: python v08/run_shadow.py
       - name: Verify original official ledger again
         run: python daily_runner.py --check
+      - name: Audit EOD completeness (workflow success is not a trade)
+        if: always()
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          lines=['## Atlas daily data audit', '']
+          for path in (Path('reports/latest_status.json'),Path('v08/reports/latest_status.json')):
+              if not path.exists():
+                  lines.append(f'- **{path}**: unavailable')
+                  print(f'::warning title=Atlas missing report::{path}')
+                  continue
+              data=json.loads(path.read_text(encoding='utf-8'))
+              date=data.get('asof',data.get('date','unknown'))
+              lines.append(f'### {path} — {date}')
+              for name,r in data.get('results',{}).items():
+                  status=r.get('report_status',r.get('status','UNKNOWN'))
+                  missing=r.get('missing_exact_closes',[])
+                  issues=', '.join(x['symbol'] for x in missing)
+                  nav=r.get('portfolio_eur',r.get('nav_eur'))
+                  cnt=r.get('order_count',r.get('orders',0))
+                  lines.append(f'- {name}: **{status}**; NAV={nav}; orders={cnt}; missing close={issues or "none"}')
+                  if status=='PENDING_DATA':
+                      print(f'::warning title=Atlas quotes incomplete::{name} date={date}; missing exact={issues or "check provider"}')
+              lines.append('')
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a',encoding='utf-8') as fh:
+              fh.write('\n'.join(lines)+'\n')
+          PY
       - name: Save dated ledgers and reports to GitHub
         run: |
           git config user.name "Atlas Paper Bot"
