@@ -35,7 +35,7 @@ class DatasetTests(unittest.TestCase):
         self.assertEqual(len(one),25)
         self.assertNotEqual(one,two)
         self.assertEqual(total,total2)
-        self.assertEqual(one[0],'AAPL')
+        self.assertEqual(one[0],'ACWI')
     def test_ambiguous_symbol_mapping_rejected(self):
         self.assertEqual(mod.derive('XXX','Unknown Exchange','Unknown'), '')
     def test_merger_delisting_not_an_active_quote_requirement(self):
