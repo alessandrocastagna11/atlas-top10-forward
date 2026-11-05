@@ -1,7 +1,7 @@
 {
   "asof": "2026-11-04",
   "source": "YAHOO_CHART",
-  "digest_sha256": "39c7c7801226647608bfb5e62e7845463039c0e802a863f728f17e6c32e54be8",
+  "digest_sha256": "f91c6a1b657aaa0dfc423f2adeff39d1b04d02b289c6f97036402eccedd01550",
   "results": {
     "MA10_Official": {
       "price_freshness": "EXACT",
@@ -43,7 +43,7 @@
           "bar_date": "2026-11-04",
           "close": 26.239999771118164,
           "currency": "SAR",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -51,7 +51,7 @@
           "bar_date": "2026-11-04",
           "close": 349.510009765625,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -59,7 +59,7 @@
           "bar_date": "2026-11-04",
           "close": 266.0299987792969,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -67,7 +67,7 @@
           "bar_date": "2026-11-04",
           "close": 4.071400165557861,
           "currency": "SAR",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -75,7 +75,7 @@
           "bar_date": "2026-11-04",
           "close": 1.1207244396209717,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -83,7 +83,7 @@
           "bar_date": "2026-11-04",
           "close": 287.29998779296875,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -99,7 +99,7 @@
           "bar_date": "2026-11-04",
           "close": 630.0,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -107,7 +107,7 @@
           "bar_date": "2026-11-04",
           "close": 555.7999877929688,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -115,7 +115,7 @@
           "bar_date": "2026-11-04",
           "close": 200.1300048828125,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -123,7 +123,7 @@
           "bar_date": "2026-11-04",
           "close": 135.9199981689453,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -131,7 +131,7 @@
           "bar_date": "2026-11-04",
           "close": 385.19000244140625,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -139,7 +139,7 @@
           "bar_date": "2026-11-04",
           "close": 395.75,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         }
       ],
       "last_update_source": "Yahoo daily chart (delayed), provider time stamped; cash 0%"
@@ -184,7 +184,7 @@
           "bar_date": "2026-11-04",
           "close": 26.239999771118164,
           "currency": "SAR",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -192,7 +192,7 @@
           "bar_date": "2026-11-04",
           "close": 349.510009765625,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -200,7 +200,7 @@
           "bar_date": "2026-11-04",
           "close": 266.0299987792969,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -208,7 +208,7 @@
           "bar_date": "2026-11-04",
           "close": 4.071400165557861,
           "currency": "SAR",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -216,7 +216,7 @@
           "bar_date": "2026-11-04",
           "close": 1.1207244396209717,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -224,7 +224,7 @@
           "bar_date": "2026-11-04",
           "close": 287.29998779296875,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -240,7 +240,7 @@
           "bar_date": "2026-11-04",
           "close": 630.0,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -248,7 +248,7 @@
           "bar_date": "2026-11-04",
           "close": 555.7999877929688,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -256,7 +256,7 @@
           "bar_date": "2026-11-04",
           "close": 200.1300048828125,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -264,7 +264,7 @@
           "bar_date": "2026-11-04",
           "close": 135.9199981689453,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -272,7 +272,7 @@
           "bar_date": "2026-11-04",
           "close": 385.19000244140625,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-04",
@@ -280,7 +280,7 @@
           "bar_date": "2026-11-04",
           "close": 395.75,
           "currency": "USD",
-          "feed": "Yahoo Finance delayed daily chart"
+          "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         }
       ],
       "last_update_source": "Yahoo daily chart (delayed), provider time stamped; cash 0%"
