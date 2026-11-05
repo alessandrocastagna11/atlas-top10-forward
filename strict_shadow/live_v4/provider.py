@@ -26,6 +26,7 @@ class Bar:
     currency: str
     symbol: str
     source_sha256: str
+    unit_scale: float = 1.0
 
 class YahooChart:
     """No guessed candles. An exact exchange-local session is mandatory."""
@@ -53,15 +54,17 @@ class YahooChart:
             if not result: raise DataUnavailable(f'provider returned no series for {symbol}')
             meta=result['meta']; tz=ZoneInfo(meta['exchangeTimezoneName'])
             raw=result['indicators']['quote'][0]
-            currency=str(meta.get('currency','')).upper()
-            if not currency: raise DataUnavailable(f'currency missing: {symbol}')
+            raw_currency=str(meta.get('currency',''))
+            if not raw_currency: raise DataUnavailable(f'currency missing: {symbol}')
+            unit_scale=0.01 if raw_currency in ('GBp','GBX') else 1.0
+            currency='GBP' if unit_scale!=1.0 else raw_currency.upper()
             candles={}
             digest=hashlib.sha256(data).hexdigest()
             for i,timestamp in enumerate(result.get('timestamp') or []):
                 sess=dt.datetime.fromtimestamp(timestamp,dt.timezone.utc).astimezone(tz).date()
                 op,cl=raw['open'][i],raw['close'][i]
                 if op is None or cl is None or not math.isfinite(float(op)) or not math.isfinite(float(cl)) or op<=0 or cl<=0: continue
-                candles[sess]=Bar(sess,float(op),float(cl),currency,symbol,digest)
+                candles[sess]=Bar(sess,float(op),float(cl),currency,symbol,digest,unit_scale)
             if not candles: raise DataUnavailable(f'no valid bars: {symbol}')
             self.cache[key]=candles
             return candles
@@ -79,7 +82,7 @@ class YahooChart:
         curr=str(currency).upper()
         if curr=='EUR':return 1.0,{'fx_symbol':'EUR','fx_session':str(session),'fx_sha256':'EUR'}
         # GBp means pence Sterling; Yahoo historical prices normally use GBp for UK equities.
-        if curr in ('GBP','GBX','GBPENCE','GBPENNY','GBPENNY') : curr='GBP'
+        if curr in ('GBX','GBPENCE','GBPENNY') : curr='GBP'
         target=_date(session)
         end=target-dt.timedelta(days=1) if for_open else target
         start=end-dt.timedelta(days=10)
@@ -104,13 +107,10 @@ class YahooChart:
         if field not in ('open','close'):raise ValueError('only open or close')
         bar=self.bar(symbol,session)
         curr=bar.currency
-        unit_factor=0.01 if curr in ('GBP','GBX') and symbol.endswith('.L') and bar.open>50 else 1.0
-        # Yahoo GBP/GBp conventions are not reliably inferable from price magnitude.
-        if unit_factor!=1.0:
-            raise DataUnavailable('GBp normalization needs explicit instrument metadata; refusing estimate')
+        unit_factor=bar.unit_scale
         rate,fx=self.fx_units_per_eur(curr,bar.session,for_open=(field=='open'))
-        quote=getattr(bar,field)/rate
+        quote=getattr(bar,field)*unit_factor/rate
         if not math.isfinite(quote) or quote<=0:raise DataUnavailable(f'invalid EUR quote: {symbol}')
         return {'symbol':symbol,'session':str(bar.session),'field':field,'price_eur':round(quote,10),
-                'local_price':getattr(bar,field),'currency':curr,'fx_units_per_eur':rate,
+                'local_price':getattr(bar,field),'local_unit_scale':unit_factor,'currency':curr,'fx_units_per_eur':rate,
                 'market_sha256':bar.source_sha256,**fx}
