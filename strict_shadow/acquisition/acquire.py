@@ -26,13 +26,13 @@ def get(s,sym,start,end):
             time.sleep(2**attempt*2)
 def main():
     p=argparse.ArgumentParser()
-    for key,default in [('input','strict_shadow/acquisition/input/global_top200_annual_pit.csv'),('out','downloaded'),('start','2010-01-01'),('end','2025-12-11')]:p.add_argument('--'+key,default=default)
+    for key,default in [('input','strict_shadow/acquisition/input/global200_symbols_recovered.csv'),('out','downloaded'),('start','2010-01-01'),('end','2025-12-11')]:p.add_argument('--'+key,default=default)
     a=p.parse_args(); m=pd.read_csv(a.input)
-    if not {'primary_symbol','effective_year'}.issubset(m.columns):raise ValueError('missing PIT membership columns')
-    if len(m)<2000:raise ValueError('unexpectedly small PIT membership')
+    if 'symbol' not in m.columns:raise ValueError('missing symbol column')
+    if len(m)!=288:raise ValueError('unexpected recovered symbol count; aborting')
     root=Path(a.out)
     for d in ['prices','fx','audit']:(root/d).mkdir(parents=True,exist_ok=True)
-    jobs=[('prices',x) for x in sorted(set(m.primary_symbol.dropna().astype(str)))]+[('fx',x) for x in FX]
+    jobs=[('prices',x) for x in sorted(set(m.symbol.dropna().astype(str)))]+[('fx',x) for x in FX]
     s=requests.Session();s.headers.update({'User-Agent':'Mozilla/5.0'})
     with (root/'audit/acquisition_log.jsonl').open('a') as log:
         for kind,sym in jobs:
