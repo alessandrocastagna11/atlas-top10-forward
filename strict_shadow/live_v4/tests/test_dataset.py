@@ -38,6 +38,11 @@ class DatasetTests(unittest.TestCase):
         self.assertEqual(one[0],'AAPL')
     def test_ambiguous_symbol_mapping_rejected(self):
         self.assertEqual(mod.derive('XXX','Unknown Exchange','Unknown'), '')
+    def test_merger_delisting_not_an_active_quote_requirement(self):
+        self.assertNotIn('WBD',mod.terminal_symbols(D('2026-10-05')))
+        self.assertIn('WBD',mod.terminal_symbols(D('2026-11-05')))
+    def test_known_issuer_remains_in_historical_inventory(self):
+        self.assertIn('WBD',mod.old_symbols())
     def test_roster_is_proxy_not_market_cap(self):
         # Labels are explicit and never used as the original V4 engine's true market cap ranks.
         source=mod.universe_snapshot.__doc__ or ''
