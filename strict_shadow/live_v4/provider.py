@@ -27,6 +27,7 @@ class Bar:
     symbol: str
     source_sha256: str
     unit_scale: float = 1.0
+    volume: float = 0.0
 
 class YahooChart:
     """No guessed candles. An exact exchange-local session is mandatory."""
@@ -64,7 +65,7 @@ class YahooChart:
                 sess=dt.datetime.fromtimestamp(timestamp,dt.timezone.utc).astimezone(tz).date()
                 op,cl=raw['open'][i],raw['close'][i]
                 if op is None or cl is None or not math.isfinite(float(op)) or not math.isfinite(float(cl)) or op<=0 or cl<=0: continue
-                candles[sess]=Bar(sess,float(op),float(cl),currency,symbol,digest,unit_scale)
+                candles[sess]=Bar(sess,float(op),float(cl),currency,symbol,digest,unit_scale,float(raw.get('volume',[None]*len(result.get('timestamp') or []))[i] or 0))
             if not candles: raise DataUnavailable(f'no valid bars: {symbol}')
             self.cache[key]=candles
             return candles
