@@ -1,8 +1,8 @@
 {
   "asof": "2026-11-04",
   "source": "YAHOO_CHART",
-  "digest_sha256": "1cfa14cec0627557a50811fbe7e1cbb273eaa126b4662076454de258e17dc5c5",
-  "downloaded_at_utc": "2026-11-05T06:11:12.618317+00:00",
+  "digest_sha256": "25a87c0d363d7ddc87690246c4ec9bdfb478515c72b3bcc28ee28126789ed530",
+  "downloaded_at_utc": "2026-11-05T06:14:40.519058+00:00",
   "data": {
     "AAPL": {
       "symbol": "AAPL",
@@ -314,7 +314,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-05T06:11:10.484343+00:00"
+      "retrieved_utc": "2026-11-05T06:14:39.094683+00:00"
     },
     "NVDA": {
       "symbol": "NVDA",
@@ -627,7 +627,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-05T06:11:10.735629+00:00"
+      "retrieved_utc": "2026-11-05T06:14:39.203918+00:00"
     },
     "MSFT": {
       "symbol": "MSFT",
@@ -939,7 +939,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-05T06:11:10.944300+00:00"
+      "retrieved_utc": "2026-11-05T06:14:39.383508+00:00"
     },
     "GOOG": {
       "symbol": "GOOG",
@@ -1252,7 +1252,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-05T06:11:11.119794+00:00"
+      "retrieved_utc": "2026-11-05T06:14:39.534778+00:00"
     },
     "AMZN": {
       "symbol": "AMZN",
@@ -1559,7 +1559,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-05T06:11:11.274302+00:00"
+      "retrieved_utc": "2026-11-05T06:14:39.648626+00:00"
     },
     "TSM": {
       "symbol": "TSM",
@@ -1872,7 +1872,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-05T06:11:11.437872+00:00"
+      "retrieved_utc": "2026-11-05T06:14:39.745333+00:00"
     },
     "SPCX": {
       "symbol": "SPCX",
@@ -1983,7 +1983,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-05T06:11:11.574294+00:00"
+      "retrieved_utc": "2026-11-05T06:14:39.857179+00:00"
     },
     "2222.SR": {
       "symbol": "2222.SR",
@@ -2292,7 +2292,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-05T06:11:11.758341+00:00"
+      "retrieved_utc": "2026-11-05T06:14:39.955832+00:00"
     },
     "TSLA": {
       "symbol": "TSLA",
@@ -2599,7 +2599,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-05T06:11:11.892360+00:00"
+      "retrieved_utc": "2026-11-05T06:14:40.038549+00:00"
     },
     "META": {
       "symbol": "META",
@@ -2912,7 +2912,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-05T06:11:12.067594+00:00"
+      "retrieved_utc": "2026-11-05T06:14:40.167693+00:00"
     },
     "IUSQ.DE": {
       "symbol": "IUSQ.DE",
@@ -3219,7 +3219,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-05T06:11:12.278917+00:00"
+      "retrieved_utc": "2026-11-05T06:14:40.295067+00:00"
     },
     "EURUSD=X": {
       "symbol": "EURUSD=X",
@@ -3535,7 +3535,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-05T06:11:12.463594+00:00"
+      "retrieved_utc": "2026-11-05T06:14:40.388725+00:00"
     },
     "EURSAR=X": {
       "symbol": "EURSAR=X",
@@ -3851,7 +3851,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart",
-      "retrieved_utc": "2026-11-05T06:11:12.614915+00:00"
+      "retrieved_utc": "2026-11-05T06:14:40.517143+00:00"
     }
   }
 }
