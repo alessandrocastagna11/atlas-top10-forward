@@ -127,7 +127,7 @@ def run(root=ROOT,now=None,fetch=True):
                            'execution':execution,'executed_decisions':len(st['decisions']),
                            'total_paper_orders':len(st['orders'])})
         except (SignalBlocked,PaperBlocked,KeyError,TypeError,ValueError,json.JSONDecodeError,DataUnavailable) as e:
-            status.update({'status':'BLOCKED_SIGNAL' if isinstance(e,(PaperBlocked,SignalBlocked,KeyError,TypeError,ValueError)) else 'PENDING_DATA',
+            status.update({'status':'PENDING_DATA' if isinstance(e,DataUnavailable) else 'BLOCKED_SIGNAL',
                            'reason':str(e)})
     # Independent mark-to-market: only identical close session for all held positions
     if st['holdings'] and last_session:
