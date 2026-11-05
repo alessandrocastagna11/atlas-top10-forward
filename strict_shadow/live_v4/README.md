@@ -20,11 +20,11 @@
 
 ## Architettura
 
-1. `provider.py` recupera barre OHLC con timestamp/sessione locale e cambio in EUR. La chiusura verificata di ACWI funge da *heartbeat* del feed.
-2. Un **generatore esterno** del vero modello Confidence70 calcola ranking, punteggi, regime e pesi da input PIT/FX aggiornati. Questo componente **non è attualmente autonomo nel repository**: il replay storico da 161 MB arriva al 10/12/2025; non va estrapolato al 2026.
-3. `inbox/latest_signal.json` è la decisione del generatore: le quattro sorgenti che ha usato devono essere allegate come `inbox/sources/prices.csv`, `fx.csv`, `universe.csv`, `scores.csv`. I quattro hash dichiarati devono corrispondere esattamente ai file allegati.
-4. `run.py` controlla identificativo motore, beta, prove storiche, sessioni, vintage, pesi, mapping `ticker → market_symbol`, quotazioni del provider e differenze di prezzo oltre 5%. **Nessuna decisione nuova senza tutti i controlli.**
-5. `paper.py` contabilizza SELL/BUY atomici, tasse proxy e saldo virtuale; blocca duplicati, vendite prima dei 35 giorni e saldi incoerenti. Non può inviare denaro.
+1. `dataset_daily.py` aggiorna incrementamente il catalogo storico di 288 simboli recuperati, i membri ACWI forward, le coppie FX effettive e le verifiche di completezza. Le azioni delistate, come WBD dopo la fusione di ottobre 2026, sono tracciate separatamente nel registro delle corporate action.\n2. `provider.py` recupera barre OHLC con timestamp/sessione locale e cambio in EUR. La chiusura verificata di ACWI funge da *heartbeat* del feed.
+3. Un **generatore esterno** del vero modello Confidence70 calcola ranking, punteggi, regime e pesi da input PIT/FX aggiornati. Questo componente **non è attualmente autonomo nel repository**: il replay storico da 161 MB arriva al 10/12/2025; non va estrapolato al 2026.
+4. `inbox/latest_signal.json` è la decisione del generatore: le quattro sorgenti che ha usato devono essere allegate come `inbox/sources/prices.csv`, `fx.csv`, `universe.csv`, `scores.csv`. I quattro hash dichiarati devono corrispondere esattamente ai file allegati.
+5. `run.py` controlla identificativo motore, beta, prove storiche, sessioni, vintage, pesi, mapping `ticker → market_symbol`, quotazioni del provider e differenze di prezzo oltre 5%. **Nessuna decisione nuova senza tutti i controlli.**
+6. `paper.py` contabilizza SELL/BUY atomici, tasse proxy e saldo virtuale; blocca duplicati, vendite prima dei 35 giorni e saldi incoerenti. Non può inviare denaro.
 
 ## Formato del segnale (SOLO PRODUTTORE DEL MODELLO)
 
@@ -65,13 +65,13 @@ python strict_shadow/live_v4/run.py
 
 Il workflow esegue i test, acquisisce il feed, produce il report e salva *solo* `strict_shadow/live_v4/state|reports|market_data` sul ramo dedicato. Un workflow concluso con `success` **non** prova l'esecuzione di un ordine: controllare sempre `status` e `total_paper_orders`.
 
-**Scheduling GitHub:** i workflow pianificati con `schedule` partono dal branch predefinito, non da questo branch. Qui sono attivi i trigger `push`; per il report quotidiano autonomo è necessaria l'approvazione di un piccolo dispatcher su `main` che faccia esclusivamente checkout/push sul ramo V4, oppure un repository GitHub dedicato. Fino a quel momento non dichiarare attivi aggiornamenti giornalieri automatici.
+**Scheduling GitHub: ATTIVO.** Il workflow `.github/workflows/atlas-v4-confidence70-dispatcher.yml` è stato unito a `main` tramite PR #1 il 5 novembre 2026. Scatta ogni notte ai cron UTC 00:15 e 02:45, fa checkout del solo branch `atlas-v4-confidence70-live-paper`, aggiorna quote, FX e membership forward da source snapshots, esegue il portafoglio PAPER in modalità fail-closed, e salva report/dataset esclusivamente nel branch V4. Non modifica Atlas Top 10 ufficiale. GitHub può ritardare cron e il successo tecnico non implica un nuovo segnale. Un report ChatGPT separato è programmato ogni giorno alle 09:30 ora italiana.
 
 ## Qualità storica
 Il replay storico viene da un archivio ricostruito (284 serie globali, USA canonico, Global200 annuale) e non ha parità numerica esatta; la conversione FX storica originale era interpolata/mediata su base annuale. Queste limitazioni sono **documentate**, non occultate. L'uso di quote live con FX puntuali non sana retroattivamente il backtest né prova che i ranking 2026 siano corretti.
 
 ## Requisiti mancanti per autonomia completa
-- Caricare il motore V4 generatore di segnali forward e gli input storici canonici in un archivio durevole leggibile da GitHub Actions.
+- Caricare il motore V4 generatore di segnali forward e gli input storici canonici in un archivio durevole leggibile da GitHub Actions. La raccolta giornaliera di quote e snapshot ACWI ora è operativa, ma da sola non genera segnali.
 - Collegare feed PIT per aggiornare realmente classifiche/ranking USA+RoW e tutti i segnali senza hindsight; non usare Top500 corrente retroattivamente.
 - Verificare end-to-end un segnale fresco, i dati di apertura e almeno una simulazione reale con i controlli superati.
-- Abilitare il trigger periodico senza toccare il forward ufficiale.
+- Trigger periodico attivato su `main` senza alterare il forward ufficiale; monitorare periodicamente quote e log.
