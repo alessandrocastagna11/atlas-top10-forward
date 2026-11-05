@@ -54,16 +54,12 @@ class RunnerTests(unittest.TestCase):
             'date':'2026-11-05','currency':'EUR','venue':'XETRA',
             'open':111.0,'close':112.0,'verified_on':'2026-11-05',
             'source_urls':['https://one.test/iusq','https://two.test/iusq']}]}
+        actual_overlay=r.verified_quotes.apply_verified
         with patch.object(r.se,'retrieve_yahoo',
              side_effect=lambda sym,end: (_ for _ in ()).throw(ValueError('YAHOO_DOWN')) if sym==e.BENCH else fixture()[sym]):
             with patch.object(r.verified_quotes,'apply_verified',
-                 side_effect=lambda data,asof,shape: r.verified_quotes._unpatched(data,asof,shape,supplements=supplementary)):
-                r.verified_quotes._unpatched=r.verified_quotes_apply_original if hasattr(r,'verified_quotes_apply_original') else None
-                # Exercise the actual overlay function without network.
-                from verified_quotes import apply_verified as actual_overlay
-                r.verified_quotes._unpatched=actual_overlay
+                 side_effect=lambda data,asof,shape: actual_overlay(data,asof,shape,supplements=supplementary)):
                 data,errors=r.download('2026-11-05')
-                del r.verified_quotes._unpatched
         self.assertNotIn(e.BENCH,errors)
         self.assertEqual(data[e.BENCH]['bars']['2026-11-05']['open'],111.)
     def test_replay_no_duplicate_orders(self):
