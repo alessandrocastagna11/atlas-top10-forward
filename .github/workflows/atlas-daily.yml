@@ -39,9 +39,9 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
       - run: python -m pip install -r requirements.txt
-      - name: Regression tests for original v0.7 (read only)
+      - name: Regression tests for original v0.7 (23 checks)
         run: python -m unittest test_engine test_daily_runner -q
-      - name: Synthetic v0.8 tests (27 checks)
+      - name: Synthetic v0.8 tests (29 checks)
         run: python -m unittest discover -s v08/tests -p 'test_*.py' -q
       - name: Check official v0.7 saved state
         run: python daily_runner.py --check
