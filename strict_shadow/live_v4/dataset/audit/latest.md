@@ -1,11 +1,11 @@
 # Atlas V4 daily research dataset
 
-Checked: 2026-11-05T20:41:44.966878+00:00
-Original symbols cached: 214/288
-All cached prices: 369 / 559
+Checked: 2026-11-05T20:44:36.218827+00:00
+Original symbols cached: 287/288
+All cached prices: 558 / 559
 FX cached: 17 / 17
-Provider errors: 0
-Unique symbols with a quote dated within 7 days: 369/559
+Provider errors: 1
+Unique symbols with a quote dated within 7 days: 558/559
 Cache status: PARTIAL_DATA
 Forward universe: Nov 04, 2026
 Confidence70 live forward signal: **NOT READY** (fail closed).
