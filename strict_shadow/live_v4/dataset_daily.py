@@ -93,6 +93,10 @@ def universe_snapshot(today):
             try:asof=next(csv.reader([line]))[1].strip()
             except (ValueError,IndexError):pass
     if not asof:raise DataUnavailable('iShares source effective date missing; refusing undated roster')
+    try: source_date=dt.datetime.strptime(asof,'%b %d, %Y').date()
+    except ValueError as exc:raise DataUnavailable('Unknown iShares date format: '+asof) from exc
+    if source_date>today or (today-source_date).days>14:
+        raise DataUnavailable(f'Stale/future iShares source snapshot as of {source_date}; today {today}')
     reader=csv.DictReader(io.StringIO('\n'.join(lines[h:])))
     required={'Ticker','Name','Sector','Asset Class','Market Value','Location','Exchange','Market Currency'}
     if not required.issubset(set(reader.fieldnames or [])):
@@ -127,14 +131,22 @@ def universe_snapshot(today):
     fields=['etf_holding_rank','issuer_key','company_name','symbol','sector','country','currency',
             'holding_market_value_usd','source_as_of','first_recorded_at_utc','provider','ranking_type']
     latest=active/'global500_latest.csv'
-    if not (dated/'global500.csv').exists():
-        csv_write(dated/'global500.csv',allrows,fields)
-    # Keep record of latest successfully observed snapshot only. Date of source may lag.
-    csv_write(latest,allrows,fields)
+    first_capture=not (dated/'global500.csv').exists()
     meta={'source_as_of':asof,'recorded_on':str(today),'count':len(allrows),
           'type':'ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP','raw_sha256':sha(raw),
           'mapped_symbols':len(set(x['symbol'] for x in allrows))}
-    json_save(dated/'source.json',meta)
+    if first_capture:
+        csv_write(dated/'global500.csv',allrows,fields)
+        json_save(dated/'source.json',meta)
+    else:
+        marker=dated/'source.json'
+        if not marker.exists():raise DataUnavailable('Dated universe snapshot missing its source manifest')
+        frozen=json.loads(marker.read_text(encoding='utf-8'))
+        rows=rows_load(dated/'global500.csv')
+        if not rows or rows[0].get('source_as_of')!=frozen.get('source_as_of'):
+            raise DataUnavailable('Dated universe snapshot provenance mismatch; blocked')
+    # Latest is overwriteable; dated daily captures and their manifests are immutable.
+    csv_write(latest,allrows,fields)
     return allrows,meta
 
 FIELDS=['date','symbol','open','close','currency','unit_scale','source_sha256']
