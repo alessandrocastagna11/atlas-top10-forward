@@ -37,7 +37,7 @@ jobs:
       - name: Check paper ledger invariant
         run: python strict_shadow/live_v4/run.py --check
       - name: Incrementally refresh historical symbols, rolling daily prices, FX and forward ETF snapshots
-        run: python strict_shadow/live_v4/dataset_daily.py --limit 90 --start 2025-12-01
+        run: python strict_shadow/live_v4/dataset_daily.py --limit 300 --start 2025-12-01
       - name: Fetch complete EOD benchmark and run fail-closed V4 PAPER
         run: python strict_shadow/live_v4/run.py
       - name: Verify ledger invariant again
