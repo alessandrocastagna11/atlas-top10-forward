@@ -1,0 +1,12 @@
+{
+  "cash_eur": 10000.0,
+  "decisions": [],
+  "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
+  "holdings": {},
+  "initial_cash_eur": 10000.0,
+  "last_execution_session": null,
+  "mode": "PAPER",
+  "orders": [],
+  "real_money_authorized": false,
+  "schema_version": 1
+}

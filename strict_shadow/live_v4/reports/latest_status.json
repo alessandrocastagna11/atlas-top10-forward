@@ -1,0 +1,29 @@
+{
+  "benchmark": {
+    "close_local": 158.47999572753906,
+    "currency": "USD",
+    "session": "2026-11-04",
+    "source_sha256": "046ffd4fb9b4a562cab1afc97eb29b0f634df20be03a678a9c5fe1f9d812c4fb",
+    "symbol": "ACWI"
+  },
+  "capital_initial_eur": 10000.0,
+  "checked_at_utc": "2026-11-05T19:43:19.883392+00:00",
+  "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
+  "executed_decisions": 0,
+  "historical_replay_parity": "REPLAY_DIFFERS_FROM_ORIGINAL",
+  "market_data_status": "BENCHMARK_EOD_VERIFIED",
+  "mode": "PAPER",
+  "official_main_unchanged": true,
+  "real_money_orders": 0,
+  "reason": "No fresh Confidence70 model-generated and hashed signal snapshot",
+  "state_sha256": "aa931723e5826846ceafd907fd267961b403e75f076097a83eea6335e11e5a20",
+  "status": "PENDING_SIGNAL",
+  "strategy": "V4_Confidence70",
+  "total_paper_orders": 0,
+  "valuation": {
+    "cash_eur": 10000.0,
+    "nav_eur": 10000.0,
+    "positions": 0,
+    "valuation_type": "CASH_ONLY"
+  }
+}
