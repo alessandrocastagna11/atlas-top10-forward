@@ -1,0 +1,63 @@
+name: Atlas V4 Confidence70 — daily dispatcher (PAPER ONLY)
+on:
+  workflow_dispatch:
+  schedule:
+    # After a complete US close, two attempts to cover quote-provider lag.
+    # Cron triggers use UTC and are best-effort (GitHub may delay them).
+    - cron: '15 0 * * 1-6'
+    - cron: '45 2 * * 1-6'
+permissions:
+  contents: write
+concurrency:
+  group: atlas-v4-confidence70-live-paper
+  cancel-in-progress: false
+jobs:
+  v4_paper_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # IMPORTANT: checkout and push ONLY the experimental V4 branch.
+          ref: atlas-v4-confidence70-live-paper
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test paper and provider guards
+        run: python -m unittest discover -s strict_shadow/live_v4/tests -p 'test_*.py' -v
+      - name: Validate previous virtual ledger
+        run: python strict_shadow/live_v4/run.py --check
+      - name: Run strict V4 shadow EOD and optional verified paper execution
+        run: python strict_shadow/live_v4/run.py
+      - name: Validate next virtual ledger
+        run: python strict_shadow/live_v4/run.py --check
+      - name: Summarize status (success NEVER implies orders)
+        if: always()
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path('strict_shadow/live_v4/reports/latest_status.json')
+          data=json.loads(p.read_text()) if p.exists() else {}
+          rows=['## Atlas V4 Confidence70 — dedicated PAPER',
+                'State: **'+str(data.get('status','NO_REPORT'))+'**',
+                'Reason: '+str(data.get('reason','unknown')),
+                'Benchmark data: '+str(data.get('market_data_status','unknown')),
+                'Cumulative paper orders: '+str(data.get('total_paper_orders',0)),
+                'Real orders: **0**','Official Top 10: **unchanged**','']
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a',encoding='utf-8') as f:f.write('\n'.join(rows))
+          PY
+      - name: Persist V4 virtual results to experimental branch only
+        if: success()
+        run: |
+          git config user.name "Atlas V4 Paper Bot"
+          git config user.email "atlas-v4-paper-bot@users.noreply.github.com"
+          git add -A strict_shadow/live_v4/state strict_shadow/live_v4/reports
+          if [ -d strict_shadow/live_v4/market_data ]; then
+            git add -A strict_shadow/live_v4/market_data
+          fi
+          if ! git diff --cached --quiet; then
+            git commit -m "Atlas V4 shadow daily $(date -u +%F)"
+            git push origin HEAD:atlas-v4-confidence70-live-paper
+          fi
