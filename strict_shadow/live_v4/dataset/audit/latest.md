@@ -1,12 +1,12 @@
 # Atlas V4 daily research dataset
 
-Checked: 2026-11-05T20:44:36.218827+00:00
-Original symbols cached: 287/288
-All cached prices: 558 / 559
+Checked: 2026-11-05T20:47:52.105075+00:00
+Original symbols cached: 288/288
+All cached prices: 558 / 558
 FX cached: 17 / 17
-Provider errors: 1
-Unique symbols with a quote dated within 7 days: 558/559
-Cache status: PARTIAL_DATA
+Provider errors: 0
+Unique symbols with a quote dated within 7 days: 558/558
+Cache status: ALL_ACTIVE_SYMBOLS_HAVE_SOME_DATA
 Forward universe: Nov 04, 2026
 Confidence70 live forward signal: **NOT READY** (fail closed).
 iShares universe ranks are holding-value proxies, not historical market cap ranks.
