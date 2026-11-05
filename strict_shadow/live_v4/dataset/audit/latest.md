@@ -1,8 +1,10 @@
 # Atlas V4 daily research dataset
 
-Checked: 2026-11-05T20:47:52.105075+00:00
-Original symbols cached: 288/288
-All cached prices: 558 / 558
+Checked: 2026-11-05T20:49:21.500809+00:00
+Original symbols cached: 287/288
+Originals accounted incl. delistings: 288/288
+Inactive verified delistings: WBD
+All ACTIVE cached prices: 558 / 558
 FX cached: 17 / 17
 Provider errors: 0
 Unique symbols with a quote dated within 7 days: 558/558
