@@ -1,5 +1,5 @@
 """Engine checks only. ALL quotes here are SYNTHETIC TEST FIXTURES, not market data."""
-import sys,tempfile,json,math,unittest
+import sys,tempfile,json,math,unittest,datetime as dt
 from pathlib import Path
 from unittest.mock import patch
 HERE=Path(__file__).resolve().parent
@@ -24,6 +24,22 @@ def fake_data(p1=100,p2=101):
 def seed_state():
     return dict(started_at='2026-11-03',initialized=False,last_update='2026-11-03',cash_eur=10000.,positions={},order_count=0,risk_on=True,last_regime_month='2026-10',last_roster_year=2026,liabilities_eur=0.,tax_losses=[],benchmark={'shares':0.,'cash_eur':10000.,'cost_basis_eur':0.,'liabilities_eur':0.})
 class Tests(unittest.TestCase):
+    def test_yahoo_split_adjusted_close_is_nominalized(self):
+        from unittest.mock import Mock
+        def price(day):
+            return int(dt.datetime.fromisoformat(day).replace(tzinfo=dt.timezone.utc).timestamp())
+        raw={'chart':{'error':None,'result':[{
+          'meta':{'exchangeTimezoneName':'America/New_York','currency':'USD'},
+          'timestamp':[price('2026-11-04')+43200,price('2026-11-05')+43200],
+          'indicators':{'quote':[{'close':[50.,55.]}]},
+          'events':{'splits':{'event':{'date':price('2026-11-05')+43200,'numerator':2,'denominator':1}}}
+        }]}}
+        r=Mock();r.raise_for_status.return_value=None;r.json.return_value=raw
+        with patch.object(f.requests,'get',return_value=r):
+            quote=f.fetch_yahoo('AAPL',start='2026-11-03',end='2026-11-05')
+        self.assertAlmostEqual(quote['bars']['2026-11-04'],100.)
+        self.assertAlmostEqual(quote['bars']['2026-11-05'],55.)
+        self.assertEqual(quote['splits']['2026-11-05'],2.)
     def test_ma10(self):
         state,last,ma=f.ma10_state(fake_data()['IUSQ.DE']['bars'],'2026-11-04',False,.01)
         self.assertTrue(state);self.assertAlmostEqual(last,108.26,4);self.assertAlmostEqual(ma,101.754,3)

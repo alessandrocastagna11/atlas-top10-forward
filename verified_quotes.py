@@ -5,7 +5,8 @@ only if independently sourced EOD for the SAME venue and currency.
 from __future__ import annotations
 import json, math
 from pathlib import Path
-from datetime import date
+from datetime import date, datetime, timezone
+from urllib.parse import urlsplit
 
 ROOT=Path(__file__).resolve().parent
 DEFAULT_FILE=ROOT/'market_data'/'verified_quotes.json'
@@ -24,10 +25,18 @@ def apply_verified(data,asof,shape='close',supplements=None):
         if item.get('currency')!=rec.get('currency'):
             raise ValueError('Supplement currency mismatch '+sym)
         sources=item.get('source_urls',[])
-        if len(set(sources))<2 or not all(x.startswith('https://') for x in sources):
-            raise ValueError('At least two independent https evidence URLs required '+sym)
-        if not item.get('verified_on') or item['verified_on']<day:
-            raise ValueError('Verification date missing/earlier than session '+sym)
+        hosts={urlsplit(str(x)).hostname for x in sources if
+               urlsplit(str(x)).scheme=='https' and urlsplit(str(x)).hostname}
+        if len(hosts)<2:
+            raise ValueError('At least two distinct HTTPS domains required '+sym)
+        verified_on=item.get('verified_on')
+        try:
+            vdate=date.fromisoformat(verified_on)
+            session=date.fromisoformat(day)
+        except (TypeError,ValueError):
+            raise ValueError('Invalid supplement dates '+sym) from None
+        if vdate<session or vdate>datetime.now(timezone.utc).date():
+            raise ValueError('Quote verification not yet available '+sym)
         close=float(item['close'])
         op=float(item['open']) if item.get('open') is not None else None
         if not math.isfinite(close) or close<=0 or (op is not None and (not math.isfinite(op) or op<=0)):

@@ -47,6 +47,20 @@ class DailyTests(unittest.TestCase):
         r=dr.do_strategy(self.folder,'2026-11-04',d)
         self.assertEqual({v['symbol'] for v in r['missing_exact_closes']},{'2222.SR','IUSQ.DE'})
         self.assertEqual(r['report_status'],'PENDING_DATA')
+    def test_future_verified_supplement_is_rejected(self):
+        d=synthetic()
+        sample={'schema':1,'quotes':[{'symbol':'IUSQ.DE','date':'2026-11-04',
+            'currency':'EUR','close':108.9,'venue':'XETRA','verified_on':'2099-01-01',
+            'source_urls':['https://one.test/evidence','https://two.test/evidence']}]}
+        with self.assertRaises(ValueError):
+            verified_quotes.apply_verified(d,'2026-11-04',supplements=sample)
+    def test_same_domain_supplement_is_rejected(self):
+        d=synthetic()
+        sample={'schema':1,'quotes':[{'symbol':'IUSQ.DE','date':'2026-11-04',
+            'currency':'EUR','close':108.9,'venue':'XETRA','verified_on':'2026-11-05',
+            'source_urls':['https://one.test/evidence','https://one.test/other']}]}
+        with self.assertRaises(ValueError):
+            verified_quotes.apply_verified(d,'2026-11-04',supplements=sample)
     def test_verified_eod_supplement_and_no_overwrite(self):
         d=synthetic()
         d['IUSQ.DE']['bars'].pop('2026-11-04')

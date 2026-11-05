@@ -109,7 +109,17 @@ def fetch_yahoo(symbol:str, start='2025-09-01',end=None)->dict:
         ratio=float(ev.get('numerator',0))/max(float(ev.get('denominator',0)),1e-12)
         if not math.isfinite(ratio) or ratio<=0:raise RuntimeError('Invalid stock split for '+symbol)
         splits[day]=ratio
-    return {'symbol':symbol,'currency':meta.get('currency'),'bars':bars,'dividends':dividends,'splits':splits,'feed':'Yahoo Finance delayed daily chart','retrieved_utc':dt.datetime.now(dt.timezone.utc).isoformat()}
+    # Yahoo Chart OHLC are split-adjusted even before a future split within
+    # the requested history. Recover historical nominal closes so applying
+    # actual share splits to held positions will NOT double-count the split.
+    # Must use the same price convention as v0.8 shadow_engine.retrieve_yahoo.
+    for bar_day,price in list(bars.items()):
+        factor=1.0
+        for split_day,ratio in splits.items():
+            if split_day>bar_day:
+                factor*=ratio
+        bars[bar_day]=price*factor
+    return {'symbol':symbol,'currency':meta.get('currency'),'bars':bars,'dividends':dividends,'splits':splits,'feed':'Yahoo Finance delayed daily chart (nominalized for splits)','retrieved_utc':dt.datetime.now(dt.timezone.utc).isoformat()}
 
 def obtain_data(cfg,asof,fixture=None):
     if fixture:

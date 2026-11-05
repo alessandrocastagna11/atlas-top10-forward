@@ -66,10 +66,34 @@ def download(asof):
     for sym in ticker_list:
         try:out[sym]=se.retrieve_yahoo(sym,end=asof)
         except Exception as e:errors[sym]=str(e)[:220]
-    return verified_quotes.apply_verified(out,asof,shape='ohlc'),errors
+    # Use a durable, timestamped previously downloaded snapshot to recover
+    # historical context when Yahoo becomes unavailable for one instrument.
+    # A cached old bar alone is NOT a valid current-day price.
+    cache=MARKET/'last_snapshot.json'
+    if errors and cache.exists():
+        try: prior=json.loads(cache.read_text(encoding='utf-8')).get('data',{})
+        except (ValueError,OSError): prior={}
+        for sym in list(errors):
+            rec=prior.get(sym)
+            if not isinstance(rec,dict) or not rec.get('bars'):continue
+            expect=se.CURRENCIES.get(sym,'EUR' if sym==se.BENCH else 'USD' if sym=='EURUSD=X' else 'SAR' if sym=='EURSAR=X' else None)
+            if rec.get('currency')!=expect:continue
+            out[sym]=copy.deepcopy(rec)
+            out[sym]['feed']=str(rec.get('feed',''))+' (cached historical source)'
+    # Never expose future bars/actions from a reused snapshot.
+    for rec in out.values():
+        for field in ('bars','splits','dividends'):
+            if field in rec:rec[field]={d:v for d,v in rec[field].items() if d<=asof}
+    out=verified_quotes.apply_verified(out,asof,shape='ohlc')
+    for sym in list(errors):
+        # A missing provider can be replaced ONLY by a documented same-day
+        # quote (with valid OHLC), not by the last stale cached close.
+        if asof in out.get(sym,{}).get('bars',{}):
+            errors.pop(sym,None)
+    return out,errors
 
 def source_status(errors,asof):
-    return {'asof':asof,'feed':'Yahoo delayed chart public data, non certified',
+    return {'asof':asof,'feed':'Yahoo delayed + separately verified supplements',
             'missing_symbols':errors}
 
 def replay(asof,data,errors=None,allow_initial_trade=True):
@@ -187,8 +211,8 @@ def main(argv=None):
     # A full feed failure or missing benchmark/FX blocks the entire update.
     for essential in (se.BENCH,'EURUSD=X','EURSAR=X'):
         if essential in errors:
-            save_json(REPORTS/'latest_status.json',{'asof':args.asof,'type':'SHADOW','status':'PENDING_DATA','errors':errors})
-            print('PENDING_DATA essential source: '+essential);return
+            save_json(REPORTS/'last_attempt.json',{'asof':args.asof,'type':'SHADOW','status':'PENDING_DATA','errors':errors})
+            print('PENDING_DATA essential source: '+essential+'; last verified report preserved');return
     # Some stock feeds can be absent as long as the stock is not held; a
     # previously-held stock lacking any historical price stops update safely.
     if errors:
