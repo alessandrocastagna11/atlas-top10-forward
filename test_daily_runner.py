@@ -1,5 +1,5 @@
 """All quote data in this module are SYNTHETIC and MUST NEVER enter paper ledger."""
-import copy,json,tempfile,unittest
+import copy,datetime as dt,json,tempfile,unittest
 from pathlib import Path
 from unittest.mock import patch
 import engine as e
@@ -35,6 +35,17 @@ class DailyTests(unittest.TestCase):
         self.addCleanup(self.reset_globals)
     def reset_globals(self):
         e.ROOT,e.CONFIG,e.STATE,e.JOURNAL,e.NAV,e.SOURCES=self.orig
+    def test_eod_scheduler_uses_previous_session_before_close(self):
+        ny=dt.timezone(dt.timedelta(hours=-5))
+        self.assertEqual(dr.latest_closed_us_day(dt.datetime(2026,11,5,8,0,tzinfo=ny)),'2026-11-04')
+        self.assertEqual(dr.latest_closed_us_day(dt.datetime(2026,11,4,18,0,tzinfo=ny)),'2026-11-04')
+    def test_missing_exact_symbols_audited(self):
+        d=synthetic()
+        d['2222.SR']['bars'].pop('2026-11-04')
+        d['IUSQ.DE']['bars'].pop('2026-11-04')
+        r=dr.do_strategy(self.folder,'2026-11-04',d)
+        self.assertEqual({v['symbol'] for v in r['missing_exact_closes']},{'2222.SR','IUSQ.DE'})
+        self.assertEqual(r['report_status'],'PENDING_DATA')
     def test_gap_replay_and_idempotence(self):
         r=dr.do_strategy(self.folder,'2026-11-05',synthetic())
         self.assertEqual(r['report_status'],'COMPLETE')

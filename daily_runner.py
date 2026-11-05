@@ -132,7 +132,14 @@ def do_strategy(folder,asof,data):
     sells=sum(o['side']=='SELL' for o in stocks)
     today_orders=[o for o in stocks if o['date']==asof]
     audit_today=price_audit(data,asof)
-    freshness='EXACT' if audit_today and all(x['bar_date']==asof for x in audit_today) else 'VALUATION_WITH_STALE_QUOTES'
+    required=[x['symbol'] for x in cfg['basket']]+[cfg['benchmark']['symbol']]
+    missing_exact=[]
+    for sym in required:
+        bars=data.get(sym,{}).get('bars',{})
+        if asof not in bars:
+            eligible=[d for d in bars if d<=asof]
+            missing_exact.append({'symbol':sym,'last_close_date':max(eligible) if eligible else None})
+    freshness='EXACT' if not missing_exact else 'VALUATION_WITH_STALE_QUOTES'
     out={
        'price_freshness':freshness,'engine':cfg['name'],'asof_requested':asof,'last_verified_valuation':nav['date'],
        'report_status': ('PENDING_FIRST_REAL_CLOSE' if not state['initialized'] and not attempts else ('COMPLETE' if state['initialized'] and nav['date']==asof and not attempts else 'PENDING_DATA')),
@@ -151,6 +158,7 @@ def do_strategy(folder,asof,data):
        'total_slippage_eur':round(sum(float(o['slippage_eur']) for o in stocks),2),
        'pending_transition':state.get('pending_transition'),
        'data_warning':state.get('data_warning'),
+       'missing_exact_closes':missing_exact,
        'new_valuations':len(new),'execution_attempts_blocked':attempts[:8],
        'asof_price_audit':audit_today,
        'last_update_source':'Yahoo daily chart (delayed), provider time stamped; cash 0%'
@@ -177,6 +185,9 @@ def render_report(asof,reports,data_hash):
         f"- Patrimonio {r['portfolio_eur']:,.2f} €, benchmark {r['benchmark_eur']:,.2f} €; variazione dall'ultima osservazione: {r['portfolio_day_pct']:+.3f}% vs {r['benchmark_day_pct']:+.3f}%.",
         f"- Operazioni: {r['buys']} acquisti + {r['sells']} vendite = {r['order_count']} ordini; nella data richiesta: {r['orders_on_asof']}.",
         f"- Commissioni accumulate {r['total_fees_eur']:.2f} €; slippage {r['total_slippage_eur']:.2f} €; imposte plusvalenze {r['realized_gain_tax_eur']:.2f} €; imposte dividendi proxy {r['dividend_tax_eur']:.2f} €; bollo maturato {r['bollo_accrued_eur']:.2f} €."]
+      if r.get('missing_exact_closes'):
+        md.append('- **Chiusure mancanti per la data richiesta:** '+', '.join(
+            f"{x['symbol']} (ultima {x['last_close_date'] or 'nessuna'})" for x in r['missing_exact_closes']))
       if r['execution_attempts_blocked']:
         md.append('- **Dati mancanti/esecuzione bloccata:** '+ '; '.join(f"{x['date']}: {x['reason']}" for x in r['execution_attempts_blocked'][:3]))
       if r['pending_transition']:
@@ -188,15 +199,26 @@ def render_report(asof,reports,data_hash):
     (REPORTS/'latest.md').write_text('\n'.join(md)+'\n',encoding='utf8')
 
 
+def latest_closed_us_day(now):
+    """Conservative EOD cutoff; morning retries use preceding US calendar date.
+    No future quotes, no intraday trades, and no destructive PENDING_US_CLOSE.
+    """
+    return (now.date() if now.time()>=dt.time(17,30) else
+            now.date()-dt.timedelta(days=1)).isoformat()
+
+
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
-    ap.add_argument('--asof',default=dt.datetime.now(ZoneInfo('America/New_York')).date().isoformat(),
+    ap.add_argument('--asof',default=None,
                     help='end-of-day date YYYY-MM-DD (default: current America/New_York date)')
     ap.add_argument('--fixture',help='SYNTHETIC TEST DATA ONLY; produces no official updates')
     ap.add_argument('--snapshot',help='User-supplied external JSON; emits UNVERIFIED_EXTERNAL flag, use for research')
     ap.add_argument('--check',action='store_true',help='validate portfolio files without downloading')
     ap.add_argument('--seed-report',action='store_true',help='write truthful zero-order report without downloading')
     args=ap.parse_args()
+    ny_now=dt.datetime.now(ZoneInfo('America/New_York'))
+    if args.asof is None:
+        args.asof=latest_closed_us_day(ny_now)
     REPORTS.mkdir(exist_ok=True)
     if args.asof>'2026-11-03' and args.asof>dt.datetime.now(ZoneInfo('America/New_York')).date().isoformat():
         raise SystemExit('Refusing future date')
@@ -235,11 +257,9 @@ def main():
         raise SystemExit('Synthetic fixtures are reserved for unit tests; cannot run in production state')
     if args.snapshot:
         raise SystemExit('Manual data snapshots cannot update the official ledger: use the market provider (or a separate test copy).')
-    ny_now=dt.datetime.now(ZoneInfo('America/New_York'))
-    if args.asof==ny_now.date().isoformat() and ny_now.time()<dt.time(17,0):
-        msg={'date':args.asof,'status':'PENDING_US_CLOSE','info':'Wait until at least 17:00 America/New_York; all prices must be EOD', 'portfolio_state':'UNCHANGED'}
-        atomic_json(REPORTS/'latest_status.json',msg)
-        (REPORTS/'latest.md').write_text(f"# Atlas — mercati ancora aperti\n\nData: {args.asof}. Nessun ordine nuovo: attendere la chiusura USA e la pubblicazione delle quote EOD.\n",encoding='utf8')
+    if args.asof==ny_now.date().isoformat() and ny_now.time()<dt.time(17,30):
+        msg={'date':args.asof,'status':'PENDING_US_CLOSE','info':'Waiting until 17:30 America/New_York; preserved last report', 'portfolio_state':'UNCHANGED'}
+        atomic_json(REPORTS/'last_attempt.json',msg)
         print(json.dumps(msg,ensure_ascii=False));return
     else:
         try:
@@ -249,10 +269,8 @@ def main():
             # A missing feed must not mutate portfolio positions or NAV.
             result={'date':args.asof,'status':'PENDING_DATA','error':str(exc),
                     'portfolio_state':'UNCHANGED','source':'Yahoo Finance daily chart'}
-            atomic_json(REPORTS/'latest_status.json',result)
-            (REPORTS/'latest.md').write_text('# Atlas Top10 — aggiornamento sospeso\n\n'
-                   f"Data richiesta: {args.asof}. Dati di mercato non disponibili: `{str(exc)[:400]}`.\n\n"
-                   'Nessuna operazione registrata; i registri precedenti restano invariati.\n')
+            atomic_json(REPORTS/'last_attempt.json',result)
+            # Keep the last real NAV/report untouched on a total feed outage.
             print(json.dumps(result,ensure_ascii=False))
             return
     data_json=json.dumps(data,sort_keys=True,ensure_ascii=False).encode('utf8')

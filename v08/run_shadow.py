@@ -154,11 +154,15 @@ def render(asof,r,source):
 
 def main(argv=None):
     ap=argparse.ArgumentParser()
-    ap.add_argument('--asof',default=datetime.now(ZoneInfo('America/New_York')).date().isoformat())
+    ap.add_argument('--asof',default=None)
     ap.add_argument('--seed',action='store_true')
     ap.add_argument('--test',action='store_true')
     args=ap.parse_args(argv)
-    if args.asof>datetime.now(ZoneInfo('America/New_York')).date().isoformat():raise SystemExit('future asof forbidden')
+    now=datetime.now(ZoneInfo('America/New_York'))
+    if args.asof is None:
+        # Recheck the last completed US day, never overwrite good report with intraday status.
+        args.asof=(now.date() if now.time()>=time(17,30) else now.date()-timedelta(days=1)).isoformat()
+    if args.asof>now.date().isoformat():raise SystemExit('future asof forbidden')
     init()
     if args.seed:
         res=replay(se.START,{})
@@ -167,7 +171,8 @@ def main(argv=None):
         render(se.START,res,src)
         return
     if args.asof<se.FIRST_DAY:
-        return main(['--seed'])
+        print('PRE_LAUNCH: no update; preserved existing seed and forward ledger')
+        return
     now=datetime.now(ZoneInfo('America/New_York'))
     if args.asof==now.date().isoformat() and now.time()<time(17,30):
         print('PENDING_US_CLOSE; no read/write to ledger')

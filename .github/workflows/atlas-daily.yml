@@ -12,9 +12,13 @@ on:
       - 'v08/tests/**'
   workflow_dispatch:
   schedule:
-    # EOD after US markets close: 22:35 UTC, 23:35 Italian winter time.
-    # The US calendar date is chosen by each runner independently.
+    # Three independent attempts: Yahoo can publish Xetra/Saudi closes late.
+    # GitHub schedules are best effort and may execute several hours late.
+    # NY morning retries always target the previous COMPLETE US session.
     - cron: '35 22 * * *'
+    - cron: '43 0 * * *'
+    - cron: '47 3 * * *'
+    - cron: '11 6 * * *'
 permissions:
   contents: write
 concurrency:
