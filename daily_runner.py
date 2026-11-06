@@ -95,7 +95,7 @@ def price_audit(data,date):
     return out
 
 
-def do_strategy(folder,asof,data,allow_initial_trade=True):
+def do_strategy(folder,asof,data,allow_initial_trade=True,expected_initial_risk=None):
     configure_paths(folder)
     cfg=json.loads(E.CONFIG.read_text())
     state=json.loads(E.STATE.read_text())
@@ -110,7 +110,11 @@ def do_strategy(folder,asof,data,allow_initial_trade=True):
             continue
         pending_before=copy.deepcopy(state)
         try:
+            was_uninitialized=not state['initialized']
             orders,nav=E.step(state,cfg,data,date)
+            if was_uninitialized and state['initialized'] and expected_initial_risk is not None:
+                if state['risk_on'] is not expected_initial_risk:
+                    raise ValueError('SIGNAL_DIFFERS_FROM_PRECOMMITTED_OCTOBER_REGIME')
             if nav is None:continue
             state.setdefault('nav_history',[]).append(nav)
             state.setdefault('order_history',[]).extend(orders)
@@ -139,6 +143,16 @@ def do_strategy(folder,asof,data,allow_initial_trade=True):
     sells=sum(o['side']=='SELL' for o in stocks)
     today_orders=[o for o in stocks if o['date']==asof]
     audit_today=price_audit(data,asof)
+    def drawdowns(key):
+        history=[float(x[key]) for x in state['nav_history']]
+        running_peak=history[0]
+        worst=0.
+        for value in history:
+            running_peak=max(running_peak,value)
+            worst=min(worst,100*(value/running_peak-1))
+        return round(100*(history[-1]/running_peak-1),4),round(worst,4)
+    dd_now,dd_max=drawdowns('portfolio_nav_eur')
+    bench_dd_now,bench_dd_max=drawdowns('benchmark_nav_eur')
     required=[x['symbol'] for x in cfg['basket']]+[cfg['benchmark']['symbol']]
     missing_exact=[]
     for sym in required:
@@ -168,6 +182,8 @@ def do_strategy(folder,asof,data,allow_initial_trade=True):
        'bollo_accrued_eur':round(float(state.get('liabilities_eur',0)),2),
        'dividend_tax_eur':round(sum(float(x['tax_eur']) for x in state.get('dividend_history',[])),2),
        'total_slippage_eur':round(sum(float(o['slippage_eur']) for o in stocks),2),
+       'current_drawdown_pct':dd_now,'max_drawdown_pct':dd_max,
+       'benchmark_current_drawdown_pct':bench_dd_now,'benchmark_max_drawdown_pct':bench_dd_max,
        'pending_transition':state.get('pending_transition'),
        'data_warning':state.get('data_warning'),
        'missing_exact_closes':missing_exact,
@@ -199,6 +215,8 @@ def render_report(asof,reports,data_hash):
         f"- Commissioni accumulate {r['total_fees_eur']:.2f} €; slippage {r['total_slippage_eur']:.2f} €; imposte plusvalenze {r['realized_gain_tax_eur']:.2f} €; imposte dividendi proxy {r['dividend_tax_eur']:.2f} €; bollo maturato {r['bollo_accrued_eur']:.2f} €."]
       if r.get('launch_guard'):
         md.append('- **Avvio paper:** '+r['launch_guard'])
+      if 'max_drawdown_pct' in r:
+        md.append(f"- **Drawdown dal lancio:** attuale {r['current_drawdown_pct']:.2f}%, massimo {r['max_drawdown_pct']:.2f}%; benchmark massimo {r['benchmark_max_drawdown_pct']:.2f}%.")
       if r.get('missing_exact_closes'):
         md.append('- **Chiusure mancanti per la data richiesta:** '+', '.join(
             f"{x['symbol']} (ultima {x['last_close_date'] or 'nessuna'})" for x in r['missing_exact_closes']))
@@ -256,6 +274,8 @@ def launch_ready(asof, now):
                 raise ValueError('BASKET_CHANGED_SINCE_LAUNCH_LOCK: '+key)
             if cfg['benchmark']['symbol']!=entry['benchmark_symbol']:
                 raise ValueError('BENCHMARK_CHANGED_SINCE_LAUNCH_LOCK: '+key)
+            if not isinstance(entry.get('precommitted_risk_on'),bool) or entry.get('precommitted_signal_month')!='2026-10':
+                raise ValueError('MISSING_PRECOMMITTED_OCTOBER_REGIME: '+key)
             state=json.loads(st.read_text(encoding='utf-8'))
             if not state['initialized']:
                 if (git_blob_sha(st.read_bytes())!=entry['initial_state_blob_sha'] or
@@ -348,9 +368,12 @@ def main():
     atomic_json(DATA/'latest_snapshot.json',{'asof':args.asof,'source':source,'digest_sha256':data_hash,
                 'downloaded_at_utc':dt.datetime.now(dt.timezone.utc).isoformat(), 'data':data})
     launch_allowed,launch_reason=launch_ready(args.asof,dt.datetime.now(dt.timezone.utc))
+    plan=json.loads((REPORTS/'launch_intent.json').read_text(encoding='utf-8'))
     reports={}
     for key in LABELS:
-        reports[key]=do_strategy(STRATEGIES/key,args.asof,data,allow_initial_trade=launch_allowed)
+        expected=(plan['strategies'][key]['precommitted_risk_on'] if launch_allowed else None)
+        reports[key]=do_strategy(STRATEGIES/key,args.asof,data,
+                                 allow_initial_trade=launch_allowed,expected_initial_risk=expected)
         reports[key]['launch_guard']=launch_reason
         if not reports[key]['initialized'] and launch_reason=='WAITING_PRECOMMITTED_COMMON_SESSION':
             reports[key]['report_status']='WAITING_PRECOMMITTED_COMMON_SESSION'
