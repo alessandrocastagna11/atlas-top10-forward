@@ -33,6 +33,17 @@ def next_weekday(session):
     x=session+dt.timedelta(days=1)
     while x.weekday()>=5:x+=dt.timedelta(days=1)
     return x
+def executable_session(decision,produced_at):
+    """First US weekday opening not already passed when the signal is produced.
+
+    The real open is later audited by the provider. Never allow a signal
+    generated after the open to buy retroactively at that open.
+    """
+    ny=produced_at.astimezone(NY)
+    planned=next_weekday(decision)
+    if planned<ny.date() or (planned==ny.date() and ny.time()>=dt.time(9,30)):
+        planned=next_weekday(ny.date())
+    return planned
 def latest_roster(decision):
     root=DATA/'universe/snapshots';found=[]
     for p in root.glob('*/source.json'):
@@ -302,7 +313,9 @@ def generate(now=None):
                  'roster_sha256':rm['sha256'],'benchmark_price_file_sha256':bench_sha}
         signal={'schema_version':'research-forward-1','engine_id':ENGINE,
                 'model_variant':VERSION,'historical_engine_equivalent':False,
-                'mode':'SHADOW','decision_session':str(decision),'execution_session':str(next_weekday(decision)),
+                'mode':'SHADOW','decision_session':str(decision),
+                'execution_session':str(executable_session(decision,now)),
+                'produced_at_utc':now.astimezone(dt.timezone.utc).isoformat(),
                 'risk_regime':'RISK_ON' if risk_on else 'DEFENSIVE_PROXY',
                 'target_exposure':sum(x['weight'] for x in targets),
                 'region_strength_proxy':round(strength,6),'row_slots':row_slots,
@@ -321,7 +334,15 @@ def generate(now=None):
         if not pending.exists():json_save(pending,signal)
         else:
             prior=json.loads(pending.read_text())
-            status['pending_execution_session']=prior.get('execution_session')
+            if 'produced_at_utc' not in prior:
+                # Pre-fix signals lack proof they existed before the open.
+                # Archive, then replace; do not execute an unprovable retro fill.
+                legacy=FORWARD/'quarantine'/('legacy_untimed_'+str(prior.get('decision_session','unknown'))+'.json')
+                if not legacy.exists():json_save(legacy,prior)
+                json_save(pending,signal)
+                status['quarantined_legacy_signal']=str(legacy.relative_to(FORWARD))
+            else:
+                status['pending_execution_session']=prior.get('execution_session')
         scorepath=FORWARD/'scores_latest.csv'
         fields=['ticker','market_symbol','region','sector','score','raw12','res12','vol63','dollar_volume_20','price_eur']
         with __import__('io').StringIO() as f:
