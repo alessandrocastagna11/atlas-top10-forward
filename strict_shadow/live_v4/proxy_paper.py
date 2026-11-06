@@ -47,9 +47,13 @@ def execute(now=None,provider=None):
                 raise PaperBlocked('signal predates verified decision-session close')
             symbols=[p['market_symbol'] for p in signal.get('targets',[])]
             symbols.extend(p['market_symbol'] for p in state['holdings'].values())
-            global_cutoff=earliest_open_utc(symbols,exe)-dt.timedelta(minutes=30)
-            if stamped.astimezone(dt.timezone.utc)>=global_cutoff:
-                raise PaperBlocked('signal was produced after earliest global opening cutoff')
+            # OPEN and CLOSE are different execution policies. A same-day
+            # precommitted MOC is correctly AFTER the NY opening, but must
+            # satisfy the separate 15:45 NY MOC lock deadline below.
+            if signal.get('execution_policy')!='US_MOC_LOCKED_PRE_CLOSE':
+                global_cutoff=earliest_open_utc(symbols,exe)-dt.timedelta(minutes=30)
+                if stamped.astimezone(dt.timezone.utc)>=global_cutoff:
+                    raise PaperBlocked('signal was produced after earliest global opening cutoff')
             if exe<=dec or dec>ny.date() or (ny.date()-dec).days>7:
                 raise PaperBlocked('stale/future proxy signal')
             # Optional one-off start: US market-on-close intent locked in Git
