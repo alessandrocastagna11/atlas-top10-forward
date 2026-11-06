@@ -81,6 +81,17 @@ class DailyTests(unittest.TestCase):
         r=dr.do_strategy(self.folder,'2026-11-04',d,allow_initial_trade=False)
         self.assertEqual(r['order_count'],0)
         self.assertFalse(r['initialized'])
+        self.assertEqual(r['report_status'],'WAITING_NEXT_LIVE_SESSION')
+    def test_no_retro_fill_with_real_verifiable_yahoo_bar(self):
+        d=synthetic()
+        # All same-day closes, including IUSQ, are now known,
+        # but the run is delayed to the following morning.
+        r=dr.do_strategy(self.folder,'2026-11-05',d,allow_initial_trade=False)
+        self.assertEqual(r['price_freshness'],'EXACT')
+        self.assertEqual(r['order_count'],0)
+        self.assertEqual(r['report_status'],'WAITING_NEXT_LIVE_SESSION')
+        st=json.loads((self.folder/'state.json').read_text())
+        self.assertEqual(st['last_update'],'2026-11-03')
     def test_gap_replay_and_idempotence(self):
         r=dr.do_strategy(self.folder,'2026-11-05',synthetic())
         self.assertEqual(r['report_status'],'COMPLETE')
