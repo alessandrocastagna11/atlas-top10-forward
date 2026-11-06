@@ -24,8 +24,14 @@ class ForwardTests(unittest.TestCase):
         self.assertEqual(str(fw.next_weekday(dt.date(2026,11,5))),'2026-11-06')
     def test_signal_execution_open_is_not_backdated(self):
         d=dt.date(2026,11,5)
-        self.assertEqual(str(fw.executable_session(d,dt.datetime(2026,11,6,14,0,tzinfo=dt.timezone.utc))),'2026-11-06')
+        self.assertEqual(str(fw.executable_session(d,dt.datetime(2026,11,6,13,45,tzinfo=dt.timezone.utc))),'2026-11-06')
         self.assertEqual(str(fw.executable_session(d,dt.datetime(2026,11,6,16,35,tzinfo=dt.timezone.utc))),'2026-11-09')
+        # Friday morning in New York is already after the Friday Tokyo open.
+        self.assertEqual(str(fw.executable_session(d,dt.datetime(2026,11,6,13,0,tzinfo=dt.timezone.utc),['6098.T'])),'2026-11-09')
+        # Thursday after US close, but still before Friday's Tokyo open.
+        self.assertEqual(str(fw.executable_session(d,dt.datetime(2026,11,5,23,0,tzinfo=dt.timezone.utc),['6098.T'])),'2026-11-06')
+        # The same signal would be too late for Friday's Sydney opening.
+        self.assertEqual(str(fw.executable_session(d,dt.datetime(2026,11,5,23,0,tzinfo=dt.timezone.utc),['BHP.AX'])),'2026-11-09')
     def test_empty_data_blocks_research(self):
         old_forward,old_data=fw.FORWARD,fw.DATA
         try:
