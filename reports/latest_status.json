@@ -1,7 +1,7 @@
 {
   "asof": "2026-11-05",
   "source": "YAHOO_CHART",
-  "digest_sha256": "7f3dd010c285f69ebf47069339c4d626159cd8a0e85c19e6c4ad42de22a83235",
+  "digest_sha256": "a72bdd4ef0d597a0cbd543c0636f355286ff2383933f27e41265bd576274cd67",
   "results": {
     "MA10_Official": {
       "price_freshness": "EXACT",
