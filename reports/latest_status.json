@@ -1,10 +1,10 @@
 {
   "asof": "2026-11-05",
   "source": "YAHOO_CHART",
-  "digest_sha256": "78f238a3c326958345cf6508b6e0bab5cf8ea6cd326e2ea76badb8c7ac797436",
+  "digest_sha256": "3a28d4d902df6181106542283a7daedb1b72948273f88748066ea7985ae1978c",
   "results": {
     "MA10_Official": {
-      "price_freshness": "VALUATION_WITH_STALE_QUOTES",
+      "price_freshness": "EXACT",
       "engine": "Atlas Top 10 Global A — MA10_Official",
       "asof_requested": "2026-11-05",
       "last_verified_valuation": "2026-11-03",
@@ -33,12 +33,7 @@
       "total_slippage_eur": 0,
       "pending_transition": null,
       "data_warning": null,
-      "missing_exact_closes": [
-        {
-          "symbol": "IUSQ.DE",
-          "last_close_date": "2026-11-04"
-        }
-      ],
+      "missing_exact_closes": [],
       "new_valuations": 0,
       "execution_attempts_blocked": [],
       "asof_price_audit": [
@@ -93,8 +88,8 @@
         {
           "asof_date": "2026-11-05",
           "symbol": "IUSQ.DE",
-          "bar_date": "2026-11-04",
-          "close": 108.9000015258789,
+          "bar_date": "2026-11-05",
+          "close": 106.31999969482422,
           "currency": "EUR",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
@@ -150,7 +145,7 @@
       "last_update_source": "Yahoo daily chart (delayed), provider time stamped; cash 0%"
     },
     "MA6_MA12_Challenger": {
-      "price_freshness": "VALUATION_WITH_STALE_QUOTES",
+      "price_freshness": "EXACT",
       "engine": "Atlas Top 10 Global A — MA6_MA12_Challenger",
       "asof_requested": "2026-11-05",
       "last_verified_valuation": "2026-11-03",
@@ -179,12 +174,7 @@
       "total_slippage_eur": 0,
       "pending_transition": null,
       "data_warning": null,
-      "missing_exact_closes": [
-        {
-          "symbol": "IUSQ.DE",
-          "last_close_date": "2026-11-04"
-        }
-      ],
+      "missing_exact_closes": [],
       "new_valuations": 0,
       "execution_attempts_blocked": [],
       "asof_price_audit": [
@@ -239,8 +229,8 @@
         {
           "asof_date": "2026-11-05",
           "symbol": "IUSQ.DE",
-          "bar_date": "2026-11-04",
-          "close": 108.9000015258789,
+          "bar_date": "2026-11-05",
+          "close": 106.31999969482422,
           "currency": "EUR",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },

@@ -3,7 +3,7 @@
 **Capitale virtuale:** 10.000 € per ciascuna simulazione; nessun ordine reale.
 **Benchmark:** IUSQ.DE (MSCI ACWI ETF in EUR), conto virtuale indipendente.
 **Prezzi:** Yahoo daily end-of-day; nessuna esecuzione con prezzi ipotetici.
-**Impronta snapshot:** `78f238a3c326958345cf6508b6e0bab5cf8ea6cd326e2ea76badb8c7ac797436`.
+**Impronta snapshot:** `3a28d4d902df6181106542283a7daedb1b72948273f88748066ea7985ae1978c`.
 
 | Strategia | Stato | NAV € | IUSQ € | Cum. % | IUSQ cum. % | Excess pp | Acquisti | Vendite |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
@@ -15,17 +15,15 @@
 **Ordini di benchmark non inclusi nel conteggio della strategia.**
 
 ## MA10_Official
-- Ultima data NAV verificabile: **2026-11-03**, richiesta **2026-11-05**; stato: **PENDING_FIRST_REAL_CLOSE**; freschezza quotazioni: **VALUATION_WITH_STALE_QUOTES**.
+- Ultima data NAV verificabile: **2026-11-03**, richiesta **2026-11-05**; stato: **PENDING_FIRST_REAL_CLOSE**; freschezza quotazioni: **EXACT**.
 - Patrimonio 10,000.00 €, benchmark 10,000.00 €; variazione dall'ultima osservazione: +0.000% vs +0.000%.
 - Operazioni: 0 acquisti + 0 vendite = 0 ordini; nella data richiesta: 0.
 - Commissioni accumulate 0.00 €; slippage 0.00 €; imposte plusvalenze 0.00 €; imposte dividendi proxy 0.00 €; bollo maturato 0.00 €.
-- **Chiusure mancanti per la data richiesta:** IUSQ.DE (ultima 2026-11-04)
 
 ## MA6_MA12_Challenger
-- Ultima data NAV verificabile: **2026-11-03**, richiesta **2026-11-05**; stato: **PENDING_FIRST_REAL_CLOSE**; freschezza quotazioni: **VALUATION_WITH_STALE_QUOTES**.
+- Ultima data NAV verificabile: **2026-11-03**, richiesta **2026-11-05**; stato: **PENDING_FIRST_REAL_CLOSE**; freschezza quotazioni: **EXACT**.
 - Patrimonio 10,000.00 €, benchmark 10,000.00 €; variazione dall'ultima osservazione: +0.000% vs +0.000%.
 - Operazioni: 0 acquisti + 0 vendite = 0 ordini; nella data richiesta: 0.
 - Commissioni accumulate 0.00 €; slippage 0.00 €; imposte plusvalenze 0.00 €; imposte dividendi proxy 0.00 €; bollo maturato 0.00 €.
-- **Chiusure mancanti per la data richiesta:** IUSQ.DE (ultima 2026-11-04)
 
 **Avvertenza:** se ultima data NAV è precedente alla richiesta, il valore è storico e NON rappresenta una nuova quotazione giornaliera.
