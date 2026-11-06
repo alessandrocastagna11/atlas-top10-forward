@@ -73,9 +73,11 @@ jobs:
                   issues=', '.join(x['symbol'] for x in missing)
                   nav=r.get('portfolio_eur',r.get('nav_eur'))
                   cnt=r.get('order_count',r.get('orders',0))
-                  lines.append(f'- {name}: **{status}**; NAV={nav}; orders={cnt}; missing close={issues or "none"}')
-                  if status=='PENDING_DATA':
-                      print(f'::warning title=Atlas quotes incomplete::{name} date={date}; missing exact={issues or "check provider"}')
+                  pending=len(r.get('pending_tasks',[]))
+                  last_date=r.get('last_verified_valuation',r.get('last_nav_date','unknown'))
+                  lines.append(f'- {name}: **{status}**; last NAV={last_date}; capital={nav}; orders={cnt}; pending opens={pending}; missing close={issues or "none"}')
+                  if status in ('PENDING_DATA','PENDING_FIRST_REAL_CLOSE','PENDING_ORDERS','PENDING_FIRST_OPEN','WAITING_NEXT_LIVE_SESSION'):
+                      print(f'::warning title=Atlas not yet tradable::{name} date={date}; state={status}; last NAV={last_date}; pending={pending}; missing exact={issues or "none"}')
               lines.append('')
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a',encoding='utf-8') as fh:
               fh.write('\n'.join(lines)+'\n')
