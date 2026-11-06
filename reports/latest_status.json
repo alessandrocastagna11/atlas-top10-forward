@@ -1,14 +1,14 @@
 {
   "asof": "2026-11-05",
   "source": "YAHOO_CHART",
-  "digest_sha256": "9488a54eeb066a10aa651096151ff9ae654ad0551bef69a81c57bed605fe35ec",
+  "digest_sha256": "3b77721bde2bcfe3ec8b33a142fae80388143a4710eb01656da78172d2ef7b28",
   "results": {
     "MA10_Official": {
       "price_freshness": "EXACT",
       "engine": "Atlas Top 10 Global A — MA10_Official",
       "asof_requested": "2026-11-05",
       "last_verified_valuation": "2026-11-03",
-      "report_status": "PENDING_FIRST_REAL_CLOSE",
+      "report_status": "WAITING_NEXT_LIVE_SESSION",
       "source_status": "PENDING_FIRST_REAL_CLOSE",
       "initialized": false,
       "virtual_capital_start_eur": 10000.0,
@@ -149,7 +149,7 @@
       "engine": "Atlas Top 10 Global A — MA6_MA12_Challenger",
       "asof_requested": "2026-11-05",
       "last_verified_valuation": "2026-11-03",
-      "report_status": "PENDING_FIRST_REAL_CLOSE",
+      "report_status": "WAITING_NEXT_LIVE_SESSION",
       "source_status": "PENDING_FIRST_REAL_CLOSE",
       "initialized": false,
       "virtual_capital_start_eur": 10000.0,
