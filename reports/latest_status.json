@@ -1,7 +1,7 @@
 {
   "asof": "2026-11-05",
   "source": "YAHOO_CHART",
-  "digest_sha256": "a4c5d7e8cfdaa20d9129fad1ed038513c53abd9c1fc95bfa88b9eef48b4cb0ab",
+  "digest_sha256": "2d7c422e68d383299b057ba0503e271dc861bc5d93d02944a240c2eb703a1c58",
   "results": {
     "MA10_Official": {
       "price_freshness": "EXACT",
@@ -31,6 +31,10 @@
       "bollo_accrued_eur": 0.0,
       "dividend_tax_eur": 0,
       "total_slippage_eur": 0,
+      "current_drawdown_pct": 0.0,
+      "max_drawdown_pct": 0.0,
+      "benchmark_current_drawdown_pct": 0.0,
+      "benchmark_max_drawdown_pct": 0.0,
       "pending_transition": null,
       "data_warning": null,
       "missing_exact_closes": [],
@@ -173,6 +177,10 @@
       "bollo_accrued_eur": 0.0,
       "dividend_tax_eur": 0,
       "total_slippage_eur": 0,
+      "current_drawdown_pct": 0.0,
+      "max_drawdown_pct": 0.0,
+      "benchmark_current_drawdown_pct": 0.0,
+      "benchmark_max_drawdown_pct": 0.0,
       "pending_transition": null,
       "data_warning": null,
       "missing_exact_closes": [],
