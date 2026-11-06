@@ -4,7 +4,7 @@
   },
   "decision_session": "2026-11-05",
   "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
-  "execution_session": "2026-11-09",
+  "execution_session": "2026-11-06",
   "feature_source": "CURRENT_COHORT_H4_APPROX_NOT_ORIGINAL_OLS",
   "historical_engine_equivalent": false,
   "mode": "SHADOW",
@@ -20,7 +20,7 @@
   "risk_regime": "DEFENSIVE_PROXY",
   "row_slots": 2,
   "schema_version": "research-forward-1",
-  "target_exposure": 0.29999995,
+  "target_exposure": 0.23960822999999998,
   "targets": [
     {
       "market_symbol": "MPC",
@@ -93,24 +93,6 @@
       "sector": "Industrials",
       "ticker": "DE",
       "weight": 0.01931185
-    },
-    {
-      "market_symbol": "6098.T",
-      "price_eur": 101.23153,
-      "region": "ROW",
-      "score": 2.38637697,
-      "sector": "Industrials",
-      "ticker": "6098.T",
-      "weight": 0.03728647
-    },
-    {
-      "market_symbol": "1303.TW",
-      "price_eur": 6.752797,
-      "region": "ROW",
-      "score": 2.36628362,
-      "sector": "Materials",
-      "ticker": "1303.TW",
-      "weight": 0.02310525
     }
   ],
   "universe_source": {
@@ -119,5 +101,22 @@
     "recorded_on": "2026-11-05",
     "sha256": "d499e50a80ae0246a637a976fcbae7e30e0ad5eb03c2f035aee4a71530830201",
     "type": "ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP"
-  }
+  },
+  "deferred_non_us_targets": [
+    {
+      "ticker": "6098.T",
+      "weight": 0.03728647,
+      "reason": "market closed before pre-close MOC intent"
+    },
+    {
+      "ticker": "1303.TW",
+      "weight": 0.02310525,
+      "reason": "market closed before pre-close MOC intent"
+    }
+  ],
+  "execution_policy": "US_MOC_LOCKED_PRE_CLOSE",
+  "locked_at_utc": "2026-11-06T17:21:20.356Z",
+  "parent_signal_blob_sha": "3fe591dfa8a6cfc173a36547d4ee0bd5b50b3fbe",
+  "launch_date": "2026-11-06",
+  "launch_note": "PAPER ONLY. US exchange MOC intent committed before cut-off. Verify exact close after official EOD. Two Asian targets deferred; no backdated Asian executions."
 }
