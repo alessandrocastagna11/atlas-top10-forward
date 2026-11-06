@@ -1,0 +1,137 @@
+{
+  "asof": "2026-11-05",
+  "quotes_asof": {
+    "2222.SR": {
+      "bar": {
+        "close": 26.15999984741211,
+        "open": 26.1200008392334,
+        "volume": 6915453
+      },
+      "currency": "SAR",
+      "identity": "Saudi Arabian Oil Company",
+      "retrieved_at_utc": "2026-11-06T20:18:08.564493+00:00"
+    },
+    "AAPL": {
+      "bar": {
+        "close": 344.1700134277344,
+        "open": 353.8900146484375,
+        "volume": 75678900
+      },
+      "currency": "USD",
+      "identity": "Apple Inc.",
+      "retrieved_at_utc": "2026-11-06T20:18:07.962970+00:00"
+    },
+    "AMZN": {
+      "bar": {
+        "close": 260.2099914550781,
+        "open": 271.42999267578125,
+        "volume": 85796800
+      },
+      "currency": "USD",
+      "identity": "Amazon.com, Inc.",
+      "retrieved_at_utc": "2026-11-06T20:18:08.278497+00:00"
+    },
+    "EURSAR=X": {
+      "bar": {
+        "close": 4.071300029754639,
+        "open": 4.071300029754639,
+        "volume": 0
+      },
+      "currency": "SAR",
+      "identity": "EUR/SAR",
+      "retrieved_at_utc": "2026-11-06T20:18:08.927627+00:00"
+    },
+    "EURUSD=X": {
+      "bar": {
+        "close": 1.1234945058822632,
+        "open": 1.123721718788147,
+        "volume": 0
+      },
+      "currency": "USD",
+      "identity": "EUR/USD",
+      "retrieved_at_utc": "2026-11-06T20:18:08.856781+00:00"
+    },
+    "GOOG": {
+      "bar": {
+        "close": 281.739990234375,
+        "open": 291.80499267578125,
+        "volume": 41149900
+      },
+      "currency": "USD",
+      "identity": "Alphabet Inc.",
+      "retrieved_at_utc": "2026-11-06T20:18:08.207789+00:00"
+    },
+    "IUSQ.DE": {
+      "bar": {
+        "close": 106.31999969482422,
+        "open": 108.72000122070312,
+        "volume": 176379
+      },
+      "currency": "EUR",
+      "identity": "iShares MSCI All Country World UCITS ETF USD Acc",
+      "retrieved_at_utc": "2026-11-06T20:18:08.785373+00:00"
+    },
+    "META": {
+      "bar": {
+        "close": 605.0800170898438,
+        "open": 632.2999877929688,
+        "volume": 28676200
+      },
+      "currency": "USD",
+      "identity": "Meta Platforms, Inc.",
+      "retrieved_at_utc": "2026-11-06T20:18:08.711413+00:00"
+    },
+    "MSFT": {
+      "bar": {
+        "close": 535.9299926757812,
+        "open": 554.9400024414062,
+        "volume": 42507900
+      },
+      "currency": "USD",
+      "identity": "Microsoft Corporation",
+      "retrieved_at_utc": "2026-11-06T20:18:08.133942+00:00"
+    },
+    "NVDA": {
+      "bar": {
+        "close": 181.60000610351562,
+        "open": 196.07000732421875,
+        "volume": 306127800
+      },
+      "currency": "USD",
+      "identity": "NVIDIA Corporation",
+      "retrieved_at_utc": "2026-11-06T20:18:08.041906+00:00"
+    },
+    "SPCX": {
+      "bar": {
+        "close": 123.62000274658203,
+        "open": 131.33999633789062,
+        "volume": 171356200
+      },
+      "currency": "USD",
+      "identity": "Space Exploration Technologies Corp.",
+      "retrieved_at_utc": "2026-11-06T20:18:08.487462+00:00"
+    },
+    "TSLA": {
+      "bar": {
+        "close": 343.69000244140625,
+        "open": 374.1199951171875,
+        "volume": 79675500
+      },
+      "currency": "USD",
+      "identity": "Tesla, Inc.",
+      "retrieved_at_utc": "2026-11-06T20:18:08.634995+00:00"
+    },
+    "TSM": {
+      "bar": {
+        "close": 353.1000061035156,
+        "open": 379.75,
+        "volume": 43030700
+      },
+      "currency": "USD",
+      "identity": "Taiwan Semiconductor Manufacturing Company Limited",
+      "retrieved_at_utc": "2026-11-06T20:18:08.416073+00:00"
+    }
+  },
+  "sha256": "26e32a42af85b111097b8ab3c8b34fcde83e3ecf5604f9ae630b839a57c78487",
+  "source": "YAHOO_CHART_DELAYED"
+}
