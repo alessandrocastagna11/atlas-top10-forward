@@ -1,7 +1,7 @@
 {
   "base_date": "2024-01-01",
   "cached_required_quotes_complete": true,
-  "checked_at_utc": "2026-11-06T16:50:28.018581+00:00",
+  "checked_at_utc": "2026-11-06T17:21:44.092958+00:00",
   "data_ready_for_confidence70_model": false,
   "dataset_use": "FORWARD_RESEARCH_NOT_PIT_CERTIFIED",
   "forward_universe": {
@@ -26,7 +26,7 @@
   "quotes_cache_status": "ALL_ACTIVE_SYMBOLS_HAVE_SOME_DATA",
   "reason_not_model_ready": "PIT validated forward USA100 rankings, RoW issuer scores, full technical features, independent daily FX provenance and true engine forward signal still missing",
   "required_symbols_fresh_7_calendar_days": 558,
-  "round_robin_cursor": 279,
+  "round_robin_cursor": 20,
   "source": "Yahoo Chart unofficial",
   "total_candidate_symbols": 559,
   "verified_terminal_delisted_symbols": [
