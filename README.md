@@ -5,7 +5,19 @@ Questo progetto contiene un motore **eseguibile** per due simulazioni separate, 
 - `MA10_Official`: regola A congelata, prezzo finale mensile IUSQ rispetto alla sua SMA10, banda ±1%.
 - `MA6_MA12_Challenger`: regola alternativa da testare in **parallelo**, SMA6 vs SMA12 con banda ±1%, senza modificare la strategia ufficiale. Il suo primo segnale è `PENDING` finché non sono disponibili 12 chiusure mensili verificabili.
 
-Il benchmark per **entrambe** è `IUSQ.DE` (ETF MSCI ACWI in EUR ad accumulazione), conto virtuale parallelo da 10.000 €. Tutte le date di ingresso sono legate a reali prezzi di chiusura, e **il primo ordine può avvenire non prima del 4 novembre 2026**. I prezzi inesistenti non vengono stimati; se una fonte manca, il portafoglio resta in attesa. L'algoritmo non invia ordini ad alcun broker.
+Il benchmark per **entrambe** è `IUSQ.DE` (ETF MSCI ACWI in EUR ad accumulazione), conto virtuale parallelo da 10.000 €. Tutte le date di ingresso sono legate a reali prezzi di chiusura, e **il primo ordine ufficiale nel nuovo lancio pre-registrato è previsto non prima del 9 novembre 2026**. I prezzi inesistenti non vengono stimati; se una fonte manca, il portafoglio resta in attesa. L'algoritmo non invia ordini ad alcun broker.
+
+## Forward operativo — decisione congelata il 6 novembre 2026
+
+**GitHub Actions è già attivo sul ramo main.** Sono due conti virtuali INDIPENDENTI da 10.000 € ciascuno, senza operazioni reali. Il 6/11/2026 il file [reports/launch_intent.json](reports/launch_intent.json) ha pre-registrato i 10 titoli, il paniere originale, la strategia A (MA10), la strategia B (MA6/MA12), le impronte del codice/configurazione e i segnali **RISK_ON** basati sulla chiusura di ottobre. Questo impedisce di decidere l'acquisto DOPO aver visto i prezzi di esecuzione.
+
+Il mercato saudita (Aramco) è aperto da domenica a giovedì, mentre Xetra e USA negoziano da lunedì a venerdì: il 6 novembre (venerdì) **non** esiste una chiusura comune, dunque **nessun ordine iniziale deve essere attribuito a venerdì**. La prima data autorizzata è **lunedì 9 novembre 2026**; se manca anche un solo close verificabile o un cambio necessario, il programma aspetta la successiva seduta comune fino a giovedì 12 novembre. Se anche questa finestra fallisce, occorre un nuovo intento prospettico; non si inventano riempimenti passati.
+
+Il sistema usa prezzi di chiusura pubblicati e simula un **market-on-close PAPER**, non un'esecuzione di broker garantita. L'intento è firmato con l'impronta Git blob di entrambe le configurazioni e dei conti ancora vuoti; ogni divergenza dei dati iniziali o del segnale mensile blocca la prima operazione. Viene verificata anche l'identità SpaceX/SPCX e la valuta di Aramco e del benchmark. Il monitor di drawdown è espositivo e non cambia automaticamente l'allocazione.
+
+[Stato dei due conti](reports/latest_status.json) · [Report giornaliero](reports/latest.md) · [Cronologia dei workflow](https://github.com/alessandrocastagna11/atlas-top10-forward/actions).
+
+**Studio delle alternative (non valida un nuovo rendimento atteso):** nel backtest-proxy 2016–2025 MA6/MA12 otteneva circa 13,59% CAGR e MA10 9,55%, con max drawdown rispettivamente circa −28,71% e −25,27%; la versione Adaptive Risk aveva più di 500 operazioni e CAGR inferiore. I ranking e gli indici storici di quel test **non sono certificati PIT** e non coincidono completamente con il forward, quindi la variante MA6/MA12 resta un challenger separato e non viene promossa a vincitrice sul solo backtest. [Limiti metodologici](backtests/v08_close_proxy/FINAL_REPORT.md).
 
 ## Come farlo funzionare
 
@@ -21,9 +33,9 @@ python daily_runner.py
 
 Il programma scarica barre giornaliere di tutti i titoli, IUSQ, EUR/USD ed EUR/SAR. Aggiorna i file `strategies/*/state.json`, `daily_nav.csv`, `orders.csv`, `quotes_audit.csv`, `dashboard.html`; crea `reports/latest.md`, `reports/latest_status.json` e `market_data/latest_snapshot.json` (contenente data e impronta SHA-256 della fonte). Ripetendo il comando sulla stessa data **non si duplicano operazioni**. Il sistema tenta di recuperare i giorni saltati.
 
-**Il codice non può aggiornarsi da solo a computer spento.** La cartella `.github/workflows/atlas-daily.yml` contiene la pianificazione GitHub Actions. Per abilitarla, creare un repository GitHub **privato**, copiare il contenuto di questa cartella nella root del repository, abilitare Actions e i permessi di scrittura dei workflow. La pagina dashboard **non richiede GitHub Pages**: si può aprire come file locale dalla cartella. GitHub Actions salva quotidianamente nel repository i ledger aggiornati; se il servizio quote è indisponibile, salva soltanto il rapporto `PENDING_DATA`, senza inventare esecuzioni. La schedulazione di GitHub può subire ritardi.
+**Il sistema gira sul cloud GitHub Actions anche a computer spento.** La cartella `.github/workflows/atlas-daily.yml` contiene la pianificazione GitHub Actions, già abilitata sul repository. La pagina dashboard **non richiede GitHub Pages**: si può aprire come file locale dalla cartella. GitHub Actions salva quotidianamente nel repository i ledger aggiornati; se il servizio quote è indisponibile, salva soltanto il rapporto `PENDING_DATA`, senza inventare esecuzioni. La schedulazione di GitHub può subire ritardi.
 
-Il report automatico ChatGPT già attivo alle 23:30 ora italiana è **separato dall'esecuzione di questo codice**. Per fare in modo che riporti esattamente il patrimonio aggiornato da GitHub Actions bisogna rendere accessibili al processo del report i registri del repository o fornire periodicamente i CSV. L'automazione non esegue in autonomia il file ZIP allegato.
+Il report automatico ChatGPT è attivo alle **09:30 ora italiana** ed è **separato dall'esecuzione di questo codice**. Controlla i registri GitHub aggiornati da Actions; non invia ordini e non fabbrica quotazioni mancanti.
 
 ### Rapporto giornaliero
 
