@@ -27,6 +27,19 @@ class ProviderTests(unittest.TestCase):
         data={'ABC':{D('2026-11-15'):Bar(D('2026-11-15'),1,2,'USD','ABC','m')},
               'EURUSD=X':{D('2026-11-05'):Bar(D('2026-11-05'),1,1.2,'USD','EURUSD=X','fx')}}
         with self.assertRaises(DataUnavailable):InMemory(data).eur_quote('ABC',D('2026-11-15'),'close')
+    def test_valuation_uses_published_prior_close_for_holiday(self):
+        data={'JP.T':{D('2026-11-05'):Bar(D('2026-11-05'),200,205,'JPY','JP.T','oldjp')},
+              'EURJPY=X':{D('2026-11-05'):Bar(D('2026-11-05'),160,160,'JPY','EURJPY=X','oldfx'),
+                          D('2026-11-06'):Bar(D('2026-11-06'),170,170,'JPY','EURJPY=X','newfx')}}
+        result=InMemory(data).latest_published_eur_quote('JP.T',D('2026-11-06'))
+        self.assertEqual(result['valuation_quote_session'],'2026-11-05')
+        self.assertEqual(result['valuation_staleness_days'],1)
+        self.assertFalse(result['is_exact_valuation_session'])
+        self.assertAlmostEqual(result['price_eur'],205/160)
+    def test_valuation_rejects_stale_market(self):
+        data={'ABC':{D('2026-10-28'):Bar(D('2026-10-28'),10,11,'EUR','ABC','x')}}
+        with self.assertRaises(DataUnavailable):
+            InMemory(data).latest_published_eur_quote('ABC',D('2026-11-06'),max_age_days=5)
     def test_pence_metadata_factor(self):
         data={'ABC.L':{D('2026-11-05'):Bar(D('2026-11-05'),200,202,'GBP','ABC.L','m',0.01)},
               'EURGBP=X':{D('2026-11-05'):Bar(D('2026-11-05'),0.8,0.8,'GBP','EURGBP=X','fx')}}
