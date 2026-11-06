@@ -149,7 +149,7 @@ def universe_snapshot(today):
     csv_write(latest,allrows,fields)
     return allrows,meta
 
-FIELDS=['date','symbol','open','close','volume','currency','unit_scale','source_sha256']
+FIELDS=['date','symbol','open','close','volume','currency','unit_scale','source_sha256','first_seen_at_utc','last_verified_at_utc']
 def update_history(provider,symbol,kind,today,base_date,overlap_days=10):
     folder=DATA/kind
     file=folder/symbol_filename(symbol)
@@ -170,14 +170,23 @@ def update_history(provider,symbol,kind,today,base_date,overlap_days=10):
         # The dataset must not promote an intraday partial candle to a final close.
         ny=dt.datetime.now(dt.timezone.utc).astimezone(NY)
         north_america=('.' not in symbol or symbol.endswith(('.TO','.V')))
-        if kind=='prices' and north_america and d==ny.date() and ny.time()<dt.time(17,30):
+        if d==ny.date() and ny.time()<dt.time(17,30) and (
+                kind=='fx' or (kind=='prices' and north_america)):
+            # A daily FX observation can still be provisional before the
+            # New York 17:00 FX rollover. Conservative 17:30 release guard.
+            # Do NOT write partial intraday values as completed EOD.
             continue
+        observed=dt.datetime.now(dt.timezone.utc).isoformat()
         row={'date':d.isoformat(),'symbol':symbol,'open':format(b.open,'.10g'),
             'close':format(b.close,'.10g'),'volume':format(b.volume,'.10g'),'currency':b.currency,
-            'unit_scale':str(b.unit_scale),'source_sha256':b.source_sha256}
+            'unit_scale':str(b.unit_scale),'source_sha256':b.source_sha256,
+            'first_seen_at_utc':observed,'last_verified_at_utc':observed}
         prev=old.get(row['date'])
         if prev is None:old[row['date']]=row;inserted+=1
         elif any(prev.get(k)!=row[k] for k in ('open','close','currency','unit_scale')):
+            # First observed timestamp survives provider revision. Missing
+            # timestamps in older cached rows remain explicitly UNKNOWN.
+            row['first_seen_at_utc']=prev.get('first_seen_at_utc','')
             revised+=1
             # Preserve the prior observation for audit, then replace revised provider bar.
             audit=DATA/'audit'/'revisions.csv'
@@ -190,6 +199,8 @@ def update_history(provider,symbol,kind,today,base_date,overlap_days=10):
             old[row['date']]=row
         elif prev.get('volume','')!=row['volume']:
             # The first backfill provides daily volume for liquidity filters.
+            row['first_seen_at_utc']=prev.get('first_seen_at_utc','')
+            row['last_verified_at_utc']=prev.get('last_verified_at_utc','')
             old[row['date']]=row;upgraded+=1
     ordered=[old[d] for d in sorted(old)]
     if inserted or revised or upgraded or not file.exists():csv_write(file,ordered,FIELDS)
@@ -289,7 +300,9 @@ def main():
           'original_288_symbols_cached':sum(x in price_set for x in historic),
           'original_288_symbols_missing':missing,'fx_symbols_cached':len(required_fx_set & cached_fx_set),
           'fx_symbols_expected':len(required_fx_set),'fx_symbols_missing_required':missing_fx,
-          'fx_validation':'YAHOO_SPOT_UNOFFICIAL_NOT_HISTORICAL_PIT',
+          'fx_validation':'YAHOO_DAILY_EOD_AFTER_NY_1730_NO_ANNUAL_INTERPOLATION_NOT_HISTORICAL_PIT',
+          'fx_partial_daily_bar_blocked':True,
+          'fx_observation_provenance':'first_seen_at_utc on newly inserted rows; legacy blanks not retroactively certified',
           'provider_errors':errors,
           'data_ready_for_confidence70_model':False,
           'reason_not_model_ready':'PIT validated forward USA100 rankings, RoW issuer scores, full technical features, independent daily FX provenance and true engine forward signal still missing'}
