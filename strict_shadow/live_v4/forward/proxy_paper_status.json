@@ -1,7 +1,7 @@
 {
   "capital_initial_eur": 10000.0,
   "cash_eur": 7603.92,
-  "checked_at_utc": "2026-11-06T22:38:49.338708+00:00",
+  "checked_at_utc": "2026-11-06T22:40:36.234492+00:00",
   "executed_decisions": 1,
   "historical_engine_equivalent": false,
   "model_variant": "V4_CONF70_FORWARD_COHORT_PROXY_V1",

@@ -3,11 +3,11 @@
     "close_local": 152.3699951171875,
     "currency": "USD",
     "session": "2026-11-06",
-    "source_sha256": "62e06cf240e6c8a333d92d27969497b13f78670ec1df8bf0dc17cc0a2f3ab2ed",
+    "source_sha256": "53411506cc5403ba11fe315e7dc1bddec21ae3ca458b538684f3fb2a7e251d0e",
     "symbol": "ACWI"
   },
   "capital_initial_eur": 10000.0,
-  "checked_at_utc": "2026-11-06T22:38:50.846979+00:00",
+  "checked_at_utc": "2026-11-06T22:40:38.091781+00:00",
   "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
   "executed_decisions": 0,
   "historical_replay_parity": "REPLAY_DIFFERS_FROM_ORIGINAL",
