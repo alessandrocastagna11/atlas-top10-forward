@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/atlas-daily.yml'
       - 'daily_runner.py'
+      - 'reports/launch_intent.json'
       - 'verified_quotes.py'
       - 'market_data/verified_quotes.json'
       - 'engine.py'
@@ -43,7 +44,7 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
       - run: python -m pip install -r requirements.txt
-      - name: Regression tests for original v0.7 (23 checks)
+      - name: Regression tests for original v0.7 and prospective launch guards
         run: python -m unittest test_engine test_daily_runner -q
       - name: Synthetic v0.8 tests (29 checks)
         run: python -m unittest discover -s v08/tests -p 'test_*.py' -q
@@ -106,7 +107,7 @@ jobs:
                   pending=len(r.get('pending_tasks',[]))
                   last_date=r.get('last_verified_valuation',r.get('last_nav_date','unknown'))
                   lines.append(f'- {name}: **{status}**; last NAV={last_date}; capital={nav}; orders={cnt}; pending opens={pending}; missing close={issues or "none"}')
-                  if status in ('PENDING_DATA','PENDING_FIRST_REAL_CLOSE','PENDING_ORDERS','PENDING_FIRST_OPEN','WAITING_NEXT_LIVE_SESSION'):
+                  if status in ('PENDING_DATA','PENDING_FIRST_REAL_CLOSE','PENDING_ORDERS','PENDING_FIRST_OPEN','WAITING_NEXT_LIVE_SESSION','WAITING_PRECOMMITTED_COMMON_SESSION'):
                       print(f'::warning title=Atlas not yet tradable::{name} date={date}; state={status}; last NAV={last_date}; pending={pending}; missing exact={issues or "none"}')
               lines.append('')
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a',encoding='utf-8') as fh:
