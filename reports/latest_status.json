@@ -1,14 +1,14 @@
 {
   "asof": "2026-11-05",
   "source": "YAHOO_CHART",
-  "digest_sha256": "a72bdd4ef0d597a0cbd543c0636f355286ff2383933f27e41265bd576274cd67",
+  "digest_sha256": "b88bc68e0dd1e79290e4e60e55615b902726c062466fe53b38109d2faa8a1fdc",
   "results": {
     "MA10_Official": {
       "price_freshness": "EXACT",
       "engine": "Atlas Top 10 Global A — MA10_Official",
       "asof_requested": "2026-11-05",
       "last_verified_valuation": "2026-11-03",
-      "report_status": "WAITING_NEXT_LIVE_SESSION",
+      "report_status": "WAITING_PRECOMMITTED_COMMON_SESSION",
       "source_status": "PENDING_FIRST_REAL_CLOSE",
       "initialized": false,
       "virtual_capital_start_eur": 10000.0,
@@ -142,14 +142,15 @@
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         }
       ],
-      "last_update_source": "Yahoo daily chart (delayed), provider time stamped; cash 0%"
+      "last_update_source": "Yahoo daily chart (delayed), provider time stamped; cash 0%",
+      "launch_guard": "WAITING_PRECOMMITTED_COMMON_SESSION"
     },
     "MA6_MA12_Challenger": {
       "price_freshness": "EXACT",
       "engine": "Atlas Top 10 Global A — MA6_MA12_Challenger",
       "asof_requested": "2026-11-05",
       "last_verified_valuation": "2026-11-03",
-      "report_status": "WAITING_NEXT_LIVE_SESSION",
+      "report_status": "WAITING_PRECOMMITTED_COMMON_SESSION",
       "source_status": "PENDING_FIRST_REAL_CLOSE",
       "initialized": false,
       "virtual_capital_start_eur": 10000.0,
@@ -283,7 +284,8 @@
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         }
       ],
-      "last_update_source": "Yahoo daily chart (delayed), provider time stamped; cash 0%"
+      "last_update_source": "Yahoo daily chart (delayed), provider time stamped; cash 0%",
+      "launch_guard": "WAITING_PRECOMMITTED_COMMON_SESSION"
     }
   }
 }
