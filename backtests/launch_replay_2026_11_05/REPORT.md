@@ -12,7 +12,7 @@ ammissibile con il paniere v0.7 attuale riguarda il 4–5 novembre, non il 2025.
 | MA10_Official | COMPLETE_DIAGNOSTIC | 9,426.76 | 9,752.30 | -5.732% | 10 | 10.00 |
 | MA6_MA12_Challenger | COMPLETE_DIAGNOSTIC | 9,426.76 | 9,752.30 | -5.732% | 10 | 10.00 |
 
-Fonte: `market_data/latest_snapshot.json`; hash sha256 dei dati: `2d7c422e68d383299b057ba0503e271dc861bc5d93d02944a240c2eb703a1c58`.
+Fonte: `market_data/latest_snapshot.json`; hash sha256 dei dati: `0f950f5e542aa75f90e1555d59f1c6f01da5a7752080163fe6d93c312de317e3`.
 
 IUSQ.DE del 5 novembre proviene dal singolo snapshot Yahoo: contrasto con altre fonti
 non risolto. Esecuzioni storiche dei soli prezzi di CLOSE, non prove di eseguibilità.
