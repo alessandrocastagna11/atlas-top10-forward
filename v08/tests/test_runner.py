@@ -43,6 +43,32 @@ class RunnerTests(unittest.TestCase):
         res=r.replay('2026-11-06',d)
         self.assertEqual(len(r.load('MA10_Open')['orders']),0)
         self.assertTrue(all(o.get('date')!='2026-11-05' for o in r.load('MA10_Open')['orders']))
+    def test_delayed_replay_never_executes_prior_open_orders(self):
+        d=fixture()
+        # First run on Nov 5: benchmark missing; queue targets but don't trade.
+        d[e.BENCH]['bars'].pop('2026-11-05')
+        first=r.replay('2026-11-05',d)
+        self.assertEqual(first['MA10_Open']['orders'],0)
+        self.assertEqual(len(r.load('MA10_Open')['pending']),10)
+        # Yahoo publishes both Nov 5 and Nov 6 late, on Nov 7. Replay may
+        # update the risk state but must NOT pretend the Nov 6 open was traded.
+        d=fixture()
+        late=r.replay('2026-11-06',d,allow_initial_trade=False)
+        self.assertEqual(late['MA10_Open']['orders'],0)
+        self.assertEqual(r.load('MA10_Open')['benchmark']['shares'],0)
+        self.assertEqual(len(r.load('MA10_Open')['pending']),10)
+        self.assertFalse(any(t['date']=='2026-11-06' for t in r.load('MA10_Open')['orders']))
+
+    def test_current_session_can_fill_previous_pending_orders(self):
+        d=fixture()
+        d[e.BENCH]['bars'].pop('2026-11-05')
+        r.replay('2026-11-05',d)
+        d=fixture()
+        current=r.replay('2026-11-06',d,allow_initial_trade=True)
+        self.assertGreater(current['MA10_Open']['orders'],0)
+        self.assertGreater(r.load('MA10_Open')['benchmark']['shares'],0)
+        self.assertTrue(all(t['date']=='2026-11-06' for t in r.load('MA10_Open')['orders']))
+
     def test_cached_history_plus_verified_quote_resolves_feed_outage(self):
         d=fixture()
         for sym in d:
