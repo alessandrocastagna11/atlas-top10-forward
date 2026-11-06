@@ -31,6 +31,13 @@ def status(now=None,root=ROOT,require_model=False):
     proxy=read_json(root/'forward/proxy_paper_status.json')
     ecb_data=(ecb.get('status')=='ECB_REFERENCE_UPDATED')
     refcurr=int(ecb.get('currencies_with_history',0))
+    ecb_stale=[]
+    for currency,coverage in ecb.get('currency_coverage',{}).items():
+        try:
+            if (now.date()-dt.date.fromisoformat(coverage['last'])).days>14:
+                ecb_stale.append(currency)
+        except (ValueError,TypeError,KeyError):ecb_stale.append(currency)
+    signal=read_json(root/'forward/latest_status.json')
     rotype=universe.get('type','UNKNOWN')
     # Current iShares holdings are a useful prospective cohort but NOT
     # contemporaneous company market-cap ranks for historical Confidence70.
@@ -40,7 +47,7 @@ def status(now=None,root=ROOT,require_model=False):
     pending=list(REQUIREMENTS)
     return {'checked_at_utc':now.isoformat(),'workflow':'PAPER_ONLY',
             'real_money_authorized':False,'original_confidence70_model_ready':False,
-            'research_proxy_model_ready':dataset.get('quotes_cache_status')=='ALL_ACTIVE_SYMBOLS_HAVE_SOME_DATA',
+            'research_proxy_model_ready':signal.get('status')=='RESEARCH_SIGNAL_READY',
             'research_proxy_execution_status':proxy.get('status','UNKNOWN'),
             'research_proxy_orders':int(proxy.get('orders_count',0)),
             'research_proxy_nav_eur':proxy.get('valuation',{}).get('nav_eur'),
@@ -50,6 +57,7 @@ def status(now=None,root=ROOT,require_model=False):
             'universe_ranking_type':rotype,
             'FX':{'ecb_daily_reference_available':ecb_data,
                   'ecb_currencies_with_history':refcurr,
+                  'ecb_currencies_stale_over_14_days':sorted(ecb_stale),
                   'ecb_retroactive_archive_not_original_vintage':True,
                   'annual_interpolated_fx_allowed_in_pit_engine':False,
                   'yahoo_execution_fx_separately_sourced':True},
