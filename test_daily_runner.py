@@ -124,6 +124,17 @@ class DailyTests(unittest.TestCase):
         self.assertEqual(r['report_status'],'PENDING_DATA')
         st=json.loads((self.folder/'state.json').read_text())
         self.assertEqual(st['last_update'],'2026-11-03')
+    def test_frozen_prelaunch_signal_mismatch_blocks_all_orders(self):
+        # Synthetic history says MA10 is risk-on, while a stale/falsified
+        # launch attestation says risk-off. No portfolio can initialize.
+        data=synthetic()
+        result=dr.do_strategy(self.folder,'2026-11-05',data,
+                              allow_initial_trade=True,expected_initial_risk=False)
+        self.assertEqual(result['order_count'],0)
+        self.assertFalse(result['initialized'])
+        self.assertEqual(result['report_status'],'PENDING_DATA')
+        self.assertIn('SIGNAL_DIFFERS_FROM_PRECOMMITTED_OCTOBER_REGIME',
+                      str(result['execution_attempts_blocked']))
     def test_challenger_independent_12months(self):
         (self.folder/'config.json').write_bytes((CHALLENGER/'config.json').read_bytes())
         (self.folder/'state.json').write_bytes((CHALLENGER/'state.json').read_bytes())
