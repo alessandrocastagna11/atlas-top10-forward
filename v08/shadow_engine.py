@@ -271,7 +271,7 @@ def benchmark_entry(state,data,day):
     bench['cash']=0.
 
 
-def advance(state,data,day,roster=BASKET,roster_verified=True):
+def advance(state,data,day,roster=BASKET,roster_verified=True,allow_fills=True):
     """Apply one market day atomically by caller deepcopy. No backfilled trades."""
     if day<=state['last_date']:return None
     if not any(day in data[s]['bars'] for s in BASKET+[BENCH]):return None
@@ -312,11 +312,11 @@ def advance(state,data,day,roster=BASKET,roster_verified=True):
     # Split occurs BEFORE market open. The pending share budget was calculated
     # at the previous close and is unaffected by the post-split share count.
     apply_events(state,data,day)
-    if day>=FIRST_DAY:
+    if day>=FIRST_DAY and allow_fills:
         benchmark_entry(state,data,day)
     # Do not start the simulated stock portfolio before the comparable
     # benchmark has its first actual EUR session/open.
-    if state['pending'] and state['benchmark']['shares']:
+    if allow_fills and state['pending'] and state['benchmark']['shares']:
         fill_tasks(state,data,day)
     positions=value_positions(state,data,day) if state['positions'] else {}
     equity=sum(positions.values())
