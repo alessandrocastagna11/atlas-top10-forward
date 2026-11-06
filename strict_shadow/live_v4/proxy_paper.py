@@ -136,9 +136,16 @@ def execute(now=None,provider=None):
             eligible=[d for d in hist if d<=ny.date() and (d!=ny.date() or ny.time()>=dt.time(17,30))]
             if not eligible:raise DataUnavailable('benchmark EOD unavailable')
             session=max(eligible)
-            quotes={t:provider.eur_quote(p['market_symbol'],session,'close')['price_eur']
+            valuation_audit={t:provider.latest_published_eur_quote(
+                    p['market_symbol'],session,max_age_days=5)
                     for t,p in state['holdings'].items()}
+            quotes={t:q['price_eur'] for t,q in valuation_audit.items()}
             result['valuation']=mark(state,quotes,session)
+            result['valuation_sources']={t:{k:q[k] for k in
+                    ('symbol','valuation_quote_session','valuation_staleness_days','fx_session','market_sha256')
+                    if k in q} for t,q in valuation_audit.items()}
+            result['valuation_non_exact_markets']=[
+                t for t,q in valuation_audit.items() if not q['is_exact_valuation_session']]
         except (DataUnavailable,PaperBlocked) as e:
             result['valuation_status']='PENDING_VALUATION';result['valuation_reason']=str(e)[:200]
     else:
