@@ -104,6 +104,26 @@ class YahooChart:
             a=last_close('EURUSD=X'); b=last_close('USDSAR=X')
             return a.close*b.close,{'fx_symbol':'EURUSD=X*USDSAR=X','fx_session':str(min(a.session,b.session)),'fx_sha256':a.source_sha256+':'+b.source_sha256}
 
+    def latest_published_eur_quote(self,symbol,asof,max_age_days=5):
+        """Mark a mixed-exchange holding at its last *published* closing bar.
+
+        A market holiday or different venue weekend cannot be treated as an
+        execution. This function is valuation-only; execution still requires
+        an EXACT exchange-local session and checks the precommitted signal.
+        """
+        cutoff=_date(asof)
+        bars=self.history(symbol,cutoff-dt.timedelta(days=max_age_days+5),cutoff)
+        valid=[day for day in bars if day<=cutoff]
+        if not valid:raise DataUnavailable('No previous published close for '+symbol)
+        day=max(valid)
+        age=(cutoff-day).days
+        if age>max_age_days:
+            raise DataUnavailable(f'Stale published close for {symbol}: {day} vs {cutoff}')
+        result=self.eur_quote(symbol,day,'close')
+        result.update({'valuation_cutoff':str(cutoff),'valuation_quote_session':str(day),
+                       'valuation_staleness_days':age,'is_exact_valuation_session':day==cutoff})
+        return result
+
     def eur_quote(self,symbol,session,field):
         if field not in ('open','close'):raise ValueError('only open or close')
         bar=self.bar(symbol,session)
