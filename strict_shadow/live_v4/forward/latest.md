@@ -10,4 +10,4 @@ No broker access. Original exact V4 paper account is unchanged.
 Latest decision session: 2026-11-05
 Targets: 0
 Exposure: 0%
-Issue: Insufficient verified 252-session+volume history: USA 37 / ROW 85
+Issue: Insufficient verified 252-session+volume history: USA 37 / ROW 83

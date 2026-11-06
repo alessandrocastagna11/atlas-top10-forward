@@ -1,8 +1,8 @@
 {
-  "checked_at_utc": "2026-11-06T06:35:18.130284+00:00",
+  "checked_at_utc": "2026-11-06T09:52:55.334505+00:00",
   "decision_session": "2026-11-05",
   "eligible_feature_history": {
-    "row": 85,
+    "row": 83,
     "universe_candidates": 300,
     "usa": 37
   },
@@ -10,6 +10,6 @@
   "mode": "RESEARCH_PROXY_PAPER_ONLY",
   "model_variant": "V4_CONF70_FORWARD_COHORT_PROXY_V1",
   "real_broker_orders": 0,
-  "reason": "Insufficient verified 252-session+volume history: USA 37 / ROW 85",
+  "reason": "Insufficient verified 252-session+volume history: USA 37 / ROW 83",
   "status": "PENDING_FORWARD_DATA"
 }
