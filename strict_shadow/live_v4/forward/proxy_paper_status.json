@@ -1,14 +1,14 @@
 {
   "capital_initial_eur": 10000.0,
   "cash_eur": 10000.0,
-  "checked_at_utc": "2026-11-06T17:21:44.194489+00:00",
+  "checked_at_utc": "2026-11-06T17:23:17.085803+00:00",
   "executed_decisions": 0,
   "historical_engine_equivalent": false,
   "model_variant": "V4_CONF70_FORWARD_COHORT_PROXY_V1",
   "orders_count": 0,
   "real_money_orders": 0,
-  "reason": "next execution session is not complete",
-  "status": "PENDING_EXECUTION_QUOTES",
+  "reason": "signal was produced after earliest global opening cutoff",
+  "status": "BLOCKED_PROXY_EXECUTION",
   "valuation": {
     "cash_eur": 10000.0,
     "nav_eur": 10000.0,

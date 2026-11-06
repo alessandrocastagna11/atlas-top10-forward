@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-11-06T17:21:44.290032+00:00",
+  "checked_at_utc": "2026-11-06T17:23:17.196754+00:00",
   "decision_session": "2026-11-05",
   "eligible_feature_history": {
     "eligibility": "POST_TREND_MOMENTUM_LIQUIDITY_AND_FX_FILTERS",
@@ -14,7 +14,7 @@
   "model_variant": "V4_CONF70_FORWARD_COHORT_PROXY_V1",
   "notes": "Research proxy; not frozen H4 V4 Confidence70 exact engine",
   "num_targets": 10,
-  "pending_execution_session": "2026-11-09",
+  "pending_execution_session": "2026-11-06",
   "real_broker_orders": 0,
   "roster_date": "2026-11-03",
   "signal_session": "2026-11-05",
