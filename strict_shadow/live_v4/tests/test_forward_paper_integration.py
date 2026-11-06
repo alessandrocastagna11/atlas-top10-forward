@@ -16,6 +16,12 @@ class FakeProvider:
     def history(self,symbol,start,end):
         day=dt.date(2026,11,6)
         return {day:self.bar(symbol,day)}
+    def latest_published_eur_quote(self,symbol,asof,max_age_days=5):
+        result=self.eur_quote(symbol,asof,'close')
+        result.update({'valuation_quote_session':str(asof),'valuation_staleness_days':0,
+                       'is_exact_valuation_session':True,'fx_session':str(asof),
+                       'market_sha256':'test-market-digest'})
+        return result
 
 class ForwardPaperIntegration(unittest.TestCase):
     def test_no_trades_before_open_and_only_paper_after(self):
