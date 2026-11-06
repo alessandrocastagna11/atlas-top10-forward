@@ -150,6 +150,13 @@ def execute(now=None,provider=None):
             result['valuation_status']='PENDING_VALUATION';result['valuation_reason']=str(e)[:200]
     else:
         result['valuation']={'nav_eur':round(state['cash_eur'],2),'cash_eur':round(state['cash_eur'],2),'positions':0}
+    # A prospective, append-only (with explicit revisions) daily NAV series.
+    # A workflow retry for the same session must never become a new return.
+    if result.get('valuation',{}).get('session') and state['holdings']:
+        from forward_nav import record
+        _,summary=record(FORWARD/'proxy_nav_history.json',result['valuation'],
+                         result.get('valuation_sources',{}),now,state['initial_cash_eur'])
+        result['performance_forward']=summary
     json_save(FORWARD/'proxy_paper_status.json',result)
     lines=['# Atlas V4 forward — research PROXY paper account','',
            '**Status: '+result['status']+'**','',result['reason'],'',
