@@ -3,7 +3,7 @@
 **Capitale virtuale:** 10.000 € per ciascuna simulazione; nessun ordine reale.
 **Benchmark:** IUSQ.DE (MSCI ACWI ETF in EUR), conto virtuale indipendente.
 **Prezzi:** Yahoo daily end-of-day; nessuna esecuzione con prezzi ipotetici.
-**Impronta snapshot:** `26ee8e3693159b5f9d0f70c754ec1fc3dafdde2494652d03c806c611d09813b5`.
+**Impronta snapshot:** `acd0e81e8235d8c06898814b5bfe67c60549ec1394d979243c24cbdcdc8c429f`.
 
 | Strategia | Stato | NAV € | IUSQ € | Cum. % | IUSQ cum. % | Excess pp | Acquisti | Vendite |
 |---|---|---:|---:|---:|---:|---:|---:|---:|

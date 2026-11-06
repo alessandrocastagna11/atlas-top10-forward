@@ -2,7 +2,7 @@
   "kind": "RETROSPECTIVE_2_SESSION_LAUNCH_REPLAY_NOT_FORWARD",
   "cutoff": "2026-11-05",
   "data_source": "YAHOO_CHART",
-  "data_digest_sha256": "b88bc68e0dd1e79290e4e60e55615b902726c062466fe53b38109d2faa8a1fdc",
+  "data_digest_sha256": "26ee8e3693159b5f9d0f70c754ec1fc3dafdde2494652d03c806c611d09813b5",
   "retrospective_signal_only": true,
   "replay_with_future_knowledge_beyond_asof": false,
   "strategies": {
