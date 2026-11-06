@@ -92,6 +92,15 @@ def fetch_yahoo(symbol:str, start='2025-09-01',end=None)->dict:
         raise RuntimeError('Market data unavailable for '+symbol+'; '+'; '.join(errors))
     if data.get('error'):raise RuntimeError(f'{symbol} feed error {data["error"]}')
     result=data['result'][0];meta=result['meta'];tz=ZoneInfo(meta.get('exchangeTimezoneName') or 'UTC')
+    # A ticker is not an issuer identity. Reject a symbol-reuse or wrong
+    # exchange feed before it can silently corrupt the official paper ledger.
+    if symbol=='SPCX':
+        issuer=str(meta.get('longName') or meta.get('shortName') or '').lower()
+        if 'space exploration technologies' not in issuer and 'spacex' not in issuer:
+            raise RuntimeError('SPCX_IDENTITY_NOT_VERIFIED: '+issuer[:100])
+    expected={'SPCX':'USD','2222.SR':'SAR','IUSQ.DE':'EUR'}
+    if symbol in expected and str(meta.get('currency','')).upper()!=expected[symbol]:
+        raise RuntimeError('CURRENCY_OR_VENUE_MISMATCH: '+symbol)
     timestamps=result.get('timestamp') or []
     closes=result['indicators']['quote'][0]['close']
     bars={}
