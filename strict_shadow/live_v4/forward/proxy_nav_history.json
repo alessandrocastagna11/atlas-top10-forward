@@ -1,0 +1,14 @@
+{
+  "mode": "RESEARCH_PROXY_PAPER_ONLY",
+  "observations": [
+    {
+      "cash_eur": 7603.92,
+      "first_reported_utc": "2026-11-06T22:46:36.804669+00:00",
+      "nav_eur": 9989.61,
+      "positions": 8,
+      "quote_audit_sha256": "f2d67367458ab618aba92f2e975cb3a972c855b91f5a8881fd5eea002e4f8a1f",
+      "session": "2026-11-06"
+    }
+  ],
+  "schema_version": 1
+}
