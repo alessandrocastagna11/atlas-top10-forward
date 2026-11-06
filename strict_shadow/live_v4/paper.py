@@ -98,8 +98,16 @@ def validate_targets(snapshot):
     if w>0.99+1e-9 or any(x>0.30+1e-9 for x in sec.values()):raise PaperBlocked('exposure or sector cap breached')
     return {x['ticker']:x for x in targets}
 
-def execute_paper(state,snapshot,quotes,rebalance_fraction=0.05):
-    """Atomic next-session OPEN execution. quotes: {ticker: verified EUR opening price}."""
+def execute_paper(state,snapshot,quotes,rebalance_fraction=0.05,execution_price_kind='open'):
+    """Atomic PAPER execution at verified session price ('open' or locked US MOC 'close').
+
+    A closing-price fill requires a separately committed pre-close US MOC intent.
+    This method never fetches or invents the price and never sends broker orders.
+    """
+    if execution_price_kind not in ('open','close'):
+        raise PaperBlocked('unsupported paper execution price field')
+    if execution_price_kind=='close' and snapshot.get('execution_policy')!='US_MOC_LOCKED_PRE_CLOSE':
+        raise PaperBlocked('close fills require pre-close locked MOC intent')
     rebalance_fraction=finite(rebalance_fraction,'rebalance_fraction',0)
     if rebalance_fraction>0.1:raise PaperBlocked('rebalance threshold too large')
     old=validate_state(copy.deepcopy(state))
@@ -174,6 +182,10 @@ def execute_paper(state,snapshot,quotes,rebalance_fraction=0.05):
                        'tax_estimate_eur':0.,'cash_change_eur':round(-spend,6),
                        'signal_sha256':sig,'mode':'PAPER'})
     if len(holdings)>10 or cash<0.01*nav-1e-5:raise PaperBlocked('portfolio size or cash reserve')
+    if execution_price_kind=='close':
+        for order in orders:
+            order['reference_close_eur']=order.pop('reference_open_eur')
+            order['execution_price_kind']='close'
     old['cash_eur']=cash
     old['last_execution_session']=str(execution)
     old['orders'].extend(orders)
@@ -181,9 +193,13 @@ def execute_paper(state,snapshot,quotes,rebalance_fraction=0.05):
                              'signal_sha256':sig,'orders':len(orders)})
     new_nav=cash+sum(p['shares']*prices[t] for t,p in holdings.items())
     if new_nav<=0:raise PaperBlocked('bad posttrade NAV')
-    return old,{'execution_session':str(execution),'nav_at_open_eur':round(new_nav,2),
-                'cash_eur':round(cash,2),'orders_count':len(orders),
-                'order_ids_sha256':canonical_sha(orders),'signal_sha256':sig,'orders':orders}
+    receipt={'execution_session':str(execution),'nav_at_execution_eur':round(new_nav,2),
+             'execution_price_kind':execution_price_kind,'cash_eur':round(cash,2),
+             'orders_count':len(orders),'order_ids_sha256':canonical_sha(orders),
+             'signal_sha256':sig,'orders':orders}
+    if execution_price_kind=='open':
+        receipt['nav_at_open_eur']=round(new_nav,2)
+    return old,receipt
 
 def mark(state,close_quotes,session):
     st=validate_state(state)
