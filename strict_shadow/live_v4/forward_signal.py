@@ -11,7 +11,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from dataset_daily import DATA,rows_load,symbol_filename,atomic,json_save
-from paper import ENGINE
+from paper import ENGINE,earliest_open_utc
 ROOT=Path(__file__).resolve().parent
 FORWARD=ROOT/'forward'
 NY=ZoneInfo('America/New_York')
@@ -33,17 +33,20 @@ def next_weekday(session):
     x=session+dt.timedelta(days=1)
     while x.weekday()>=5:x+=dt.timedelta(days=1)
     return x
-def executable_session(decision,produced_at):
-    """First US weekday opening not already passed when the signal is produced.
+def executable_session(decision,produced_at,symbols=()):
+    """First weekday when this GLOBAL basket's earliest open is still future.
 
-    The real open is later audited by the provider. Never allow a signal
-    generated after the open to buy retroactively at that open.
+    Tokyo/Taipei/Sydney open before New York. A US pre-market signal is
+    NOT necessarily pre-open for an Asian equity. Use a 30-minute buffer.
+    Actual session and opening bars are verified separately by the provider.
     """
-    ny=produced_at.astimezone(NY)
+    stamp=produced_at.astimezone(dt.timezone.utc)
     planned=next_weekday(decision)
-    if planned<ny.date() or (planned==ny.date() and ny.time()>=dt.time(9,30)):
-        planned=next_weekday(ny.date())
-    return planned
+    for _ in range(12):
+        if stamp<earliest_open_utc(symbols,planned)-dt.timedelta(minutes=30):
+            return planned
+        planned=next_weekday(planned)
+    raise ValueError('Could not schedule a strictly future worldwide opening')
 def latest_roster(decision):
     root=DATA/'universe/snapshots';found=[]
     for p in root.glob('*/source.json'):
@@ -314,7 +317,7 @@ def generate(now=None):
         signal={'schema_version':'research-forward-1','engine_id':ENGINE,
                 'model_variant':VERSION,'historical_engine_equivalent':False,
                 'mode':'SHADOW','decision_session':str(decision),
-                'execution_session':str(executable_session(decision,now)),
+                'execution_session':str(executable_session(decision,now,[t['market_symbol'] for t in targets])),
                 'produced_at_utc':now.astimezone(dt.timezone.utc).isoformat(),
                 'risk_regime':'RISK_ON' if risk_on else 'DEFENSIVE_PROXY',
                 'target_exposure':sum(x['weight'] for x in targets),
