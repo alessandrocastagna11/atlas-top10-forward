@@ -11,9 +11,9 @@
   "dividend_events": [],
   "dividend_tax": 0.0,
   "first_trade_eligible": "2026-11-05",
-  "initialized": false,
-  "last_date": "2026-11-04",
-  "last_signal_month": "",
+  "initialized": true,
+  "last_date": "2026-11-05",
+  "last_signal_month": "2026-11",
   "nav": [
     {
       "benchmark": 10000.0,
@@ -26,10 +26,103 @@
       "orders": 0,
       "return_pct": 0.0,
       "status": "SEED"
+    },
+    {
+      "benchmark": 10000.0,
+      "benchmark_return_pct": 0.0,
+      "cash": 10000.0,
+      "date": "2026-11-05",
+      "exposure": 1.0,
+      "invested": 0,
+      "nav": 10000.0,
+      "orders": 0,
+      "return_pct": 0.0,
+      "status": "PENDING_ORDERS"
     }
   ],
   "orders": [],
-  "pending": [],
+  "pending": [
+    {
+      "budget_eur": 1000.0,
+      "created": "2026-11-05",
+      "full": false,
+      "reason": "initial or annual entrant",
+      "side": "BUY",
+      "symbol": "2222.SR"
+    },
+    {
+      "budget_eur": 1000.0,
+      "created": "2026-11-05",
+      "full": false,
+      "reason": "initial or annual entrant",
+      "side": "BUY",
+      "symbol": "AAPL"
+    },
+    {
+      "budget_eur": 1000.0,
+      "created": "2026-11-05",
+      "full": false,
+      "reason": "initial or annual entrant",
+      "side": "BUY",
+      "symbol": "AMZN"
+    },
+    {
+      "budget_eur": 1000.0,
+      "created": "2026-11-05",
+      "full": false,
+      "reason": "initial or annual entrant",
+      "side": "BUY",
+      "symbol": "GOOG"
+    },
+    {
+      "budget_eur": 1000.0,
+      "created": "2026-11-05",
+      "full": false,
+      "reason": "initial or annual entrant",
+      "side": "BUY",
+      "symbol": "META"
+    },
+    {
+      "budget_eur": 1000.0,
+      "created": "2026-11-05",
+      "full": false,
+      "reason": "initial or annual entrant",
+      "side": "BUY",
+      "symbol": "MSFT"
+    },
+    {
+      "budget_eur": 1000.0,
+      "created": "2026-11-05",
+      "full": false,
+      "reason": "initial or annual entrant",
+      "side": "BUY",
+      "symbol": "NVDA"
+    },
+    {
+      "budget_eur": 1000.0,
+      "created": "2026-11-05",
+      "full": false,
+      "reason": "initial or annual entrant",
+      "side": "BUY",
+      "symbol": "SPCX"
+    },
+    {
+      "budget_eur": 1000.0,
+      "created": "2026-11-05",
+      "full": false,
+      "reason": "initial or annual entrant",
+      "side": "BUY",
+      "symbol": "TSLA"
+    },
+    {
+      "budget_eur": 1000.0,
+      "created": "2026-11-05",
+      "full": false,
+      "reason": "initial or annual entrant",
+      "side": "BUY",
+      "symbol": "TSM"
+    }
+  ],
   "pending_roster": false,
   "positions": {},
   "schema": 8,
@@ -88,9 +181,23 @@
     }
   },
   "seed_date": "2026-11-04",
-  "signal_log": [],
+  "signal_log": [
+    {
+      "decision_asof": "2026-10-30",
+      "exposure": 1.0,
+      "fast_confirm": null,
+      "ma3": null,
+      "metric": 106.38666661580403,
+      "month": "2026-11",
+      "risk_on": true,
+      "signal_month": "2026-10",
+      "slow": 100.27750015258789,
+      "vol20_annual": null,
+      "vol_scale": null
+    }
+  ],
   "strategy": "MA6_MA12_Open",
-  "target_exposure": 0.0,
+  "target_exposure": 1.0,
   "tax_losses": [],
   "warnings": []
 }

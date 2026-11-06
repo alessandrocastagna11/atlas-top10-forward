@@ -1,5 +1,5 @@
 {
-  "asof": "2026-11-04",
+  "asof": "2026-11-05",
   "results": {
     "Adaptive_Risk": {
       "benchmark_cum_pct": 0.0,
@@ -13,17 +13,110 @@
       "errors": [],
       "estimated_div_tax_eur": 0.0,
       "excess_pp": 0.0,
-      "exposure_target": 0.0,
-      "last_nav_date": "2026-11-04",
-      "last_signal": null,
+      "exposure_target": 1.0,
+      "last_nav_date": "2026-11-05",
+      "last_signal": {
+        "decision_asof": "2026-10-30",
+        "exposure": 1.0,
+        "fast_confirm": true,
+        "ma3": 107.8933334350586,
+        "metric": 106.38666661580403,
+        "month": "2026-11",
+        "risk_on": true,
+        "signal_month": "2026-10",
+        "slow": 100.27750015258789,
+        "vol20_annual": 0.10878312926235709,
+        "vol_scale": 1.0
+      },
       "nav_eur": 10000.0,
       "orders": 0,
-      "pending_tasks": [],
+      "pending_tasks": [
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "2222.SR"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "AAPL"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "AMZN"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "GOOG"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "META"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "MSFT"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "NVDA"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "SPCX"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "TSLA"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "TSM"
+        }
+      ],
       "positions": 0,
       "realized_tax_eur": 0,
-      "requested_asof": "2026-11-04",
+      "requested_asof": "2026-11-05",
       "sells": 0,
-      "status": "PENDING_FIRST_OPEN",
+      "status": "PENDING_ORDERS",
       "top3_weight": 0,
       "venue_fees_eur": 0,
       "warnings": [],
@@ -41,17 +134,110 @@
       "errors": [],
       "estimated_div_tax_eur": 0.0,
       "excess_pp": 0.0,
-      "exposure_target": 0.0,
-      "last_nav_date": "2026-11-04",
-      "last_signal": null,
+      "exposure_target": 1.0,
+      "last_nav_date": "2026-11-05",
+      "last_signal": {
+        "decision_asof": "2026-10-30",
+        "exposure": 1.0,
+        "fast_confirm": null,
+        "ma3": null,
+        "metric": 108.26000213623047,
+        "month": "2026-11",
+        "risk_on": true,
+        "signal_month": "2026-10",
+        "slow": 101.75400009155274,
+        "vol20_annual": null,
+        "vol_scale": null
+      },
       "nav_eur": 10000.0,
       "orders": 0,
-      "pending_tasks": [],
+      "pending_tasks": [
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "2222.SR"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "AAPL"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "AMZN"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "GOOG"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "META"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "MSFT"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "NVDA"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "SPCX"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "TSLA"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "TSM"
+        }
+      ],
       "positions": 0,
       "realized_tax_eur": 0,
-      "requested_asof": "2026-11-04",
+      "requested_asof": "2026-11-05",
       "sells": 0,
-      "status": "PENDING_FIRST_OPEN",
+      "status": "PENDING_ORDERS",
       "top3_weight": 0,
       "venue_fees_eur": 0,
       "warnings": [],
@@ -69,17 +255,110 @@
       "errors": [],
       "estimated_div_tax_eur": 0.0,
       "excess_pp": 0.0,
-      "exposure_target": 0.0,
-      "last_nav_date": "2026-11-04",
-      "last_signal": null,
+      "exposure_target": 1.0,
+      "last_nav_date": "2026-11-05",
+      "last_signal": {
+        "decision_asof": "2026-10-30",
+        "exposure": 1.0,
+        "fast_confirm": null,
+        "ma3": null,
+        "metric": 106.38666661580403,
+        "month": "2026-11",
+        "risk_on": true,
+        "signal_month": "2026-10",
+        "slow": 100.27750015258789,
+        "vol20_annual": null,
+        "vol_scale": null
+      },
       "nav_eur": 10000.0,
       "orders": 0,
-      "pending_tasks": [],
+      "pending_tasks": [
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "2222.SR"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "AAPL"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "AMZN"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "GOOG"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "META"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "MSFT"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "NVDA"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "SPCX"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "TSLA"
+        },
+        {
+          "budget_eur": 1000.0,
+          "created": "2026-11-05",
+          "full": false,
+          "reason": "initial or annual entrant",
+          "side": "BUY",
+          "symbol": "TSM"
+        }
+      ],
       "positions": 0,
       "realized_tax_eur": 0,
-      "requested_asof": "2026-11-04",
+      "requested_asof": "2026-11-05",
       "sells": 0,
-      "status": "PENDING_FIRST_OPEN",
+      "status": "PENDING_ORDERS",
       "top3_weight": 0,
       "venue_fees_eur": 0,
       "warnings": [],
@@ -87,9 +366,10 @@
     }
   },
   "source": {
-    "asof": "2026-11-04",
-    "feed": "NO TRADES: SEED",
-    "missing_symbols": {}
+    "asof": "2026-11-05",
+    "feed": "Yahoo delayed + separately verified supplements",
+    "missing_symbols": {},
+    "sha256": "89bd61bf980fd881b096f82f93213fc00b543e488dc7b6879b34f42e97670812"
   },
   "type": "SHADOW"
 }
