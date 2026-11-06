@@ -22,6 +22,10 @@ class ForwardTests(unittest.TestCase):
     def test_real_next_business_day(self):
         self.assertEqual(str(fw.next_weekday(dt.date(2026,11,6))),'2026-11-09')
         self.assertEqual(str(fw.next_weekday(dt.date(2026,11,5))),'2026-11-06')
+    def test_signal_execution_open_is_not_backdated(self):
+        d=dt.date(2026,11,5)
+        self.assertEqual(str(fw.executable_session(d,dt.datetime(2026,11,6,14,0,tzinfo=dt.timezone.utc))),'2026-11-06')
+        self.assertEqual(str(fw.executable_session(d,dt.datetime(2026,11,6,16,35,tzinfo=dt.timezone.utc))),'2026-11-09')
     def test_empty_data_blocks_research(self):
         old_forward,old_data=fw.FORWARD,fw.DATA
         try:
