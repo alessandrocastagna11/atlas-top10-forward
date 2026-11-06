@@ -7,7 +7,7 @@ Historical frozen V4 engine parity: NOT CLAIMED.
 This is a current-cohort research selection, never a certified PIT global market-cap ranking.
 No broker access. Original exact V4 paper account is unchanged.
 
-Latest decision session: 2026-11-05
+Latest decision session: 2026-11-06
 Targets: 10
 Exposure: 30.0%
 Issue: none
