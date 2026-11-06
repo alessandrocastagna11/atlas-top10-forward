@@ -9,6 +9,7 @@ on:
       - 'market_data/verified_quotes.json'
       - 'engine.py'
       - 'test_*.py'
+      - 'backtests/launch_replay_2026_11_05.py'
       - 'v08/shadow_engine.py'
       - 'v08/run_shadow.py'
       - 'v08/tests/**'
@@ -46,6 +47,8 @@ jobs:
         run: python -m unittest test_engine test_daily_runner -q
       - name: Synthetic v0.8 tests (29 checks)
         run: python -m unittest discover -s v08/tests -p 'test_*.py' -q
+      - name: Offline Nov 5 launch-only diagnostic replay (no official paper writes)
+        run: python backtests/launch_replay_2026_11_05.py
       - name: Check official v0.7 saved state
         run: python daily_runner.py --check
       - name: Update official v0.7 EOD (NO changed strategy rules)
@@ -113,7 +116,7 @@ jobs:
         run: |
           git config user.name "Atlas Paper Bot"
           git config user.email "atlas-paper-bot@users.noreply.github.com"
-          git add -A strategies reports market_data v08/state v08/reports v08/market_data
+          git add -A strategies reports market_data v08/state v08/reports v08/market_data backtests/launch_replay_2026_11_05
           if ! git diff --cached --quiet; then
             git commit -m "Atlas EOD paper ledgers $(date -u +%F)"
             git pull --rebase origin main
