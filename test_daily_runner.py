@@ -194,3 +194,64 @@ class SplitTests(unittest.TestCase):
         self.assertAlmostEqual(state['positions']['AAPL']['shares'],2*before)
         self.assertEqual(state['positions']['AAPL']['cost_basis_eur'],base)
         self.assertEqual(state['corporate_actions'][0]['type'],'SPLIT')
+
+class LaunchIntentTests(unittest.TestCase):
+    """A genuine forward decision must predate the shared trading session."""
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.base=Path(self.temp.name)
+        self.report=self.base/'reports';self.report.mkdir()
+        self.strategy=self.base/'strategies'
+        self.intent={'schema_version':1,'mode':'PAPER_ONLY',
+                     'declaration':'PRECOMMITTED_CLOSE_PRICE_PAPER_INTENT_NO_REAL_BROKER_ORDERS',
+                     'activation_date':'2026-11-06',
+                     'first_eligible_common_close':'2026-11-09',
+                     'latest_eligible_common_close':'2026-11-12',
+                     'locked_at_utc':'2026-11-06T20:14:28+00:00',
+                     'strategies':{}}
+        for name in dr.LABELS:
+            root=self.strategy/name;root.mkdir(parents=True)
+            orig=HERE/'strategies'/name
+            for filename in ['config.json','state.json']:
+                (root/filename).write_bytes((orig/filename).read_bytes())
+            cfg=json.loads((root/'config.json').read_text())
+            self.intent['strategies'][name]={
+                 'config_blob_sha':dr.git_blob_sha((root/'config.json').read_bytes()),
+                 'initial_state_blob_sha':dr.git_blob_sha((root/'state.json').read_bytes()),
+                 'basket_symbols':[x['symbol'] for x in cfg['basket']],
+                 'benchmark_symbol':cfg['benchmark']['symbol']}
+        self.oldreport=dr.REPORTS;self.oldstrat=dr.STRATEGIES
+        dr.REPORTS=self.report;dr.STRATEGIES=self.strategy
+        self.addCleanup(self.reset)
+        self.write()
+    def reset(self):
+        dr.REPORTS=self.oldreport;dr.STRATEGIES=self.oldstrat
+    def write(self):
+        (self.report/'launch_intent.json').write_text(json.dumps(self.intent))
+    def check(self,day):
+        return dr.launch_ready(day,dt.datetime(2026,11,13,0,tzinfo=dt.timezone.utc))
+    def test_monday_precommitted_frozen_paper_allowed(self):
+        ok,reason=self.check('2026-11-09')
+        self.assertTrue(ok,reason)
+        self.assertEqual(reason,'PRECOMMITTED_PAPER_LAUNCH_APPROVED')
+    def test_friday_and_expired_session_rejected(self):
+        self.assertFalse(self.check('2026-11-06')[0])
+        self.assertFalse(self.check('2026-11-13')[0])
+    def test_late_post_open_decision_rejected(self):
+        self.intent['locked_at_utc']='2026-11-09T08:00:00+00:00';self.write()
+        self.assertFalse(self.check('2026-11-09')[0])
+    def test_tampered_config_rejected(self):
+        with (self.strategy/'MA10_Official'/'config.json').open('a') as fh:fh.write(' ')
+        ok,reason=self.check('2026-11-09')
+        self.assertFalse(ok)
+        self.assertIn('CONFIG_CHANGED',reason)
+    def test_tampered_initial_ledger_rejected(self):
+        state=self.strategy/'MA6_MA12_Challenger'/'state.json'
+        with state.open('a') as fh:fh.write(' ')
+        ok,reason=self.check('2026-11-09')
+        self.assertFalse(ok)
+        self.assertIn('INITIAL_LEDGER_CHANGED',reason)
+    def test_mode_cannot_be_promoted_to_real_orders(self):
+        self.intent['mode']='REAL';self.write()
+        self.assertFalse(self.check('2026-11-09')[0])
