@@ -26,6 +26,11 @@ class FakeProvider:
     def history(self, symbol, start, end):
         d = dt.date(2026, 11, 6)
         return {d: self.bar(symbol, d)}
+    def latest_published_eur_quote(self, symbol, asof, max_age_days=5):
+        quote=self.eur_quote(symbol, asof, 'close')
+        quote.update({'valuation_quote_session':str(asof),'valuation_staleness_days':0,
+                      'is_exact_valuation_session':True, 'fx_session':str(asof)})
+        return quote
 
 
 def signal(*, locked_at='2026-11-06T17:21:20+00:00', market_symbol='AAPL', region='USA'):
