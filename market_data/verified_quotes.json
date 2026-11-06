@@ -27,6 +27,19 @@
         "https://sa.marketscreener.com/quote/stock/ARAMCO-103505448/quotes/",
         "https://it.investing.com/equities/saudi-aramco-historical-data"
       ]
+    },
+    {
+      "symbol": "2222.SR",
+      "date": "2026-11-05",
+      "currency": "SAR",
+      "venue": "TADAWUL",
+      "close": 26.16,
+      "open": 26.12,
+      "verified_on": "2026-11-06",
+      "source_urls": [
+        "https://www.marketscreener.com/quote/stock/ARAMCO-103505448/",
+        "https://www.investing.com/equities/saudi-aramco-historical-data"
+      ]
     }
   ]
 }
