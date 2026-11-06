@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "project": "Atlas Top 10 Global A/B",
+  "mode": "PAPER_ONLY",
+  "declaration": "PRECOMMITTED_CLOSE_PRICE_PAPER_INTENT_NO_REAL_BROKER_ORDERS",
+  "activation_date": "2026-11-06",
+  "first_eligible_common_close": "2026-11-09",
+  "latest_eligible_common_close": "2026-11-12",
+  "locked_at_utc": "2026-11-06T20:14:28.780Z",
+  "has_not_traded_at_lock": true,
+  "fills": "Observed matching exact-session final exchange close with historical FX; hypothetical MOC, not broker guaranteed",
+  "fallback": "If no eligible common session/verified data during this window, remain cash; no backdated fabrication; require new future intent",
+  "strategies": {
+    "MA10_Official": {
+      "config_blob_sha": "973eeedd64506768eab11b9c1790f1d35d113159",
+      "initial_state_blob_sha": "83090b0ce2e85164ba009bab3d74514ab63c43d1",
+      "initial_capital_eur": 10000,
+      "basket_symbols": [
+        "AAPL",
+        "NVDA",
+        "MSFT",
+        "GOOG",
+        "AMZN",
+        "TSM",
+        "SPCX",
+        "2222.SR",
+        "TSLA",
+        "META"
+      ],
+      "benchmark_symbol": "IUSQ.DE",
+      "signal_mode": "ma10"
+    },
+    "MA6_MA12_Challenger": {
+      "config_blob_sha": "2ca05aee40394f1d3a8366619ca88238b9cb44fa",
+      "initial_state_blob_sha": "0f55707cbb9d2ca66d2820ae3d14ceb33108ec25",
+      "initial_capital_eur": 10000,
+      "basket_symbols": [
+        "AAPL",
+        "NVDA",
+        "MSFT",
+        "GOOG",
+        "AMZN",
+        "TSM",
+        "SPCX",
+        "2222.SR",
+        "TSLA",
+        "META"
+      ],
+      "benchmark_symbol": "IUSQ.DE",
+      "signal_mode": "dual_6_12"
+    }
+  },
+  "identity_check": "SpaceX 2026 listed SPCX; require Yahoo issuer identity match",
+  "risk_note": "Frozen original v0.7 rules preserved; activation not a backtest optimization"
+}
