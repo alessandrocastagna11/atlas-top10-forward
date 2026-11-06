@@ -17,7 +17,9 @@ on:
     # Three independent attempts: Yahoo can publish Xetra/Saudi closes late.
     # GitHub schedules are best effort and may execute several hours late.
     # NY morning retries always target the previous COMPLETE US session.
-    - cron: '35 22 * * *'
+    - cron: '35 22 * * 1-5' # 18:35 NY in EDT; 17:35 in EST (early retry)
+    - cron: '35 23 * * 1-5' # 18:35 NY in EST; same-day initialization window
+    - cron: '55 23 * * 1-5' # 18:55 NY in EST; late-provider retry
     - cron: '43 0 * * *'
     - cron: '47 3 * * *'
     - cron: '11 6 * * *'
@@ -52,6 +54,31 @@ jobs:
         run: python v08/run_shadow.py
       - name: Verify original official ledger again
         run: python daily_runner.py --check
+      - name: Check actionable initialization and pending order age
+        if: always()
+        run: |
+          python - <<'PY'
+          import datetime as dt,json,os
+          from pathlib import Path
+          official=Path('reports/latest_status.json')
+          shadow=Path('v08/reports/latest_status.json')
+          now=dt.datetime.now(dt.timezone.utc)
+          lines=['## Atlas forward execution readiness','']
+          if official.exists():
+              r=json.loads(official.read_text())
+              for k,v in r.get('results',{}).items():
+                  ready=bool(v.get('initialized'))
+                  lines.append(f'- Official {k}: initialized={ready}; status={v.get("report_status")}; asof={r.get("asof")}; missing={len(v.get("missing_exact_closes",[]))}')
+                  if not ready:print(f'::warning title=Atlas official awaiting first entry::{k}: {v.get("report_status")}; last={v.get("last_verified_valuation")}')
+          if shadow.exists():
+              r=json.loads(shadow.read_text())
+              for k,v in r.get('results',{}).items():
+                  tasks=v.get('pending_tasks',[])
+                  age=max(((dt.date.fromisoformat(r['asof'])-dt.date.fromisoformat(t['created'])).days for t in tasks),default=0)
+                  lines.append(f'- Shadow {k}: orders={v.get("orders",0)}; pending={len(tasks)}; oldest_task_age_days={age}; status={v.get("status")}')
+                  if age>3:print(f'::warning title=Atlas shadow old pending orders::{k}: oldest task {age} days; no backdated fills')
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as h:h.write('\n'.join(lines)+'\n')
+          PY
       - name: Audit EOD completeness (workflow success is not a trade)
         if: always()
         run: |
