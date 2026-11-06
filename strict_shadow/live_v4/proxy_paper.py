@@ -4,7 +4,7 @@ from __future__ import annotations
 import datetime as dt,json,os
 from pathlib import Path
 from zoneinfo import ZoneInfo
-from paper import PaperBlocked,execute_paper,fresh_state,mark,validate_state,canonical_sha
+from paper import PaperBlocked,execute_paper,fresh_state,mark,validate_state,canonical_sha,earliest_open_utc
 from provider import YahooChart,DataUnavailable
 from dataset_daily import atomic,json_save
 from forward_signal import FORWARD,VERSION
@@ -45,9 +45,11 @@ def execute(now=None,provider=None):
             stamp_ny=stamped.astimezone(NY)
             if stamp_ny.date()<dec or (stamp_ny.date()==dec and stamp_ny.time()<dt.time(17,30)):
                 raise PaperBlocked('signal predates verified decision-session close')
-            execution_open=dt.datetime.combine(exe,dt.time(9,30),NY)
-            if stamp_ny>=execution_open:
-                raise PaperBlocked('signal was produced AFTER the simulated execution opening')
+            symbols=[p['market_symbol'] for p in signal.get('targets',[])]
+            symbols.extend(p['market_symbol'] for p in state['holdings'].values())
+            global_cutoff=earliest_open_utc(symbols,exe)-dt.timedelta(minutes=30)
+            if stamped.astimezone(dt.timezone.utc)>=global_cutoff:
+                raise PaperBlocked('signal was produced after earliest global opening cutoff')
             if exe<=dec or dec>ny.date() or (ny.date()-dec).days>7:
                 raise PaperBlocked('stale/future proxy signal')
             if exe>ny.date() or ny.time()<dt.time(17,30) and exe==ny.date():
