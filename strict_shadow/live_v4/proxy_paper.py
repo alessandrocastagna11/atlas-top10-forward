@@ -52,7 +52,39 @@ def execute(now=None,provider=None):
                 raise PaperBlocked('signal was produced after earliest global opening cutoff')
             if exe<=dec or dec>ny.date() or (ny.date()-dec).days>7:
                 raise PaperBlocked('stale/future proxy signal')
-            if exe>ny.date() or ny.time()<dt.time(17,30) and exe==ny.date():
+            # Optional one-off start: US market-on-close intent locked in Git
+            # before the NY 15:45 cutoff. Non-US exchanges have already closed
+            # and MUST NOT be booked at an earlier close after the decision.
+            moc=signal.get('execution_policy')=='US_MOC_LOCKED_PRE_CLOSE'
+            if signal.get('execution_policy') not in (None,'US_MOC_LOCKED_PRE_CLOSE'):
+                raise PaperBlocked('unrecognized execution policy')
+            if moc:
+                if dec!=dt.date(2026,11,5) or exe!=dt.date(2026,11,6):
+                    raise PaperBlocked('US MOC launch allowed only on Nov 6, 2026')
+                def aware_utc(value):
+                    instant=dt.datetime.fromisoformat(str(value).replace('Z','+00:00'))
+                    if instant.tzinfo is None:raise PaperBlocked('missing timestamp timezone')
+                    return instant.astimezone(dt.timezone.utc)
+                produced=aware_utc(signal['produced_at_utc'])
+                locked=aware_utc(signal['locked_at_utc'])
+                if produced>locked or produced.date()<dt.date(2026,11,5):
+                    raise PaperBlocked('invalid MOC intent timestamps')
+                cutoff=dt.datetime(2026,11,6,15,45,tzinfo=NY).astimezone(dt.timezone.utc)
+                if locked>=cutoff or produced>=cutoff:
+                    raise PaperBlocked('MOC intent not committed before cutoff')
+                if not signal.get('parent_signal_blob_sha'):
+                    raise PaperBlocked('MOC intent missing immutable GitHub parent blob evidence')
+                if not signal.get('targets') or any(
+                    t.get('region')!='USA' or ('.' in t.get('market_symbol','')
+                    and not t.get('market_symbol','').endswith(('.A','.B')))
+                    for t in signal['targets']
+                ):
+                    raise PaperBlocked('US MOC may contain only US-listed assets')
+                if exe>ny.date() or (exe==ny.date() and ny.time()<dt.time(17,30)):
+                    raise DataUnavailable('locked Nov 6 MOC: waiting for verified US closing prices')
+                if (ny.date()-exe).days>4:
+                    raise PaperBlocked('MOC launch expired; refusing retrospective fills')
+            elif exe>ny.date() or (ny.time()<dt.time(17,30) and exe==ny.date()):
                 raise DataUnavailable('next execution session is not complete')
             if state.get('last_execution_session') and exe<=dt.date.fromisoformat(state['last_execution_session']):
                 raise PaperBlocked('already executed, refusing duplicate')
@@ -69,20 +101,24 @@ def execute(now=None,provider=None):
                 names[t]=p['market_symbol']
             quotes={}
             metadata={}
+            execution_field='close' if moc else 'open'
             for t,sym in names.items():
-                rec=provider.eur_quote(sym,exe,'open')
+                rec=provider.eur_quote(sym,exe,execution_field)
                 quotes[t]=rec['price_eur'];metadata[t]=rec
-            new,trade=execute_paper(state,signal,quotes,rebalance_fraction=0.01)
+            new,trade=execute_paper(state,signal,quotes,rebalance_fraction=0.01,
+                                    execution_price_kind=execution_field)
             new['research_model_variant']=MODEL
             json_save(STATE,new)
             json_save(FORWARD/'execution_receipt.json',{
                 'mode':'PROXY_PAPER_ONLY','model_variant':MODEL,
                 'execution_session':str(exe),'source_quotes':metadata,
+                'execution_policy':signal.get('execution_policy','NEXT_VERIFIED_OPEN'),
                 'signal_sha256':canonical_sha(signal),'paper_trade_summary':trade})
             signalfile.unlink()
             state=new
-            result.update({'status':'PROXY_PAPER_EXECUTED','reason':'All next-session opens verified',
-                           'execution_session':str(exe),'execution':trade})
+            result.update({'status':'MOC_PAPER_EXECUTED' if moc else 'PROXY_PAPER_EXECUTED',
+                           'reason':'Verified same-day US close with pre-close intent' if moc else 'All next-session opens verified',
+                           'execution_session':str(exe),'execution_price_kind':execution_field,'execution':trade})
         except DataUnavailable as err:
             result.update({'status':'PENDING_EXECUTION_QUOTES','reason':str(err)[:300]})
         except (PaperBlocked,KeyError,ValueError,TypeError) as err:
