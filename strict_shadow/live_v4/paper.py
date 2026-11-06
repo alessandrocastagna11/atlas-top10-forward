@@ -5,6 +5,47 @@ import datetime as dt
 import hashlib
 import json
 import math
+from zoneinfo import ZoneInfo
+
+# Local scheduled opening of supported equity exchanges. Calendar holidays and
+# session validity are independently enforced by actual provider bars.
+# This cutoff is deliberately 30 minutes BEFORE the earliest relevant open.
+EXCHANGE_OPEN={
+    '.T':('Asia/Tokyo',9,0),'.TW':('Asia/Taipei',9,0),
+    '.HK':('Asia/Hong_Kong',9,30),'.KS':('Asia/Seoul',9,0),
+    '.SR':('Asia/Riyadh',10,0),'.AX':('Australia/Sydney',10,0),
+    '.NS':('Asia/Kolkata',9,15),'.BO':('Asia/Kolkata',9,15),
+    '.SI':('Asia/Singapore',9,0),
+    '.L':('Europe/London',8,0),'.SW':('Europe/Zurich',9,0),
+    '.TO':('America/Toronto',9,30),'.V':('America/Toronto',9,30),
+    '.AS':('Europe/Amsterdam',9,0),'.PA':('Europe/Paris',9,0),
+    '.DE':('Europe/Berlin',9,0),'.MI':('Europe/Rome',9,0),
+    '.MC':('Europe/Madrid',9,0),'.ST':('Europe/Stockholm',9,0),
+    '.CO':('Europe/Copenhagen',9,0),'.OL':('Europe/Oslo',9,0),
+    '.HE':('Europe/Helsinki',10,0),
+}
+US_OPEN=('America/New_York',9,30)
+
+def earliest_open_utc(symbols,session):
+    """Earliest possible global stock-session open (never a fill price).
+
+    Unknown exchange suffix fails closed, rather than assuming a US opening.
+    Provider must still verify the exact local session at execution.
+    """
+    date=dt.date.fromisoformat(str(session))
+    opens=[]
+    for item in symbols or ['AAPL']:
+        symbol=str(item).upper()
+        suffix=next((s for s in sorted(EXCHANGE_OPEN,key=len,reverse=True) if symbol.endswith(s)),None)
+        if suffix:
+            zone,hour,minute=EXCHANGE_OPEN[suffix]
+        elif '.' not in symbol or symbol.endswith(('.A','.B')):
+            zone,hour,minute=US_OPEN
+        else:
+            raise PaperBlocked('unknown exchange opening schedule: '+symbol)
+        local_open=dt.datetime.combine(date,dt.time(hour,minute),ZoneInfo(zone))
+        opens.append(local_open.astimezone(dt.timezone.utc))
+    return min(opens)
 
 ENGINE="ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07"
 FEE=1.0
