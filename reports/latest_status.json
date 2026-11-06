@@ -1,14 +1,14 @@
 {
   "asof": "2026-11-05",
   "source": "YAHOO_CHART",
-  "digest_sha256": "f9b2dfc023a1262a3a42248aaeb927680f2d2d3e3fef2906a759aedbd025236a",
+  "digest_sha256": "2797389107ea3a3b435e9a30174c42b1decf20a6daec486a072c85d9279f571b",
   "results": {
     "MA10_Official": {
       "price_freshness": "VALUATION_WITH_STALE_QUOTES",
       "engine": "Atlas Top 10 Global A — MA10_Official",
       "asof_requested": "2026-11-05",
       "last_verified_valuation": "2026-11-03",
-      "report_status": "PENDING_DATA",
+      "report_status": "PENDING_FIRST_REAL_CLOSE",
       "source_status": "PENDING_FIRST_REAL_CLOSE",
       "initialized": false,
       "virtual_capital_start_eur": 10000.0,
@@ -44,12 +44,7 @@
         }
       ],
       "new_valuations": 0,
-      "execution_attempts_blocked": [
-        {
-          "date": "2026-11-05",
-          "reason": "No exact close for 2026-11-05; last=2026-11-04"
-        }
-      ],
+      "execution_attempts_blocked": [],
       "asof_price_audit": [
         {
           "asof_date": "2026-11-05",
@@ -163,7 +158,7 @@
       "engine": "Atlas Top 10 Global A — MA6_MA12_Challenger",
       "asof_requested": "2026-11-05",
       "last_verified_valuation": "2026-11-03",
-      "report_status": "PENDING_DATA",
+      "report_status": "PENDING_FIRST_REAL_CLOSE",
       "source_status": "PENDING_FIRST_REAL_CLOSE",
       "initialized": false,
       "virtual_capital_start_eur": 10000.0,
@@ -199,12 +194,7 @@
         }
       ],
       "new_valuations": 0,
-      "execution_attempts_blocked": [
-        {
-          "date": "2026-11-05",
-          "reason": "No exact close for 2026-11-05; last=2026-11-04"
-        }
-      ],
+      "execution_attempts_blocked": [],
       "asof_price_audit": [
         {
           "asof_date": "2026-11-05",

@@ -1595,7 +1595,7 @@
       "exchange_timezone": "Asia/Riyadh",
       "feed": "Yahoo chart 1d",
       "identity": "Saudi Arabian Oil Company",
-      "retrieved_at_utc": "2026-11-06T02:43:34.778683+00:00",
+      "retrieved_at_utc": "2026-11-06T07:25:06.184591+00:00",
       "splits": {}
     },
     "AAPL": {
@@ -3207,7 +3207,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Apple Inc.",
-      "retrieved_at_utc": "2026-11-06T02:43:33.664736+00:00",
+      "retrieved_at_utc": "2026-11-06T07:25:05.308297+00:00",
       "splits": {}
     },
     "AMZN": {
@@ -4813,7 +4813,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Amazon.com, Inc.",
-      "retrieved_at_utc": "2026-11-06T02:43:34.391936+00:00",
+      "retrieved_at_utc": "2026-11-06T07:25:05.816351+00:00",
       "splits": {}
     },
     "EURSAR=X": {
@@ -6464,7 +6464,7 @@
       "exchange_timezone": "Europe/London",
       "feed": "Yahoo chart 1d",
       "identity": "EUR/SAR",
-      "retrieved_at_utc": "2026-11-06T02:43:35.536156+00:00",
+      "retrieved_at_utc": "2026-11-06T07:25:06.884060+00:00",
       "splits": {}
     },
     "EURUSD=X": {
@@ -8115,7 +8115,7 @@
       "exchange_timezone": "Europe/London",
       "feed": "Yahoo chart 1d",
       "identity": "EUR/USD",
-      "retrieved_at_utc": "2026-11-06T02:43:35.347184+00:00",
+      "retrieved_at_utc": "2026-11-06T07:25:06.776236+00:00",
       "splits": {}
     },
     "GOOG": {
@@ -9727,7 +9727,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Alphabet Inc.",
-      "retrieved_at_utc": "2026-11-06T02:43:34.199418+00:00",
+      "retrieved_at_utc": "2026-11-06T07:25:05.707970+00:00",
       "splits": {}
     },
     "IUSQ.DE": {
@@ -11333,7 +11333,7 @@
       "exchange_timezone": "Europe/Berlin",
       "feed": "Yahoo chart 1d",
       "identity": "iShares MSCI All Country World UCITS ETF USD Acc",
-      "retrieved_at_utc": "2026-11-06T02:43:35.156132+00:00",
+      "retrieved_at_utc": "2026-11-06T07:25:06.585339+00:00",
       "splits": {}
     },
     "META": {
@@ -12945,7 +12945,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Meta Platforms, Inc.",
-      "retrieved_at_utc": "2026-11-06T02:43:35.027287+00:00",
+      "retrieved_at_utc": "2026-11-06T07:25:06.435473+00:00",
       "splits": {}
     },
     "MSFT": {
@@ -14557,7 +14557,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Microsoft Corporation",
-      "retrieved_at_utc": "2026-11-06T02:43:34.062029+00:00",
+      "retrieved_at_utc": "2026-11-06T07:25:05.554369+00:00",
       "splits": {}
     },
     "NVDA": {
@@ -16169,7 +16169,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "NVIDIA Corporation",
-      "retrieved_at_utc": "2026-11-06T02:43:33.853621+00:00",
+      "retrieved_at_utc": "2026-11-06T07:25:05.424202+00:00",
       "splits": {}
     },
     "SPCX": {
@@ -16690,7 +16690,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Space Exploration Technologies Corp.",
-      "retrieved_at_utc": "2026-11-06T02:43:34.655656+00:00",
+      "retrieved_at_utc": "2026-11-06T07:25:06.042970+00:00",
       "splits": {}
     },
     "TSLA": {
@@ -18296,7 +18296,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Tesla, Inc.",
-      "retrieved_at_utc": "2026-11-06T02:43:34.901711+00:00",
+      "retrieved_at_utc": "2026-11-06T07:25:06.325034+00:00",
       "splits": {}
     },
     "TSM": {
@@ -19908,9 +19908,9 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Taiwan Semiconductor Manufacturing Company Limited",
-      "retrieved_at_utc": "2026-11-06T02:43:34.540296+00:00",
+      "retrieved_at_utc": "2026-11-06T07:25:05.934686+00:00",
       "splits": {}
     }
   },
-  "sha256": "89bd61bf980fd881b096f82f93213fc00b543e488dc7b6879b34f42e97670812"
+  "sha256": "8f3fef4f55ea9fa5f55d30b34805ba5d0af02fe303ee392ef706ffd3d72bad89"
 }
