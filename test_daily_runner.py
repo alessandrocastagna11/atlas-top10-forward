@@ -220,7 +220,8 @@ class LaunchIntentTests(unittest.TestCase):
                  'config_blob_sha':dr.git_blob_sha((root/'config.json').read_bytes()),
                  'initial_state_blob_sha':dr.git_blob_sha((root/'state.json').read_bytes()),
                  'basket_symbols':[x['symbol'] for x in cfg['basket']],
-                 'benchmark_symbol':cfg['benchmark']['symbol']}
+                 'benchmark_symbol':cfg['benchmark']['symbol'],
+                 'precommitted_risk_on':True,'precommitted_signal_month':'2026-10'}
         self.oldreport=dr.REPORTS;self.oldstrat=dr.STRATEGIES
         dr.REPORTS=self.report;dr.STRATEGIES=self.strategy
         self.addCleanup(self.reset)
