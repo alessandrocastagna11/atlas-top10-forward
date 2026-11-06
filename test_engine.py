@@ -40,6 +40,37 @@ class Tests(unittest.TestCase):
         self.assertAlmostEqual(quote['bars']['2026-11-04'],100.)
         self.assertAlmostEqual(quote['bars']['2026-11-05'],55.)
         self.assertEqual(quote['splits']['2026-11-05'],2.)
+    def test_spacex_identity_is_required_for_spcx(self):
+        from unittest.mock import Mock
+        raw={'chart':{'error':None,'result':[{
+            'meta':{'exchangeTimezoneName':'America/New_York','currency':'USD',
+                    'longName':'Unrelated Space Sector ETF'},
+            'timestamp':[], 'indicators':{'quote':[{'close':[]}]}
+        }]}}
+        response=Mock();response.raise_for_status.return_value=None
+        response.json.return_value=raw
+        with patch.object(f.requests,'get',return_value=response):
+            with self.assertRaisesRegex(RuntimeError,'SPCX_IDENTITY_NOT_VERIFIED'):
+                f.fetch_yahoo('SPCX',start='2026-11-03',end='2026-11-05')
+        raw['chart']['result'][0]['meta']['longName']='Space Exploration Technologies Corp.'
+        # The verified corporate issuer passes the identity gate. The empty
+        # synthetic fixture then reaches a normal empty OHLC result.
+        with patch.object(f.requests,'get',return_value=response):
+            rec=f.fetch_yahoo('SPCX',start='2026-11-03',end='2026-11-05')
+        self.assertEqual(rec['symbol'],'SPCX')
+        self.assertEqual(rec['currency'],'USD')
+    def test_spacex_wrong_quote_currency_blocked(self):
+        from unittest.mock import Mock
+        raw={'chart':{'error':None,'result':[{
+            'meta':{'exchangeTimezoneName':'America/New_York','currency':'EUR',
+                    'longName':'Space Exploration Technologies Corp.'},
+            'timestamp':[], 'indicators':{'quote':[{'close':[]}]}
+        }]}}
+        response=Mock();response.raise_for_status.return_value=None
+        response.json.return_value=raw
+        with patch.object(f.requests,'get',return_value=response):
+            with self.assertRaisesRegex(RuntimeError,'CURRENCY_OR_VENUE_MISMATCH'):
+                f.fetch_yahoo('SPCX',start='2026-11-03',end='2026-11-05')
     def test_ma10(self):
         state,last,ma=f.ma10_state(fake_data()['IUSQ.DE']['bars'],'2026-11-04',False,.01)
         self.assertTrue(state);self.assertAlmostEqual(last,108.26,4);self.assertAlmostEqual(ma,101.754,3)
