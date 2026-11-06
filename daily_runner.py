@@ -215,7 +215,7 @@ def render_report(asof,reports,data_hash):
 
 def git_blob_sha(raw):
     """The SHA1 of a GitHub blob, to bind an intent to frozen source bytes."""
-    return hashlib.sha1(b'blob '+str(len(raw)).encode('ascii')+b'\\x00'+raw).hexdigest()
+    return hashlib.sha1(b'blob '+str(len(raw)).encode('ascii')+bytes([0])+raw).hexdigest()
 
 
 def launch_ready(asof, now):
