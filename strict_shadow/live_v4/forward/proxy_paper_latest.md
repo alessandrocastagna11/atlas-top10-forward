@@ -1,8 +1,8 @@
 # Atlas V4 forward — research PROXY paper account
 
-**Status: BLOCKED_PROXY_EXECUTION**
+**Status: PENDING_EXECUTION_QUOTES**
 
-signal was produced after earliest global opening cutoff
+locked Nov 6 MOC: waiting for verified US closing prices
 
 Model: V4_CONF70_FORWARD_COHORT_PROXY_V1 — NOT historically identical to the frozen V4 engine.
 Virtual NAV: EUR 10000.0

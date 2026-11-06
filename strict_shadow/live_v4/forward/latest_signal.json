@@ -9,10 +9,10 @@
   "historical_engine_equivalent": false,
   "mode": "SHADOW",
   "model_variant": "V4_CONF70_FORWARD_COHORT_PROXY_V1",
-  "produced_at_utc": "2026-11-06T17:23:17.196754+00:00",
+  "produced_at_utc": "2026-11-06T17:24:42.403094+00:00",
   "provenance_sha256": {
     "benchmark_price_file_sha256": "efad9e09effafe4990638fb6f3a670a7380418e612928ebbddabc1093d9010d4",
-    "fx_files_sha256": "cc6cf416018d136b4e719f68437398b0ec1ee870ed4c7402ceeef41485f68796",
+    "fx_files_sha256": "17332bae333070b58e61d5fc651503c31702cd5fa72104cd7365c368b7a75418",
     "price_files_sha256": "9902a427a3c15db365e8570189b002aeaf4e1fb6ed38d5cb80c025d1b340e708",
     "roster_sha256": "d499e50a80ae0246a637a976fcbae7e30e0ad5eb03c2f035aee4a71530830201"
   },
