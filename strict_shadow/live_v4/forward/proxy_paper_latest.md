@@ -1,8 +1,8 @@
 # Atlas V4 forward — research PROXY paper account
 
-**Status: MOC_PAPER_EXECUTED**
+**Status: PENDING_EXECUTION_QUOTES**
 
-Verified same-day US close with pre-close intent
+next execution session is not complete
 
 Model: V4_CONF70_FORWARD_COHORT_PROXY_V1 — NOT historically identical to the frozen V4 engine.
 Virtual NAV: EUR 9989.61
