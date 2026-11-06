@@ -36,6 +36,18 @@ def execute(now=None,provider=None):
             if signal.get('schema_version')!='research-forward-1':raise PaperBlocked('unsupported signal schema')
             dec=dt.date.fromisoformat(signal['decision_session'])
             exe=dt.date.fromisoformat(signal['execution_session'])
+            # A paper "next open" is only legitimate when the signal's
+            # timestamp proves it existed BEFORE the simulated opening.
+            # Missing timestamps in old signals are not grandfathered in.
+            stamped=dt.datetime.fromisoformat(signal['produced_at_utc'])
+            if stamped.tzinfo is None or stamped>now:
+                raise PaperBlocked('signal production timestamp missing timezone or future')
+            stamp_ny=stamped.astimezone(NY)
+            if stamp_ny.date()<dec or (stamp_ny.date()==dec and stamp_ny.time()<dt.time(17,30)):
+                raise PaperBlocked('signal predates verified decision-session close')
+            execution_open=dt.datetime.combine(exe,dt.time(9,30),NY)
+            if stamp_ny>=execution_open:
+                raise PaperBlocked('signal was produced AFTER the simulated execution opening')
             if exe<=dec or dec>ny.date() or (ny.date()-dec).days>7:
                 raise PaperBlocked('stale/future proxy signal')
             if exe>ny.date() or ny.time()<dt.time(17,30) and exe==ny.date():
