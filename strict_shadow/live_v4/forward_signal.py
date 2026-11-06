@@ -96,6 +96,30 @@ def fx_cache():
         pairs.sort()
         fx[curr]=([p[0] for p in pairs],[p[1] for p in pairs])
         hashes[code]=digest(file)
+    # Saudi shares need a historically aligned EUR/SAR cross. The Yahoo
+    # direct EURSAR pair is not consistently available, whereas EURUSD and
+    # USDSAR are already cached by dataset_daily.py. Only same-date bars are
+    # multiplied: never fill an unknown conversion with a guessed rate.
+    if 'SAR' not in fx:
+        usd_path=DATA/'fx'/symbol_filename('EURUSD=X')
+        sar_path=DATA/'fx'/symbol_filename('USDSAR=X')
+        if usd_path.exists() and sar_path.exists():
+            try:
+                def dated_rates(path):
+                    out={}
+                    for row in rows_load(path):
+                        day=dt.date.fromisoformat(row['date'])
+                        v=safe_float(row['close'])
+                        if math.isfinite(v) and v>0:out[day]=v
+                    return out
+                eurusd=dated_rates(usd_path);usdsar=dated_rates(sar_path)
+                aligned=sorted(set(eurusd)&set(usdsar))
+                if aligned:
+                    fx['SAR']=(aligned,[eurusd[d]*usdsar[d] for d in aligned])
+                    hashes['EURUSD=X*USDSAR=X']=hashlib.sha256(
+                        (digest(usd_path)+':'+digest(sar_path)).encode()).hexdigest()
+            except (OSError,KeyError,ValueError):
+                pass  # No unaudited or synthetic fallback if actual FX data fail.
     return fx,hashes
 def feature_pack(sym,row,decision,fx):
     series,price_sha=prices(sym,decision)
@@ -231,8 +255,16 @@ def generate(now=None):
             if f:
                 by_symbol[symbol]=f;pricehashes[symbol]=f['price_sha256']
         fs=list(by_symbol.values());usa=[f for f in fs if f['region']=='USA'];row=[f for f in fs if f['region']=='ROW']
-        status['eligible_feature_history']={'usa':len(usa),'row':len(row),'universe_candidates':len(us_rows)+len(rw_rows)}
-        if len(usa)<60 or len(row)<40:raise ValueError('Insufficient verified 252-session+volume history: USA '+str(len(usa))+' / ROW '+str(len(row)))
+        # The feature_pack result has ALREADY passed positive momentum, trend,
+        # extension, liquidity and FX filters. It is not a count of titles with
+        # available history. Requiring 60 bullish USA equities would systematically
+        # disable a defensive strategy during market weakness.
+        status['eligible_feature_history']={'usa':len(usa),'row':len(row),
+                                            'universe_candidates':len(us_rows)+len(rw_rows),
+                                            'eligibility':'POST_TREND_MOMENTUM_LIQUIDITY_AND_FX_FILTERS',
+                                            'required_usa':20,'required_row':20}
+        if len(usa)<20 or len(row)<20:
+            raise ValueError('Insufficient post-filter diversified research breadth: USA '+str(len(usa))+' / ROW '+str(len(row))+' (minimum 20 each)')
         scored=group_score(usa)+group_score(row)
         top_usa=sorted((f for f in scored if f['region']=='USA'),key=lambda x:x['score'],reverse=True)
         top_row=sorted((f for f in scored if f['region']=='ROW'),key=lambda x:x['score'],reverse=True)
