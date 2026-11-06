@@ -28,7 +28,11 @@
         "META"
       ],
       "benchmark_symbol": "IUSQ.DE",
-      "signal_mode": "ma10"
+      "signal_mode": "ma10",
+      "precommitted_risk_on": true,
+      "precommitted_signal_month": "2026-10",
+      "precommitted_signal_metric": 108.26000213623047,
+      "precommitted_signal_slow": 101.75400009155274
     },
     "MA6_MA12_Challenger": {
       "config_blob_sha": "2ca05aee40394f1d3a8366619ca88238b9cb44fa",
@@ -47,9 +51,14 @@
         "META"
       ],
       "benchmark_symbol": "IUSQ.DE",
-      "signal_mode": "dual_6_12"
+      "signal_mode": "dual_6_12",
+      "precommitted_risk_on": true,
+      "precommitted_signal_month": "2026-10",
+      "precommitted_signal_metric": 106.38666661580403,
+      "precommitted_signal_slow": 100.27750015258789
     }
   },
   "identity_check": "SpaceX 2026 listed SPCX; require Yahoo issuer identity match",
-  "risk_note": "Frozen original v0.7 rules preserved; activation not a backtest optimization"
+  "risk_note": "Frozen original v0.7 rules preserved; activation not a backtest optimization",
+  "signal_attestation": "Prior-month completed Oct 2026 risk-on confirmed in independent v0.8 research, commit frozen before Nov 9 trading; strict v0.7 re-computes and must agree for first simulated fill."
 }
