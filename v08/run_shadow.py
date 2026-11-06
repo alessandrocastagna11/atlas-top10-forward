@@ -114,7 +114,8 @@ def replay(asof,data,errors=None,allow_initial_trade=True):
             trial=copy.deepcopy(state)
             try:
                 roster,valid,roster_error=validate_roster(d)
-                x=se.advance(trial,data,d,roster=roster,roster_verified=valid)
+                x=se.advance(trial,data,d,roster=roster,roster_verified=valid,
+                             allow_fills=(d==asof and allow_initial_trade))
                 if x is None:continue
                 se.validate(trial)
                 state=trial;processed+=1
