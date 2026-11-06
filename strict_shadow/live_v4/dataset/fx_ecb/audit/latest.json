@@ -1,118 +1,118 @@
 {
   "caveat": "Retroactive ECB history is not evidence of a historical timestamped PIT archive",
-  "checked_at_utc": "2026-11-06T22:40:23.733777+00:00",
+  "checked_at_utc": "2026-11-06T22:43:20.951860+00:00",
   "currencies_with_history": 16,
   "currency_coverage": {
     "AUD": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     },
     "BRL": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     },
     "CAD": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     },
     "CHF": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     },
     "DKK": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     },
     "GBP": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     },
     "HKD": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     },
     "INR": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     },
     "JPY": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     },
     "KRW": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     },
     "NOK": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     },
     "SEK": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     },
     "SGD": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     },
     "TWD": {
       "count": 2258,
       "first": "2012-01-02",
       "last": "2020-10-30",
-      "new": 2258,
+      "new": 0,
       "revisions": 0
     },
     "USD": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     },
     "ZAR": {
       "count": 3800,
       "first": "2012-01-02",
       "last": "2026-11-06",
-      "new": 3800,
+      "new": 0,
       "revisions": 0
     }
   },
@@ -120,10 +120,10 @@
   "historical_revisions_time_versioned": false,
   "no_annual_interpolation": true,
   "original_confidence70_pit_certified": false,
-  "raw_sha256": "0a5bf1e5ac5b26f1403c29bb9404ebc7b718fad94e69044a101d82edd6e041ba",
+  "raw_sha256": "5f7d947cec10fed08ef52a5c34438f2f0187286daa78e360be51e758a630091d",
   "reference_only": true,
   "request_end": "2026-11-06",
-  "request_start": "2012-01-01",
+  "request_start": "2026-09-22",
   "source": "ECB EXR daily reference, fetched retrospectively",
   "status": "ECB_REFERENCE_UPDATED"
 }
