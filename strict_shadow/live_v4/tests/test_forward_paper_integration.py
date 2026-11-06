@@ -26,6 +26,7 @@ class ForwardPaperIntegration(unittest.TestCase):
                 decision={'schema_version':'research-forward-1','engine_id':ENGINE,
                           'model_variant':VERSION,'historical_engine_equivalent':False,'mode':'SHADOW',
                           'decision_session':'2026-11-05','execution_session':'2026-11-06',
+                          'produced_at_utc':'2026-11-05T23:00:00+00:00',
                           'authorization':{'real_money_authorized':False},
                           'universe_source':{'recorded_on':'2026-11-05','asof':'2026-11-04'},
                           'targets':[{'ticker':'AAPL','market_symbol':'AAPL','region':'USA','sector':'TECH',
@@ -44,4 +45,28 @@ class ForwardPaperIntegration(unittest.TestCase):
                 again=m.execute(dt.datetime(2026,11,6,23,tzinfo=dt.timezone.utc),FakeProvider())
                 self.assertEqual(again['orders_count'],2)
         finally:m.FORWARD,m.STATE=original
+    def test_rejects_post_open_retroactive_fill(self):
+        original=(m.FORWARD,m.STATE)
+        try:
+            with tempfile.TemporaryDirectory() as tmp:
+                m.FORWARD=Path(tmp);m.STATE=m.FORWARD/'proxy_paper_state.json'
+                decision={'schema_version':'research-forward-1','engine_id':ENGINE,
+                          'model_variant':VERSION,'historical_engine_equivalent':False,
+                          'decision_session':'2026-11-05','execution_session':'2026-11-06',
+                          'produced_at_utc':'2026-11-06T16:35:00+00:00',
+                          'authorization':{'real_money_authorized':False},
+                          'universe_source':{'recorded_on':'2026-11-05','asof':'2026-11-04'},
+                          'targets':[{'ticker':'AAPL','market_symbol':'AAPL',
+                                      'region':'USA','sector':'TECH','weight':.12,'price_eur':99.}]}
+                (m.FORWARD/'pending_signal.json').write_text(json.dumps(decision))
+                out=m.execute(dt.datetime(2026,11,6,23,tzinfo=dt.timezone.utc),FakeProvider())
+                self.assertEqual(out['status'],'BLOCKED_PROXY_EXECUTION')
+                self.assertEqual(out['orders_count'],0)
+                del decision['produced_at_utc']
+                (m.FORWARD/'pending_signal.json').write_text(json.dumps(decision))
+                out=m.execute(dt.datetime(2026,11,6,23,tzinfo=dt.timezone.utc),FakeProvider())
+                self.assertEqual(out['status'],'BLOCKED_PROXY_EXECUTION')
+                self.assertEqual(out['orders_count'],0)
+        finally:m.FORWARD,m.STATE=original
+
 if __name__=='__main__':unittest.main()
