@@ -31,6 +31,8 @@ jobs:
         run: python strict_shadow/live_v4/run.py --check
       - name: Incrementally refresh historical symbol quotes, FX and dated forward universe
         run: python strict_shadow/live_v4/dataset_daily.py --limit 300 --start 2024-01-01
+      - name: Refresh independent ECB daily FX series and track corrections
+        run: python strict_shadow/live_v4/ecb_fx.py --start 2012-01-01
       - name: Settle last verified forward research proxy at actual next-session opens
         run: python strict_shadow/live_v4/proxy_paper.py
       - name: Generate new research forward signal (NOT original parity)
@@ -39,6 +41,8 @@ jobs:
         run: python strict_shadow/live_v4/run.py
       - name: Validate next virtual ledger
         run: python strict_shadow/live_v4/run.py --check
+      - name: Publish PIT validation gaps and separate live-paper status
+        run: python strict_shadow/live_v4/pit_readiness.py
       - name: Summarize status (success NEVER implies orders)
         if: always()
         run: |
