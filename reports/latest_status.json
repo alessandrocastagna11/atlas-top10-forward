@@ -1,7 +1,7 @@
 {
   "asof": "2026-11-05",
   "source": "YAHOO_CHART",
-  "digest_sha256": "2797389107ea3a3b435e9a30174c42b1decf20a6daec486a072c85d9279f571b",
+  "digest_sha256": "78f238a3c326958345cf6508b6e0bab5cf8ea6cd326e2ea76badb8c7ac797436",
   "results": {
     "MA10_Official": {
       "price_freshness": "VALUATION_WITH_STALE_QUOTES",
@@ -35,10 +35,6 @@
       "data_warning": null,
       "missing_exact_closes": [
         {
-          "symbol": "2222.SR",
-          "last_close_date": "2026-11-04"
-        },
-        {
           "symbol": "IUSQ.DE",
           "last_close_date": "2026-11-04"
         }
@@ -49,8 +45,8 @@
         {
           "asof_date": "2026-11-05",
           "symbol": "2222.SR",
-          "bar_date": "2026-11-04",
-          "close": 26.239999771118164,
+          "bar_date": "2026-11-05",
+          "close": 26.15999984741211,
           "currency": "SAR",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
@@ -185,10 +181,6 @@
       "data_warning": null,
       "missing_exact_closes": [
         {
-          "symbol": "2222.SR",
-          "last_close_date": "2026-11-04"
-        },
-        {
           "symbol": "IUSQ.DE",
           "last_close_date": "2026-11-04"
         }
@@ -199,8 +191,8 @@
         {
           "asof_date": "2026-11-05",
           "symbol": "2222.SR",
-          "bar_date": "2026-11-04",
-          "close": 26.239999771118164,
+          "bar_date": "2026-11-05",
+          "close": 26.15999984741211,
           "currency": "SAR",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
