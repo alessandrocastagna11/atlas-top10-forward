@@ -197,6 +197,8 @@ def render_report(asof,reports,data_hash):
         f"- Patrimonio {r['portfolio_eur']:,.2f} €, benchmark {r['benchmark_eur']:,.2f} €; variazione dall'ultima osservazione: {r['portfolio_day_pct']:+.3f}% vs {r['benchmark_day_pct']:+.3f}%.",
         f"- Operazioni: {r['buys']} acquisti + {r['sells']} vendite = {r['order_count']} ordini; nella data richiesta: {r['orders_on_asof']}.",
         f"- Commissioni accumulate {r['total_fees_eur']:.2f} €; slippage {r['total_slippage_eur']:.2f} €; imposte plusvalenze {r['realized_gain_tax_eur']:.2f} €; imposte dividendi proxy {r['dividend_tax_eur']:.2f} €; bollo maturato {r['bollo_accrued_eur']:.2f} €."]
+      if r.get('launch_guard'):
+        md.append('- **Avvio paper:** '+r['launch_guard'])
       if r.get('missing_exact_closes'):
         md.append('- **Chiusure mancanti per la data richiesta:** '+', '.join(
             f"{x['symbol']} (ultima {x['last_close_date'] or 'nessuna'})" for x in r['missing_exact_closes']))
@@ -209,6 +211,60 @@ def render_report(asof,reports,data_hash):
       md.append('')
     md.append('**Avvertenza:** se ultima data NAV è precedente alla richiesta, il valore è storico e NON rappresenta una nuova quotazione giornaliera.')
     (REPORTS/'latest.md').write_text('\n'.join(md)+'\n',encoding='utf8')
+
+
+def git_blob_sha(raw):
+    """The SHA1 of a GitHub blob, to bind an intent to frozen source bytes."""
+    return hashlib.sha1(b'blob '+str(len(raw)).encode('ascii')+b'\\x00'+raw).hexdigest()
+
+
+def launch_ready(asof, now):
+    """Allow only a launch precommitted before the earliest relevant market opened.
+
+    This makes the observed CLOSE a transparent, hypothetical PAPER MOC fill,
+    not a decision made after seeing that day's price. The same frozen basket
+    and both strategy configurations must match their recorded Git blob SHAs.
+    """
+    path=REPORTS/'launch_intent.json'
+    if not path.exists():return False,'NO_PRECOMMITTED_LAUNCH_INTENT'
+    try:
+        plan=json.loads(path.read_text(encoding='utf-8'))
+        if plan.get('schema_version')!=1 or plan.get('mode')!='PAPER_ONLY':
+            raise ValueError('launch must be paper-only')
+        if plan.get('declaration')!='PRECOMMITTED_CLOSE_PRICE_PAPER_INTENT_NO_REAL_BROKER_ORDERS':
+            raise ValueError('unsupported launch intent')
+        first=dt.date.fromisoformat(plan['first_eligible_common_close'])
+        last=dt.date.fromisoformat(plan['latest_eligible_common_close'])
+        trading=dt.date.fromisoformat(asof)
+        if not first<=trading<=last:return False,'WAITING_PRECOMMITTED_COMMON_SESSION'
+        if trading.weekday() not in (0,1,2,3):
+            return False,'NO_COMMON_SAUDI_US_EU_TRADING_DAY'
+        stamp=dt.datetime.fromisoformat(plan['locked_at_utc'].replace('Z','+00:00'))
+        if stamp.tzinfo is None:raise ValueError('launch lock missing timezone')
+        if stamp.astimezone(dt.timezone.utc)>=dt.datetime.combine(first,dt.time(7),dt.timezone.utc):
+            raise ValueError('launch intent locked after Saudi trading opened')
+        if stamp>now:raise ValueError('future-dated intent')
+        if plan['activation_date']>str(first):raise ValueError('activation after earliest session')
+        for key in LABELS:
+            folder=STRATEGIES/key
+            entry=plan['strategies'][key]
+            cf=folder/'config.json';st=folder/'state.json'
+            if git_blob_sha(cf.read_bytes())!=entry['config_blob_sha']:
+                raise ValueError('CONFIG_CHANGED_SINCE_LAUNCH_LOCK: '+key)
+            cfg=json.loads(cf.read_text(encoding='utf-8'))
+            if [x['symbol'] for x in cfg['basket']]!=entry['basket_symbols']:
+                raise ValueError('BASKET_CHANGED_SINCE_LAUNCH_LOCK: '+key)
+            if cfg['benchmark']['symbol']!=entry['benchmark_symbol']:
+                raise ValueError('BENCHMARK_CHANGED_SINCE_LAUNCH_LOCK: '+key)
+            state=json.loads(st.read_text(encoding='utf-8'))
+            if not state['initialized']:
+                if (git_blob_sha(st.read_bytes())!=entry['initial_state_blob_sha'] or
+                        state['last_update']!='2026-11-03' or
+                        state['order_count'] or state['positions']):
+                    raise ValueError('INITIAL_LEDGER_CHANGED_SINCE_LAUNCH_LOCK: '+key)
+        return True,'PRECOMMITTED_PAPER_LAUNCH_APPROVED'
+    except (KeyError,TypeError,ValueError,OSError,json.JSONDecodeError) as exc:
+        return False,'LAUNCH_BLOCKED: '+str(exc)[:190]
 
 
 def latest_closed_us_day(now):
@@ -291,9 +347,13 @@ def main():
     DATA.mkdir(exist_ok=True)
     atomic_json(DATA/'latest_snapshot.json',{'asof':args.asof,'source':source,'digest_sha256':data_hash,
                 'downloaded_at_utc':dt.datetime.now(dt.timezone.utc).isoformat(), 'data':data})
+    launch_allowed,launch_reason=launch_ready(args.asof,dt.datetime.now(dt.timezone.utc))
     reports={}
     for key in LABELS:
-        reports[key]=do_strategy(STRATEGIES/key,args.asof,data,allow_initial_trade=(args.asof==ny_now.date().isoformat()))
+        reports[key]=do_strategy(STRATEGIES/key,args.asof,data,allow_initial_trade=launch_allowed)
+        reports[key]['launch_guard']=launch_reason
+        if not reports[key]['initialized'] and launch_reason=='WAITING_PRECOMMITTED_COMMON_SESSION':
+            reports[key]['report_status']='WAITING_PRECOMMITTED_COMMON_SESSION'
     render_report(args.asof,reports,data_hash)
     from master_dashboard import update as refresh_master
     refresh_master()
