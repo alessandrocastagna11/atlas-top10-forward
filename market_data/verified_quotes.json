@@ -40,6 +40,22 @@
         "https://www.marketscreener.com/quote/stock/ARAMCO-103505448/",
         "https://www.investing.com/equities/saudi-aramco-historical-data"
       ]
+    },
+    {
+      "symbol": "IUSQ.DE",
+      "date": "2026-11-05",
+      "currency": "EUR",
+      "venue": "XETRA",
+      "open": 108.72,
+      "close": 106.32,
+      "verified_on": "2026-11-06",
+      "source_urls": [
+        "https://twelvedata.com/markets/843163/etf/xetr/iusq/historical-data",
+        "https://it.investing.com/etfs/ishares-v-msci-acwi-historical-data?cid=46483",
+        "https://www.marketscreener.com/quote/etf/ISHARES-MSCI-ACWI-UCITS-E-16697382/quotes/"
+      ],
+      "instrument_isin": "IE00B6R52259",
+      "notes": "Xetra closing auction value; other venues must not be mixed with Xetra EOD"
     }
   ]
 }
