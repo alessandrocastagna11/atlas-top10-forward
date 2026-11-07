@@ -1,5 +1,5 @@
 {
-  "asof": "2026-11-05",
+  "asof": "2026-11-06",
   "results": {
     "Adaptive_Risk": {
       "benchmark_cum_pct": 0.0,
@@ -14,7 +14,7 @@
       "estimated_div_tax_eur": 0.0,
       "excess_pp": 0.0,
       "exposure_target": 1.0,
-      "last_nav_date": "2026-11-05",
+      "last_nav_date": "2026-11-06",
       "last_signal": {
         "decision_asof": "2026-10-30",
         "exposure": 1.0,
@@ -114,7 +114,7 @@
       ],
       "positions": 0,
       "realized_tax_eur": 0,
-      "requested_asof": "2026-11-05",
+      "requested_asof": "2026-11-06",
       "sells": 0,
       "status": "PENDING_ORDERS",
       "top3_weight": 0,
@@ -135,7 +135,7 @@
       "estimated_div_tax_eur": 0.0,
       "excess_pp": 0.0,
       "exposure_target": 1.0,
-      "last_nav_date": "2026-11-05",
+      "last_nav_date": "2026-11-06",
       "last_signal": {
         "decision_asof": "2026-10-30",
         "exposure": 1.0,
@@ -235,7 +235,7 @@
       ],
       "positions": 0,
       "realized_tax_eur": 0,
-      "requested_asof": "2026-11-05",
+      "requested_asof": "2026-11-06",
       "sells": 0,
       "status": "PENDING_ORDERS",
       "top3_weight": 0,
@@ -256,7 +256,7 @@
       "estimated_div_tax_eur": 0.0,
       "excess_pp": 0.0,
       "exposure_target": 1.0,
-      "last_nav_date": "2026-11-05",
+      "last_nav_date": "2026-11-06",
       "last_signal": {
         "decision_asof": "2026-10-30",
         "exposure": 1.0,
@@ -356,7 +356,7 @@
       ],
       "positions": 0,
       "realized_tax_eur": 0,
-      "requested_asof": "2026-11-05",
+      "requested_asof": "2026-11-06",
       "sells": 0,
       "status": "PENDING_ORDERS",
       "top3_weight": 0,
@@ -366,10 +366,10 @@
     }
   },
   "source": {
-    "asof": "2026-11-05",
+    "asof": "2026-11-06",
     "feed": "Yahoo delayed + separately verified supplements",
     "missing_symbols": {},
-    "sha256": "44efd0172ae49c0b2e2972f463dcd0e68fb90f945ab9a6b9701bc668b3dabfee"
+    "sha256": "2861daf62c192461dcf9421268ce73215028cc39d3ef81d227e004148d14a236"
   },
   "type": "SHADOW"
 }

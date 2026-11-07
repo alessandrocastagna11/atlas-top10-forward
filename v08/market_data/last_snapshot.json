@@ -1,5 +1,5 @@
 {
-  "asof": "2026-11-05",
+  "asof": "2026-11-06",
   "data": {
     "2222.SR": {
       "bars": {
@@ -1600,7 +1600,7 @@
       "exchange_timezone": "Asia/Riyadh",
       "feed": "Yahoo chart 1d",
       "identity": "Saudi Arabian Oil Company",
-      "retrieved_at_utc": "2026-11-06T20:22:41.454569+00:00",
+      "retrieved_at_utc": "2026-11-07T02:20:03.857731+00:00",
       "splits": {}
     },
     "AAPL": {
@@ -3199,6 +3199,11 @@
           "close": 344.1700134277344,
           "open": 353.8900146484375,
           "volume": 75678900
+        },
+        "2026-11-06": {
+          "close": 342.3699951171875,
+          "open": 338.7300109863281,
+          "volume": 44676300
         }
       },
       "currency": "USD",
@@ -3212,7 +3217,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Apple Inc.",
-      "retrieved_at_utc": "2026-11-06T20:22:40.548861+00:00",
+      "retrieved_at_utc": "2026-11-07T02:20:03.357931+00:00",
       "splits": {}
     },
     "AMZN": {
@@ -4811,6 +4816,11 @@
           "close": 260.2099914550781,
           "open": 271.42999267578125,
           "volume": 85796800
+        },
+        "2026-11-06": {
+          "close": 259.29998779296875,
+          "open": 259.80999755859375,
+          "volume": 42497100
         }
       },
       "currency": "USD",
@@ -4818,7 +4828,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Amazon.com, Inc.",
-      "retrieved_at_utc": "2026-11-06T20:22:40.858632+00:00",
+      "retrieved_at_utc": "2026-11-07T02:20:03.643885+00:00",
       "splits": {}
     },
     "EURSAR=X": {
@@ -6462,6 +6472,11 @@
           "close": 4.071300029754639,
           "open": 4.071300029754639,
           "volume": 0
+        },
+        "2026-11-06": {
+          "close": 4.075500011444092,
+          "open": 4.075500011444092,
+          "volume": 0
         }
       },
       "currency": "SAR",
@@ -6469,7 +6484,7 @@
       "exchange_timezone": "Europe/London",
       "feed": "Yahoo chart 1d",
       "identity": "EUR/SAR",
-      "retrieved_at_utc": "2026-11-06T20:22:41.885016+00:00",
+      "retrieved_at_utc": "2026-11-07T02:20:04.197493+00:00",
       "splits": {}
     },
     "EURUSD=X": {
@@ -8113,6 +8128,11 @@
           "close": 1.1234945058822632,
           "open": 1.123721718788147,
           "volume": 0
+        },
+        "2026-11-06": {
+          "close": 1.1228259801864624,
+          "open": 1.1227502822875977,
+          "volume": 0
         }
       },
       "currency": "USD",
@@ -8120,7 +8140,7 @@
       "exchange_timezone": "Europe/London",
       "feed": "Yahoo chart 1d",
       "identity": "EUR/USD",
-      "retrieved_at_utc": "2026-11-06T20:22:41.737432+00:00",
+      "retrieved_at_utc": "2026-11-07T02:20:04.117450+00:00",
       "splits": {}
     },
     "GOOG": {
@@ -9732,7 +9752,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Alphabet Inc.",
-      "retrieved_at_utc": "2026-11-06T20:22:40.794783+00:00",
+      "retrieved_at_utc": "2026-11-07T02:20:03.582822+00:00",
       "splits": {}
     },
     "IUSQ.DE": {
@@ -11343,7 +11363,7 @@
       "exchange_timezone": "Europe/Berlin",
       "feed": "Yahoo chart 1d",
       "identity": "iShares MSCI All Country World UCITS ETF USD Acc",
-      "retrieved_at_utc": "2026-11-06T20:22:41.666854+00:00",
+      "retrieved_at_utc": "2026-11-07T02:20:04.055289+00:00",
       "splits": {}
     },
     "META": {
@@ -12955,7 +12975,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Meta Platforms, Inc.",
-      "retrieved_at_utc": "2026-11-06T20:22:41.592767+00:00",
+      "retrieved_at_utc": "2026-11-07T02:20:03.993996+00:00",
       "splits": {}
     },
     "MSFT": {
@@ -14554,6 +14574,11 @@
           "close": 535.9299926757812,
           "open": 554.9400024414062,
           "volume": 42507900
+        },
+        "2026-11-06": {
+          "close": 530.6099853515625,
+          "open": 525.6900024414062,
+          "volume": 26938400
         }
       },
       "currency": "USD",
@@ -14567,7 +14592,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Microsoft Corporation",
-      "retrieved_at_utc": "2026-11-06T20:22:40.713140+00:00",
+      "retrieved_at_utc": "2026-11-07T02:20:03.509083+00:00",
       "splits": {}
     },
     "NVDA": {
@@ -16166,6 +16191,11 @@
           "close": 181.60000610351562,
           "open": 196.07000732421875,
           "volume": 306127800
+        },
+        "2026-11-06": {
+          "close": 186.63999938964844,
+          "open": 191.10000610351562,
+          "volume": 179722400
         }
       },
       "currency": "USD",
@@ -16179,7 +16209,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "NVIDIA Corporation",
-      "retrieved_at_utc": "2026-11-06T20:22:40.629384+00:00",
+      "retrieved_at_utc": "2026-11-07T02:20:03.424135+00:00",
       "splits": {}
     },
     "SPCX": {
@@ -16700,7 +16730,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Space Exploration Technologies Corp.",
-      "retrieved_at_utc": "2026-11-06T20:22:41.329355+00:00",
+      "retrieved_at_utc": "2026-11-07T02:20:03.791418+00:00",
       "splits": {}
     },
     "TSLA": {
@@ -18299,6 +18329,11 @@
           "close": 343.69000244140625,
           "open": 374.1199951171875,
           "volume": 79675500
+        },
+        "2026-11-06": {
+          "close": 358.2200012207031,
+          "open": 348.9200134277344,
+          "volume": 36642300
         }
       },
       "currency": "USD",
@@ -18306,7 +18341,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Tesla, Inc.",
-      "retrieved_at_utc": "2026-11-06T20:22:41.522472+00:00",
+      "retrieved_at_utc": "2026-11-07T02:20:03.927799+00:00",
       "splits": {}
     },
     "TSM": {
@@ -19905,6 +19940,11 @@
           "close": 353.1000061035156,
           "open": 379.75,
           "volume": 43030700
+        },
+        "2026-11-06": {
+          "close": 375.44000244140625,
+          "open": 380.55999755859375,
+          "volume": 23801300
         }
       },
       "currency": "USD",
@@ -19918,9 +19958,9 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Taiwan Semiconductor Manufacturing Company Limited",
-      "retrieved_at_utc": "2026-11-06T20:22:41.265623+00:00",
+      "retrieved_at_utc": "2026-11-07T02:20:03.733689+00:00",
       "splits": {}
     }
   },
-  "sha256": "44efd0172ae49c0b2e2972f463dcd0e68fb90f945ab9a6b9701bc668b3dabfee"
+  "sha256": "2861daf62c192461dcf9421268ce73215028cc39d3ef81d227e004148d14a236"
 }
