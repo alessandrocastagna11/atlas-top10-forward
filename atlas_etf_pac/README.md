@@ -1,5 +1,18 @@
 # Atlas ETF — PAC riattivato a novembre 2026
 
+## Altro progetto recuperato: app ATLAS ETF Live / CIA40
+
+La Libreria conserva anche l'app pubblicata con slug "atlas-etf-live",
+non riconducibile alla release V2.3 né al nuovo PAC paper.
+Fotografia storica del 27/09/2026: modello CIA40, pesi 60% World,
+25% Nasdaq, 10% EM, 5% Gold; segnali market regime a cinque fattori,
+"Governor" del conto a -10% drawdown TWR; massimo una vendita e
+due acquisti mensili, ordini da confermare manualmente, registro
+conto sul dispositivo. I dati di quella fotografia NON sono
+quotazioni di novembre 2026. La Libreria segnala sito pubblicato,
+ma il browser automatico non ha potuto verificarne l'accessibilità:
+https://atlas-etf-live.alessandro-castagn76.chatgpt.site
+
 ## Progetto originale recuperato
 
 Archivio originale recuperato: ATLAS_ETF_GLOBAL_V2_3_COMPLETE_2026-10-01.zip.
