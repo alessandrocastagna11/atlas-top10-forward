@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "model": "ATLAS_ETF_PAC_4SLEEVE_RESTART_V1",
+  "mode": "PAPER_ONLY_RESEARCH_RECONSTRUCTION",
+  "started_at": "2026-11-07",
+  "last_processed_session": "2026-11-07",
+  "last_deposit_month": "2026-11",
+  "cash_eur": 1000,
+  "stamp_accrued_eur": 0,
+  "positions": {},
+  "orders": [],
+  "contributions": [],
+  "nav": [
+    {
+      "date": "2026-11-07",
+      "nav_eur": 1000,
+      "cash_eur": 1000,
+      "holdings_eur": 0,
+      "source_status": "SEED_NO_ORDERS",
+      "market_session": false
+    }
+  ],
+  "pending": null,
+  "last_risk_on": null,
+  "off_trough": null,
+  "signal_history": [],
+  "blocked_actions": []
+}
