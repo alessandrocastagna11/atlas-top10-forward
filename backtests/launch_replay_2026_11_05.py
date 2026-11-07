@@ -28,13 +28,25 @@ def fresh_history(full,day):
 def build():
     raw=json.loads((ROOT/'market_data/latest_snapshot.json').read_text())
     full=raw['data']
-    if raw.get('asof')!=CUTOFF:
-        raise ValueError('Frozen last-asof 2026-11-05 snapshot required, got '+str(raw.get('asof')))
+    # This is a RETROSPECTIVE diagnostic, not a tradeable historical signal.
+    # The rolling paper snapshot normally advances past Nov 5. Do not fail
+    # daily CI merely because it is now Nov 6/7/9/etc; instead restrict each
+    # replay decision's bars, dividends and splits to the historical cutoff.
+    # A later downloaded snapshot can still contain subsequently corrected
+    # historical prices: explicitly label the replay as NOT PIT certified.
+    snapshot_asof=raw.get('asof')
+    if not isinstance(snapshot_asof,str) or len(snapshot_asof)!=10 or snapshot_asof<CUTOFF:
+        raise ValueError('Replay requires a source snapshot at/after '+CUTOFF+
+                         ', got '+str(snapshot_asof))
     digest=hashlib.sha256(json.dumps(full,sort_keys=True).encode()).hexdigest()
     audit={'kind':'RETROSPECTIVE_2_SESSION_LAUNCH_REPLAY_NOT_FORWARD',
-           'cutoff':CUTOFF,'data_source':raw.get('source'),
+           'cutoff':CUTOFF,'source_snapshot_asof':snapshot_asof,
+           'data_source':raw.get('source'),
            'data_digest_sha256':digest,'retrospective_signal_only':True,
-           'replay_with_future_knowledge_beyond_asof':False,'strategies':{}}
+           'historical_pit_certified':False,
+           'late_snapshot_may_contain_historical_revisions':snapshot_asof>CUTOFF,
+           'bars_actions_truncated_to_each_decision_date':True,
+           'strategies':{}}
     for name in STRATEGIES:
         folder=ROOT/'strategies'/name
         cfg=json.loads((folder/'config.json').read_text())
@@ -89,7 +101,11 @@ def build():
     for k,x in audit['strategies'].items():
         md.append(f"| {k} | {x['status']} | {x['portfolio_nav_eur']:,.2f} | {x['benchmark_nav_eur']:,.2f} | {x['two_session_return_pct']:+.3f}% | {x['nonbenchmark_orders']} | {x['fees_eur']:.2f} |")
         if x['blocked']:md.append(f"\n- {k}: blocchi "+json.dumps(x['blocked'],ensure_ascii=False))
-    md+=['','Fonte: `market_data/latest_snapshot.json`; hash sha256 dei dati: `'+digest+'`.','',
+    md+=['','Il report utilizza lo snapshot corrente asof '+str(snapshot_asof)+
+         '; le barre e le azioni sono filtrate fino al giorno simulato.',
+         'I dati storici potrebbero essere stati corretti retrospettivamente:',
+         'QUESTO È UN REPLAY DIAGNOSTICO, NON UN BACKTEST PIT NÉ UN CONTABILE FORWARD.','',
+         'Fonte: `market_data/latest_snapshot.json`; hash sha256 dei dati: `'+digest+'`.','',
         'IUSQ.DE del 5 novembre proviene dal singolo snapshot Yahoo: contrasto con altre fonti',
         'non risolto. Esecuzioni storiche dei soli prezzi di CLOSE, non prove di eseguibilità.','',
         'Un backtest pluriennale di v0.8 fino al 2025 è separato; non è stato esteso',
