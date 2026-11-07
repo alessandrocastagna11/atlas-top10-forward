@@ -9,11 +9,11 @@
   "historical_engine_equivalent": false,
   "mode": "SHADOW",
   "model_variant": "V4_CONF70_FORWARD_COHORT_PROXY_V1",
-  "produced_at_utc": "2026-11-06T22:46:37.513549+00:00",
+  "produced_at_utc": "2026-11-07T05:54:33.334082+00:00",
   "provenance_sha256": {
-    "benchmark_price_file_sha256": "863475aedb22faf81ea7e37ac89a1ce700591acd99eaf7b20a21aacd064dc290",
-    "fx_files_sha256": "6a92e8a79511f578b07f2871d7ca29c8d20fa3fa68621b3cee8f3fc2369ee004",
-    "price_files_sha256": "6148749939c6e8d27b05b745461127c831b3f61106b4075d43734160cdf4a6bd",
+    "benchmark_price_file_sha256": "7929d419e9c42a2d735284cacce35b216328bee476e548f962c8d3cde3fe87e2",
+    "fx_files_sha256": "533051b401359efe3021e8a90d1ca17e0755ed5b716ae776f74a8b75f70b9191",
+    "price_files_sha256": "c2a4221abb4d4f48b09d6b413d5f5783475388593979c2d4106a2324bba1f3e7",
     "roster_sha256": "88a5c6f6612bd0fc1b2468455ed1b334c79e90dc1a34e80d2dcc32b462496026"
   },
   "region_strength_proxy": -0.137525,
@@ -24,7 +24,7 @@
   "targets": [
     {
       "market_symbol": "CRWD",
-      "price_eur": 194.646054,
+      "price_eur": 193.173295,
       "region": "USA",
       "score": 1.90645077,
       "sector": "Information Technology",
@@ -33,7 +33,7 @@
     },
     {
       "market_symbol": "PANW",
-      "price_eur": 281.640012,
+      "price_eur": 279.509026,
       "region": "USA",
       "score": 1.63171329,
       "sector": "Information Technology",
@@ -42,7 +42,7 @@
     },
     {
       "market_symbol": "AMD",
-      "price_eur": 402.968502,
+      "price_eur": 399.919504,
       "region": "USA",
       "score": 1.61370714,
       "sector": "Information Technology",
@@ -51,7 +51,7 @@
     },
     {
       "market_symbol": "MRK",
-      "price_eur": 131.675498,
+      "price_eur": 130.679195,
       "region": "USA",
       "score": 1.12073306,
       "sector": "Health Care",
@@ -60,7 +60,7 @@
     },
     {
       "market_symbol": "ABBV",
-      "price_eur": 261.421591,
+      "price_eur": 259.443585,
       "region": "USA",
       "score": 0.65542547,
       "sector": "Health Care",
@@ -69,7 +69,7 @@
     },
     {
       "market_symbol": "COP",
-      "price_eur": 122.288701,
+      "price_eur": 121.363423,
       "region": "USA",
       "score": 0.43435054,
       "sector": "Energy",
@@ -78,7 +78,7 @@
     },
     {
       "market_symbol": "TMO",
-      "price_eur": 623.47763,
+      "price_eur": 618.760184,
       "region": "USA",
       "score": 0.38009742,
       "sector": "Health Care",
@@ -87,7 +87,7 @@
     },
     {
       "market_symbol": "PM",
-      "price_eur": 177.577516,
+      "price_eur": 176.233903,
       "region": "USA",
       "score": 0.36155313,
       "sector": "Consumer Staples",
@@ -96,7 +96,7 @@
     },
     {
       "market_symbol": "6098.T",
-      "price_eur": 96.270914,
+      "price_eur": 96.142427,
       "region": "ROW",
       "score": 2.40640335,
       "sector": "Industrials",
@@ -105,7 +105,7 @@
     },
     {
       "market_symbol": "1303.TW",
-      "price_eur": 6.551413,
+      "price_eur": 6.443272,
       "region": "ROW",
       "score": 2.38182685,
       "sector": "Materials",

@@ -1,6 +1,6 @@
 {
   "caveat": "Retroactive ECB history is not evidence of a historical timestamped PIT archive",
-  "checked_at_utc": "2026-11-06T22:46:35.381840+00:00",
+  "checked_at_utc": "2026-11-07T05:54:29.800012+00:00",
   "currencies_with_history": 16,
   "currency_coverage": {
     "AUD": {
@@ -120,10 +120,10 @@
   "historical_revisions_time_versioned": false,
   "no_annual_interpolation": true,
   "original_confidence70_pit_certified": false,
-  "raw_sha256": "5f7d947cec10fed08ef52a5c34438f2f0187286daa78e360be51e758a630091d",
+  "raw_sha256": "f9b3b90909ff33d2f7f3e9e98ae6995da92f60010ed419c37d40a6b236b205a0",
   "reference_only": true,
-  "request_end": "2026-11-06",
-  "request_start": "2026-09-22",
+  "request_end": "2026-11-07",
+  "request_start": "2026-09-23",
   "source": "ECB EXR daily reference, fetched retrospectively",
   "status": "ECB_REFERENCE_UPDATED"
 }
