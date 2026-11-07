@@ -1,7 +1,7 @@
 {
   "asof": "2026-11-06",
   "source": "YAHOO_CHART",
-  "digest_sha256": "c8544f49d350fab6a76f269870a0b54500117ee7834829aef72d531b3424e262",
+  "digest_sha256": "e5fce561cbffdf2c50eeae6609e690f06d1266a316cacfda9537c67e6bfa9917",
   "results": {
     "MA10_Official": {
       "price_freshness": "VALUATION_WITH_STALE_QUOTES",
@@ -39,23 +39,7 @@
       "data_warning": null,
       "missing_exact_closes": [
         {
-          "symbol": "GOOG",
-          "last_close_date": "2026-11-05"
-        },
-        {
-          "symbol": "SPCX",
-          "last_close_date": "2026-11-05"
-        },
-        {
           "symbol": "2222.SR",
-          "last_close_date": "2026-11-05"
-        },
-        {
-          "symbol": "META",
-          "last_close_date": "2026-11-05"
-        },
-        {
-          "symbol": "IUSQ.DE",
           "last_close_date": "2026-11-05"
         }
       ],
@@ -105,24 +89,24 @@
         {
           "asof_date": "2026-11-06",
           "symbol": "GOOG",
-          "bar_date": "2026-11-05",
-          "close": 281.739990234375,
+          "bar_date": "2026-11-06",
+          "close": 283.92999267578125,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-06",
           "symbol": "IUSQ.DE",
-          "bar_date": "2026-11-05",
-          "close": 106.31999969482422,
+          "bar_date": "2026-11-06",
+          "close": 106.27999877929688,
           "currency": "EUR",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-06",
           "symbol": "META",
-          "bar_date": "2026-11-05",
-          "close": 605.0800170898438,
+          "bar_date": "2026-11-06",
+          "close": 610.1500244140625,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
@@ -145,8 +129,8 @@
         {
           "asof_date": "2026-11-06",
           "symbol": "SPCX",
-          "bar_date": "2026-11-05",
-          "close": 123.62000274658203,
+          "bar_date": "2026-11-06",
+          "close": 134.27000427246094,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
@@ -206,23 +190,7 @@
       "data_warning": null,
       "missing_exact_closes": [
         {
-          "symbol": "GOOG",
-          "last_close_date": "2026-11-05"
-        },
-        {
-          "symbol": "SPCX",
-          "last_close_date": "2026-11-05"
-        },
-        {
           "symbol": "2222.SR",
-          "last_close_date": "2026-11-05"
-        },
-        {
-          "symbol": "META",
-          "last_close_date": "2026-11-05"
-        },
-        {
-          "symbol": "IUSQ.DE",
           "last_close_date": "2026-11-05"
         }
       ],
@@ -272,24 +240,24 @@
         {
           "asof_date": "2026-11-06",
           "symbol": "GOOG",
-          "bar_date": "2026-11-05",
-          "close": 281.739990234375,
+          "bar_date": "2026-11-06",
+          "close": 283.92999267578125,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-06",
           "symbol": "IUSQ.DE",
-          "bar_date": "2026-11-05",
-          "close": 106.31999969482422,
+          "bar_date": "2026-11-06",
+          "close": 106.27999877929688,
           "currency": "EUR",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
           "asof_date": "2026-11-06",
           "symbol": "META",
-          "bar_date": "2026-11-05",
-          "close": 605.0800170898438,
+          "bar_date": "2026-11-06",
+          "close": 610.1500244140625,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
@@ -312,8 +280,8 @@
         {
           "asof_date": "2026-11-06",
           "symbol": "SPCX",
-          "bar_date": "2026-11-05",
-          "close": 123.62000274658203,
+          "bar_date": "2026-11-06",
+          "close": 134.27000427246094,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },

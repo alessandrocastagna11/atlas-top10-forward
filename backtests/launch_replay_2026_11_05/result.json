@@ -1,10 +1,13 @@
 {
   "kind": "RETROSPECTIVE_2_SESSION_LAUNCH_REPLAY_NOT_FORWARD",
   "cutoff": "2026-11-05",
+  "source_snapshot_asof": "2026-11-06",
   "data_source": "YAHOO_CHART",
-  "data_digest_sha256": "d2c23ebb6f0e102de960af6b44e9e38b8664020ed641e6b4c947a8c4be0d5731",
+  "data_digest_sha256": "c8544f49d350fab6a76f269870a0b54500117ee7834829aef72d531b3424e262",
   "retrospective_signal_only": true,
-  "replay_with_future_knowledge_beyond_asof": false,
+  "historical_pit_certified": false,
+  "late_snapshot_may_contain_historical_revisions": true,
+  "bars_actions_truncated_to_each_decision_date": true,
   "strategies": {
     "MA10_Official": {
       "status": "COMPLETE_DIAGNOSTIC",

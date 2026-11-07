@@ -12,7 +12,11 @@ ammissibile con il paniere v0.7 attuale riguarda il 4–5 novembre, non il 2025.
 | MA10_Official | COMPLETE_DIAGNOSTIC | 9,426.76 | 9,752.30 | -5.732% | 10 | 10.00 |
 | MA6_MA12_Challenger | COMPLETE_DIAGNOSTIC | 9,426.76 | 9,752.30 | -5.732% | 10 | 10.00 |
 
-Fonte: `market_data/latest_snapshot.json`; hash sha256 dei dati: `d2c23ebb6f0e102de960af6b44e9e38b8664020ed641e6b4c947a8c4be0d5731`.
+Il report utilizza lo snapshot corrente asof 2026-11-06; le barre e le azioni sono filtrate fino al giorno simulato.
+I dati storici potrebbero essere stati corretti retrospettivamente:
+QUESTO È UN REPLAY DIAGNOSTICO, NON UN BACKTEST PIT NÉ UN CONTABILE FORWARD.
+
+Fonte: `market_data/latest_snapshot.json`; hash sha256 dei dati: `c8544f49d350fab6a76f269870a0b54500117ee7834829aef72d531b3424e262`.
 
 IUSQ.DE del 5 novembre proviene dal singolo snapshot Yahoo: contrasto con altre fonti
 non risolto. Esecuzioni storiche dei soli prezzi di CLOSE, non prove di eseguibilità.

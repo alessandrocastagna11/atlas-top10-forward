@@ -3,7 +3,7 @@
 **Capitale virtuale:** 10.000 € per ciascuna simulazione; nessun ordine reale.
 **Benchmark:** IUSQ.DE (MSCI ACWI ETF in EUR), conto virtuale indipendente.
 **Prezzi:** Yahoo daily end-of-day; nessuna esecuzione con prezzi ipotetici.
-**Impronta snapshot:** `c8544f49d350fab6a76f269870a0b54500117ee7834829aef72d531b3424e262`.
+**Impronta snapshot:** `e5fce561cbffdf2c50eeae6609e690f06d1266a316cacfda9537c67e6bfa9917`.
 
 | Strategia | Stato | NAV € | IUSQ € | Cum. % | IUSQ cum. % | Excess pp | Acquisti | Vendite |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
@@ -21,7 +21,7 @@
 - Commissioni accumulate 0.00 €; slippage 0.00 €; imposte plusvalenze 0.00 €; imposte dividendi proxy 0.00 €; bollo maturato 0.00 €.
 - **Avvio paper:** WAITING_PRECOMMITTED_COMMON_SESSION
 - **Drawdown dal lancio:** attuale 0.00%, massimo 0.00%; benchmark massimo 0.00%.
-- **Chiusure mancanti per la data richiesta:** GOOG (ultima 2026-11-05), SPCX (ultima 2026-11-05), 2222.SR (ultima 2026-11-05), META (ultima 2026-11-05), IUSQ.DE (ultima 2026-11-05)
+- **Chiusure mancanti per la data richiesta:** 2222.SR (ultima 2026-11-05)
 
 ## MA6_MA12_Challenger
 - Ultima data NAV verificabile: **2026-11-03**, richiesta **2026-11-06**; stato: **WAITING_PRECOMMITTED_COMMON_SESSION**; freschezza quotazioni: **VALUATION_WITH_STALE_QUOTES**.
@@ -30,6 +30,6 @@
 - Commissioni accumulate 0.00 €; slippage 0.00 €; imposte plusvalenze 0.00 €; imposte dividendi proxy 0.00 €; bollo maturato 0.00 €.
 - **Avvio paper:** WAITING_PRECOMMITTED_COMMON_SESSION
 - **Drawdown dal lancio:** attuale 0.00%, massimo 0.00%; benchmark massimo 0.00%.
-- **Chiusure mancanti per la data richiesta:** GOOG (ultima 2026-11-05), SPCX (ultima 2026-11-05), 2222.SR (ultima 2026-11-05), META (ultima 2026-11-05), IUSQ.DE (ultima 2026-11-05)
+- **Chiusure mancanti per la data richiesta:** 2222.SR (ultima 2026-11-05)
 
 **Avvertenza:** se ultima data NAV è precedente alla richiesta, il valore è storico e NON rappresenta una nuova quotazione giornaliera.
