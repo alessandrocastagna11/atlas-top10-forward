@@ -133,7 +133,7 @@ def execute_paper(state,snapshot,quotes,rebalance_fraction=0.05,execution_price_
         excess=current-desired
         if excess<=max(nav*rebalance_fraction,3.):continue
         held=(execution-dt.date.fromisoformat(pos['first_entry_date'])).days
-        if held<35:raise PaperBlocked(f'minimum holding 35 days for {t}: {held} elapsed')
+        if held<35:continue  # Preserve locked holdings without blocking other valid orders.
         shares=min(pos['shares'],excess/prices[t])
         if shares*prices[t]>3.:sells.append((t,shares))
     orders=[]
@@ -155,6 +155,16 @@ def execute_paper(state,snapshot,quotes,rebalance_fraction=0.05,execution_price_
         cur=holdings.get(t,{}).get('shares',0)*prices[t]
         difference=estimated_target[t]-cur
         if difference>max(nav*rebalance_fraction,3.):need.append((t,difference))
+    # Locked holdings still occupy slots: select only purchases that fit.
+    free_slots=max(0,10-len(holdings))
+    eligible=[]
+    for t,difference in need:
+        if t in holdings:
+            eligible.append((t,difference))
+        elif free_slots>0:
+            eligible.append((t,difference))
+            free_slots-=1
+    need=eligible
     required=sum(v for _,v in need)
     free=max(0,cash-0.01*nav-len(need)*FEE)
     scale=min(1.,free/required) if required>0 else 0
