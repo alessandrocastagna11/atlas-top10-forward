@@ -1,0 +1,85 @@
+{
+  "asof": "2026-11-07",
+  "quotes_asof": {
+    "2222.SR": {
+      "bar": null,
+      "currency": "SAR",
+      "identity": "Saudi Arabian Oil Company",
+      "retrieved_at_utc": "2026-11-08T13:15:58.384330+00:00"
+    },
+    "AAPL": {
+      "bar": null,
+      "currency": "USD",
+      "identity": "Apple Inc.",
+      "retrieved_at_utc": "2026-11-08T13:15:57.502459+00:00"
+    },
+    "AMZN": {
+      "bar": null,
+      "currency": "USD",
+      "identity": "Amazon.com, Inc.",
+      "retrieved_at_utc": "2026-11-08T13:15:58.004579+00:00"
+    },
+    "EURSAR=X": {
+      "bar": null,
+      "currency": "SAR",
+      "identity": "EUR/SAR",
+      "retrieved_at_utc": "2026-11-08T13:15:59.065105+00:00"
+    },
+    "EURUSD=X": {
+      "bar": null,
+      "currency": "USD",
+      "identity": "EUR/USD",
+      "retrieved_at_utc": "2026-11-08T13:15:58.944175+00:00"
+    },
+    "GOOG": {
+      "bar": null,
+      "currency": "USD",
+      "identity": "Alphabet Inc.",
+      "retrieved_at_utc": "2026-11-08T13:15:57.884082+00:00"
+    },
+    "IUSQ.DE": {
+      "bar": null,
+      "currency": "EUR",
+      "identity": "iShares MSCI All Country World UCITS ETF USD Acc",
+      "retrieved_at_utc": "2026-11-08T13:15:58.755636+00:00"
+    },
+    "META": {
+      "bar": null,
+      "currency": "USD",
+      "identity": "Meta Platforms, Inc.",
+      "retrieved_at_utc": "2026-11-08T13:15:58.634840+00:00"
+    },
+    "MSFT": {
+      "bar": null,
+      "currency": "USD",
+      "identity": "Microsoft Corporation",
+      "retrieved_at_utc": "2026-11-08T13:15:57.760255+00:00"
+    },
+    "NVDA": {
+      "bar": null,
+      "currency": "USD",
+      "identity": "NVIDIA Corporation",
+      "retrieved_at_utc": "2026-11-08T13:15:57.628744+00:00"
+    },
+    "SPCX": {
+      "bar": null,
+      "currency": "USD",
+      "identity": "Space Exploration Technologies Corp.",
+      "retrieved_at_utc": "2026-11-08T13:15:58.253623+00:00"
+    },
+    "TSLA": {
+      "bar": null,
+      "currency": "USD",
+      "identity": "Tesla, Inc.",
+      "retrieved_at_utc": "2026-11-08T13:15:58.508991+00:00"
+    },
+    "TSM": {
+      "bar": null,
+      "currency": "USD",
+      "identity": "Taiwan Semiconductor Manufacturing Company Limited",
+      "retrieved_at_utc": "2026-11-08T13:15:58.138601+00:00"
+    }
+  },
+  "sha256": "fe916a26ce32e7f89815b4ae382e0dfeb95939db98b9d2cf632c7565317e5518",
+  "source": "YAHOO_CHART_DELAYED"
+}
