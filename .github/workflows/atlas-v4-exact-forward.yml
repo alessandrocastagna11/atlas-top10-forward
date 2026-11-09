@@ -8,6 +8,7 @@ on:
       - 'strict_shadow/v4_exact_source/run_live.py'
       - 'strict_shadow/v4_exact_source/frozen_region.py'
       - 'strict_shadow/v4_exact_source/live_simulator.py'
+      - 'strict_shadow/v4_exact_source/paper_reporting.py'
       - 'strict_shadow/v4_exact_source/live_tests/**'
       - 'strict_shadow/v4_exact_source/requirements-live.txt'
       - '.github/workflows/atlas-v4-exact-forward.yml'
@@ -16,7 +17,8 @@ on:
     - cron: '35 22 * * 1-5'
     - cron: '5 23 * * 1-5'
     # Late feed retry for US-only baskets (global open cutoff still enforced).
-    - cron: '25 0 * * 2-6'
+    # Late retry disabled to avoid write contention with the midnight dispatcher.
+    # - cron: '25 0 * * 2-6'
 permissions:
   contents: write
 concurrency:
@@ -47,6 +49,10 @@ jobs:
           key: atlas-v4-adjusted-${{ runner.os }}-${{ github.run_id }}
           restore-keys: |
             atlas-v4-adjusted-${{ runner.os }}-
+      - name: Refresh as-recorded roster and daily unadjusted quote/FX feed
+        run: python strict_shadow/live_v4/dataset_daily.py --limit 300 --start 2024-01-01
+      - name: Update independent ECB FX audit
+        run: python strict_shadow/live_v4/ecb_fx.py --start 2012-01-01
       - name: Verify original frozen source hashes
         run: python strict_shadow/v4_exact_source/readiness.py
       - name: Original engine smoke tests and fail-closed controls
@@ -68,6 +74,11 @@ jobs:
                  '- Reason: '+str(j.get('reason','none')),
                  '- Session: '+str(j.get('decision_session','none')),
                  '- Virtual orders: '+str(j.get('orders_cumulative','unchanged')),
+                 '- New orders: '+str(j.get('new_orders',0)),
+                 '- Cash: '+str(j.get('cash_eur','not yet valued')),
+                 '- Positions: '+str(j.get('positions_count','not yet valued')),
+                 '- Holding limit: **35 calendar days per lot, including defensive sales**',
+                 '- Portfolio report: strict_shadow/v4_exact_source/forward/latest.md',
                  '- NAV: '+str(j.get('nav_eur','unchanged')),
                  '- Original 2026 PIT-market-cap membership certified: **NO**',
                  '- Broker orders: **ZERO**']
@@ -80,6 +91,9 @@ jobs:
           git config user.email "atlas-v4-original-paper@users.noreply.github.com"
           git add -A strict_shadow/v4_exact_source/forward
           git add -A strict_shadow/v4_exact_source/reports
+          if [ -d strict_shadow/live_v4/dataset ]; then
+            git add -A strict_shadow/live_v4/dataset
+          fi
           if ! git diff --cached --quiet; then
             git commit -m "Atlas V4 original source daily PAPER audit $(date -u +%F)"
             git pull --rebase origin atlas-v4-confidence70-live-paper
