@@ -22,7 +22,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: atlas-v4-exact-original-paper
+  group: atlas-v4-confidence70-live-paper
   cancel-in-progress: false
 jobs:
   exact_v4_paper:
