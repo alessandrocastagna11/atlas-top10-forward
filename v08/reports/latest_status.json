@@ -14,7 +14,7 @@
       "estimated_div_tax_eur": 0.0,
       "excess_pp": 0.0,
       "exposure_target": 1.0,
-      "last_nav_date": "2026-11-06",
+      "last_nav_date": "2026-11-08",
       "last_signal": {
         "decision_asof": "2026-10-30",
         "exposure": 1.0,
@@ -116,7 +116,7 @@
       "realized_tax_eur": 0,
       "requested_asof": "2026-11-08",
       "sells": 0,
-      "status": "PENDING_DATA",
+      "status": "PENDING_ORDERS",
       "top3_weight": 0,
       "venue_fees_eur": 0,
       "warnings": [],
@@ -135,7 +135,7 @@
       "estimated_div_tax_eur": 0.0,
       "excess_pp": 0.0,
       "exposure_target": 1.0,
-      "last_nav_date": "2026-11-06",
+      "last_nav_date": "2026-11-08",
       "last_signal": {
         "decision_asof": "2026-10-30",
         "exposure": 1.0,
@@ -237,7 +237,7 @@
       "realized_tax_eur": 0,
       "requested_asof": "2026-11-08",
       "sells": 0,
-      "status": "PENDING_DATA",
+      "status": "PENDING_ORDERS",
       "top3_weight": 0,
       "venue_fees_eur": 0,
       "warnings": [],
@@ -256,7 +256,7 @@
       "estimated_div_tax_eur": 0.0,
       "excess_pp": 0.0,
       "exposure_target": 1.0,
-      "last_nav_date": "2026-11-06",
+      "last_nav_date": "2026-11-08",
       "last_signal": {
         "decision_asof": "2026-10-30",
         "exposure": 1.0,
@@ -358,7 +358,7 @@
       "realized_tax_eur": 0,
       "requested_asof": "2026-11-08",
       "sells": 0,
-      "status": "PENDING_DATA",
+      "status": "PENDING_ORDERS",
       "top3_weight": 0,
       "venue_fees_eur": 0,
       "warnings": [],
@@ -369,7 +369,7 @@
     "asof": "2026-11-08",
     "feed": "Yahoo delayed + separately verified supplements",
     "missing_symbols": {},
-    "sha256": "52c524133d0bbebbe28c910c65829acad7a3f7e92e160c63e4f7967fbac45152"
+    "sha256": "ec470f7e2f77d4a62e180c84158337405ec264184310be8149a3ac1f10739586"
   },
   "type": "SHADOW"
 }
