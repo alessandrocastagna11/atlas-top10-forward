@@ -1,13 +1,129 @@
 {
-  "checked_at_utc": "2026-11-09T17:41:18.206306+00:00",
+  "caveat": "Retroactive ECB history is not evidence of a historical timestamped PIT archive",
+  "checked_at_utc": "2026-11-09T20:46:46.097596+00:00",
+  "currencies_with_history": 16,
+  "currency_coverage": {
+    "AUD": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    },
+    "BRL": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    },
+    "CAD": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    },
+    "CHF": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    },
+    "DKK": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    },
+    "GBP": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    },
+    "HKD": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    },
+    "INR": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    },
+    "JPY": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    },
+    "KRW": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    },
+    "NOK": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    },
+    "SEK": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    },
+    "SGD": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    },
+    "TWD": {
+      "count": 2258,
+      "first": "2012-01-02",
+      "last": "2020-10-30",
+      "new": 0,
+      "revisions": 0
+    },
+    "USD": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    },
+    "ZAR": {
+      "count": 3801,
+      "first": "2012-01-02",
+      "last": "2026-11-09",
+      "new": 0,
+      "revisions": 0
+    }
+  },
   "execution_quote_source_unchanged": true,
   "historical_revisions_time_versioned": false,
   "no_annual_interpolation": true,
   "original_confidence70_pit_certified": false,
-  "reason": "HTTPError: HTTP Error 504: Gateway Time-out",
+  "raw_sha256": "f28018891031cdfccbc96e7c0b1fb538fd4a5f94270aa4be64db972922d8858c",
   "reference_only": true,
   "request_end": "2026-11-09",
   "request_start": "2026-09-25",
   "source": "ECB EXR daily reference, fetched retrospectively",
-  "status": "ECB_REFERENCE_UNAVAILABLE"
+  "status": "ECB_REFERENCE_UPDATED"
 }
