@@ -11,6 +11,7 @@ on:
       - 'strict_shadow/live_v4/forward_signal.py'
       - 'strict_shadow/live_v4/proxy_paper.py'
       - 'strict_shadow/live_v4/inbox/**'
+      - 'strict_shadow/v4_exact_source/**'
   workflow_dispatch:
 
 # No schedule here: GitHub scheduled Actions only run on the default branch.
@@ -43,6 +44,10 @@ jobs:
         run: python strict_shadow/live_v4/dataset_daily.py --limit 300 --start 2024-01-01
       - name: Independently refresh ECB daily EUR reference rates and audit historical revisions
         run: python strict_shadow/live_v4/ecb_fx.py --start 2012-01-01
+      - name: Verify exact historical Confidence70 source and report 2026 parity readiness
+        run: |
+          python -m unittest discover -s strict_shadow/v4_exact_source/tests -p 'test_*.py' -v
+          python strict_shadow/v4_exact_source/readiness.py
       - name: Settle last verified forward research proxy at actual next-session opens
         run: python strict_shadow/live_v4/proxy_paper.py
       - name: Generate new research forward signal (NOT original parity)
@@ -81,6 +86,7 @@ jobs:
           git config user.name "Atlas V4 Paper Bot"
           git config user.email "atlas-v4-paper-bot@users.noreply.github.com"
           git add -A strict_shadow/live_v4/state strict_shadow/live_v4/reports
+          git add -A strict_shadow/v4_exact_source/reports
           if [ -d strict_shadow/live_v4/dataset ]; then
             git add -A strict_shadow/live_v4/dataset
           fi
