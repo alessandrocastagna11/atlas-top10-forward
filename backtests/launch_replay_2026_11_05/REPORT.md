@@ -16,7 +16,7 @@ Il report utilizza lo snapshot corrente asof 2026-11-07; le barre e le azioni so
 I dati storici potrebbero essere stati corretti retrospettivamente:
 QUESTO È UN REPLAY DIAGNOSTICO, NON UN BACKTEST PIT NÉ UN CONTABILE FORWARD.
 
-Fonte: `market_data/latest_snapshot.json`; hash sha256 dei dati: `d5de10772c9f12a715560f76c4400afc048c4c13ffbb19491e5025b5dae28230`.
+Fonte: `market_data/latest_snapshot.json`; hash sha256 dei dati: `ecc012b5b2348030bbd6e6d03fd215b886011f18f4df200c2e4c406497e58190`.
 
 IUSQ.DE del 5 novembre proviene dal singolo snapshot Yahoo: contrasto con altre fonti
 non risolto. Esecuzioni storiche dei soli prezzi di CLOSE, non prove di eseguibilità.

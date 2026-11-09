@@ -1,5 +1,5 @@
 {
-  "asof": "2026-11-07",
+  "asof": "2026-11-08",
   "results": {
     "Adaptive_Risk": {
       "benchmark_cum_pct": 0.0,
@@ -114,7 +114,7 @@
       ],
       "positions": 0,
       "realized_tax_eur": 0,
-      "requested_asof": "2026-11-07",
+      "requested_asof": "2026-11-08",
       "sells": 0,
       "status": "PENDING_DATA",
       "top3_weight": 0,
@@ -235,7 +235,7 @@
       ],
       "positions": 0,
       "realized_tax_eur": 0,
-      "requested_asof": "2026-11-07",
+      "requested_asof": "2026-11-08",
       "sells": 0,
       "status": "PENDING_DATA",
       "top3_weight": 0,
@@ -356,7 +356,7 @@
       ],
       "positions": 0,
       "realized_tax_eur": 0,
-      "requested_asof": "2026-11-07",
+      "requested_asof": "2026-11-08",
       "sells": 0,
       "status": "PENDING_DATA",
       "top3_weight": 0,
@@ -366,10 +366,10 @@
     }
   },
   "source": {
-    "asof": "2026-11-07",
+    "asof": "2026-11-08",
     "feed": "Yahoo delayed + separately verified supplements",
     "missing_symbols": {},
-    "sha256": "fe916a26ce32e7f89815b4ae382e0dfeb95939db98b9d2cf632c7565317e5518"
+    "sha256": "52c524133d0bbebbe28c910c65829acad7a3f7e92e160c63e4f7967fbac45152"
   },
   "type": "SHADOW"
 }

@@ -1,9 +1,9 @@
-# Atlas Top 10 — report EOD 2026-11-07
+# Atlas Top 10 — report EOD 2026-11-08
 
 **Capitale virtuale:** 10.000 € per ciascuna simulazione; nessun ordine reale.
 **Benchmark:** IUSQ.DE (MSCI ACWI ETF in EUR), conto virtuale indipendente.
 **Prezzi:** Yahoo daily end-of-day; nessuna esecuzione con prezzi ipotetici.
-**Impronta snapshot:** `ecc012b5b2348030bbd6e6d03fd215b886011f18f4df200c2e4c406497e58190`.
+**Impronta snapshot:** `9c4c7015f6102f246e3d8eff2dabbd9693f62b72f20520f5f32c1a0b7ebd9469`.
 
 | Strategia | Stato | NAV € | IUSQ € | Cum. % | IUSQ cum. % | Excess pp | Acquisti | Vendite |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
@@ -15,7 +15,7 @@
 **Ordini di benchmark non inclusi nel conteggio della strategia.**
 
 ## MA10_Official
-- Ultima data NAV verificabile: **2026-11-03**, richiesta **2026-11-07**; stato: **WAITING_PRECOMMITTED_COMMON_SESSION**; freschezza quotazioni: **VALUATION_WITH_STALE_QUOTES**.
+- Ultima data NAV verificabile: **2026-11-03**, richiesta **2026-11-08**; stato: **WAITING_PRECOMMITTED_COMMON_SESSION**; freschezza quotazioni: **VALUATION_WITH_STALE_QUOTES**.
 - Patrimonio 10,000.00 €, benchmark 10,000.00 €; variazione dall'ultima osservazione: +0.000% vs +0.000%.
 - Operazioni: 0 acquisti + 0 vendite = 0 ordini; nella data richiesta: 0.
 - Commissioni accumulate 0.00 €; slippage 0.00 €; imposte plusvalenze 0.00 €; imposte dividendi proxy 0.00 €; bollo maturato 0.00 €.
@@ -24,7 +24,7 @@
 - **Chiusure mancanti per la data richiesta:** AAPL (ultima 2026-11-06), NVDA (ultima 2026-11-06), MSFT (ultima 2026-11-06), GOOG (ultima 2026-11-06), AMZN (ultima 2026-11-06), TSM (ultima 2026-11-06), SPCX (ultima 2026-11-06), 2222.SR (ultima 2026-11-05), TSLA (ultima 2026-11-06), META (ultima 2026-11-06), IUSQ.DE (ultima 2026-11-06)
 
 ## MA6_MA12_Challenger
-- Ultima data NAV verificabile: **2026-11-03**, richiesta **2026-11-07**; stato: **WAITING_PRECOMMITTED_COMMON_SESSION**; freschezza quotazioni: **VALUATION_WITH_STALE_QUOTES**.
+- Ultima data NAV verificabile: **2026-11-03**, richiesta **2026-11-08**; stato: **WAITING_PRECOMMITTED_COMMON_SESSION**; freschezza quotazioni: **VALUATION_WITH_STALE_QUOTES**.
 - Patrimonio 10,000.00 €, benchmark 10,000.00 €; variazione dall'ultima osservazione: +0.000% vs +0.000%.
 - Operazioni: 0 acquisti + 0 vendite = 0 ordini; nella data richiesta: 0.
 - Commissioni accumulate 0.00 €; slippage 0.00 €; imposte plusvalenze 0.00 €; imposte dividendi proxy 0.00 €; bollo maturato 0.00 €.
