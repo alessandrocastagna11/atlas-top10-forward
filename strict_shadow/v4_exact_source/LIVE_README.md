@@ -1,0 +1,43 @@
+# Atlas V4 Confidence70 original-source PAPER forward
+
+This is NOT `V4_CONF70_FORWARD_COHORT_PROXY_V1` and cannot use its historic CAGR
+as evidence of live returns. It executes the original 2012–2025
+`RegionSlotAtlas` class (verbatim, audited SHA), original H4 two-factor OLS
+routines, robust cross-sectional scoring and path/alpha selectors, V2 continuous
+SPY regime, T8 overlay and T9 tax-aware simulator. It changes the simulator's
+**end-of-sample forced liquidation** to `False`: that closing transaction is an
+end-of-backtest accounting operation and must not become a live order.
+
+Capital starts from **EUR 10,000 PAPER on 2026-11-10**, on a standalone ledger.
+The legacy proxy ledger and original Strict inbox are never written. Original
+5-week full selection, weekly risk reduction, 10-stock, 15%-issuer and
+30%-sector caps, 35-day holding-for-rotation, EUR500 minimum core trade,
+6% rebalance band and 1% cash reserve are unchanged. **An absolute 35-day lock
+on risk-only sales is NOT in the historical simulator.** This matters for parity.
+No cap on monthly order count. Broker API operations are impossible.
+
+## Transparent market-data exception (NOT the historical universe)
+
+The historical 2012–2025 original ranked PIT USA and RoW universes; those exact
+2026 market-cap ranks were not supplied. This daily forward uses **as-recorded**
+iShares ACWI 500 holding-value roster, with 100 US and 200 non-US candidates,
+first usable on its actual recorded day. These contemporary candidates are
+not identical to the original historical market-cap selection and **must not
+be called original universe PIT parity**. No retroactive membership backfill
+can create a trade. Prices are Yahoo adjusted daily OHLC with exchange-local
+session dates and FX per date; SPY and original sector ETF factors are required.
+Incomplete source data blocks trading without creating synthetic quotes.
+
+The original model is refreshed from raw market data before decisions; an
+append-only ledger is checked against every previously stored order, and a
+pre-opening attestation must already exist before any new simulated fill.
+If re-stated data change a prior decision or the next global open has already
+begun, no new order is committed. The code runs on GitHub Actions; job success
+means the check ran, NOT that the strategy placed any paper orders.
+
+Report: `forward/latest_status.json`; order ledger `forward/orders.csv`;
+net liquidatable NAV `forward/equity.csv`; signed as-of records `forward/preopen/`.
+
+This is a development deployment: **2026 source-code and input-to-signal parity
+with the 2012–2025 frozen universe is not certified**. The actual reference
+backtest starts 2012-01-03 and ends 2025-12-10.
