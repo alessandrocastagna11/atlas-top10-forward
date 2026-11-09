@@ -1,0 +1,38 @@
+name: Atlas V4 Cohort — retrospective research (NOT PIT)
+on:
+  push:
+    branches: [atlas-v4-confidence70-live-paper]
+    paths:
+      - 'strict_shadow/v4_backtest/backtest.py'
+      - '.github/workflows/atlas-v4-cohort-backtest.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: atlas-v4-backtest-research
+  cancel-in-progress: false
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: atlas-v4-confidence70-live-paper
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run reproducible non-PIT current-cohort historical diagnostic
+        run: python strict_shadow/v4_backtest/backtest.py
+      - name: Publish research artifacts to V4 branch only
+        run: |
+          git config user.name "Atlas V4 Research Bot"
+          git config user.email "atlas-v4-research-bot@users.noreply.github.com"
+          git add strict_shadow/v4_backtest/results
+          if ! git diff --cached --quiet; then
+            git commit -m "Research only: Atlas V4 current-cohort ex-post diagnostic"
+            git pull --rebase origin atlas-v4-confidence70-live-paper
+            git push origin HEAD:atlas-v4-confidence70-live-paper
+          fi
