@@ -11,7 +11,6 @@ on:
       - 'strict_shadow/live_v4/forward_signal.py'
       - 'strict_shadow/live_v4/proxy_paper.py'
       - 'strict_shadow/live_v4/inbox/**'
-      - 'strict_shadow/v4_exact_source/**'
   workflow_dispatch:
 
 # No schedule here: GitHub scheduled Actions only run on the default branch.
