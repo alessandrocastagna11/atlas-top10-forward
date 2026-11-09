@@ -15,6 +15,7 @@ from live_model import HERE,CACHE,LIVE,START_PAPER,ENGINE,INITIAL,SECTOR,latest_
 from live_model import v1,v2,t9,inc,frozen,LIVE
 if str(LIVE) not in sys.path:sys.path.insert(0,str(LIVE))
 from paper import earliest_open_utc
+from paper_reporting import to_portfolio,initial_portfolio,write_report
 
 UTC=dt.timezone.utc
 NY=ZoneInfo('America/New_York')
@@ -170,6 +171,9 @@ def main(now=None):
     FORWARD.mkdir(parents=True,exist_ok=True)
     status=status_base(now)
     old=json.loads(STATE.read_text()) if STATE.is_file() else {'orders':[]}
+    prior_portfolio_path=FORWARD/'portfolio.json'
+    portfolio=(json.loads(prior_portfolio_path.read_text()) if prior_portfolio_path.is_file()
+               else initial_portfolio())
     try:
         # An incomplete US session must never become the decision_date.
         ny=now.astimezone(NY)
@@ -181,7 +185,23 @@ def main(now=None):
         if not dates:raise ValueError('No completed benchmark history')
         asof=max(dates)
         if (candidate-asof).days>4:raise ValueError('Stale SPY benchmark')
-        vintage=latest_vintages(asof)[-1]
+        vintages=latest_vintages(asof)
+        # Keep one as-recorded starting cohort during the 2026 paper calibration.
+        # Updating the latest cohort every night and replaying from inception
+        # would silently replace yesterday's holdings with a different history.
+        # Market QUOTES still refresh each run. A future roster migration requires
+        # a separate explicit, audited membership-transition implementation.
+        locked_roster_date=old.get('universe_lock_recorded_date')
+        if locked_roster_date:
+            matched=[v for v in vintages if str(v[0])==locked_roster_date]
+            if not matched:raise ValueError('Persisted as-recorded universe lock was removed')
+            vintage=matched[0]
+        else:
+            vintage=vintages[-1]
+            locked_roster_date=str(vintage[0])
+        status['universe_lock_recorded_date']=locked_roster_date
+        status['latest_available_roster_recorded_date']=str(vintages[-1][0])
+        status['universe_policy']='LOCKED_START_COHORT_TO_PREVENT_RETROACTIVE_REPLAY_BIAS'
         symbols=[str(x['symbol']).upper() for x in vintage[3]+vintage[4]]
         required=set(symbols)|set(SECTOR.values())|{'SPY','EURUSD=X'}
         required|={'EUR'+str(x['currency']).upper()+'=X' for x in vintage[3]+vintage[4] if str(x['currency']).upper()!='EUR'}
@@ -202,6 +222,15 @@ def main(now=None):
         else:
             rows=serialize(result)
             fresh=order_timecheck(rows,old.get('orders',[]),m)
+            # Validate *every* historical sale including SPY risk-sleeve sells.
+            if len(result.realized_lots):
+                min_sold_days=int(result.realized_lots['calendar_days'].min())
+                if min_sold_days<35:
+                    raise ValueError(f'ALERT: realized a lot younger than 35 calendar days: {min_sold_days}')
+            else:min_sold_days=None
+            portfolio=to_portfolio(result,m,meta)
+            if len(rows)!=portfolio['orders_total']:
+                raise ValueError('Order ledger and paper holdings snapshot mismatch')
             status.update({'status':'PAPER_LEDGER_VERIFIED','orders_cumulative':len(rows),
                            'new_orders':len(fresh),'nav_eur':round(float(result.equity.iloc[-1]),2),
                            'max_drawdown_pct':round(float((result.equity/result.equity.cummax()-1).min()*100),3),
@@ -209,13 +238,23 @@ def main(now=None):
                            'tax_eur_total':round(float(result.total_tax_eur),2),
                            'fees_eur_total':round(float(result.total_fees_eur),2),
                            'estimated_slippage_eur':round(float(result.estimated_slippage_eur),2),
-                           'model_state_input_timestamp_validated':True})
+                           'model_state_input_timestamp_validated':True,
+                           'minimum_realized_lot_age_days':min_sold_days,
+                           'min_hold_calendar_days':35,
+                           'blocked_or_partial_sell_requests':int(result.blocked_sell_count),
+                           'cash_eur':portfolio['cash_eur'],
+                           'invested_eur':portfolio['invested_eur'],
+                           'positions_count':portfolio['positions_count'],
+                           'holdings_summary':[{'ticker':p['ticker'],'market_value_eur':p['market_value_eur']}
+                                               for p in portfolio['holdings']]})
             save={'schema_version':1,'engine_id':ENGINE,'portfolio':'EXACT_V4_ORIGINAL_SOURCE_PAPER',
                   'initial_cash_eur':INITIAL,'orders':rows,'latest_nav_eur':status['nav_eur'],
                   'last_valuation_session':status['last_valuation_session'],
+                  'universe_lock_recorded_date':locked_roster_date,
                   'cash_and_positions':'computed_by_frozen_simulator_not_manual_broker',
                   'real_money_authorized':False}
             write_json(STATE,save)
+            write_json(prior_portfolio_path,portfolio)
             daily=FORWARD/'equity.csv'
             data='date,net_liquidation_nav_eur\n'+'\n'.join(
                 f'{day.date()},{val:.4f}' for day,val in result.equity.items())+'\n'
@@ -226,7 +265,27 @@ def main(now=None):
         status.update({'status':'PENDING_EXACT_DATA_OR_PARITY','reason':str(exc)[:2000],
                        'no_new_official_orders':True})
         if os.environ.get('ATLAS_EXACT_DEBUG')=='1':traceback.print_exc()
+    # Persist a readable status even before the first actual trade/valuation.
+    # An unsuccessful run never changes the last verified position ledger.
+    status.setdefault('orders_cumulative',len(old.get('orders',[])))
+    status.setdefault('new_orders',0)
+    status.setdefault('min_hold_calendar_days',35)
+    status.setdefault('nav_eur',portfolio.get('nav_net_liquidation_eur',10000.))
+    status['portfolio_report_session']=portfolio.get('valuation_session')
+    if not STATE.is_file():
+        write_json(STATE,{'schema_version':1,'engine_id':ENGINE,'portfolio':'EXACT_V4_ORIGINAL_35DAY_PAPER',
+                          'initial_cash_eur':INITIAL,'orders':[],'latest_nav_eur':10000.,
+                          'last_valuation_session':None,'real_money_authorized':False,
+                          'universe_lock_recorded_date':status.get('universe_lock_recorded_date')})
+    # Persist the chosen source vintage even in an initial cash-only run.
+    if status.get('universe_lock_recorded_date') and not old.get('universe_lock_recorded_date'):
+        locked_state=json.loads(STATE.read_text())
+        locked_state['universe_lock_recorded_date']=status['universe_lock_recorded_date']
+        write_json(STATE,locked_state)
+    if not prior_portfolio_path.is_file():write_json(prior_portfolio_path,portfolio)
     write_json(STATUS,status)
+    write_report(FORWARD,status,portfolio,
+                 json.loads(STATE.read_text()).get('orders',[]))
     print(json.dumps({k:status.get(k) for k in ('status','reason','orders_cumulative','new_orders','decision_session','nav_eur')},ensure_ascii=False))
     return status
 

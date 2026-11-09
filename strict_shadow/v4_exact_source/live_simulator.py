@@ -45,6 +45,18 @@ def simulate_tax_aware(
     open_values = raw_market.open_eur
     rank = score.where(eligible & membership).rank(axis=1, ascending=False, method="min")
     positions: dict[str, v2.Position] = {}
+    # FIFO purchase lots for minimum holding period; original tax basis remains
+    # weighted average by ticker. The lot dates enforce execution eligibility.
+    import os
+    # Identical FIFO sale restriction to the validated 2012-2025 35-day replay.
+    # The runtime cannot quietly disable it with an environment variable.
+    required_hold_days = int(cfg.minimum_holding_calendar_days)
+    if required_hold_days != 35:
+        raise ValueError('This validated live paper requires exactly 35 calendar days')
+    if required_hold_days < 0 or required_hold_days > 365:raise ValueError('hold period outside valid range')
+    lot_inventory: dict[str, list[dict]] = {}
+    blocked_sell_count = 0
+    blocked_sell_notional_eur = 0.0
     cash = float(initial_capital)
     previous_date: Optional[pd.Timestamp] = None
     previous_invested = 0.0
@@ -141,9 +153,33 @@ def simulate_tax_aware(
         sell_shares = min(position.shares, reference_value / reference_price)
         if sell_shares <= 1e-12:
             return
+        nonlocal blocked_sell_count, blocked_sell_notional_eur
+        available = sum(lot['shares'] for lot in lot_inventory.get(ticker, [])
+                        if (date-lot['date']).days >= required_hold_days)
+        if abs(available-position.shares) > 1e-6 and required_hold_days == 0:
+            raise ValueError('FIFO lot share reconciliation failed: '+ticker)
+        if sell_shares > available + 1e-9:
+            blocked_sell_count += 1
+            blocked_sell_notional_eur += (sell_shares-max(0.,available))*reference_price
+        sell_shares = min(sell_shares, max(0.,available))
+        if sell_shares <= 1e-12: return
+        sold_lot_dates=[]
+        remaining = sell_shares
+        for lot in lot_inventory.get(ticker, []):
+            if remaining <= 1e-10:break
+            if (date - lot['date']).days < required_hold_days:continue
+            take=min(remaining,lot['shares'])
+            if take > 0:
+                sold_lot_dates.append(lot['date'])
+                lot['shares'] -= take
+                remaining -= take
+        if remaining > 1e-6:raise ValueError('FIFO sold more than matured shares')
+        lot_inventory[ticker] = [lot for lot in lot_inventory[ticker] if lot['shares']>1e-8]
         fraction = sell_shares / position.shares
+        # Preserve the original Italian weighted-average-basis proxy calculation.
         basis = position.cost_basis_eur * fraction
-        entry_date = position.first_entry_date
+        # Report the newest sold lot to verify the strict minimum age.
+        entry_date = max(sold_lot_dates) if sold_lot_dates else position.first_entry_date
         bps = slip_bps(date, ticker)
         execution_price = reference_price * (1.0 - bps / 10_000.0)
         gross = sell_shares * execution_price
@@ -171,6 +207,7 @@ def simulate_tax_aware(
         is_full = position.shares <= 1e-9
         if is_full:
             positions.pop(ticker)
+            lot_inventory.pop(ticker,None)
         realized_rows.append(
             {
                 "scenario": tax_config.name,
@@ -253,6 +290,7 @@ def simulate_tax_aware(
             positions[ticker].cost_basis_eur += deployed
         else:
             positions[ticker] = v2.Position(shares, deployed, date)
+        lot_inventory.setdefault(ticker, []).append({'date':date, 'shares':shares})
         order_rows.append(
             {
                 "scenario": tax_config.name,
@@ -561,6 +599,7 @@ def simulate_tax_aware(
         exposure_rows.append(invested / close_nav if close_nav > 0.0 else 0.0)
         previous_invested = invested
 
+    # Continuing paper does not close at the end of every nightly run.
     if liquidate_on_final_session and len(sim_index) and positions:
         final_date = sim_index[-1]
         for ticker in list(positions):
@@ -578,7 +617,7 @@ def simulate_tax_aware(
         exposure_rows[-1] = 0.0
 
     final_date = sim_index[-1]
-    return TaxAwareResult(
+    result = TaxAwareResult(
         name=strategy_name,
         scenario=tax_config.name,
         equity=pd.Series(equity_rows, index=sim_index, name=strategy_name),
@@ -603,4 +642,19 @@ def simulate_tax_aware(
         ending_loss_credit_nominal_eur=loss_ledger.nominal_balance(final_date.year),
         ending_loss_credit_usable_eur=loss_ledger.usable_balance(final_date),
     )
+    result.blocked_sell_count=blocked_sell_count
+    result.blocked_sell_notional_eur=blocked_sell_notional_eur
+    result.strict_hold_calendar_days=required_hold_days
+    # Observability only: never alter trading rules, execution, cash or tax.
+    result.paper_cash_eur=float(cash)
+    result.paper_positions={ticker:{'shares':float(p.shares),
+        'cost_basis_eur':float(p.cost_basis_eur),
+        'first_entry_date':str(p.first_entry_date.date()),
+        'lots':[{'purchase_date':str(lot['date'].date()),
+                 'shares':float(lot['shares']),
+                 'sale_eligible_date':str((lot['date']+pd.Timedelta(days=required_hold_days)).date())}
+                for lot in lot_inventory.get(ticker,[]) if lot['shares']>1e-9]}
+        for ticker,p in positions.items()}
+    return result
+
 

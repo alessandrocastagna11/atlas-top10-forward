@@ -9,11 +9,15 @@ SPY regime, T8 overlay and T9 tax-aware simulator. It changes the simulator's
 end-of-backtest accounting operation and must not become a live order.
 
 Capital starts from **EUR 10,000 PAPER on 2026-11-10**, on a standalone ledger.
-The legacy proxy ledger and original Strict inbox are never written. Original
-5-week full selection, weekly risk reduction, 10-stock, 15%-issuer and
-30%-sector caps, 35-day holding-for-rotation, EUR500 minimum core trade,
-6% rebalance band and 1% cash reserve are unchanged. **An absolute 35-day lock
-on risk-only sales is NOT in the historical simulator.** This matters for parity.
+The legacy Cohort Proxy and Strict inbox are never written. The validated
+2012–2025 **35-day backtest variant**, rather than the earlier unlocked baseline,
+is the executable policy: every purchase becomes a FIFO lot, and **NO sale is
+allowed before 35 calendar days**, even defensive reductions and SPY positions.
+The original five-week full-selection cadence, weekly risk monitoring, ten-stock,
+15%-issuer/30%-sector caps, €500 core-order minimum, 6% rebalancing band and 1%
+cash reserve are retained. No hard limit on monthly order count.
+The new 35-day gate is identical in mechanics to the 2012–2025 replay; its past
+figures are not certified predictions for the current ACWI-proxy universe.
 No cap on monthly order count. Broker API operations are impossible.
 
 ## Transparent market-data exception (NOT the historical universe)
@@ -35,8 +39,17 @@ If re-stated data change a prior decision or the next global open has already
 begun, no new order is committed. The code runs on GitHub Actions; job success
 means the check ran, NOT that the strategy placed any paper orders.
 
-Report: `forward/latest_status.json`; order ledger `forward/orders.csv`;
-net liquidatable NAV `forward/equity.csv`; signed as-of records `forward/preopen/`.
+Daily human-readable report: `forward/latest.md`; machine-readable holdings,
+cash and FIFO maturity dates: `forward/portfolio.json`; order ledger:
+`forward/orders.csv`; dated NAV series: `forward/equity.csv`;
+model state: `forward/state.json`; operational/pending status: `forward/latest_status.json`;
+source-locked pre-open records: `forward/preopen/`. Empty accounts retain
+€10,000 cash and zero orders; missing prices never become invented fills.
+The initial as-recorded roster is **frozen for the inaugural paper cohort** so
+that subsequent Yahoo/ETF snapshot refreshes cannot rewrite prior trades.
+Daily *prices* and FX continue to update. A future roster rotation needs a
+separate causal membership-transition migration, and current 2026 ETF holdings
+are not identical to the historical PIT market-cap universe.
 
 This is a development deployment: **2026 source-code and input-to-signal parity
 with the 2012–2025 frozen universe is not certified**. The actual reference
