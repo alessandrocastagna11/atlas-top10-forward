@@ -14,7 +14,7 @@ That introduces selection/survivorship and look-ahead bias; CAGR is not evidence
 | Max drawdown | -18.022% | -17.331% |
 
 Orders: 755 (362 buys, 393 sells), fees EUR 755.0, estimated realized taxes EUR 1831.37, average exposure 64.54%.
-Signals generated: 423; processed: 390.
+Signals generated: 423; processed: 390. Rebalance threshold 1% NAV, decision cadence daily.
 
 Blocked/skipped: {"missing_execution_open_or_prior_fx": 33, "signal_after_last_session": 1, "signal_breadth USA 19 ROW 56": 1}
 

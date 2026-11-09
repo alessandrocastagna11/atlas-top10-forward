@@ -1,5 +1,7 @@
 {
   "test_label": "EX_POST_CURRENT_2026_COHORT_DIAGNOSTIC_NOT_PIT_BACKTEST",
+  "rebalance_fraction": 0.01,
+  "signal_cadence": "daily",
   "strategy": "V4_CONF70_FORWARD_COHORT_PROXY_V1 + updated paper.py FIFO lots",
   "date_window": {
     "start": "2025-03-03",
