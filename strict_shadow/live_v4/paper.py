@@ -174,6 +174,8 @@ def execute_paper(state,snapshot,quotes,rebalance_fraction=0.05,execution_price_
     # Sell ONLY lots aged at least 35 calendar days. Locked lots remain.
     for t,pos in holdings.items():
         ensure_lots(pos)
+        if any(dt.date.fromisoformat(lot['entry_date'])>execution for lot in pos['lots']):
+            raise PaperBlocked('future-dated purchase lot')
         if t in tar and (pos['market_symbol']!=tar[t]['market_symbol']
                          or pos['sector']!=tar[t]['sector']
                          or pos['region']!=tar[t]['region']):
@@ -218,15 +220,25 @@ def execute_paper(state,snapshot,quotes,rebalance_fraction=0.05,execution_price_
         cur=holdings.get(t,{}).get('shares',0)*prices[t]
         difference=estimated_target[t]-cur
         if difference>max(nav*rebalance_fraction,3.):need.append((t,difference))
-    # Locked holdings still occupy slots: select only purchases that fit.
+    # Locked holdings occupy slots. Allocate remaining slots to the largest
+    # *regional shortfall* first so eight locked USA names cannot crowd out
+    # the two ROW slots explicitly selected by a 8-USA/2-ROW signal.
     free_slots=max(0,10-len(holdings))
-    eligible=[]
-    for t,difference in need:
-        if t in holdings:
-            eligible.append((t,difference))
-        elif free_slots>0:
-            eligible.append((t,difference))
-            free_slots-=1
+    eligible=[(t,v) for t,v in need if t in holdings]
+    new_names=[(t,v) for t,v in need if t not in holdings]
+    target_region={}
+    actual_region={}
+    for entry in tar.values():
+        region=entry['region']
+        target_region[region]=target_region.get(region,0.)+nav*entry['weight']
+    for t,pos in holdings.items():
+        region=pos['region']
+        actual_region[region]=actual_region.get(region,0.)+pos['shares']*prices[t]
+    new_names.sort(key=lambda item:(
+        -max(0,target_region.get(tar[item[0]]['region'],0.)-
+               actual_region.get(tar[item[0]]['region'],0.)),
+        -item[1],item[0]))
+    eligible.extend(new_names[:free_slots])
     need=eligible
     required=sum(v for _,v in need)
     free=max(0,cash-0.01*nav-len(need)*FEE)

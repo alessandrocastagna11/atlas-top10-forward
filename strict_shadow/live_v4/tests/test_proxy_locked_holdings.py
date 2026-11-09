@@ -52,6 +52,20 @@ class ProxyHoldingLockTests(unittest.TestCase):
         self.assertEqual(receipt["orders_count"], 0)
         self.assertEqual(new["cash_eur"], st["cash_eur"])
 
+    def test_geographic_slots_prioritize_row_when_eight_us_locked(self):
+        st=seeded_state(8)
+        quotes={**{f"T{i}":100. for i in range(8)},
+                "US1":100., "US2":100., "ROW1":100., "ROW2":100.}
+        sig=signal([("US1",.05),("US2",.05),("ROW1",.05),("ROW2",.05)])
+        for item in sig["targets"]:
+            if item["ticker"].startswith("ROW"):
+                item["region"]="ROW"
+                item["sector"]="Industrials"
+        new,receipt=execute_paper(st,sig,quotes,rebalance_fraction=.001)
+        self.assertEqual(len(new["holdings"]),10)
+        self.assertEqual({o["ticker"] for o in receipt["orders"]},{"ROW1","ROW2"})
+        self.assertEqual(sum(x["region"]=="ROW" for x in new["holdings"].values()),2)
+
     def test_locked_sector_and_total_exposure_limit_new_buys(self):
         st = seeded_state(1)
         st['holdings']['T0']['shares']=29.
