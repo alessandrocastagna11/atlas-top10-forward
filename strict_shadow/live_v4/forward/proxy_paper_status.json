@@ -1,7 +1,7 @@
 {
   "capital_initial_eur": 10000.0,
   "cash_eur": 7603.92,
-  "checked_at_utc": "2026-11-07T09:16:50.438088+00:00",
+  "checked_at_utc": "2026-11-09T17:38:57.764995+00:00",
   "executed_decisions": 1,
   "historical_engine_equivalent": false,
   "model_variant": "V4_CONF70_FORWARD_COHORT_PROXY_V1",
@@ -29,56 +29,56 @@
   "valuation_sources": {
     "ABBV": {
       "fx_session": "2026-11-06",
-      "market_sha256": "a1afbe2267de57d0a94177e74cf7e1642000a20876a4712d6a87bfe71d3bcf9d",
+      "market_sha256": "b2d025207ab114c5744e6bbd17c587b686ca709f540e644f52ca0eaf2710eb05",
       "symbol": "ABBV",
       "valuation_quote_session": "2026-11-06",
       "valuation_staleness_days": 0
     },
     "AMGN": {
       "fx_session": "2026-11-06",
-      "market_sha256": "f8c27f75252f924ba00937714ab9469127eecbfe82bbd9c5d38aaa6a7bd549ea",
+      "market_sha256": "702b967d42eb8e9889e1509ccd8f2bb28c4c04c52ff940bcf7c7bf18eb2991a8",
       "symbol": "AMGN",
       "valuation_quote_session": "2026-11-06",
       "valuation_staleness_days": 0
     },
     "CRWD": {
       "fx_session": "2026-11-06",
-      "market_sha256": "92ef70586d32b8eaf7ac9d562f266f534b79250e266d8dfa330587161d73d10e",
+      "market_sha256": "8b95187b00528b6ce58cb4bbf89095dc235b6bb35c33c99c8635cf889574e240",
       "symbol": "CRWD",
       "valuation_quote_session": "2026-11-06",
       "valuation_staleness_days": 0
     },
     "DE": {
       "fx_session": "2026-11-06",
-      "market_sha256": "0dc3b50482b2d4e4975cbe0f80f65f9c15da116cf529a44b3896e4431f444436",
+      "market_sha256": "cbd7c25e3613057007038db552003887eae70542cc839829381427725f30cad6",
       "symbol": "DE",
       "valuation_quote_session": "2026-11-06",
       "valuation_staleness_days": 0
     },
     "MPC": {
       "fx_session": "2026-11-06",
-      "market_sha256": "88877cdbf458d1e754fe55ee8f655795b9bf39442b8bb3424e273656d7b24ef2",
+      "market_sha256": "fdae2d795936056eea043f270ac2ed2e8b100fc4f943ba736db5e979446da2d7",
       "symbol": "MPC",
       "valuation_quote_session": "2026-11-06",
       "valuation_staleness_days": 0
     },
     "MRK": {
       "fx_session": "2026-11-06",
-      "market_sha256": "6ecdf6a1d7cf3bcee1a1c218525d735f6096e8eb538454b2558f37c088550765",
+      "market_sha256": "ca17d2ea3bfdf7b40ef75348c2697349f61ff816118c7c6551fd0245db67c6c8",
       "symbol": "MRK",
       "valuation_quote_session": "2026-11-06",
       "valuation_staleness_days": 0
     },
     "PANW": {
       "fx_session": "2026-11-06",
-      "market_sha256": "33491843d7ad94084f1c264fa00f1c146381ede38e0bd63878b3f70d6fffbb3c",
+      "market_sha256": "0525d2e0d85605c579bd0cd20315996088af9351487edef00a2063e8b3bfb55d",
       "symbol": "PANW",
       "valuation_quote_session": "2026-11-06",
       "valuation_staleness_days": 0
     },
     "TXN": {
       "fx_session": "2026-11-06",
-      "market_sha256": "f82068070d22ab40b7fb57d4a3179836b6f25b9ec0a0a734cff10323c4ca50ea",
+      "market_sha256": "6d55070fd31503a954e70b7bdcbf0c12eddde89543b9aa87c64b9130c0d1c758",
       "symbol": "TXN",
       "valuation_quote_session": "2026-11-06",
       "valuation_staleness_days": 0
