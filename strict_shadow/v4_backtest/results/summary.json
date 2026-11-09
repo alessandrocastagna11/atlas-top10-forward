@@ -1,0 +1,61 @@
+{
+  "test_label": "EX_POST_CURRENT_2026_COHORT_DIAGNOSTIC_NOT_PIT_BACKTEST",
+  "strategy": "V4_CONF70_FORWARD_COHORT_PROXY_V1 + updated paper.py FIFO lots",
+  "date_window": {
+    "start": "2025-03-03",
+    "end": "2026-11-06"
+  },
+  "source_universe": "ACWI holdings frozen at 2026-11-06 vintage, recorded on 2026-11-09",
+  "historical_membership_pit": false,
+  "historical_fx_first_seen_pit": false,
+  "survivorship_and_lookahead_risk": "HIGH: 2026 roster reused for earlier years",
+  "execution_policy": "next first globally executable business opening; 30min pre-open cut",
+  "trade_policy": "35-day individual lots; 10 names; 15% issuer; 30% sector; 1% cash; EUR1/order; 10bp/side; 26% realized-gain tax estimate; 1% NAV rebalance threshold; no monthly order cap",
+  "portfolio": {
+    "initial_eur": 10000,
+    "final_eur": 10687.81,
+    "total_return_pct": 6.878,
+    "cagr_pct": 4.043,
+    "max_drawdown_pct": -18.022,
+    "annual_price_only_returns_pct": {
+      "2025": -8.895,
+      "2026": 17.313
+    },
+    "valuation_sessions": 425,
+    "first_valuation": "2025-03-03",
+    "last_valuation": "2026-11-06"
+  },
+  "benchmark_ACWI_EUR_price_only": {
+    "initial_eur": 10000,
+    "final_eur": 11820.85,
+    "total_return_pct": 18.208,
+    "cagr_pct": 10.481,
+    "max_drawdown_pct": -17.331,
+    "annual_price_only_returns_pct": {
+      "2025": 4.918,
+      "2026": 12.668
+    },
+    "valuation_sessions": 425,
+    "first_valuation": "2025-03-03",
+    "last_valuation": "2026-11-06"
+  },
+  "orders_total": 755,
+  "buys": 362,
+  "sells": 393,
+  "fees_eur": 755.0,
+  "estimated_tax_eur": 1831.37,
+  "approx_slippage_eur": 181.73,
+  "final_cash_eur": 3103.32,
+  "final_holdings": 10,
+  "avg_equity_exposure_pct": 64.54,
+  "signals_generated": 423,
+  "decisions_processed": 390,
+  "blocked_and_skipped": {
+    "missing_execution_open_or_prior_fx": 33,
+    "signal_breadth USA 19 ROW 56": 1,
+    "signal_after_last_session": 1
+  },
+  "num_roster_candidates": 300,
+  "num_cached_candidate_symbols": 300,
+  "note": "Retrospective selection is NOT causal/out-of-sample. Price-only ACWI excludes dividends and portfolio prices use Yahoo close with no independently certified historical corporate-action PIT. No forward ledger changed."
+}
