@@ -33,6 +33,10 @@ jobs:
         run: python strict_shadow/live_v4/dataset_daily.py --limit 300 --start 2024-01-01
       - name: Refresh independent ECB daily FX series and track corrections
         run: python strict_shadow/live_v4/ecb_fx.py --start 2012-01-01
+      - name: Verify frozen historical Confidence70 engine and 2026 PIT readiness
+        run: |
+          python -m unittest discover -s strict_shadow/v4_exact_source/tests -p 'test_*.py' -v
+          python strict_shadow/v4_exact_source/readiness.py
       - name: Settle last verified forward research proxy at actual next-session opens
         run: python strict_shadow/live_v4/proxy_paper.py
       - name: Generate new research forward signal (NOT original parity)
@@ -51,7 +55,11 @@ jobs:
           from pathlib import Path
           p=Path('strict_shadow/live_v4/reports/latest_status.json')
           data=json.loads(p.read_text()) if p.exists() else {}
+          exact=Path('strict_shadow/v4_exact_source/reports/latest_status.json')
+          exact_data=json.loads(exact.read_text()) if exact.exists() else {}
           rows=['## Atlas V4 Confidence70 — dedicated PAPER',
+                'Frozen source verified: **'+str(exact_data.get('original_engine_source_present',False))+'**',
+                'Exact engine 2026 readiness: **'+str(exact_data.get('status','NO_REPORT'))+'**',
                 'State: **'+str(data.get('status','NO_REPORT'))+'**',
                 'Reason: '+str(data.get('reason','unknown')),
                 'Benchmark data: '+str(data.get('market_data_status','unknown')),
@@ -65,6 +73,7 @@ jobs:
           git config user.name "Atlas V4 Paper Bot"
           git config user.email "atlas-v4-paper-bot@users.noreply.github.com"
           git add -A strict_shadow/live_v4/state strict_shadow/live_v4/reports
+          git add -A strict_shadow/v4_exact_source/reports
           if [ -d strict_shadow/live_v4/dataset ]; then
             git add -A strict_shadow/live_v4/dataset
           fi
