@@ -26,6 +26,16 @@ jobs:
           python-version: '3.11'
       - name: Run reproducible non-PIT current-cohort historical diagnostic
         run: python strict_shadow/v4_backtest/backtest.py
+      - name: Run 5-percent rebalance sensitivity at daily signal frequency
+        env:
+          ATLAS_REBALANCE_FRACTION: '0.05'
+          ATLAS_SIGNAL_CADENCE: daily
+        run: python strict_shadow/v4_backtest/backtest.py
+      - name: Run 5-percent rebalance sensitivity at Friday signal frequency (not original engine)
+        env:
+          ATLAS_REBALANCE_FRACTION: '0.05'
+          ATLAS_SIGNAL_CADENCE: weekly_friday
+        run: python strict_shadow/v4_backtest/backtest.py
       - name: Publish research artifacts to V4 branch only
         run: |
           git config user.name "Atlas V4 Research Bot"

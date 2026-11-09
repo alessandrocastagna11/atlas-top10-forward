@@ -4,7 +4,7 @@ Uses the actual repository's forward_signal ranking/allocation and paper.execute
 with FIFO 35-day lots. It must never touch any official/paper portfolio state.
 """
 from __future__ import annotations
-import bisect,csv,datetime as dt,json,math,statistics,sys
+import bisect,csv,datetime as dt,json,math,os,statistics,sys
 from collections import Counter,defaultdict
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -14,7 +14,12 @@ import forward_signal as f
 from dataset_daily import DATA,rows_load,symbol_filename
 from paper import ENGINE,PaperBlocked,execute_paper,fresh_state
 
-REPORT=Path(__file__).resolve().parent/'results'
+REB_FRAC=float(os.environ.get('ATLAS_REBALANCE_FRACTION','0.01'))
+CADENCE=os.environ.get('ATLAS_SIGNAL_CADENCE','daily')
+if not (0<=REB_FRAC<=.10):raise ValueError('Invalid rebalance fraction')
+if CADENCE not in ('daily','weekly_friday'):raise ValueError('Invalid research cadence')
+REPORT=Path(__file__).resolve().parent/('results' if REB_FRAC==.01 and CADENCE=='daily' else
+    'results_{}pct_{}'.format(int(round(REB_FRAC*100)),CADENCE))
 NY=ZoneInfo('America/New_York')
 SNAPSHOT='2026-11-09'
 START=dt.date(2025,3,3)
@@ -176,7 +181,7 @@ def main():
                 pending=None # fail-closed; no invented fills or extra-day retroactive fills.
             elif day==actualday:
                 try:
-                    state,receipt=execute_paper(state,pending,quotes,rebalance_fraction=.01)
+                    state,receipt=execute_paper(state,pending,quotes,rebalance_fraction=REB_FRAC)
                     scheduled+=1
                 except (PaperBlocked,ValueError,KeyError) as exc:
                     blocked['execution_blocked_'+str(exc)[:90]]+=1
@@ -206,6 +211,7 @@ def main():
         if acwi is not None and math.isfinite(usd) and usd>0:
             bnh.append((day,acwi[1]/usd))
         if pending:continue
+        if CADENCE=='weekly_friday' and day.weekday()!=4:continue
         try:
             signal,why=compute_signal(day,usa,row,fx,data)
             if not signal:
@@ -230,13 +236,14 @@ def main():
     sells=len(orders)-buys
     result={
       'test_label':'EX_POST_CURRENT_2026_COHORT_DIAGNOSTIC_NOT_PIT_BACKTEST',
+      'rebalance_fraction':REB_FRAC,'signal_cadence':CADENCE,
       'strategy':'V4_CONF70_FORWARD_COHORT_PROXY_V1 + updated paper.py FIFO lots',
       'date_window':{'start':str(firstday),'end':str(lastday)},
       'source_universe':'ACWI holdings frozen at 2026-11-06 vintage, recorded on 2026-11-09',
       'historical_membership_pit':False,'historical_fx_first_seen_pit':False,
       'survivorship_and_lookahead_risk':'HIGH: 2026 roster reused for earlier years',
       'execution_policy':'next first globally executable business opening; 30min pre-open cut',
-      'trade_policy':'35-day individual lots; 10 names; 15% issuer; 30% sector; 1% cash; EUR1/order; 10bp/side; 26% realized-gain tax estimate; 1% NAV rebalance threshold; no monthly order cap',
+      'trade_policy':f'35-day individual lots; 10 names; 15% issuer; 30% sector; 1% cash; EUR1/order; 10bp/side; 26% realized-gain tax estimate; {REB_FRAC*100:g}% NAV rebalance threshold; no monthly order cap',
       'portfolio':portfolio,'benchmark_ACWI_EUR_price_only':bench,
       'orders_total':len(orders),'buys':buys,'sells':sells,
       'fees_eur':round(sum(x['fee_eur'] for x in orders),2),
@@ -278,7 +285,7 @@ def main():
       f"| Max drawdown | {p['max_drawdown_pct']}% | {b['max_drawdown_pct']}% |",
       '',
       f"Orders: {len(orders)} ({buys} buys, {sells} sells), fees EUR {result['fees_eur']}, estimated realized taxes EUR {result['estimated_tax_eur']}, average exposure {result['avg_equity_exposure_pct']}%.",
-      f"Signals generated: {generated}; processed: {scheduled}.",
+      f"Signals generated: {generated}; processed: {scheduled}. Rebalance threshold {REB_FRAC*100:g}% NAV, decision cadence {CADENCE}.",
       '',
       'Blocked/skipped: '+json.dumps(dict(blocked),sort_keys=True),
       '',
