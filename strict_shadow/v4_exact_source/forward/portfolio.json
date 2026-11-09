@@ -1,0 +1,20 @@
+{
+  "buy_orders": 0,
+  "cash_eur": 10000.0,
+  "holdings": [],
+  "initial_capital_eur": 10000.0,
+  "invested_eur": 0.0,
+  "nav_mark_to_market_eur": 10000.0,
+  "nav_net_liquidation_eur": 10000.0,
+  "orders_total": 0,
+  "pnl_mark_to_market_pct": 0.0,
+  "positions_count": 0,
+  "real_money_orders": 0,
+  "schema_version": 2,
+  "sell_orders": 0,
+  "strict_min_holding_calendar_days": 35,
+  "type": "PAPER_ONLY",
+  "universe_market_cap_pit_certified": false,
+  "valuation_session": null,
+  "variant": "CONFIDENCE70_ORIGINAL_H4_STRICT_35_CALENDAR_DAYS_EVERY_LOT"
+}

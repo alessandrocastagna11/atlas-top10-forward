@@ -1,0 +1,11 @@
+{
+  "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
+  "initial_cash_eur": 10000.0,
+  "last_valuation_session": null,
+  "latest_nav_eur": 10000.0,
+  "orders": [],
+  "portfolio": "EXACT_V4_ORIGINAL_35DAY_PAPER",
+  "real_money_authorized": false,
+  "schema_version": 1,
+  "universe_lock_recorded_date": "2026-11-06"
+}

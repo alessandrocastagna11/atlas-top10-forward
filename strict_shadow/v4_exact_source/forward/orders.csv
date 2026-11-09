@@ -1,0 +1,1 @@
+scenario,strategy,decision_date,date,action,ticker,shares,reference_price_eur,execution_price_eur,reference_value_eur,fee_eur,slippage_bps_per_side,capital_gains_tax_eur,reason

@@ -1,34 +1,40 @@
 {
   "capital_initial_eur": 10000.0,
-  "checked_at_utc": "2026-11-09T21:32:39.256752+00:00",
+  "checked_at_utc": "2026-11-09T22:24:29.367860+00:00",
   "data_universe": "AS_RECORDED_ACWI_ETF_HOLDING_PROXY_2026",
   "decision_session": "2026-11-06",
   "engine": "FROZEN_ATLAS_V4_CONFIDENCE70",
   "frozen_replay_parity": "NOT_YET_PROVEN_FOR_2026_DAILY_INPUTS",
   "historical_alpha_code": "VERBATIM_REGION_SLOT_ATLAS_FROM_2012_2025",
+  "latest_available_roster_recorded_date": "2026-11-06",
+  "min_hold_calendar_days": 35,
   "model_run": {
     "reason": "paper start session unavailable",
     "status": "PENDING_US_CLOSE"
   },
+  "nav_eur": 10000.0,
+  "new_orders": 0,
   "next_preopen": {
     "candidate_count": 300,
     "cutoff_utc": "2026-11-09T14:00:00+00:00",
-    "decision_model_sha256": "ffb52857bf338405c0462e8524abde4bbc78622d00897d8e3bc1b25bb77fe234",
+    "decision_model_sha256": "8d3dad02e2a0d7dcfaa4668b0edf5ba5cb2ec114a1c43caf8933d9291a4aa326",
     "decision_session": "2026-11-06",
     "earliest_open_utc": "2026-11-09T14:30:00+00:00",
     "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
     "execution_session": "2026-11-09",
     "market_data_first_observed_before_open": false,
-    "model_source_sha256": "6430f7c00e188627e326f1498a9749a80968e547a51bea43c0e7f304442be974",
+    "model_source_sha256": "7665fea53c9dce7f24df16927f4bb9461ea4a1866298320b653c7fd63e707e22",
     "preopen_selected_symbols": [
       "SPY"
     ],
-    "produced_at_utc": "2026-11-09T21:32:39.256752+00:00",
-    "risk_state": 0.5701965533572085,
+    "produced_at_utc": "2026-11-09T22:24:29.367860+00:00",
+    "risk_state": 0.5701965362468372,
     "roster_sha256": "88a5c6f6612bd0fc1b2468455ed1b334c79e90dc1a34e80d2dcc32b462496026",
     "status": "MISSED_GLOBAL_PREOPEN_CUTOFF"
   },
+  "orders_cumulative": 0,
   "paper_only": true,
+  "portfolio_report_session": null,
   "proxy_ledger_unchanged": true,
   "real_money_orders": 0,
   "source": {
@@ -344,5 +350,7 @@
   "status": "WAITING_FIRST_ACTUAL_EXECUTION_SESSION",
   "strict_exact_inbox_unchanged": true,
   "tax_simulator": "FROZEN_T9_WITH_TERMINAL_LIQUIDATION_DISABLED",
-  "universe_market_cap_pit_certified": false
+  "universe_lock_recorded_date": "2026-11-06",
+  "universe_market_cap_pit_certified": false,
+  "universe_policy": "LOCKED_START_COHORT_TO_PREVENT_RETROACTIVE_REPLAY_BIAS"
 }
