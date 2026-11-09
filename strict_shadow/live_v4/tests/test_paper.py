@@ -37,14 +37,61 @@ class PaperTests(unittest.TestCase):
         with self.assertRaises(PaperBlocked):execute_paper(st,snap(),self.quotes)
     def test_protect_35days(self):
         st,_=execute_paper(fresh_state(),snap(),self.quotes)
-        with self.assertRaisesRegex(PaperBlocked,'35 days'):
-            execute_paper(st,snap('2026-11-25','2026-11-26',targets=[]),self.quotes)
+        newer,receipt=execute_paper(st,snap('2026-11-25','2026-11-26',targets=[]),self.quotes)
+        self.assertEqual(receipt['orders_count'],0)
+        self.assertEqual(len(newer['holdings']),2)
+        self.assertEqual(len(st['holdings']),2)
     def test_sell_after_35_days_and_tax(self):
         st,_=execute_paper(fresh_state(),snap(),self.quotes)
         st,report=execute_paper(st,snap('2026-12-15','2026-12-16',targets=[]),{'AAPL':130.,'MSFT':250.})
         self.assertEqual(report['orders_count'],2)
         self.assertEqual(len(st['holdings']),0)
         self.assertTrue(all(x['tax_estimate_eur']>0 for x in report['orders']))
+    def test_multiple_lots_protect_newer_shares_and_allow_old_sale(self):
+        st = fresh_state()
+        only = [{'ticker':'AAPL','market_symbol':'AAPL','sector':'XLK','region':'USA','weight':.10}]
+        st,_ = execute_paper(st,snap('2026-11-05','2026-11-06',only),{'AAPL':100.},rebalance_fraction=.001)
+        first_qty = st['holdings']['AAPL']['shares']
+        only[0]['weight'] = .15
+        st,_ = execute_paper(st,snap('2026-11-19','2026-11-20',only),{'AAPL':100.},rebalance_fraction=.001)
+        self.assertEqual(len(st['holdings']['AAPL']['lots']),2)
+        second_qty=st['holdings']['AAPL']['lots'][1]['shares']
+        self.assertGreater(second_qty,0)
+        old=copy.deepcopy(st)
+        st,receipt = execute_paper(st,snap('2026-12-10','2026-12-11',[]),{'AAPL':100.},rebalance_fraction=.001)
+        self.assertEqual(receipt['orders_count'],1)
+        self.assertEqual(receipt['orders'][0]['action'],'SELL')
+        self.assertAlmostEqual(receipt['orders'][0]['shares'],first_qty,places=7)
+        self.assertAlmostEqual(st['holdings']['AAPL']['shares'],second_qty,places=7)
+        self.assertEqual(st['holdings']['AAPL']['first_entry_date'],'2026-11-20')
+        self.assertEqual(len(old['holdings']['AAPL']['lots']),2)
+        st,receipt=execute_paper(st,snap('2026-12-24','2026-12-25',[]),{'AAPL':100.},rebalance_fraction=.001)
+        self.assertEqual(receipt['orders_count'],1)
+        self.assertEqual(len(st['holdings']),0)
+
+    def test_lot_ledger_rejects_inconsistent_shares(self):
+        st=fresh_state()
+        st['holdings']['AAPL']={'shares':2.,'cost_basis_eur_per_share':100.,
+            'first_entry_date':'2026-11-06','market_symbol':'AAPL',
+            'sector':'XLK','region':'USA',
+            'lots':[{'entry_date':'2026-11-06','shares':1.,'cost_basis_eur_per_share':100.}]}
+        st['cash_eur']=9800.
+        with self.assertRaisesRegex(PaperBlocked,'lot share reconciliation'):
+            validate_state(st)
+
+    def test_legacy_holding_migrates_without_changing_cost_or_date(self):
+        st=fresh_state()
+        st['holdings']['AAPL']={'shares':5.,'cost_basis_eur_per_share':99.,
+            'first_entry_date':'2026-11-06','market_symbol':'AAPL',
+            'sector':'XLK','region':'USA'}
+        st['cash_eur']=9505.
+        newer,receipt=execute_paper(st,snap('2026-11-07','2026-11-09',[]),
+                                    {'AAPL':100.},rebalance_fraction=.01)
+        self.assertEqual(receipt['orders_count'],0)
+        self.assertEqual(newer['holdings']['AAPL']['lots'][0]['entry_date'],'2026-11-06')
+        self.assertEqual(newer['holdings']['AAPL']['lots'][0]['cost_basis_eur_per_share'],99.)
+        self.assertNotIn('lots',st['holdings']['AAPL'])
+
     def test_bad_sector_and_weight(self):
         bad=snap();bad['targets'][0]['weight']=0.16
         with self.assertRaisesRegex(PaperBlocked,'15%'):execute_paper(fresh_state(),bad,self.quotes)

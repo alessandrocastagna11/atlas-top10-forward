@@ -52,10 +52,28 @@ class ProxyHoldingLockTests(unittest.TestCase):
         self.assertEqual(receipt["orders_count"], 0)
         self.assertEqual(new["cash_eur"], st["cash_eur"])
 
+    def test_locked_sector_and_total_exposure_limit_new_buys(self):
+        st = seeded_state(1)
+        st['holdings']['T0']['shares']=29.
+        st['cash_eur']=7100.
+        quotes={'T0':100.,'NEW':100.}
+        new,receipt=execute_paper(st,signal([('NEW',.15)]),quotes,rebalance_fraction=.001)
+        self.assertEqual(receipt['orders_count'],0)
+        self.assertEqual(len(new['holdings']),1)
+
+    def test_cannot_add_when_old_position_over_issuer_cap(self):
+        st=seeded_state(1)
+        st['holdings']['T0']['shares']=18.
+        st['cash_eur']=8200.
+        quotes={'T0':100.}
+        new,receipt=execute_paper(st,signal([('T0',.15)]),quotes,rebalance_fraction=.001)
+        self.assertEqual(receipt['orders_count'],0)
+        self.assertEqual(new['holdings']['T0']['shares'],18.)
+
     def test_sale_allowed_after_35_calendar_days(self):
         st = seeded_state(1)
         quotes = {"T0": 100.0}
-        new, receipt = execute_paper(st, signal([], execution="2026-12-11"), quotes, rebalance_fraction=.01)
+        new, receipt = execute_paper(st, signal([], execution="2026-12-11"), quotes, rebalance_fraction=.005)
         self.assertEqual(receipt["orders_count"], 1)
         self.assertEqual(receipt["orders"][0]["action"], "SELL")
         self.assertEqual(len(new["holdings"]), 0)

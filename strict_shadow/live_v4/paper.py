@@ -69,6 +69,35 @@ def fresh_state():
             'cash_eur':INITIAL,'holdings':{},'orders':[],'decisions':[],
             'last_execution_session':None,'real_money_authorized':False}
 
+# Persist each purchase as an independent tax/holding-period lot.
+# Pre-existing November 6 paper holdings are migrated lazily from their exact
+# recorded first-entry date and aggregate cost basis, without rewriting history.
+LOT_EPS=1e-8
+
+def position_lots(pos):
+    if 'lots' not in pos:
+        return [{'entry_date':pos['first_entry_date'],
+                 'shares':pos['shares'],
+                 'cost_basis_eur_per_share':pos['cost_basis_eur_per_share']}]
+    lots=pos['lots']
+    if not isinstance(lots,list) or not lots:raise PaperBlocked('missing position lots')
+    return lots
+
+def ensure_lots(pos):
+    if 'lots' not in pos:
+        pos['lots']=position_lots(pos)
+    return pos['lots']
+
+def sync_position(pos):
+    lots=[x for x in ensure_lots(pos) if x['shares']>LOT_EPS]
+    if not lots:raise PaperBlocked('cannot sync empty position')
+    shares=sum(x['shares'] for x in lots)
+    pos['lots']=lots
+    pos['shares']=shares
+    pos['cost_basis_eur_per_share']=sum(
+        x['shares']*x['cost_basis_eur_per_share'] for x in lots)/shares
+    pos['first_entry_date']=min(x['entry_date'] for x in lots)
+
 def validate_state(st):
     if st.get('schema_version')!=1 or st.get('engine_id')!=ENGINE or st.get('mode')!='PAPER':raise PaperBlocked('state identity or mode mismatch')
     if st.get('real_money_authorized') is not False:raise PaperBlocked('real-money flags forbidden')
@@ -77,9 +106,25 @@ def validate_state(st):
     if not isinstance(h,dict) or len(h)>10:raise PaperBlocked('invalid holdings')
     for ticker,pos in h.items():
         if not ticker or not pos.get('market_symbol'):raise PaperBlocked('unmapped holdings symbol')
-        finite(pos.get('shares'),'shares',0)
-        finite(pos.get('cost_basis_eur_per_share'),'cost basis',0)
-        dt.date.fromisoformat(pos['first_entry_date'])
+        shares=finite(pos.get('shares'),'shares',0)
+        basis=finite(pos.get('cost_basis_eur_per_share'),'cost basis',0)
+        first=dt.date.fromisoformat(pos['first_entry_date'])
+        if shares<=LOT_EPS:raise PaperBlocked('nonpositive holding')
+        lots=position_lots(pos)
+        count=0.; cost=0.; earliest=None
+        for lot in lots:
+            if not isinstance(lot,dict):raise PaperBlocked('invalid position lot')
+            day=dt.date.fromisoformat(lot['entry_date'])
+            if day<first:raise PaperBlocked('lot predates first entry')
+            qty=finite(lot.get('shares'),'lot shares',0)
+            unit=finite(lot.get('cost_basis_eur_per_share'),'lot cost',0)
+            if qty<=LOT_EPS:raise PaperBlocked('empty position lot')
+            count+=qty;cost+=qty*unit
+            earliest=day if earliest is None or day<earliest else earliest
+        if first!=earliest or not math.isclose(count,shares,rel_tol=1e-9,abs_tol=LOT_EPS):
+            raise PaperBlocked('lot share reconciliation mismatch')
+        if not math.isclose(cost,shares*basis,rel_tol=1e-9,abs_tol=1e-6):
+            raise PaperBlocked('lot cost reconciliation mismatch')
     if not isinstance(st.get('decisions'),list) or not isinstance(st.get('orders'),list):raise PaperBlocked('missing ledger history')
     return st
 
@@ -126,29 +171,47 @@ def execute_paper(state,snapshot,quotes,rebalance_fraction=0.05,execution_price_
     if nav<=0:raise PaperBlocked('nonpositive NAV')
     cash=old['cash_eur']
     estimated_target={t:nav*finite(p['weight'],'target weight',0) for t,p in tar.items()}
-    # Calculate all trades before modifying persistent state. Existing holdings protected for 35 calendar days.
+    # Sell ONLY lots aged at least 35 calendar days. Locked lots remain.
+    for t,pos in holdings.items():
+        ensure_lots(pos)
+        if t in tar and (pos['market_symbol']!=tar[t]['market_symbol']
+                         or pos['sector']!=tar[t]['sector']
+                         or pos['region']!=tar[t]['region']):
+            raise PaperBlocked('held ticker identity/sector mismatch')
     sells=[]
     for t,pos in holdings.items():
-        current=pos['shares']*prices[t]; desired=estimated_target.get(t,0)
+        current=pos['shares']*prices[t];desired=estimated_target.get(t,0)
         excess=current-desired
         if excess<=max(nav*rebalance_fraction,3.):continue
-        held=(execution-dt.date.fromisoformat(pos['first_entry_date'])).days
-        if held<35:continue  # Preserve locked holdings without blocking other valid orders.
-        shares=min(pos['shares'],excess/prices[t])
+        unlocked=sum(lot['shares'] for lot in pos['lots']
+                     if (execution-dt.date.fromisoformat(lot['entry_date'])).days>=35)
+        shares=min(unlocked,excess/prices[t])
         if shares*prices[t]>3.:sells.append((t,shares))
     orders=[]
     for t,shares in sorted(sells):
-        p=holdings[t];price=prices[t];gross=shares*price*(1-SLIPPAGE)
-        cost=shares*p['cost_basis_eur_per_share'];gain=max(0,gross-cost-FEE)
-        taxes=gain*TAX
-        proceeds=gross-FEE-taxes
+        p=holdings[t];price=prices[t]
+        remaining=shares;cost=0.
+        # Deterministic FIFO among unlocked lots, never reduce locked shares.
+        for lot in sorted(p['lots'],key=lambda x:x['entry_date']):
+            if (execution-dt.date.fromisoformat(lot['entry_date'])).days<35:continue
+            part=min(remaining,lot['shares'])
+            if part<=0:continue
+            cost+=part*lot['cost_basis_eur_per_share']
+            lot['shares']-=part;remaining-=part
+            if remaining<=LOT_EPS:break
+        if remaining>LOT_EPS:raise PaperBlocked('unlocked lot quantity exceeded')
+        gross=shares*price*(1-SLIPPAGE)
+        gain=max(0,gross-cost-FEE)
+        taxes=gain*TAX;proceeds=gross-FEE-taxes
         if proceeds<=0:raise PaperBlocked('sell after fees has negative proceeds')
-        cash+=proceeds;p['shares']-=shares
+        cash+=proceeds
+        p['lots']=[x for x in p['lots'] if x['shares']>LOT_EPS]
+        if p['lots']:sync_position(p)
+        else:del holdings[t]
         orders.append({'session':str(execution),'action':'SELL','ticker':t,'market_symbol':p['market_symbol'],
                        'shares':round(shares,10),'reference_open_eur':price,'execution_price_eur':round(price*(1-SLIPPAGE),10),
                        'fee_eur':FEE,'tax_estimate_eur':round(taxes,6),'cash_change_eur':round(proceeds,6),
                        'signal_sha256':sig,'mode':'PAPER'})
-        if p['shares']<1e-8:del holdings[t]
     # Buy toward target, enforcing 1% cash reserve, max 10 names and 35-day holding on future exits.
     need=[]
     for t,p in tar.items():
@@ -167,25 +230,46 @@ def execute_paper(state,snapshot,quotes,rebalance_fraction=0.05,execution_price_
     need=eligible
     required=sum(v for _,v in need)
     free=max(0,cash-0.01*nav-len(need)*FEE)
-    scale=min(1.,free/required) if required>0 else 0
+    gross_exposure=sum(pos['shares']*prices[t] for t,pos in holdings.items())
+    target_exposure=nav*sum(x['weight'] for x in tar.values())
+    # Locked holdings consume the budget: don't buy beyond the signal's risk regime.
+    budget=max(0,target_exposure-gross_exposure)
+    scale=min(1.,free/required,budget/required) if required>0 else 0
+    sector_values={}
+    for t,pos in holdings.items():
+        sector_values[pos['sector']]=sector_values.get(pos['sector'],0.)+pos['shares']*prices[t]
     for t,shortfall in sorted(need):
         target_spend=shortfall*scale
-        if target_spend<5.:continue
         p=tar[t];price=prices[t]*(1+SLIPPAGE)
+        current=holdings.get(t,{}).get('shares',0)*prices[t]
+        # Caps constrain actual holdings, not merely target weights.
+        issuer_room=max(0,.15*nav-current)
+        sector_room=max(0,.30*nav-sector_values.get(p['sector'],0.))
+        exposure_room=max(0,target_exposure-gross_exposure)
+        notional_room=min(issuer_room,sector_room,exposure_room)
+        if notional_room<=LOT_EPS:continue
+        target_spend=min(target_spend,notional_room*(1+SLIPPAGE)+FEE,
+                         max(0,cash-.01*nav))
+        if target_spend<5.:continue
         shares=(target_spend-FEE)/price
         if shares<=0:continue
         spend=shares*price+FEE
         if cash-spend<0.01*nav-1e-6:raise PaperBlocked('cash reserve violation')
         old_p=holdings.get(t)
+        purchase={'entry_date':str(execution),'shares':shares,
+                  'cost_basis_eur_per_share':spend/shares}
         if old_p:
-            total_shares=old_p['shares']+shares
-            old_p['cost_basis_eur_per_share']=(old_p['cost_basis_eur_per_share']*old_p['shares']+spend)/total_shares
-            old_p['shares']=total_shares
+            ensure_lots(old_p).append(purchase)
+            sync_position(old_p)
         else:
             holdings[t]={'shares':shares,'cost_basis_eur_per_share':spend/shares,
-                         'first_entry_date':str(execution),'market_symbol':p['market_symbol'],
+                         'first_entry_date':str(execution),'lots':[purchase],
+                         'market_symbol':p['market_symbol'],
                          'sector':p['sector'],'region':p['region']}
         cash-=spend
+        amount=shares*prices[t]
+        gross_exposure+=amount
+        sector_values[p['sector']]=sector_values.get(p['sector'],0.)+amount
         orders.append({'session':str(execution),'action':'BUY','ticker':t,'market_symbol':p['market_symbol'],
                        'shares':round(shares,10),'reference_open_eur':prices[t],
                        'execution_price_eur':round(price,10),'fee_eur':FEE,
