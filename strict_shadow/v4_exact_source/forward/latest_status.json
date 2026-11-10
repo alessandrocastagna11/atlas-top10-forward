@@ -1,6 +1,6 @@
 {
   "capital_initial_eur": 10000.0,
-  "checked_at_utc": "2026-11-10T14:32:38.202832+00:00",
+  "checked_at_utc": "2026-11-10T21:48:09.170616+00:00",
   "data_universe": "ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP",
   "decision_session": "2026-11-09",
   "engine": "FROZEN_ATLAS_V4_CONFIDENCE70",
@@ -26,14 +26,14 @@
     "any_market_preopen_eligible": false,
     "candidate_count": 300,
     "cutoff_utc": "2026-11-10T14:00:00+00:00",
-    "decision_model_sha256": "072708221e3de10cf34378ce82fcf5142e7b6691f3d81b66c1c027253527204b",
+    "decision_model_sha256": "1bf9d46364f4eaeae74e0ab91d8d3c68640205625b4afa672d022741a5cb5954",
     "decision_session": "2026-11-09",
     "earliest_open_utc": "2026-11-10T14:30:00+00:00",
     "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
     "exchange_execution_policy": "PER_SYMBOL_NEXT_UNOBSERVED_OPEN",
     "execution_session": "2026-11-10",
     "market_data_first_observed_before_open": false,
-    "model_source_sha256": "4b21cf381a1dd2a4d26eb9efdae21e8d3e58eda5d37da323a7d4957221336f8f",
+    "model_source_sha256": "5271fad078a957edcf781f5f29d24dc9a2b3eff2fe4bc37a0d43d043c39c8b4c",
     "not_authorized_for_original_past_open": true,
     "per_symbol_exchange_plan": {
       "ABBV": {
@@ -160,9 +160,9 @@
       "MO"
     ],
     "prior_sha256": "4fa61554ab5f7c36431c6b29dc108805641fceed033ceaf09d5a513f297cb743",
-    "produced_at_utc": "2026-11-10T14:32:38.202832+00:00",
-    "recomputed_sha256": "072708221e3de10cf34378ce82fcf5142e7b6691f3d81b66c1c027253527204b",
-    "risk_state": 0.6508431311757088,
+    "produced_at_utc": "2026-11-10T21:48:09.170616+00:00",
+    "recomputed_sha256": "1bf9d46364f4eaeae74e0ab91d8d3c68640205625b4afa672d022741a5cb5954",
+    "risk_state": 0.6508431382355622,
     "roster_sha256": "72764adee0ebbdb45c95600674ae6b0e6599692136ab9e90a4df4e56af3ca1f6",
     "signal_published": true,
     "status": "SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF"
