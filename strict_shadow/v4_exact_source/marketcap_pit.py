@@ -62,17 +62,26 @@ def parse_ranking(source):
     out=[]
     for row in p.rows:
         try:
-            rank=int(re.search(r"\d+",_plain("".join(row[0]["text"]))).group())
-            name=_plain("".join(row[1]["text"]))
-            symbols=row[1]["symbol"]
+            # The vendor sometimes places a favourite/star column before rank.
+            start=next((k for k in range(min(3,len(row)-3))
+                        if re.fullmatch(r"\d+",_plain("".join(row[k]["text"])))
+                        and (row[k+1]["symbol"] or "company-code" in
+                             _plain("".join(row[k+1]["text"])).lower())),None)
+            if start is None:
+                start=next((k for k in range(min(3,len(row)-3))
+                            if re.fullmatch(r"\d+",_plain("".join(row[k]["text"])))),None)
+            if start is None:continue
+            rank=int(_plain("".join(row[start]["text"])))
+            name=_plain("".join(row[start+1]["text"]))
+            symbols=row[start+1]["symbol"]
             ticker=_plain("".join(symbols)).upper()
             # Some layouts omit the separate company-code div.
             if not ticker:
                 m=re.search(r"([A-Z0-9]{1,9}(?:[.-][A-Z0-9]{1,5})?)$",name)
                 ticker=m.group(1) if m else ""
             if not re.fullmatch(r"[A-Z0-9]+(?:[.-][A-Z0-9]+)*",ticker):continue
-            cap=_number("".join(row[2]["text"]))
-            if not cap and row[2]["sort"]:cap=_number(row[2]["sort"])
+            cap=_number("".join(row[start+2]["text"]))
+            if not cap and row[start+2]["sort"]:cap=_number(row[start+2]["sort"])
             if not cap or cap<1e7:continue
             country=_plain("".join(row[-1]["text"]))
             if not country:continue
