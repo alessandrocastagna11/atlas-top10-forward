@@ -87,7 +87,10 @@ def write_report(out_dir,status,portfolio,orders):
         '',f"**Stato:** `{status_text}` — **Validità della valutazione:** `{recency}`",
         '',f"**Ultima sessione decisionale:** {status.get('decision_session') or 'non disponibile'}",
         f"**Ultima sessione valorizzata:** {asof or 'non ancora avviata'}",
-        f"**Dati mercato / universo:** {source.get('universe_kind') or 'in attesa'}; fotografia registrata il {source.get('roster_recorded_date') or 'n/d'}",
+        f"**Dati mercato / universo:** {source.get('universe_kind') or 'in attesa'}; fotografia utilizzata al {source.get('roster_recorded_date') or 'n/d'}",
+        f"**Universo dinamico:** {status.get('historical_universe_vintages',0)} fotografie cronologiche, ultima disponibile {status.get('latest_available_roster_recorded_date') or 'n/d'}; nuove società eleggibili SOLO dalla data registrata",
+        f"**Primo segnale / apertura successiva:** {(status.get('next_preopen') or {}).get('decision_session','n/d')} / {(status.get('next_preopen') or {}).get('execution_session','n/d')}",
+        f"**Recuperi dopo interruzioni:** {status.get('recovered_paper_decision_count',0)} sedute; {status.get('new_orders_mode','in attesa')}",
         '**Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.',
         '',
         '| Portafoglio virtuale | Importo |', '|---|---:|',
@@ -99,6 +102,7 @@ def write_report(out_dir,status,portfolio,orders):
         f"| Posizioni | {portfolio.get('positions_count',0)} |",
         f"| Ordini complessivi | {portfolio.get('orders_total',0)} |",
         f"| Nuovi ordini verificati | {int(status.get('new_orders',0) or 0)} |",
+        f"| Sedute paper ricostruite dopo interruzione | {int(status.get('recovered_paper_decision_count',0) or 0)} |",
         '',
         '*NAV netto liquidabile = valutazione ipotetica dopo costi e imposte di liquidazione; **non è una vendita eseguita** e non supera il blocco dei 35 giorni.',
         '',
@@ -114,6 +118,9 @@ def write_report(out_dir,status,portfolio,orders):
     for o in orders[-15:][::-1]:
         lines.append(f"| {str(o.get('date',''))[:10]} | {o.get('action','')} | {o.get('ticker','')} | {float(o.get('shares',0)):.6g} | {float(o.get('execution_price_eur',0)):.4f} | {o.get('reason','')} |")
     if not orders:lines.append('| — Nessuna operazione | — | — | — | — | — |')
+    if status.get('recovered_paper_decision_dates'):
+        lines+=['','**Nota recupero:** operazioni ricostruite ex post con prezzi storici, NON esecuzioni osservate in diretta.',
+                'Date di decisione ricostruite: '+', '.join(status['recovered_paper_decision_dates'])]
     lines+=['','**Politica ordini:** minimo 35 giorni CALENDARIO su ogni lotto, anche vendite difensive; controlli di rischio settimanali e rotazione ogni 5 settimane; nessun ordine reale.','',
             'Il workflow aggiorna i dati e verifica il modello, ma non garantisce che ogni giorno vi sia un acquisto o una vendita.',
             '',f"**Eventuale blocco:** {status.get('reason','nessuno') or 'nessuno'}",'']
