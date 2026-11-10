@@ -1,18 +1,59 @@
 {
   "started_at": "2026-11-03",
-  "initialized": false,
-  "last_update": "2026-11-03",
-  "cash_eur": 10000.0,
-  "positions": {},
-  "order_count": 0,
+  "initialized": true,
+  "last_update": "2026-11-09",
+  "cash_eur": 0,
+  "positions": {
+    "2222.SR": {
+      "shares": 156.09745910660482,
+      "cost_basis_eur": 1000.0
+    },
+    "AAPL": {
+      "shares": 3.1723188557748845,
+      "cost_basis_eur": 1000.0
+    },
+    "AMZN": {
+      "shares": 4.167761352422767,
+      "cost_basis_eur": 1000.0000000000001
+    },
+    "GOOG": {
+      "shares": 3.8897257763400233,
+      "cost_basis_eur": 1000.0
+    },
+    "META": {
+      "shares": 1.7345689941004232,
+      "cost_basis_eur": 1000.0
+    },
+    "MSFT": {
+      "shares": 2.0406113984784797,
+      "cost_basis_eur": 1000.0
+    },
+    "NVDA": {
+      "shares": 6.226565840251838,
+      "cost_basis_eur": 1000.0
+    },
+    "SPCX": {
+      "shares": 7.830650031134085,
+      "cost_basis_eur": 1000.0
+    },
+    "TSLA": {
+      "shares": 2.942733879641999,
+      "cost_basis_eur": 1000.0
+    },
+    "TSM": {
+      "shares": 2.8626949751804234,
+      "cost_basis_eur": 1000.0
+    }
+  },
+  "order_count": 10,
   "risk_on": true,
   "last_regime_month": "2026-10",
   "liabilities_eur": 0.0,
   "tax_losses": [],
   "benchmark": {
-    "shares": 0.0,
-    "cash_eur": 10000.0,
-    "cost_basis_eur": 0.0,
+    "shares": 93.11158745966252,
+    "cash_eur": 0.0,
+    "cost_basis_eur": 10000.0,
     "liabilities_eur": 0.0
   },
   "nav_history": [
@@ -29,8 +70,305 @@
       "positions": 0,
       "cumulative_orders": 0,
       "source_status": "PENDING_FIRST_REAL_CLOSE"
+    },
+    {
+      "date": "2026-11-09",
+      "portfolio_nav_eur": 9980.02,
+      "benchmark_nav_eur": 9989.01,
+      "portfolio_return_pct": -0.1998,
+      "benchmark_return_pct": -0.1099,
+      "excess_return_pp": -0.0899,
+      "cash_eur": 0,
+      "invested_eur": 9980.02,
+      "regime": "RISK_ON",
+      "positions": 10,
+      "cumulative_orders": 10,
+      "source_status": "COMPLETE"
     }
   ],
-  "order_history": [],
-  "quote_history": []
+  "order_history": [
+    {
+      "date": "2026-11-09",
+      "symbol": "2222.SR",
+      "side": "BUY",
+      "shares": 156.09745910660482,
+      "price_local": 26.100000381469727,
+      "currency": "SAR",
+      "eur_per_local": 0.2449599378778966,
+      "gross_eur": 998.0019980019981,
+      "commission_eur": 1.0,
+      "slippage_eur": 0.9980019980019982,
+      "tax_eur": 0.0,
+      "realized_pnl_eur": 0.0,
+      "cash_after_eur": 9000.0,
+      "reason": "initial point-in-time basket"
+    },
+    {
+      "date": "2026-11-09",
+      "symbol": "AAPL",
+      "side": "BUY",
+      "shares": 3.1723188557748845,
+      "price_local": 350.69000244140625,
+      "currency": "USD",
+      "eur_per_local": 0.8970800385926061,
+      "gross_eur": 998.0019980019981,
+      "commission_eur": 1.0,
+      "slippage_eur": 0.9980019980019982,
+      "tax_eur": 0.0,
+      "realized_pnl_eur": 0.0,
+      "cash_after_eur": 8000.0,
+      "reason": "initial point-in-time basket"
+    },
+    {
+      "date": "2026-11-09",
+      "symbol": "AMZN",
+      "side": "BUY",
+      "shares": 4.167761352422767,
+      "price_local": 266.92999267578125,
+      "currency": "USD",
+      "eur_per_local": 0.8970800385926061,
+      "gross_eur": 998.0019980019982,
+      "commission_eur": 1.0,
+      "slippage_eur": 0.9980019980019983,
+      "tax_eur": 0.0,
+      "realized_pnl_eur": 0.0,
+      "cash_after_eur": 7000.0,
+      "reason": "initial point-in-time basket"
+    },
+    {
+      "date": "2026-11-09",
+      "symbol": "GOOG",
+      "side": "BUY",
+      "shares": 3.8897257763400233,
+      "price_local": 286.010009765625,
+      "currency": "USD",
+      "eur_per_local": 0.8970800385926061,
+      "gross_eur": 998.0019980019981,
+      "commission_eur": 1.0,
+      "slippage_eur": 0.9980019980019982,
+      "tax_eur": 0.0,
+      "realized_pnl_eur": 0.0,
+      "cash_after_eur": 6000.0,
+      "reason": "initial point-in-time basket"
+    },
+    {
+      "date": "2026-11-09",
+      "symbol": "META",
+      "side": "BUY",
+      "shares": 1.7345689941004232,
+      "price_local": 641.3699951171875,
+      "currency": "USD",
+      "eur_per_local": 0.8970800385926061,
+      "gross_eur": 998.0019980019981,
+      "commission_eur": 1.0,
+      "slippage_eur": 0.9980019980019982,
+      "tax_eur": 0.0,
+      "realized_pnl_eur": 0.0,
+      "cash_after_eur": 5000.0,
+      "reason": "initial point-in-time basket"
+    },
+    {
+      "date": "2026-11-09",
+      "symbol": "MSFT",
+      "side": "BUY",
+      "shares": 2.0406113984784797,
+      "price_local": 545.1799926757812,
+      "currency": "USD",
+      "eur_per_local": 0.8970800385926061,
+      "gross_eur": 998.0019980019981,
+      "commission_eur": 1.0,
+      "slippage_eur": 0.9980019980019982,
+      "tax_eur": 0.0,
+      "realized_pnl_eur": 0.0,
+      "cash_after_eur": 4000.0,
+      "reason": "initial point-in-time basket"
+    },
+    {
+      "date": "2026-11-09",
+      "symbol": "NVDA",
+      "side": "BUY",
+      "shares": 6.226565840251838,
+      "price_local": 178.6699981689453,
+      "currency": "USD",
+      "eur_per_local": 0.8970800385926061,
+      "gross_eur": 998.0019980019981,
+      "commission_eur": 1.0,
+      "slippage_eur": 0.9980019980019982,
+      "tax_eur": 0.0,
+      "realized_pnl_eur": 0.0,
+      "cash_after_eur": 3000.0,
+      "reason": "initial point-in-time basket"
+    },
+    {
+      "date": "2026-11-09",
+      "symbol": "SPCX",
+      "side": "BUY",
+      "shares": 7.830650031134085,
+      "price_local": 142.07000732421875,
+      "currency": "USD",
+      "eur_per_local": 0.8970800385926061,
+      "gross_eur": 998.0019980019981,
+      "commission_eur": 1.0,
+      "slippage_eur": 0.9980019980019982,
+      "tax_eur": 0.0,
+      "realized_pnl_eur": 0.0,
+      "cash_after_eur": 2000.0,
+      "reason": "initial point-in-time basket"
+    },
+    {
+      "date": "2026-11-09",
+      "symbol": "TSLA",
+      "side": "BUY",
+      "shares": 2.942733879641999,
+      "price_local": 378.04998779296875,
+      "currency": "USD",
+      "eur_per_local": 0.8970800385926061,
+      "gross_eur": 998.0019980019981,
+      "commission_eur": 1.0,
+      "slippage_eur": 0.9980019980019982,
+      "tax_eur": 0.0,
+      "realized_pnl_eur": 0.0,
+      "cash_after_eur": 1000.0,
+      "reason": "initial point-in-time basket"
+    },
+    {
+      "date": "2026-11-09",
+      "symbol": "TSM",
+      "side": "BUY",
+      "shares": 2.8626949751804234,
+      "price_local": 388.6199951171875,
+      "currency": "USD",
+      "eur_per_local": 0.8970800385926061,
+      "gross_eur": 998.0019980019981,
+      "commission_eur": 1.0,
+      "slippage_eur": 0.9980019980019982,
+      "tax_eur": 0.0,
+      "realized_pnl_eur": 0.0,
+      "cash_after_eur": 0.0,
+      "reason": "initial point-in-time basket"
+    },
+    {
+      "date": "2026-11-09",
+      "symbol": "IUSQ.DE",
+      "side": "BUY",
+      "shares": 93.11158745966252,
+      "price_local": 107.27999877929688,
+      "currency": "EUR",
+      "eur_per_local": 1,
+      "gross_eur": 9989.010989010989,
+      "commission_eur": 1.0,
+      "slippage_eur": 9.989010989010989,
+      "tax_eur": 0,
+      "realized_pnl_eur": 0,
+      "cash_after_eur": 0,
+      "reason": "benchmark initial long-only"
+    }
+  ],
+  "quote_history": [
+    {
+      "asof_date": "2026-11-09",
+      "symbol": "2222.SR",
+      "bar_date": "2026-11-09",
+      "close": 26.100000381469727,
+      "currency": "SAR",
+      "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
+    },
+    {
+      "asof_date": "2026-11-09",
+      "symbol": "AAPL",
+      "bar_date": "2026-11-09",
+      "close": 350.69000244140625,
+      "currency": "USD",
+      "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
+    },
+    {
+      "asof_date": "2026-11-09",
+      "symbol": "AMZN",
+      "bar_date": "2026-11-09",
+      "close": 266.92999267578125,
+      "currency": "USD",
+      "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
+    },
+    {
+      "asof_date": "2026-11-09",
+      "symbol": "EURSAR=X",
+      "bar_date": "2026-11-09",
+      "close": 4.082300186157227,
+      "currency": "SAR",
+      "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
+    },
+    {
+      "asof_date": "2026-11-09",
+      "symbol": "EURUSD=X",
+      "bar_date": "2026-11-09",
+      "close": 1.1147277355194092,
+      "currency": "USD",
+      "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
+    },
+    {
+      "asof_date": "2026-11-09",
+      "symbol": "GOOG",
+      "bar_date": "2026-11-09",
+      "close": 286.010009765625,
+      "currency": "USD",
+      "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
+    },
+    {
+      "asof_date": "2026-11-09",
+      "symbol": "IUSQ.DE",
+      "bar_date": "2026-11-09",
+      "close": 107.27999877929688,
+      "currency": "EUR",
+      "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
+    },
+    {
+      "asof_date": "2026-11-09",
+      "symbol": "META",
+      "bar_date": "2026-11-09",
+      "close": 641.3699951171875,
+      "currency": "USD",
+      "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
+    },
+    {
+      "asof_date": "2026-11-09",
+      "symbol": "MSFT",
+      "bar_date": "2026-11-09",
+      "close": 545.1799926757812,
+      "currency": "USD",
+      "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
+    },
+    {
+      "asof_date": "2026-11-09",
+      "symbol": "NVDA",
+      "bar_date": "2026-11-09",
+      "close": 178.6699981689453,
+      "currency": "USD",
+      "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
+    },
+    {
+      "asof_date": "2026-11-09",
+      "symbol": "SPCX",
+      "bar_date": "2026-11-09",
+      "close": 142.07000732421875,
+      "currency": "USD",
+      "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
+    },
+    {
+      "asof_date": "2026-11-09",
+      "symbol": "TSLA",
+      "bar_date": "2026-11-09",
+      "close": 378.04998779296875,
+      "currency": "USD",
+      "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
+    },
+    {
+      "asof_date": "2026-11-09",
+      "symbol": "TSM",
+      "bar_date": "2026-11-09",
+      "close": 388.6199951171875,
+      "currency": "USD",
+      "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
+    }
+  ],
+  "last_roster_year": 2026
 }

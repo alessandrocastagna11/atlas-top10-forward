@@ -1592,6 +1592,11 @@
           "close": 26.079999923706055,
           "open": 26.059999465942383,
           "volume": 4644370
+        },
+        "2026-11-09": {
+          "close": 26.100000381469727,
+          "open": 26.059999465942383,
+          "volume": 6423943
         }
       },
       "currency": "SAR",
@@ -1605,7 +1610,7 @@
       "exchange_timezone": "Asia/Riyadh",
       "feed": "Yahoo chart 1d",
       "identity": "Saudi Arabian Oil Company",
-      "retrieved_at_utc": "2026-11-10T07:45:26.748797+00:00",
+      "retrieved_at_utc": "2026-11-10T11:48:28.513717+00:00",
       "splits": {}
     },
     "AAPL": {
@@ -3227,7 +3232,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Apple Inc.",
-      "retrieved_at_utc": "2026-11-10T07:45:26.221322+00:00",
+      "retrieved_at_utc": "2026-11-10T11:48:27.659447+00:00",
       "splits": {}
     },
     "AMZN": {
@@ -4843,7 +4848,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Amazon.com, Inc.",
-      "retrieved_at_utc": "2026-11-10T07:45:26.520475+00:00",
+      "retrieved_at_utc": "2026-11-10T11:48:28.123441+00:00",
       "splits": {}
     },
     "EURSAR=X": {
@@ -6504,7 +6509,7 @@
       "exchange_timezone": "Europe/London",
       "feed": "Yahoo chart 1d",
       "identity": "EUR/SAR",
-      "retrieved_at_utc": "2026-11-10T07:45:27.233216+00:00",
+      "retrieved_at_utc": "2026-11-10T11:48:29.064440+00:00",
       "splits": {}
     },
     "EURUSD=X": {
@@ -8165,7 +8170,7 @@
       "exchange_timezone": "Europe/London",
       "feed": "Yahoo chart 1d",
       "identity": "EUR/USD",
-      "retrieved_at_utc": "2026-11-10T07:45:27.164918+00:00",
+      "retrieved_at_utc": "2026-11-10T11:48:28.962027+00:00",
       "splits": {}
     },
     "GOOG": {
@@ -9787,7 +9792,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Alphabet Inc.",
-      "retrieved_at_utc": "2026-11-10T07:45:26.451503+00:00",
+      "retrieved_at_utc": "2026-11-10T11:48:28.022305+00:00",
       "splits": {}
     },
     "IUSQ.DE": {
@@ -11396,6 +11401,11 @@
           "close": 106.27999877929688,
           "open": 104.94000244140625,
           "volume": 317415
+        },
+        "2026-11-09": {
+          "close": 107.27999877929688,
+          "open": 105.55999755859375,
+          "volume": 161543
         }
       },
       "currency": "EUR",
@@ -11403,7 +11413,7 @@
       "exchange_timezone": "Europe/Berlin",
       "feed": "Yahoo chart 1d",
       "identity": "iShares MSCI All Country World UCITS ETF USD Acc",
-      "retrieved_at_utc": "2026-11-10T07:45:27.053761+00:00",
+      "retrieved_at_utc": "2026-11-10T11:48:28.826388+00:00",
       "splits": {}
     },
     "META": {
@@ -13025,7 +13035,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Meta Platforms, Inc.",
-      "retrieved_at_utc": "2026-11-10T07:45:26.986227+00:00",
+      "retrieved_at_utc": "2026-11-10T11:48:28.728529+00:00",
       "splits": {}
     },
     "MSFT": {
@@ -14647,7 +14657,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Microsoft Corporation",
-      "retrieved_at_utc": "2026-11-10T07:45:26.383271+00:00",
+      "retrieved_at_utc": "2026-11-10T11:48:27.922304+00:00",
       "splits": {}
     },
     "NVDA": {
@@ -16269,7 +16279,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "NVIDIA Corporation",
-      "retrieved_at_utc": "2026-11-10T07:45:26.297836+00:00",
+      "retrieved_at_utc": "2026-11-10T11:48:27.767508+00:00",
       "splits": {}
     },
     "SPCX": {
@@ -16800,7 +16810,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Space Exploration Technologies Corp.",
-      "retrieved_at_utc": "2026-11-10T07:45:26.670025+00:00",
+      "retrieved_at_utc": "2026-11-10T11:48:28.384270+00:00",
       "splits": {}
     },
     "TSLA": {
@@ -18416,7 +18426,7 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Tesla, Inc.",
-      "retrieved_at_utc": "2026-11-10T07:45:26.910116+00:00",
+      "retrieved_at_utc": "2026-11-10T11:48:28.632442+00:00",
       "splits": {}
     },
     "TSM": {
@@ -20038,9 +20048,9 @@
       "exchange_timezone": "America/New_York",
       "feed": "Yahoo chart 1d",
       "identity": "Taiwan Semiconductor Manufacturing Company Limited",
-      "retrieved_at_utc": "2026-11-10T07:45:26.604012+00:00",
+      "retrieved_at_utc": "2026-11-10T11:48:28.246618+00:00",
       "splits": {}
     }
   },
-  "sha256": "366404a313e6683482f607912d85ce7900d7958a22d82d8114ecc159bae19794"
+  "sha256": "d4eb9a2da2948e8870f72fc0ea06a3ba2e9ac58f3745af4a74fc370f863be724"
 }
