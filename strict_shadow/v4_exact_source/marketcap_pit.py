@@ -5,7 +5,7 @@ Separate from official live cohort until mapping and PIT coverage are proven.
 Source is a third-party contemporaneous public ranking, not filing-grade shares.
 """
 from __future__ import annotations
-import csv,datetime as dt,hashlib,html,io,json,re,urllib.request
+import csv,datetime as dt,hashlib,html,io,json,re,urllib.request,unicodedata
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -115,24 +115,76 @@ def _fetch(url):
         if response.status!=200:raise ValueError("non-200 market-cap source")
         return data
 
+def _country(s):
+    t=unicodedata.normalize("NFKD",str(s)).encode("ascii","ignore").decode("ascii")
+    t=re.sub(r"\s+"," ",t).strip().upper()
+    codes={"USA":"UNITED STATES","UK":"UNITED KINGDOM","S. KOREA":"SOUTH KOREA",
+           "KOREA (SOUTH)":"SOUTH KOREA","S. ARABIA":"SAUDI ARABIA"}
+    return codes.get(t,t)
+
+_STOP=set("THE GROUP HOLDINGS HOLDING INC INCORPORATED CLASS CORP CORPORATION LTD "
+          "LIMITED PLC COMPANY CO AG SA SE NV GROEP BANCO MOTOR PS PAR NON VOTING "
+          "PREFERRED PRE SUBORDINATE ORDINARY A B C H N OF AND".split())
+def _issuer_name(s):
+    s=unicodedata.normalize("NFKD",str(s)).encode("ascii","ignore").decode("ascii")
+    s=re.sub(r"\([^)]*\)"," ",s).upper()
+    t=[w for w in re.sub(r"[^A-Z0-9]+"," ",s).split() if w and w not in _STOP]
+    return " ".join(sorted(t))
+
+# Reviewed issuer-level correspondence. These are NOT arbitrary Yahoo suffix
+# substitutions: each vendor ticker must also match the exchange's country.
+# Whitelist deliberately excludes Samsung preferred vs Samsung ordinary and
+# other duplicate classes that could distort the issuer top-N ranking.
+_CURATED_ISSUER_ALIASES={
+    "2330.TW":"TSM", "TD.TO":"TD", "BNS.TO":"BNS","CM.TO":"CM",
+    "GSK.L":"GSK", "CP.TO":"CP", "ABX.TO":"B", "3711.TW":"ASX",
+    "2318.HK":"601318.SS", "105560.KS":"KB"
+}
+
 def crosswalk(vendor,etf):
     bysymbol={}
     for item in vendor:
         s=item["vendor_ticker"].replace(".", "-") if item["vendor_ticker"].startswith("BRK.") else item["vendor_ticker"]
         bysymbol.setdefault(s,item)
-    # Do not silently convert ADR caps into listing-specific caps. Ticker
-    # identity and issuer share class need independent confirmation.
-    matches=[]
+    # A name/country match is allowed only when both are unique, with exact
+    # issuer-name normalization; no fuzzy edit-distance guesses.
+    nameindex={}
+    for item in vendor:
+        raw=item["vendor_company_name"]
+        ticker=item["vendor_ticker"]
+        if raw.upper().endswith(ticker.upper()):raw=raw[:-len(ticker)]
+        key=(_country(item["vendor_country"]),_issuer_name(raw))
+        if key[1]:nameindex.setdefault(key,[]).append(item)
+    matches=[];used_vendor=set()
     for row in etf:
-        sym=row["symbol"].upper()
-        x=bysymbol.get(sym)
-        if x is None:continue
-        matches.append({**row,"market_cap_usd":x["market_cap_usd"],"market_cap_vendor_rank":x["vendor_rank"],
-                        "market_cap_vendor_ticker":x["vendor_ticker"],
-                        "capitalization_coverage_status":"EXACT_TICKER_MATCH_REQUIRES_ISSUER_REVIEW",
+        symbol=row["symbol"].upper()
+        v=bysymbol.get(symbol)
+        if v and _country(v["vendor_country"])==_country(row["country"]) and v["vendor_ticker"] not in used_vendor:
+            method="EXACT_TICKER_AND_COUNTRY"
+        else:
+            v=None
+            method=""
+        if v is None:
+            country=_country(row["country"])
+            candidates=[item for item in nameindex.get((country,_issuer_name(row["company_name"])),[])
+                        if item["vendor_ticker"] not in used_vendor]
+            if len(candidates)==1:
+                v=candidates[0];method="UNIQUE_NORMALIZED_ISSUER_NAME_AND_COUNTRY"
+        if v is None:
+            alias=_CURATED_ISSUER_ALIASES.get(symbol)
+            possibility=bysymbol.get(alias)
+            if possibility and possibility["vendor_ticker"] not in used_vendor and (
+                 _country(possibility["vendor_country"])==_country(row["country"])):
+                v=possibility;method="CURATED_ISSUER_ALIAS_AND_COUNTRY"
+        if v is None:continue
+        used_vendor.add(v["vendor_ticker"])
+        matches.append({**row,"market_cap_usd":v["market_cap_usd"],"market_cap_vendor_rank":v["vendor_rank"],
+                        "market_cap_vendor_ticker":v["vendor_ticker"],
+                        "capitalization_coverage_status":method+"_NOT_FULL_PIT_CERTIFIED",
                         "ranking_type":RANKING_TYPE})
     matches.sort(key=lambda r:-float(r["market_cap_usd"]))
     return matches
+
 
 def run(now=None,fetch=None):
     now=now or dt.datetime.now(dt.timezone.utc)
