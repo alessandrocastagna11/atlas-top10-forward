@@ -5,6 +5,8 @@ on:
     branches: [atlas-v4-confidence70-live-paper]
     paths:
       - 'strict_shadow/v4_exact_source/live_model.py'
+      - 'strict_shadow/v4_exact_source/marketcap_pit.py'
+      - 'strict_shadow/v4_exact_source/model_proposal.py'
       - 'strict_shadow/v4_exact_source/run_live.py'
       - 'strict_shadow/v4_exact_source/frozen_region.py'
       - 'strict_shadow/v4_exact_source/live_simulator.py'
@@ -51,6 +53,8 @@ jobs:
             atlas-v4-adjusted-${{ runner.os }}-
       - name: Refresh as-recorded roster and daily unadjusted quote/FX feed
         run: python strict_shadow/live_v4/dataset_daily.py --limit 300 --start 2024-01-01
+      - name: Capture daily as-observed issuer market caps (shadow, no retroactive PIT substitution)
+        run: python strict_shadow/v4_exact_source/marketcap_pit.py
       - name: Update independent ECB FX audit
         run: python strict_shadow/live_v4/ecb_fx.py --start 2012-01-01
       - name: Verify original frozen source hashes
