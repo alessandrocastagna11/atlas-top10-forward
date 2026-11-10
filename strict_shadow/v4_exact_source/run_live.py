@@ -315,6 +315,7 @@ def main(now=None):
             raise ValueError(f'Adjusted dataset incomplete ({len(fail)}/{len(required)}): '+str(first))
         m,meta=build_model(vintages,asof,frames)
         status.update({'decision_session':str(asof),'source':meta})
+        status['data_universe']=meta.get('universe_kind')
         evidence=preview(m,meta,asof,now,old.get('orders',[]))
         status['next_preopen']=evidence
         status['signal_status']=evidence.get('status')
