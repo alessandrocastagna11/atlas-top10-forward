@@ -1,6 +1,6 @@
 {
   "capital_initial_eur": 10000.0,
-  "checked_at_utc": "2026-11-10T09:39:54.688539+00:00",
+  "checked_at_utc": "2026-11-10T09:42:26.845818+00:00",
   "data_universe": "AS_RECORDED_ACWI_ETF_HOLDING_PROXY_2026",
   "decision_session": "2026-11-09",
   "engine": "FROZEN_ATLAS_V4_CONFIDENCE70",
@@ -18,13 +18,13 @@
   "next_preopen": {
     "candidate_count": 300,
     "cutoff_utc": "2026-11-10T14:00:00+00:00",
-    "decision_model_sha256": "dd86b0c23f6a916145ab677c4c17d6c06323ad564fdea74c867a6d9e30a9ca9b",
+    "decision_model_sha256": "76735157185d2ed73edd7caadc2274a7f202c12cb8b413a9ba3c97b475b11683",
     "decision_session": "2026-11-09",
     "earliest_open_utc": "2026-11-10T14:30:00+00:00",
     "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
     "execution_session": "2026-11-10",
     "market_data_first_observed_before_open": true,
-    "model_source_sha256": "e61076b5099577a4077a240204c8488785c0d9ccf8632cf5f030632eea35edb3",
+    "model_source_sha256": "f50403578c9d3257a2b7078ff617f053c54cc22097742ffdd60fab709b27e780",
     "preopen_selected_symbols": [
       "PANW",
       "CRWD",
@@ -38,9 +38,9 @@
       "MO"
     ],
     "prior_sha256": "98aac955483a22af0c19e44169c92799803de806053c37841a0a8a42f89218bd",
-    "produced_at_utc": "2026-11-10T09:39:54.688539+00:00",
-    "recomputed_sha256": "dd86b0c23f6a916145ab677c4c17d6c06323ad564fdea74c867a6d9e30a9ca9b",
-    "risk_state": 0.6508431339996507,
+    "produced_at_utc": "2026-11-10T09:42:26.845818+00:00",
+    "recomputed_sha256": "76735157185d2ed73edd7caadc2274a7f202c12cb8b413a9ba3c97b475b11683",
+    "risk_state": 0.6508431339996509,
     "roster_sha256": "72764adee0ebbdb45c95600674ae6b0e6599692136ab9e90a4df4e56af3ca1f6",
     "status": "SIGNAL_REVISED_SINCE_FIRST_ATTESTATION"
   },
