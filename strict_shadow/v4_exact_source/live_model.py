@@ -344,12 +344,43 @@ def build_model(snapshot,asof,frames):
     m.tax=t9.TaxConfig('italian_tax',True)
     m.net_cash=t9.net_cash_rate(m.cash_rate,m.tax)
     m._build_path_score();m._build_panic_rebound()
+    # Historical calibration uses the first prospectively observed cohort;
+    # each following day uses ONLY that day's as-recorded cohort. Otherwise
+    # cross-sectional path quality / breadth / alpha regressions would
+    # retroactively change when a future constituent entered the universe.
+    calibration_mask=membership.copy()
+    if historical.any():
+        first_names=[str(r['symbol']).upper() for r in snapshots[0][3]]
+        first_names+=['G::'+str(r['symbol']).upper() for r in snapshots[0][4]]
+        calibration_mask.loc[historical,first_names]=True
+    log_price=np.log(m.features.close_eur.where(m.features.close_eur>0))
+    absret=log_price.diff().abs()
+    denominator=absret.shift(21).rolling(231,min_periods=180).sum()
+    efficiency=((log_price.shift(21)-log_price.shift(252)).abs()/denominator.replace(0,np.nan)).clip(0,1)
+    jump_share=(absret.shift(21).rolling(231,min_periods=180).max()/denominator.replace(0,np.nan)).clip(0,1)
+    quality=(efficiency.where(calibration_mask).rank(axis=1,pct=True)
+             -jump_share.where(calibration_mask).rank(axis=1,pct=True)).clip(-1,1)
+    m.path_score=(m.base_score+0.20*quality).clip(-3,3)
+    spy=m.raw.close_eur['SPY'];return20=spy.pct_change(20);return10=spy.pct_change(10)
+    drawdown63=spy/spy.rolling(63,min_periods=42).max()-1.0
+    sma50=m.features.close_eur.rolling(50,min_periods=40).mean()
+    breadth=((m.features.close_eur>sma50)&calibration_mask).sum(axis=1)/calibration_mask.sum(axis=1).replace(0,np.nan)
+    breadth_change10=breadth-breadth.shift(10)
+    m.panic=((drawdown63<=-.10)&(return20<=-.05)&(breadth<.35)).fillna(False)
+    recent=m.panic.shift(1).rolling(42,min_periods=1).max().fillna(0).astype(bool)
+    m.rebound=(recent&(return10>=.05)&(breadth>=.50)&(breadth_change10>=.15)).fillna(False)
+    m.pr_t8=m.base_t8.copy();m.pr_t8.loc[m.panic]=np.minimum(m.pr_t8.loc[m.panic],.50)
+    m.pr_regime=m.base_regime.copy();m.pr_regime.loc[m.rebound]=np.maximum(m.pr_regime.loc[m.rebound],.65)
+    m.pr_t8.loc[m.rebound]=np.maximum(m.pr_t8.loc[m.rebound],.90)
     m._returns=m.features.close_eur.pct_change(fill_method=None);m._corr_cache={}
     # First fill on START_PAPER uses the PREVIOUS complete market session's
     # decision. The 63-session PIT alpha calibration must already exist then.
     decision_history=index[index<START_PAPER]
     signal_start=decision_history[-1] if len(decision_history) else START_PAPER
-    m.expected_alpha,_=v4.build_expected_alpha(m.path_score,m.features.close_eur,str(signal_start.date()))
+    m.expected_alpha,_=v4.build_expected_alpha(
+        m.path_score.where(calibration_mask),
+        m.features.close_eur.where(calibration_mask),
+        str(signal_start.date()))
     return m,{'roster_recorded_date':str(last),'roster_source_asof':str(observed),'roster_sha256':vintage_hash,
                'universe_kind':'ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP',
                'ticker_to_market_symbol':{x:x for x in symbols_us}|{'G::'+x:x for x in symbols_row},
