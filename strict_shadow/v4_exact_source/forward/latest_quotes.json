@@ -317,5 +317,5 @@
   "local_exchange_session_may_be_prior_date": true,
   "not_executable_intraday_quotes": true,
   "price_model": "RAW_UNADJUSTED_EUR_COMPLETED_US_EOD_WITH_LOCAL_FORWARD_FILL",
-  "recorded_at_utc": "2026-11-10T21:54:46.396045+00:00"
+  "recorded_at_utc": "2026-11-10T22:00:40.027235+00:00"
 }
