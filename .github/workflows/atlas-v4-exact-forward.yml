@@ -96,6 +96,17 @@ jobs:
           fi
           if ! git diff --cached --quiet; then
             git commit -m "Atlas V4 original source daily PAPER audit $(date -u +%F)"
-            git pull --rebase origin atlas-v4-confidence70-live-paper
-            git push origin HEAD:atlas-v4-confidence70-live-paper
+            # The branch may move between fetch and push (e.g. a code fix).
+            # Retry a safe fast-forward rebase; NEVER force-push paper ledgers.
+            for attempt in 1 2 3 4 5; do
+              git fetch origin atlas-v4-confidence70-live-paper
+              git rebase origin/atlas-v4-confidence70-live-paper || { git rebase --abort; exit 1; }
+              if git push origin HEAD:atlas-v4-confidence70-live-paper; then
+                echo "PAPER REPORT COMMITTED AND PUSHED"
+                exit 0
+              fi
+              sleep $((attempt * 2))
+            done
+            echo "::error::V4 paper ledger publish failed after five non-force retries"
+            exit 1
           fi
