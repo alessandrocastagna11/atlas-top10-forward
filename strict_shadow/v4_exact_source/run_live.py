@@ -123,45 +123,80 @@ def preview(m,meta,asof,now,old_orders):
             'market_data_first_observed_before_open':now<cutoff,
             'candidate_count':meta['active_roster_names'],'preopen_selected_symbols':selected_symbols,
             'risk_state':float(m.pr_regime.loc[date])*float(m.pr_t8.loc[date])}
+    path=PREOPEN/(str(asof)+'.json')
+    if path.is_file():
+        prior=json.loads(path.read_text())
+        if prior.get('decision_model_sha256')==record['decision_model_sha256']:
+            return {'status':'ATTESTED_PREVIOUS_RUN' if prior.get('market_data_first_observed_before_open') else 'PREVIOUS_LATE_ATTESTATION',**prior}
+        # Never overwrite an old proof, even when new data/corrected code
+        # generate a different decision after the fact.
+        return {'status':'SIGNAL_REVISED_SINCE_FIRST_ATTESTATION',
+                'prior_sha256':prior.get('decision_model_sha256'),
+                'recomputed_sha256':record['decision_model_sha256'],**record}
     if now>=cutoff:
         return {'status':'MISSED_GLOBAL_PREOPEN_CUTOFF',**record}
-    path=PREOPEN/(str(asof)+'.json')
-    if not path.is_file():write_json(path,record)
+    write_json(path,record)
     return {'status':'ATTESTED_BEFORE_GLOBAL_OPEN',**record}
 
 
-def order_timecheck(rows,last_orders,model):
-    prior=last_orders
-    if len(rows)<len(prior) or rows[:len(prior)]!=prior:
-        raise ValueError('Append-only paper ledger is not a prefix: data revisions/portfolio drift')
-    new=rows[len(prior):]
-    for row in new:
-        if str(row.get('reason'))=='end_of_test':raise ValueError('Historical terminal liquidation appeared in PAPER')
+def order_timecheck(rows,last_orders,model,now,asof):
+    """Append-only audit; after downtime reconstruct PAPER dates as marked backfills.
+
+    No delayed run claims to have placed an order in the past.
+    No new fill is accepted before its execution session has completed.
+    The original as-recorded universe and original engine are still used.
+    """
+    if len(rows)<len(last_orders) or rows[:len(last_orders)]!=last_orders:
+        raise ValueError('Append-only paper ledger is not a prefix: prior fills changed after source revision')
+    fresh=rows[len(last_orders):]
+    recovered_dates=set()
+    verified_dates=set()
+    model_last=pd.Timestamp(asof)
+    for row in fresh:
+        if str(row.get('reason'))=='end_of_test':
+            raise ValueError('Historical terminal liquidation appeared in PAPER')
         dec=str(row.get('decision_date'))[:10]
         execution=str(row.get('date'))[:10]
-        p=PREOPEN/(dec+'.json')
-        if not p.is_file():raise ValueError('No committed pre-open decision: '+dec)
-        evidence=json.loads(p.read_text())
-        if not evidence.get('market_data_first_observed_before_open'):
-            raise ValueError('Late/unattested decision: '+dec)
-        if evidence.get('execution_session')!=execution:
-            raise ValueError('Decision/execution session mismatch: '+dec)
-        # Fail closed if refreshed or restated history would modify what the
-        # model could have scored before the opening auction.
+        if pd.Timestamp(execution)>model_last:
+            raise ValueError('Requested PAPER fill is after last verified complete session: '+execution)
+        if dec in verified_dates:continue
         date=pd.Timestamp(dec)
         cfg=model.bundle['cfg']
-        select,_,_,_=model.callbacks(None)
+        choose,_,_,_=model.callbacks(None)
         score=model.path_score.loc[date]
         eligible=model.eligible.loc[date]&model.membership.loc[date]
         ranks=score.where(eligible).rank(ascending=False,method='min')
-        chosen=select(date,score,ranks,eligible,positions_asof(last_orders,date),cfg)
+        # Include earlier already reconstructed fills; do not evaluate
+        # each missed decision using only yesterday's saved positions.
+        chosen=choose(date,score,ranks,eligible,positions_asof(rows,date),cfg)
         fingerprint=[(key,round(float(score.get(key,0)),8)) for key in chosen]
-        calc=hashlib.sha256(json.dumps({'selected':fingerprint,
+        observed_sha=hashlib.sha256(json.dumps({'selected':fingerprint,
             'risk_state':round(float(model.pr_regime.loc[date])*float(model.pr_t8.loc[date]),8)},
             sort_keys=True).encode()).hexdigest()
-        if calc!=evidence.get('decision_model_sha256'):
-            raise ValueError('Original model replay differs from committed pre-open decision '+dec)
-    return new
+        p=PREOPEN/(dec+'.json')
+        proof=json.loads(p.read_text()) if p.is_file() else None
+        is_live_attested=(bool(proof) and proof.get('market_data_first_observed_before_open') is True
+                          and proof.get('execution_session')==execution
+                          and proof.get('decision_model_sha256')==observed_sha)
+        if not is_live_attested:
+            # This is explicitly retrospective research PAPER, NEVER a
+            # contemporaneous market fill and never a broker order.
+            rec={
+                'mode':'RECOVERED_HISTORICAL_PAPER_SIMULATION_NOT_LIVE_FILL',
+                'decision_session':dec,'execution_session':execution,
+                'recovered_at_utc':now.isoformat(),
+                'original_attestation_present':bool(proof),
+                'original_attestation_matches':False,
+                'original_attestation_sha256':proof.get('decision_model_sha256') if proof else None,
+                'replayed_signal_sha256':observed_sha,
+                'original_source_verified':True,
+                'execution_data_session_complete':True,
+                'simulated_execution_not_real_order':True,
+            }
+            write_json(PREOPEN/'recoveries'/(dec+'.json'),rec)
+            recovered_dates.add(dec)
+        verified_dates.add(dec)
+    return fresh,sorted(recovered_dates)
 
 
 def main(now=None):
@@ -186,32 +221,26 @@ def main(now=None):
         asof=max(dates)
         if (candidate-asof).days>4:raise ValueError('Stale SPY benchmark')
         vintages=latest_vintages(asof)
-        # Keep one as-recorded starting cohort during the 2026 paper calibration.
-        # Updating the latest cohort every night and replaying from inception
-        # would silently replace yesterday's holdings with a different history.
-        # Market QUOTES still refresh each run. A future roster migration requires
-        # a separate explicit, audited membership-transition implementation.
-        locked_roster_date=old.get('universe_lock_recorded_date')
-        if locked_roster_date:
-            matched=[v for v in vintages if str(v[0])==locked_roster_date]
-            if not matched:raise ValueError('Persisted as-recorded universe lock was removed')
-            vintage=matched[0]
-        else:
-            vintage=vintages[-1]
-            locked_roster_date=str(vintage[0])
+        # Each immutable recorded vintage becomes active only from its own
+        # capture date. Replaying after downtime uses that same dated history.
+        # A newly captured 2026 roster never changes yesterday's membership.
+        vintage=vintages[-1]
+        locked_roster_date=str(vintages[0][0])  # legacy state only; NOT selection policy
         status['universe_lock_recorded_date']=locked_roster_date
-        status['latest_available_roster_recorded_date']=str(vintages[-1][0])
-        status['universe_policy']='LOCKED_START_COHORT_TO_PREVENT_RETROACTIVE_REPLAY_BIAS'
-        symbols=[str(x['symbol']).upper() for x in vintage[3]+vintage[4]]
+        status['latest_available_roster_recorded_date']=str(vintage[0])
+        status['universe_policy']='DAILY_CAUSAL_AS_RECORDED_ROSTERS_WITH_GAP_REPLAY'
+        status['historical_universe_vintages']=len(vintages)
+        all_constituents=[row for v in vintages for row in v[3]+v[4]]
+        symbols=[str(x['symbol']).upper() for x in all_constituents]
         required=set(symbols)|set(SECTOR.values())|{'SPY','EURUSD=X'}
-        required|={'EUR'+str(x['currency']).upper()+'=X' for x in vintage[3]+vintage[4] if str(x['currency']).upper()!='EUR'}
+        required|={'EUR'+str(x['currency']).upper()+'=X' for x in all_constituents if str(x['currency']).upper()!='EUR'}
         frames,fail=get_adjusted(required,asof,max_workers=8)
         # Every chosen 2026 constituent is required; silently dropping a leader
         # would change H4 selection and misstate source equivalence.
         if fail:
             first=list(sorted(fail.items()))[:10]
             raise ValueError(f'Adjusted dataset incomplete ({len(fail)}/{len(required)}): '+str(first))
-        m,meta=build_model(vintage,asof,frames)
+        m,meta=build_model(vintages,asof,frames)
         status.update({'decision_session':str(asof),'source':meta})
         evidence=preview(m,meta,asof,now,old.get('orders',[]))
         status['next_preopen']=evidence
@@ -221,7 +250,7 @@ def main(now=None):
             status['status']='WAITING_FIRST_ACTUAL_EXECUTION_SESSION'
         else:
             rows=serialize(result)
-            fresh=order_timecheck(rows,old.get('orders',[]),m)
+            fresh,recovered_dates=order_timecheck(rows,old.get('orders',[]),m,now,asof)
             # Validate *every* historical sale including SPY risk-sleeve sells.
             if len(result.realized_lots):
                 min_sold_days=int(result.realized_lots['calendar_days'].min())
@@ -232,7 +261,10 @@ def main(now=None):
             if len(rows)!=portfolio['orders_total']:
                 raise ValueError('Order ledger and paper holdings snapshot mismatch')
             status.update({'status':'PAPER_LEDGER_VERIFIED','orders_cumulative':len(rows),
-                           'new_orders':len(fresh),'nav_eur':round(float(result.equity.iloc[-1]),2),
+                           'new_orders':len(fresh),'recovered_paper_decision_dates':recovered_dates,
+                           'recovered_paper_decision_count':len(recovered_dates),
+                           'new_orders_mode':'HISTORICAL_PAPER_BACKFILL' if recovered_dates else 'ATTESTED_PAPER',
+                           'nav_eur':round(float(result.equity.iloc[-1]),2),
                            'max_drawdown_pct':round(float((result.equity/result.equity.cummax()-1).min()*100),3),
                            'last_valuation_session':str(result.equity.index[-1].date()),
                            'tax_eur_total':round(float(result.total_tax_eur),2),
@@ -251,6 +283,8 @@ def main(now=None):
                   'initial_cash_eur':INITIAL,'orders':rows,'latest_nav_eur':status['nav_eur'],
                   'last_valuation_session':status['last_valuation_session'],
                   'universe_lock_recorded_date':locked_roster_date,
+                  'universe_latest_recorded_date':str(vintage[0]),
+                  'universe_policy':'DAILY_CAUSAL_AS_RECORDED_ROSTERS_WITH_GAP_REPLAY',
                   'cash_and_positions':'computed_by_frozen_simulator_not_manual_broker',
                   'real_money_authorized':False}
             write_json(STATE,save)

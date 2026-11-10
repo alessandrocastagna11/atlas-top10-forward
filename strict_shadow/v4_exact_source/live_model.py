@@ -156,22 +156,54 @@ def _fx(frames,code,index):
     return vals
 
 
+def asof_membership(index,snapshots,symbols_us,row_assets):
+    """Point-in-time recorded roster, never replaced retroactively."""
+    cols=list(symbols_us)+list(row_assets)
+    out=pd.DataFrame(False,index=index,columns=cols,dtype=bool)
+    for n,v in enumerate(snapshots):
+        start=pd.Timestamp(v[0])
+        stop=pd.Timestamp(snapshots[n+1][0]) if n+1<len(snapshots) else pd.Timestamp.max
+        days=index[(index>=start)&(index<stop)]
+        names=[str(r['symbol']).upper() for r in v[3]]
+        names+=['G::'+str(r['symbol']).upper() for r in v[4]]
+        if any(k not in cols for k in names):
+            raise ValueError('Roster contains unmapped ticker')
+        out.loc[days,names]=True
+    return out
+
+
 def build_model(snapshot,asof,frames):
     """Construct the exact replay's H4 features/regime/RegionSlotAtlas callbacks.
     The 2026 membership datasource is explicitly NOT the historical PIT market-cap roster.
     """
-    last,observed,vintage_hash,us,global_non= snapshot
-    symbols_us=[str(x['symbol']).upper() for x in us]
-    symbols_row=[str(x['symbol']).upper() for x in global_non]
+    # A roster is effective from its actual recorded date, never earlier.
+    # Preserve earlier memberships while new daily snapshots are appended.
+    snapshots=([snapshot] if isinstance(snapshot,tuple) else list(snapshot))
+    if not snapshots:raise ValueError('No recorded roster vintage')
+    snapshots.sort(key=lambda v:v[0])
+    if len({v[0] for v in snapshots})!=len(snapshots):
+        raise ValueError('Duplicate roster date would make the forward ledger non-deterministic')
+    last,observed,vintage_hash,us,global_non=snapshots[-1]
+    symbols_us=list(dict.fromkeys(str(x['symbol']).upper() for v in snapshots for x in v[3]))
+    symbols_row=list(dict.fromkeys(str(x['symbol']).upper() for v in snapshots for x in v[4]))
     if set(symbols_us)&set(symbols_row):raise ValueError('Regional symbol overlap')
+    # Asset identities, sector mappings and currencies must not mutate silently.
+    seen={}
+    for vintage in snapshots:
+        for row in vintage[3]+vintage[4]:
+            symbol=str(row['symbol']).upper()
+            ident=(str(row['currency']).upper(),SECTOR.get(str(row['sector'])))
+            if symbol in seen and seen[symbol]!=ident:
+                raise ValueError('Issuer symbol mapping changed; manual corporate-action review: '+symbol)
+            seen[symbol]=ident
     sp=frames['SPY'];index=sp.index[(sp.index>=pd.Timestamp('2023-01-01'))&(sp.index<=pd.Timestamp(asof))]
     if len(index)<500:raise ValueError('Benchmark calibration shorter than 500 sessions')
     # Do not substitute present constituents for actual historical investible membership.
     # Only recorded forward vintages are tradable; backwards prices are for factors.
     row_assets=['G::'+s for s in symbols_row]
     cols=symbols_us+row_assets
-    currency={str(x['symbol']).upper():str(x['currency']).upper() for x in us+global_non}
-    sector={str(x['symbol']).upper():SECTOR.get(str(x['sector'])) for x in us+global_non}
+    currency={symbol:ident[0] for symbol,ident in seen.items()}
+    sector={symbol:ident[1] for symbol,ident in seen.items()}
     if any(not sector[s] for s in symbols_us+symbols_row):raise ValueError('Unknown sector in roster')
     for s in symbols_us+symbols_row:
         if s not in frames:raise ValueError('Missing adjusted price '+s)
@@ -214,7 +246,16 @@ def build_model(snapshot,asof,frames):
     roclose=pd.DataFrame({a:close_usd[a] for a in row_assets},index=index)
     roeur=pd.DataFrame({a:close_eur[a] for a in row_assets},index=index)
     roopen=pd.DataFrame({a:open_eur[a] for a in row_assets},index=index)
-    factor_mem=pd.DataFrame(True,index=index,columns=row_assets)
+    # Membership changes only on each snapshot's RECORDED day. Historical
+    # calibration bars are usable before first capture, but never tradeable.
+    membership=asof_membership(index,snapshots,symbols_us,row_assets)
+    factor_mem=membership[row_assets].copy()
+    historical=index<pd.Timestamp(snapshots[0][0])
+    if historical.any():
+        factor_mem.loc[historical,['G::'+str(r['symbol']).upper() for r in snapshots[0][4]]]=True
+    us_factor_mem=membership[symbols_us].copy()
+    if historical.any():
+        us_factor_mem.loc[historical,[str(r['symbol']).upper() for r in snapshots[0][3]]]=True
     logp=np.log(roclose.where(roclose>0));ret=logp.diff();masked=ret.where(factor_mem)
     market=masked.mean(axis=1,skipna=True)
     secs={a:sector[a[3:]] for a in row_assets}
@@ -231,22 +272,27 @@ def build_model(snapshot,asof,frames):
     ext=(logp-logp.shift(5))/(dv20*math.sqrt(5)).replace(0,np.nan)
     mdv=dollar_vol[row_assets].rolling(20,min_periods=15).median()
     rz=v1.robust_cross_sectional_z
-    row_score=(.35*rz(res12)+.20*rz(res6)+.15*rz(raw12)+.10*rz(raw6)+.05*rz(raw3)+.075*rz(trend)+.075*rz(-vol63))
+    row_score=(.35*rz(res12.where(factor_mem))+.20*rz(res6.where(factor_mem))
+               +.15*rz(raw12.where(factor_mem))+.10*rz(raw6.where(factor_mem))
+               +.05*rz(raw3.where(factor_mem))+.075*rz(trend.where(factor_mem))
+               +.075*rz((-vol63).where(factor_mem)))
     row_elig=(roclose>=cfg.minimum_price_usd)&(mdv>=cfg.minimum_median_dollar_volume)&(roclose>sma200)&(sma50>sma200)&(raw12>0)&(ext<=cfg.maximum_extension_z)&(ext>=cfg.minimum_extension_z)&(res12>0)&row_score.notna()
-    # The same source class RegionSlotAtlas is invoked, with initial membership
-    # effective *only* from its first actually recorded 2026 snapshot.
+    # Recalculate ONLY the US cross-sectional z-scores against each day's
+    # historically observed roster. Otherwise adding a new symbol today
+    # would silently re-rank last week's holdings and corrupt the ledger.
+    def uz(name):return rz(usf.feature_tables[name][symbols_us].where(us_factor_mem))
+    # The original low-volatility signal z-scores the NEGATIVE volatility.
+    us_score=(cfg.score_residual_12_1*uz('residual_12_1')
+              +cfg.score_residual_6_1*uz('residual_6_1')
+              +cfg.score_raw_12_1*uz('raw_12_1')
+              +cfg.score_trend*uz('trend_strength')
+              +cfg.score_low_volatility*rz((-usf.feature_tables['annual_vol_63'][symbols_us]).where(us_factor_mem)))
     raw_close=pd.DataFrame(close_eur,index=index)
     raw_open=pd.DataFrame(open_eur,index=index)
     dividends=pd.DataFrame(div,index=index).fillna(0)
-    # 2026 membership starts when we actually observed it. No artificial
-    # historical fills from the 2026 cohort.
-    membership=pd.DataFrame(False,index=index,columns=cols)
-    if pd.Timestamp(last) in index:
-        membership.loc[index>=pd.Timestamp(last),cols]=True
-    elif index[-1]>=pd.Timestamp(last):
-        membership.loc[index>=pd.Timestamp(last),cols]=True
-    score=pd.concat([usf.score[symbols_us],row_score],axis=1)
-    elig=pd.concat([usf.eligible[symbols_us],row_elig],axis=1)
+    score=pd.concat([us_score,row_score],axis=1)
+    elig=pd.concat([usf.eligible[symbols_us] & membership[symbols_us],
+                    row_elig & membership[row_assets]],axis=1)
     close_eur_all=pd.DataFrame(close_eur,index=index)
     open_eur_all=pd.DataFrame(open_eur,index=index)
     close_usd_all=pd.DataFrame(close_usd,index=index)
@@ -259,15 +305,21 @@ def build_model(snapshot,asof,frames):
              score.where(elig).rank(axis=1,ascending=False,method='min'),elig,
              score,score.where(elig).rank(axis=1,ascending=False,method='min'),elig,
              pd.Series(True,index=index),ft)
-    def eq_index(series):
-        return 100*np.exp(np.log(series.where(series>0)).diff().mean(axis=1,skipna=True).fillna(0).cumsum())
-    usa_index=eq_index(close_eur_all[symbols_us]);row_index=eq_index(close_eur_all[row_assets]);logrel=np.log(usa_index/row_index)
+    def eq_index(series,allowed):
+        # A new vintage must not alter an earlier regime classification.
+        logrets=np.log(series.where(series>0)).diff().where(allowed)
+        return 100*np.exp(logrets.mean(axis=1,skipna=True).fillna(0).cumsum())
+    usa_index=eq_index(close_eur_all[symbols_us],us_factor_mem)
+    row_index=eq_index(close_eur_all[row_assets],factor_mem)
+    logrel=np.log(usa_index/row_index)
     relvol=logrel.diff().rolling(252,min_periods=126).std()
     region_strength=(.6*(logrel.shift(21)-logrel.shift(252))/(relvol*np.sqrt(231))+.4*(logrel.shift(21)-logrel.shift(126))/(relvol*np.sqrt(105))).clip(-2.5,2.5).fillna(0)
     frozen.usa_cols=symbols_us
     frozen.region_strength=region_strength
-    frozen.SCALED_EXIT=max(40,int(round(.40*len(cols))))
-    frozen.SCALED_POOL=frozen.SCALED_EXIT
+    # Exactly 100 US + 200 rest-of-world are eligible per vintage.
+    # This threshold cannot depend on the growing number of historic symbols.
+    frozen.SCALED_EXIT=120
+    frozen.SCALED_POOL=120
     inc.STRENGTH_BETA=.70
     m=object.__new__(frozen.RegionSlotAtlas)
     m.schedule='ROTATE';m.region_slot_audit=[]
@@ -293,11 +345,18 @@ def build_model(snapshot,asof,frames):
     m.net_cash=t9.net_cash_rate(m.cash_rate,m.tax)
     m._build_path_score();m._build_panic_rebound()
     m._returns=m.features.close_eur.pct_change(fill_method=None);m._corr_cache={}
-    m.expected_alpha,_=v4.build_expected_alpha(m.path_score,m.features.close_eur,str(START_PAPER.date()))
+    # First fill on START_PAPER uses the PREVIOUS complete market session's
+    # decision. The 63-session PIT alpha calibration must already exist then.
+    decision_history=index[index<START_PAPER]
+    signal_start=decision_history[-1] if len(decision_history) else START_PAPER
+    m.expected_alpha,_=v4.build_expected_alpha(m.path_score,m.features.close_eur,str(signal_start.date()))
     return m,{'roster_recorded_date':str(last),'roster_source_asof':str(observed),'roster_sha256':vintage_hash,
                'universe_kind':'ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP',
                'ticker_to_market_symbol':{x:x for x in symbols_us}|{'G::'+x:x for x in symbols_row},
-               'active_roster_names':len(cols),'last_benchmark_date':str(index[-1].date())}
+               'active_roster_names':300,'known_historical_symbols':len(cols),
+               'dated_vintages_applied':len(snapshots),
+               'first_roster_recorded_date':str(snapshots[0][0]),
+               'last_benchmark_date':str(index[-1].date())}
 
 
 def evaluate_model(m,provenance):
