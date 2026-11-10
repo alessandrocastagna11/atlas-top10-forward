@@ -401,7 +401,9 @@ def build_model(snapshot,asof,frames):
 
 def evaluate_model(m,provenance):
     if m.features.close_eur.index[-1]<START_PAPER:
-        return None,{'status':'PENDING_US_CLOSE','reason':'paper start session unavailable'}
+        return None,{'status':'WAITING_FIRST_EXECUTION_QUOTES',
+                     'reason':'First paper session 2026-11-10: no verified actual execution-session market bar yet; the preceding close signal is recorded',
+                     'first_execution_session':str(START_PAPER.date())}
     selector,weight_builder,_,_=m.callbacks(None)
     inc.CAPITAL=INITIAL
     cfg=replace(m.bundle['cfg'],target_volatility=inc.TARGET_VOL,
