@@ -2,14 +2,14 @@
   "any_market_preopen_eligible": false,
   "candidate_count": 300,
   "cutoff_utc": "2026-11-10T14:00:00+00:00",
-  "decision_model_sha256": "257cda64fe42433f986678ccf055da44da4383bc6ace2870b879babbd96b975c",
+  "decision_model_sha256": "4474eeb530dff61bfd48262dc81d1371e884eaf0bf7a8c7c68d62d5efbfe506a",
   "decision_session": "2026-11-09",
   "earliest_open_utc": "2026-11-10T14:30:00+00:00",
   "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
   "exchange_execution_policy": "PER_SYMBOL_NEXT_UNOBSERVED_OPEN",
   "execution_session": "2026-11-10",
   "market_data_first_observed_before_open": false,
-  "model_source_sha256": "c3dc5a34acc3f7a7478dffea83a7d02f645f366ef0738bb3b6601385c1f92e01",
+  "model_source_sha256": "53654e1f20ff087353c3e630c09d8c9ca23be7cb34ebd98ae5e3dc8550dbe19e",
   "not_authorized_for_original_past_open": true,
   "per_symbol_exchange_plan": {
     "ABBV": {
@@ -136,9 +136,9 @@
     "MO"
   ],
   "prior_sha256": "4fa61554ab5f7c36431c6b29dc108805641fceed033ceaf09d5a513f297cb743",
-  "produced_at_utc": "2026-11-10T14:16:19.749873+00:00",
-  "recomputed_sha256": "257cda64fe42433f986678ccf055da44da4383bc6ace2870b879babbd96b975c",
-  "risk_state": 0.6508431339996481,
+  "produced_at_utc": "2026-11-10T14:18:49.291964+00:00",
+  "recomputed_sha256": "4474eeb530dff61bfd48262dc81d1371e884eaf0bf7a8c7c68d62d5efbfe506a",
+  "risk_state": 0.650843131175708,
   "roster_sha256": "72764adee0ebbdb45c95600674ae6b0e6599692136ab9e90a4df4e56af3ca1f6",
   "signal_published": true,
   "status": "SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF"
