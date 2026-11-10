@@ -30,6 +30,7 @@
 
 | Titolo | Quote | Valore € | Peso | Quote vincolate | Prima data vendibile |
 |---|---:|---:|---:|---:|---|
+| — Nessuna posizione | — | — | — | — | — |
 
 ## Piano delle aperture per singolo mercato
 
@@ -48,7 +49,6 @@
 
 *Orari indicativi: festività, sospensioni e quotazioni reali devono essere verificate dal provider. Il segnale non equivale a un acquisto; un mercato già aperto non autorizza esecuzioni retroattive.*
 
-| — Nessuna posizione | — | — | — | — | — |
 
 ## Ultime operazioni verificate
 

@@ -1,6 +1,6 @@
 {
   "capital_initial_eur": 10000.0,
-  "checked_at_utc": "2026-11-10T12:52:44.875435+00:00",
+  "checked_at_utc": "2026-11-10T12:56:07.116519+00:00",
   "data_universe": "AS_RECORDED_ACWI_ETF_HOLDING_PROXY_2026",
   "decision_session": "2026-11-09",
   "engine": "FROZEN_ATLAS_V4_CONFIDENCE70",
@@ -20,14 +20,14 @@
     "any_market_preopen_eligible": true,
     "candidate_count": 300,
     "cutoff_utc": "2026-11-10T14:00:00+00:00",
-    "decision_model_sha256": "b391748c3bc3ef84653da6fc394e7c07948d273fb0a6f90d8a6bcf106ec2d2fd",
+    "decision_model_sha256": "4fa61554ab5f7c36431c6b29dc108805641fceed033ceaf09d5a513f297cb743",
     "decision_session": "2026-11-09",
     "earliest_open_utc": "2026-11-10T14:30:00+00:00",
     "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
     "exchange_execution_policy": "PER_SYMBOL_NEXT_UNOBSERVED_OPEN",
     "execution_session": "2026-11-10",
     "market_data_first_observed_before_open": true,
-    "model_source_sha256": "6c60fd38ca3ebc5d289c2cc52e53d0745af490ec0ff68efc27e1e96a8301ffc1",
+    "model_source_sha256": "63d4063ab192ff04eecbdb7b4149b0fa3d3b9d00fb657847b2c554e2681decb7",
     "original_proof_archived": true,
     "per_symbol_exchange_plan": {
       "ABBV": {
@@ -153,14 +153,14 @@
       "WELL",
       "MO"
     ],
-    "produced_at_utc": "2026-11-10T12:52:44.875435+00:00",
+    "produced_at_utc": "2026-11-10T12:56:07.116519+00:00",
     "revision_reason": "CORRECTED_CAUSAL_ROSTER_AND_INITIAL_ALPHA",
-    "risk_state": 0.6508431382355597,
+    "risk_state": 0.6508431339996497,
     "roster_sha256": "72764adee0ebbdb45c95600674ae6b0e6599692136ab9e90a4df4e56af3ca1f6",
     "signal_published": true,
     "status": "ATTESTED_CORRECTION_BEFORE_OPEN",
-    "superseded_archive": "superseded/2026-11-09_336940c7ce625b2e.json",
-    "supersedes_sha256": "336940c7ce625b2ef529efcb63e8030a66be103df47dfc89d6c6ddc75e6854f5"
+    "superseded_archive": "superseded/2026-11-09_b391748c3bc3ef84.json",
+    "supersedes_sha256": "b391748c3bc3ef84653da6fc394e7c07948d273fb0a6f90d8a6bcf106ec2d2fd"
   },
   "orders_cumulative": 0,
   "paper_only": true,
