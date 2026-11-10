@@ -90,6 +90,7 @@ def write_report(out_dir,status,portfolio,orders):
         f"**Dati mercato / universo:** {source.get('universe_kind') or 'in attesa'}; fotografia utilizzata al {source.get('roster_recorded_date') or 'n/d'}",
         f"**Universo dinamico:** {status.get('historical_universe_vintages',0)} fotografie cronologiche, ultima disponibile {status.get('latest_available_roster_recorded_date') or 'n/d'}; nuove società eleggibili SOLO dalla data registrata",
         f"**Primo segnale / apertura successiva:** {(status.get('next_preopen') or {}).get('decision_session','n/d')} / {(status.get('next_preopen') or {}).get('execution_session','n/d')}",
+        f"**Candidati segnalati (NON ORDINI):** {', '.join((status.get('next_preopen') or {}).get('preopen_selected_symbols',[])) or 'nessuno'}; verifica: {(status.get('next_preopen') or {}).get('status','n/d')}",
         f"**Recuperi dopo interruzioni:** {status.get('recovered_paper_decision_count',0)} sedute; {status.get('new_orders_mode','in attesa')}",
         '**Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.',
         '',
