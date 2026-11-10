@@ -1,10 +1,10 @@
 # Atlas V4 Confidence70 — paper originale, vincolo 35 giorni
 
-**Stato:** `PENDING_EXACT_DATA_OR_PARITY` — **Validità della valutazione:** `INITIAL_CASH_ONLY_NOT_MARKET_VALUED`
+**Stato:** `WAITING_FIRST_ACTUAL_EXECUTION_SESSION` — **Validità della valutazione:** `INITIAL_CASH_ONLY_NOT_MARKET_VALUED`
 
-**Ultima sessione decisionale:** non disponibile
+**Ultima sessione decisionale:** 2026-11-09
 **Ultima sessione valorizzata:** non ancora avviata
-**Dati mercato / universo:** in attesa; fotografia registrata il n/d
+**Dati mercato / universo:** ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP; fotografia registrata il 2026-11-06
 **Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.
 
 | Portafoglio virtuale | Importo |
@@ -36,4 +36,4 @@
 
 Il workflow aggiorna i dati e verifica il modello, ma non garantisce che ogni giorno vi sia un acquisto o una vendita.
 
-**Eventuale blocco:** Cannot replicate frozen EUR cash model without ECB: cash yield disabled after ECB download failure: HTTP Error 504: Gateway Time-out
+**Eventuale blocco:** nessuno
