@@ -1,0 +1,45 @@
+name: Atlas V4 — FAST first operational PAPER account
+on:
+  workflow_dispatch:
+  push:
+    branches: [atlas-v4-confidence70-live-paper]
+    paths:
+      - '.github/workflows/atlas-v4-fast-paper.yml'
+permissions:
+  contents: write
+concurrency:
+  group: atlas-v4-fast-paper-bootstrap
+  cancel-in-progress: false
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: atlas-v4-confidence70-live-paper
+          persist-credentials: true
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r strict_shadow/v4_exact_source/requirements-live.txt
+      - name: Test FIFO 35-day and exactly-once paper orders
+        run: python -m unittest discover -s strict_shadow/v4_exact_source/live_tests -p 'test_paper_account.py' -v
+      - name: Book explicit assumed-close PAPER transactions
+        run: python strict_shadow/v4_exact_source/paper_account.py
+      - name: Persist paper positions, orders and daily NAV
+        run: |
+          git config user.name "Atlas V4 Paper Account Bot"
+          git config user.email "atlas-v4-paper@users.noreply.github.com"
+          git add -A strict_shadow/v4_exact_source/forward
+          if ! git diff --cached --quiet; then
+            git commit -m "Atlas V4 approximate paper bootstrap with immutable 35d FIFO lots"
+            for attempt in 1 2 3 4 5; do
+              git fetch origin atlas-v4-confidence70-live-paper
+              git rebase origin/atlas-v4-confidence70-live-paper || { git rebase --abort; exit 1; }
+              if git push origin HEAD:atlas-v4-confidence70-live-paper; then exit 0; fi
+              sleep $((attempt * 2))
+            done
+            exit 1
+          fi
