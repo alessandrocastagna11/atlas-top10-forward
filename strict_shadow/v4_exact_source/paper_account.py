@@ -288,51 +288,67 @@ def run(now=None):
                 p["reference_previous_close_eur"],FIRST_DECISION,now,
                 FIRST_DECISION,"FROZEN_PREVIOUS_CLOSE_NOT_EXCHANGE_FILL")
         state["processed_decision_dates"].append(FIRST_DECISION)
-    # Later full reviews every five completed weeks, with weekly risk checks.
-    # A new daily signal does not mean a daily rebalance.
-    decision=published.get("decision_session")
-    if decision and decision>FIRST_DECISION and decision not in state["processed_decision_dates"]:
-        date=dt.date.fromisoformat(decision)
+    # Persisted daily source vintages make Monday decisions available on
+    # Tuesday. Never use a Tuesday signal as a substitute for Monday's review.
+    # Evaluate each dated Monday at most once, in chronological order.
+    dated_folder=ROOT/"proposals_by_session"
+    for dated_file in sorted(dated_folder.glob("*.json")):
+        decision=dated_file.stem
+        if decision<=FIRST_DECISION or decision in state["processed_decision_dates"]:
+            continue
+        try:date=dt.date.fromisoformat(decision)
+        except ValueError:continue
+        if date.weekday()!=0 or date>=now.date():
+            continue
         base=dt.date.fromisoformat(FIRST_DECISION)
         weeks=(date-base).days//7
-        weekly=date.weekday()==0 and weeks>=1
-        full=weekly and weeks%5==0
-        risk=weekly and not full
-        current_proposal=proposal if proposal.get("decision_session")==decision else None
-        if (full or risk) and current_proposal and now.date()>date:
-            NAV=state.get("last_nav_eur",INITIAL)
-            pricecache={}
-            for t in list(state["holdings"]):
-                pricecache[t]=next_available_price(t,quote,proposal,state["holdings"],now.date())
-            if full:
-                targets={p["ticker"]:NAV*p["weight_pct"]/100
-                         for p in current_proposal.get("possible_candidates",[])}
+        if weeks<1:continue
+        full=(weeks%5)==0
+        current_proposal=load(dated_file,{})
+        if current_proposal.get("decision_session")!=decision:
+            raise ValueError("Dated original model proposal does not match its filename: "+decision)
+        # Never trade from an unobservably old or incomplete price feed. A
+        # missed review remains pending until a completed post-decision close.
+        source_session=quote.get("decision_session","")
+        if not source_session or source_session<decision:
+            break
+        NAV=state.get("last_nav_eur",INITIAL)
+        pricecache={}
+        for t in list(state["holdings"]):
+            pricecache[t]=next_available_price(t,quote,current_proposal,state["holdings"],now.date())
+        if full:
+            targets={p["ticker"]:NAV*float(p["weight_pct"])/100.
+                     for p in current_proposal.get("possible_candidates",[])}
+            threshold=max(500.,NAV*.06)
+            for ticker,p in list(state["holdings"].items()):
+                price,asof,source=pricecache[ticker]
+                excess=p["shares"]*price-targets.get(ticker,0.)
+                if ticker not in targets or excess>=threshold:
+                    sell(state,ticker,max(excess,0.),price,decision,now,asof,source,
+                         "original_five_week_rotation_proxy")
+            for candidate in current_proposal.get("possible_candidates",[]):
+                ticker=candidate["ticker"]
+                price,asof,source=next_available_price(
+                    ticker,quote,current_proposal,state["holdings"],now.date())
+                owned=state["holdings"].get(ticker,{}).get("shares",0.)*price
+                budget=NAV*float(candidate["weight_pct"])/100.-owned
+                if budget>=threshold:
+                    buy(state,ticker,budget,price,decision,now,asof,source)
+        else:
+            desired=float(current_proposal.get("regime_multiplier",1.))
+            invested=sum(p["shares"]*pricecache[t][0] for t,p in state["holdings"].items())
+            current_ratio=invested/max(NAV,1.)
+            if current_ratio>desired+.25:
+                reduction=(current_ratio-desired)*NAV
                 for ticker,p in list(state["holdings"].items()):
-                    price,asof,source=pricecache[ticker]
-                    excess=p["shares"]*price-targets.get(ticker,0.)
-                    threshold=max(500.,NAV*.06)
-                    if ticker not in targets or excess>=threshold:
-                        sell(state,ticker,max(excess,0.),price,decision,now,asof,source,"original_full_rotation_proxy")
-                for p in current_proposal.get("possible_candidates",[]):
-                    ticker=p["ticker"]
-                    price,asof,source=next_available_price(ticker,quote,current_proposal,state["holdings"],now.date())
-                    have=state["holdings"].get(ticker,{}).get("shares",0.)*price
-                    budget=NAV*p["weight_pct"]/100-have
-                    if budget>=max(500.,NAV*.06):
-                        buy(state,ticker,budget,price,decision,now,asof,source)
-            else:
-                desired=float(current_proposal.get("regime_multiplier",1.))
-                invested=sum(p["shares"]*pricecache[t][0] for t,p in state["holdings"].items())
-                current_ratio=invested/max(NAV,1)
-                if current_ratio>desired+.25:
-                    reduction=(current_ratio-desired)*NAV
-                    for ticker,p in list(state["holdings"].items()):
-                        if reduction<=0:break
-                        px,asof,src=pricecache[ticker]
-                        sell(state,ticker,min(reduction,p["shares"]*px),px,
-                             decision,now,asof,src,"weekly_risk_reduction_35day_guarded")
-                        reduction-=min(reduction,p["shares"]*px)
-            state["processed_decision_dates"].append(decision)
+                    if reduction<=0:break
+                    px,asof,source=pricecache[ticker]
+                    previous_shares=p["shares"]
+                    sell(state,ticker,min(reduction,p["shares"]*px),px,
+                         decision,now,asof,source,"weekly_risk_reduction_35day_guarded")
+                    residual=state["holdings"].get(ticker,{}).get("shares",0.)
+                    reduction-=max(0.,previous_shares-residual)*px
+        state["processed_decision_dates"].append(decision)
     # The last recorded quote is not necessarily the latest decision's quote.
     # The preserved first-day prices remain available for new-lot validation.
     if not quote.get("close_eur"):
@@ -379,6 +395,8 @@ def run(now=None):
        "estimated_slippage_eur":port["estimated_slippage_eur"],
        "portfolio_report_session":port["valuation_session"],
        "last_order_execution_mode":POLICY,
+       "processed_review_dates":state["processed_decision_dates"],
+       "weekly_monday_review":True,"full_rebalance_every_five_weeks":True,
        "risk_universe_fidelity":"ETF_ACWI_AS_RECORDED_OR_VENDOR_MARKETCAP_PROXY_NOT_HISTORICAL_PIT",
        "reason":"Execution is ASSUMED at previous complete close, not verified market fill.",
        "holdings_summary":[{"ticker":p["ticker"],"market_value_eur":p["market_value_eur"]}
