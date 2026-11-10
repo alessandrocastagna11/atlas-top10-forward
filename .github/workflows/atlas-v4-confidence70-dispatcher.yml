@@ -1,11 +1,8 @@
 name: Atlas V4 Confidence70 — daily dispatcher (PAPER ONLY)
+# The original-35d forward has its own daily schedule.
+# The legacy Cohort Proxy runs only on explicit manual research requests.
 on:
   workflow_dispatch:
-  schedule:
-    # After a complete US close, two attempts to cover quote-provider lag.
-    # Cron triggers use UTC and are best-effort (GitHub may delay them).
-    - cron: '15 0 * * 1-6'
-    - cron: '45 2 * * 1-6'
 permissions:
   contents: write
 concurrency:
