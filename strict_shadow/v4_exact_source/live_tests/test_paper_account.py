@@ -72,5 +72,25 @@ class PaperAccountTests(unittest.TestCase):
                 self.assertTrue((out/"orders.csv").exists())
                 self.assertTrue((out/"latest.md").exists())
                 self.assertIn("PROXY", (out/"latest.md").read_text())
+                # A Monday model decision is preserved, then consumed by the
+                # following Tuesday update, even if the latest daily signal is
+                # already Tuesday's. No daily execution duplicates permitted.
+                (out/"proposals_by_session").mkdir(exist_ok=True)
+                (out/"proposals_by_session"/"2026-11-16.json").write_text(
+                    json.dumps({"decision_session":"2026-11-16","regime_multiplier":0.1,
+                                "possible_candidates":candidates}))
+                (out/"latest_status.json").write_text(
+                    json.dumps({"decision_session":"2026-11-17"}))
+                (out/"latest_quotes.json").write_text(
+                    json.dumps({"decision_session":"2026-11-17",
+                                "close_eur":{"KO":85.,"JNJ":250.}}))
+                tuesday=dt.datetime(2026,11,17,20,0,tzinfo=UTC)
+                updated=pa.run(tuesday)
+                saved=json.loads((out/"state.json").read_text())
+                self.assertIn("2026-11-16",saved["processed_decision_dates"])
+                self.assertEqual(updated["orders_cumulative"],2)
+                self.assertEqual(pa.run(tuesday+dt.timedelta(minutes=30))["new_orders"],0)
+                self.assertEqual(len(json.loads((out/"state.json").read_text())["equity_points"]),2)
+
 
 if __name__=="__main__":unittest.main()
