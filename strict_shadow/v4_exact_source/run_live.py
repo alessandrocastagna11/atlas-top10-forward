@@ -128,9 +128,19 @@ def preview(m,meta,asof,now,old_orders):
         prior=json.loads(path.read_text())
         if prior.get('decision_model_sha256')==record['decision_model_sha256']:
             return {'status':'ATTESTED_PREVIOUS_RUN' if prior.get('market_data_first_observed_before_open') else 'PREVIOUS_LATE_ATTESTATION',**prior}
-        # Never overwrite an old proof, even when new data/corrected code
-        # generate a different decision after the fact.
-        return {'status':'SIGNAL_REVISED_SINCE_FIRST_ATTESTATION',
+        # Before the NEXT market actually opens, a corrected decision can be
+        # published with a preserved proof of what changed. Never rewrite an
+        # already executed or overdue signal as if it had existed earlier.
+        if now<cutoff:
+            superseded=PREOPEN/'superseded'/(str(asof)+'_'+str(prior.get('decision_model_sha256','unknown'))[:16]+'.json')
+            if not superseded.is_file():write_json(superseded,prior)
+            record.update({'supersedes_sha256':prior.get('decision_model_sha256'),
+                           'superseded_archive':str(superseded.relative_to(PREOPEN)),
+                           'revision_reason':'CORRECTED_CAUSAL_ROSTER_AND_INITIAL_ALPHA',
+                           'original_proof_archived':True})
+            write_json(path,record)
+            return {'status':'ATTESTED_CORRECTION_BEFORE_OPEN',**record}
+        return {'status':'SIGNAL_REVISED_AFTER_OPEN_PAPER_RECOVERY_REQUIRED',
                 'prior_sha256':prior.get('decision_model_sha256'),
                 'recomputed_sha256':record['decision_model_sha256'],**record}
     if now>=cutoff:
