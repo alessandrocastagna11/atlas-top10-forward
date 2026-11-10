@@ -91,6 +91,7 @@ def write_report(out_dir,status,portfolio,orders):
         f"**Universo dinamico:** {status.get('historical_universe_vintages',0)} fotografie cronologiche, ultima disponibile {status.get('latest_available_roster_recorded_date') or 'n/d'}; nuove società eleggibili SOLO dalla data registrata",
         f"**Primo segnale / apertura successiva:** {(status.get('next_preopen') or {}).get('decision_session','n/d')} / {(status.get('next_preopen') or {}).get('execution_session','n/d')}",
         f"**Candidati segnalati (NON ORDINI):** {', '.join((status.get('next_preopen') or {}).get('preopen_selected_symbols',[])) or 'nessuno'}; verifica: {(status.get('next_preopen') or {}).get('status','n/d')}",
+        f"**Segnale originale pubblicato:** {'SÌ' if status.get('signal_published') else 'in attesa'}; esito: {status.get('signal_status','n/d')}",
         f"**Recuperi dopo interruzioni:** {status.get('recovered_paper_decision_count',0)} sedute; {status.get('new_orders_mode','in attesa')}",
         '**Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.',
         '',
@@ -111,6 +112,12 @@ def write_report(out_dir,status,portfolio,orders):
         '', '| Titolo | Quote | Valore € | Peso | Quote vincolate | Prima data vendibile |',
         '|---|---:|---:|---:|---:|---|',
     ]
+    lines.extend(['','## Piano delle aperture per singolo mercato','','| Titolo | Primo mercato utile | Stato del segnale | Prossima apertura locale prevista (UTC)* |', '|---|---|---|---|'])
+    plans=(status.get('next_preopen') or {}).get('per_symbol_exchange_plan',{})
+    for symbol,item in sorted(plans.items()):
+        lines.append(f"| {symbol} | {item.get('first_candidate_session','n/d')} | {item.get('status','n/d')} | {item.get('next_eligible_open_utc','n/d')} |")
+    if not plans:lines.append('| — Non ancora disponibile | — | — | — |')
+    lines.extend(['','*Orari indicativi: festività, sospensioni e quotazioni reali devono essere verificate dal provider. Il segnale non equivale a un acquisto; un mercato già aperto non autorizza esecuzioni retroattive.*',''])
     for p in portfolio.get('holdings',[]):
         locked=[l['sale_eligible_date'] for l in p.get('lots',[]) if l['sale_eligible_date']>(asof or '9999-12-31')]
         lines.append(f"| {p['ticker']} | {p['shares']:.6g} | {p['market_value_eur']:,.2f} | {p['portfolio_weight_pct']:.2f}% | {p['locked_shares']:.6g} | {min(locked) if locked else 'già vendibile'} |")
