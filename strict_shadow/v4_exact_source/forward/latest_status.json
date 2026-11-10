@@ -10,6 +10,7 @@
   "execution_pricing_approximate": true,
   "fees_eur_total": 4.0,
   "frozen_replay_parity": "NOT_YET_PROVEN_FOR_2026_DAILY_INPUTS",
+  "full_rebalance_every_five_weeks": true,
   "historical_alpha_code": "VERBATIM_REGION_SLOT_ATLAS_FROM_2012_2025",
   "historical_universe_vintages": 4,
   "holdings_summary": [
@@ -38,7 +39,7 @@
   },
   "invested_eur": 3580.8492,
   "last_order_execution_mode": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
-  "last_report_recorded_at_utc": "2026-11-10T21:54:59.781774+00:00",
+  "last_report_recorded_at_utc": "2026-11-10T21:58:17.116444+00:00",
   "last_valuation_session": "2026-11-09",
   "latest_available_roster_recorded_date": "2026-11-09",
   "min_hold_calendar_days": 35,
@@ -312,6 +313,9 @@
   },
   "portfolio_report_session": "2026-11-09",
   "positions_count": 4,
+  "processed_review_dates": [
+    "2026-11-09"
+  ],
   "proxy_ledger_unchanged": true,
   "real_money_orders": 0,
   "reason": "Execution is ASSUMED at previous complete close, not verified market fill.",
@@ -649,5 +653,6 @@
   "universe_lock_recorded_date": "2026-11-05",
   "universe_market_cap_pit_certified": false,
   "universe_policy": "DAILY_CAUSAL_AS_RECORDED_ROSTERS_WITH_GAP_REPLAY",
-  "valuation_source_session": "2026-11-09"
+  "valuation_source_session": "2026-11-09",
+  "weekly_monday_review": true
 }
