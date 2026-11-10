@@ -65,6 +65,8 @@ jobs:
         env:
           ATLAS_EXACT_DEBUG: '1'
         run: python strict_shadow/v4_exact_source/run_live.py
+      - name: Advance 35-day FIFO forward PAPER with disclosed previous-close approximation
+        run: python strict_shadow/v4_exact_source/paper_account.py
       - name: Summarize actual state (success never means an order)
         if: always()
         run: |
