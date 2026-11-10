@@ -64,7 +64,7 @@ class DailyRecoveryTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'after last verified'):
             run_live.order_timecheck([row],[],model,
                 dt.datetime(2026,11,10,tzinfo=dt.timezone.utc),
-                dt.date(2026,11,09))
+                dt.date(2026,11,9))
 
 
 if __name__=='__main__':unittest.main()
