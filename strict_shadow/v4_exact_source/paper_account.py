@@ -245,13 +245,15 @@ def run(now=None):
     ROOT.mkdir(parents=True,exist_ok=True)
     quote=load(QUOTES,{}) or {}
     proposal=load(PROPOSAL,{}) or {}
+    # Immutable first decision is never recalculated after source revisions.
+    frozen_first=load(PREOPEN/(FIRST_DECISION+"_proposal.json"),{}) or {}
     published=load(STATUS,{}) or {}
     previous=load(STATE,{}) or {}
     sig=load(PREOPEN/(FIRST_DECISION+".json"),{}) or {}
     if not sig.get("market_data_first_observed_before_open"):
         raise ValueError("First original decision lacks timely pre-open provenance")
-    if proposal.get("decision_session")!=FIRST_DECISION and not previous.get("orders"):
-        raise ValueError("No frozen opening proposal for 2026-11-09")
+    if frozen_first.get("decision_session")!=FIRST_DECISION and not previous.get("orders"):
+        raise ValueError("No immutable opening proposal for 2026-11-09")
     if not previous.get("orders"):
         # Initial run explicitly uses the preserved original decision weights
         # and previous day's close AFTER the actual US open on START.
@@ -275,7 +277,7 @@ def run(now=None):
     # The first signal was recorded BEFORE the exchange opening. Preserve its
     # selected tickers, never revise them using a post-open score recomputation.
     if FIRST_DECISION not in state["processed_decision_dates"]:
-        candidates=proposal["possible_candidates"]
+        candidates=frozen_first["possible_candidates"]
         frozen=set(sig.get("preopen_selected_symbols",[]))
         if not frozen:raise ValueError("Frozen original shortlist missing")
         eligible=[p for p in candidates if p["market_symbol"] in frozen and
@@ -331,6 +333,12 @@ def run(now=None):
                              decision,now,asof,src,"weekly_risk_reduction_35day_guarded")
                         reduction-=min(reduction,p["shares"]*px)
             state["processed_decision_dates"].append(decision)
+    # The last recorded quote is not necessarily the latest decision's quote.
+    # The preserved first-day prices remain available for new-lot validation.
+    if not quote.get("close_eur"):
+        quote={"decision_session":frozen_first.get("decision_session", FIRST_DECISION),
+               "close_eur":{x["ticker"]:x["reference_previous_close_eur"]
+                            for x in frozen_first.get("possible_candidates",[])}}
     validate_state(state)
     if state["orders"][:len(previous_orders)]!=previous_orders:
         raise ValueError("Append-only historical order prefix mismatch")
