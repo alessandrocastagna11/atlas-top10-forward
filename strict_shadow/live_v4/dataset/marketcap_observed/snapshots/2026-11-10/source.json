@@ -1,0 +1,61 @@
+{
+  "capture_day": "2026-11-10",
+  "crosswalk_exact_ticker": 415,
+  "crosswalk_non_usa": 123,
+  "crosswalk_usa": 292,
+  "daily_new_source_can_change_yesterdays_original_signal": false,
+  "historical_pit_market_cap_verified": false,
+  "observed_at_utc": "2026-11-10T14:08:46.058287+00:00",
+  "purpose": "SHADOW_CAPITALIZATION_RANKING_NOT_LIVE_UNIVERSE_UNTIL_COVERAGE_VALIDATED",
+  "sufficient_for_100_usa_200_nonusa": false,
+  "type": "MARKET_CAP_USD_OBSERVED_ONLY_NOT_HISTORICAL_PIT_CERTIFIED",
+  "vendor": "https://companiesmarketcap.com/",
+  "vendor_page_sha256": [
+    {
+      "page": 1,
+      "sha256": "3efff720b2dc481c2cc263d3e5bba094f005d77bf41a5eb4c4f32915547b21e9",
+      "url": "https://companiesmarketcap.com/"
+    },
+    {
+      "page": 2,
+      "sha256": "af4aac3bc1c94faffd53a6aa106b957a40f8661b00bb6ef9d54366167b6eb1ec",
+      "url": "https://companiesmarketcap.com/page/2/"
+    },
+    {
+      "page": 3,
+      "sha256": "2f1ffad0b0dcf4f3236b38fdbd028eeaceb9fdef91b6cd91dc7e8dfde55f3817",
+      "url": "https://companiesmarketcap.com/page/3/"
+    },
+    {
+      "page": 4,
+      "sha256": "76a1433b14dfc87bd76f3c5723328e7c985d465322cbd62cfc4a533cb9310b8c",
+      "url": "https://companiesmarketcap.com/page/4/"
+    },
+    {
+      "page": 5,
+      "sha256": "18885cba6d369de43509fc21aa3d95a7a7204800ad263561d93919c6b5637140",
+      "url": "https://companiesmarketcap.com/page/5/"
+    },
+    {
+      "page": 6,
+      "sha256": "4cf4941c2dff887bcb050611cc853b63b5d3d148e296c43df22d363e5f1e78a3",
+      "url": "https://companiesmarketcap.com/page/6/"
+    },
+    {
+      "page": 7,
+      "sha256": "4784c31096176a52879d4b7f02a368e12fd53b3624ffe6971c497417a14d5cc9",
+      "url": "https://companiesmarketcap.com/page/7/"
+    },
+    {
+      "page": 8,
+      "sha256": "3699cf43081f6e6d756b3aea594818075c98d90e3123a95d21b3402fc82c3c4e",
+      "url": "https://companiesmarketcap.com/page/8/"
+    },
+    {
+      "page": 9,
+      "sha256": "4161c3ea9fd766456fc1e7c0621ba3048a03acde180fa936cf1f3cf0136813fd",
+      "url": "https://companiesmarketcap.com/page/9/"
+    }
+  ],
+  "vendor_rankings_fetched": 899
+}
