@@ -1,13 +1,13 @@
 {
   "candidate_count": 300,
   "cutoff_utc": "2026-11-10T14:00:00+00:00",
-  "decision_model_sha256": "bf89f791df090dc9815c98e62f93f623b64cf6b664a896c4763f77042f1d1360",
+  "decision_model_sha256": "f51852ed9902ac5369996d13b27a49269e322c9adab6337f305356c558e5ce0c",
   "decision_session": "2026-11-09",
   "earliest_open_utc": "2026-11-10T14:30:00+00:00",
   "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
   "execution_session": "2026-11-10",
   "market_data_first_observed_before_open": true,
-  "model_source_sha256": "246bef2b832a8180105cf64481dc3d1345c291fa91df663fc4417de53df1d605",
+  "model_source_sha256": "af73e8d7b158389fa124d7d3ca484cafa13164b09b9a71451f75a06e11a693d0",
   "original_proof_archived": true,
   "preopen_selected_symbols": [
     "PANW",
@@ -21,10 +21,10 @@
     "WELL",
     "MO"
   ],
-  "produced_at_utc": "2026-11-10T09:55:07.112136+00:00",
+  "produced_at_utc": "2026-11-10T09:57:11.034197+00:00",
   "revision_reason": "CORRECTED_CAUSAL_ROSTER_AND_INITIAL_ALPHA",
-  "risk_state": 0.6508431339996478,
+  "risk_state": 0.6508431339996481,
   "roster_sha256": "72764adee0ebbdb45c95600674ae6b0e6599692136ab9e90a4df4e56af3ca1f6",
-  "superseded_archive": "superseded/2026-11-09_30f4e5f1beb2e2e6.json",
-  "supersedes_sha256": "30f4e5f1beb2e2e6ab2088bb12c0047a398c2b45075cd11e77d81f226b2e0fa9"
+  "superseded_archive": "superseded/2026-11-09_bf89f791df090dc9.json",
+  "supersedes_sha256": "bf89f791df090dc9815c98e62f93f623b64cf6b664a896c4763f77042f1d1360"
 }
