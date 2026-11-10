@@ -1,0 +1,17 @@
+{
+  "candidate_count": 300,
+  "cutoff_utc": "2026-11-10T14:00:00+00:00",
+  "decision_model_sha256": "98aac955483a22af0c19e44169c92799803de806053c37841a0a8a42f89218bd",
+  "decision_session": "2026-11-09",
+  "earliest_open_utc": "2026-11-10T14:30:00+00:00",
+  "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
+  "execution_session": "2026-11-10",
+  "market_data_first_observed_before_open": true,
+  "model_source_sha256": "f368239720722a6082970203373aa3bcb520ceef9ba62e40f587746fe3ef1f53",
+  "preopen_selected_symbols": [
+    "SPY"
+  ],
+  "produced_at_utc": "2026-11-10T04:37:13.867797+00:00",
+  "risk_state": 0.6508431325876823,
+  "roster_sha256": "88a5c6f6612bd0fc1b2468455ed1b334c79e90dc1a34e80d2dcc32b462496026"
+}

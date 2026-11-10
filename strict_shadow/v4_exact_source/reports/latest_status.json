@@ -1,7 +1,7 @@
 {
   "allowed_to_use_cohort_proxy_signals": false,
   "automatic_broker_orders": 0,
-  "checked_at_utc": "2026-11-10T09:42:23.640445+00:00",
+  "checked_at_utc": "2026-11-10T09:44:25.003495+00:00",
   "disposition": "NO EXACT MODEL SIGNAL; DO NOT SUBSTITUTE PROXY OR HISTORICAL WEIGHTS",
   "explanation": "Immutable frozen source is installed, but the original replay takes 2012-2025 frozen panel inputs. Regenerating 2026 PIT USA/ROW panels and proving source-level signal parity is required before activating exact live. Historical results cannot be extrapolated.",
   "frozen_live_signal_file_present": false,

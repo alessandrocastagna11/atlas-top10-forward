@@ -4,7 +4,10 @@
 
 **Ultima sessione decisionale:** 2026-11-09
 **Ultima sessione valorizzata:** non ancora avviata
-**Dati mercato / universo:** ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP; fotografia registrata il 2026-11-09
+**Dati mercato / universo:** ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP; fotografia utilizzata al 2026-11-09
+**Universo dinamico:** 4 fotografie cronologiche, ultima disponibile 2026-11-09; nuove società eleggibili SOLO dalla data registrata
+**Primo segnale / apertura successiva:** 2026-11-09 / 2026-11-10
+**Recuperi dopo interruzioni:** 0 sedute; in attesa
 **Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.
 
 | Portafoglio virtuale | Importo |
@@ -17,6 +20,7 @@
 | Posizioni | 0 |
 | Ordini complessivi | 0 |
 | Nuovi ordini verificati | 0 |
+| Sedute paper ricostruite dopo interruzione | 0 |
 
 *NAV netto liquidabile = valutazione ipotetica dopo costi e imposte di liquidazione; **non è una vendita eseguita** e non supera il blocco dei 35 giorni.
 
