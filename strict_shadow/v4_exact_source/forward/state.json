@@ -1,11 +1,189 @@
 {
+  "blocked_sell_requests": 0,
+  "cash_eur": 6411.57,
   "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
+  "equity_points": [
+    {
+      "approximate_fills": true,
+      "mark_to_market_nav_eur": 9992.4192,
+      "net_liquidation_nav_eur": 9984.8383,
+      "report_date": "2026-11-10",
+      "source_close_session": "2026-11-09"
+    }
+  ],
+  "estimated_slippage_eur": 3.580849150848845,
+  "execution_adapter": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+  "fees_eur_total": 4.0,
+  "holdings": {
+    "CB": {
+      "cost_basis_eur": 895.43,
+      "last_price_date": "2026-11-09",
+      "last_price_eur": 326.04375098,
+      "lots": [
+        {
+          "cost_basis_eur": 895.43,
+          "entry_date": "2026-11-10",
+          "fill_method": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+          "price_source_date": "2026-11-09",
+          "sale_eligible_date": "2026-12-15",
+          "shares": 2.740541601704473
+        }
+      ],
+      "shares": 2.740541601704473
+    },
+    "JNJ": {
+      "cost_basis_eur": 902.0,
+      "last_price_date": "2026-11-09",
+      "last_price_eur": 253.07523655,
+      "lots": [
+        {
+          "cost_basis_eur": 902.0,
+          "entry_date": "2026-11-10",
+          "fill_method": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+          "price_source_date": "2026-11-09",
+          "sale_eligible_date": "2026-12-15",
+          "shares": 3.556649446901012
+        }
+      ],
+      "shares": 3.556649446901012
+    },
+    "KO": {
+      "cost_basis_eur": 1097.27,
+      "last_price_date": "2026-11-09",
+      "last_price_eur": 86.14659501,
+      "lots": [
+        {
+          "cost_basis_eur": 1097.27,
+          "entry_date": "2026-11-10",
+          "fill_method": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+          "price_source_date": "2026-11-09",
+          "sale_eligible_date": "2026-12-15",
+          "shares": 12.712920633110294
+        }
+      ],
+      "shares": 12.712920633110294
+    },
+    "MRK": {
+      "cost_basis_eur": 693.73,
+      "last_price_date": "2026-11-09",
+      "last_price_eur": 133.44962161,
+      "lots": [
+        {
+          "cost_basis_eur": 693.73,
+          "entry_date": "2026-11-10",
+          "fill_method": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+          "price_source_date": "2026-11-09",
+          "sale_eligible_date": "2026-12-15",
+          "shares": 5.1857618904338985
+        }
+      ],
+      "shares": 5.1857618904338985
+    }
+  },
   "initial_cash_eur": 10000.0,
-  "last_valuation_session": null,
-  "latest_nav_eur": 10000.0,
-  "orders": [],
-  "portfolio": "EXACT_V4_ORIGINAL_35DAY_PAPER",
+  "last_nav_eur": 9992.4192,
+  "last_valuation_session": "2026-11-09",
+  "orders": [
+    {
+      "action": "BUY",
+      "capital_gains_tax_eur": 0.0,
+      "date": "2026-11-10",
+      "decision_date": "2026-11-09",
+      "execution_mode": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+      "execution_price_eur": 86.23274160500999,
+      "fee_eur": 1.0,
+      "order_id": "APPROX-00001",
+      "paper_only": true,
+      "price_quality": "FROZEN_PREVIOUS_CLOSE_NOT_EXCHANGE_FILL",
+      "price_source_date": "2026-11-09",
+      "real_market_fill": false,
+      "reason": "original_model_entry_proxy",
+      "reference_price_eur": 86.14659501,
+      "reference_value_eur": 1095.1748251748252,
+      "scenario": "italian_tax",
+      "shares": 12.712920633110294,
+      "simulation_recorded_at_utc": "2026-11-10T21:50:54.363772+00:00",
+      "slippage_bps_per_side": 10.0,
+      "strategy": "CONFIDENCE70_ORIGINAL_SOURCE_APPROX_PAPER",
+      "ticker": "KO"
+    },
+    {
+      "action": "BUY",
+      "capital_gains_tax_eur": 0.0,
+      "date": "2026-11-10",
+      "decision_date": "2026-11-09",
+      "execution_mode": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+      "execution_price_eur": 253.32831178654996,
+      "fee_eur": 1.0,
+      "order_id": "APPROX-00002",
+      "paper_only": true,
+      "price_quality": "FROZEN_PREVIOUS_CLOSE_NOT_EXCHANGE_FILL",
+      "price_source_date": "2026-11-09",
+      "real_market_fill": false,
+      "reason": "original_model_entry_proxy",
+      "reference_price_eur": 253.07523655,
+      "reference_value_eur": 900.0999000999003,
+      "scenario": "italian_tax",
+      "shares": 3.556649446901012,
+      "simulation_recorded_at_utc": "2026-11-10T21:50:54.363772+00:00",
+      "slippage_bps_per_side": 10.0,
+      "strategy": "CONFIDENCE70_ORIGINAL_SOURCE_APPROX_PAPER",
+      "ticker": "JNJ"
+    },
+    {
+      "action": "BUY",
+      "capital_gains_tax_eur": 0.0,
+      "date": "2026-11-10",
+      "decision_date": "2026-11-09",
+      "execution_mode": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+      "execution_price_eur": 326.36979473098,
+      "fee_eur": 1.0,
+      "order_id": "APPROX-00003",
+      "paper_only": true,
+      "price_quality": "FROZEN_PREVIOUS_CLOSE_NOT_EXCHANGE_FILL",
+      "price_source_date": "2026-11-09",
+      "real_market_fill": false,
+      "reason": "original_model_entry_proxy",
+      "reference_price_eur": 326.04375098,
+      "reference_value_eur": 893.5364635364635,
+      "scenario": "italian_tax",
+      "shares": 2.740541601704473,
+      "simulation_recorded_at_utc": "2026-11-10T21:50:54.363772+00:00",
+      "slippage_bps_per_side": 10.0,
+      "strategy": "CONFIDENCE70_ORIGINAL_SOURCE_APPROX_PAPER",
+      "ticker": "CB"
+    },
+    {
+      "action": "BUY",
+      "capital_gains_tax_eur": 0.0,
+      "date": "2026-11-10",
+      "decision_date": "2026-11-09",
+      "execution_mode": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+      "execution_price_eur": 133.58307123161,
+      "fee_eur": 1.0,
+      "order_id": "APPROX-00004",
+      "paper_only": true,
+      "price_quality": "FROZEN_PREVIOUS_CLOSE_NOT_EXCHANGE_FILL",
+      "price_source_date": "2026-11-09",
+      "real_market_fill": false,
+      "reason": "original_model_entry_proxy",
+      "reference_price_eur": 133.44962161,
+      "reference_value_eur": 692.0379620379621,
+      "scenario": "italian_tax",
+      "shares": 5.1857618904338985,
+      "simulation_recorded_at_utc": "2026-11-10T21:50:54.363772+00:00",
+      "slippage_bps_per_side": 10.0,
+      "strategy": "CONFIDENCE70_ORIGINAL_SOURCE_APPROX_PAPER",
+      "ticker": "MRK"
+    }
+  ],
+  "portfolio": "ORIGINAL_SOURCE_APPROX_PAPER",
+  "processed_decision_dates": [
+    "2026-11-09"
+  ],
   "real_money_authorized": false,
-  "schema_version": 1,
+  "schema_version": 3,
+  "start_recorded_at_utc": "2026-11-10T21:50:54.363772+00:00",
+  "tax_eur_total": 0.0,
   "universe_lock_recorded_date": "2026-11-06"
 }

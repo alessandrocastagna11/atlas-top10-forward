@@ -1,18 +1,45 @@
 {
   "capital_initial_eur": 10000.0,
+  "cash_eur": 6411.57,
   "checked_at_utc": "2026-11-10T21:48:09.170616+00:00",
   "data_universe": "ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP",
   "decision_session": "2026-11-09",
   "engine": "FROZEN_ATLAS_V4_CONFIDENCE70",
+  "estimated_slippage_eur": 3.5808,
+  "execution_policy": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+  "execution_pricing_approximate": true,
+  "fees_eur_total": 4.0,
   "frozen_replay_parity": "NOT_YET_PROVEN_FOR_2026_DAILY_INPUTS",
   "historical_alpha_code": "VERBATIM_REGION_SLOT_ATLAS_FROM_2012_2025",
   "historical_universe_vintages": 4,
+  "holdings_summary": [
+    {
+      "market_value_eur": 893.5365,
+      "ticker": "CB"
+    },
+    {
+      "market_value_eur": 900.0999,
+      "ticker": "JNJ"
+    },
+    {
+      "market_value_eur": 1095.1748,
+      "ticker": "KO"
+    },
+    {
+      "market_value_eur": 692.038,
+      "ticker": "MRK"
+    }
+  ],
   "indicative_order_test": {
     "actual_fills": 0,
     "decision_session": "2026-11-09",
     "possible_buys_meeting_threshold": 4,
     "status": "INDICATIVE_ONLY_NO_ORDER_NO_FILL"
   },
+  "invested_eur": 3580.8492,
+  "last_order_execution_mode": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+  "last_report_recorded_at_utc": "2026-11-10T21:50:54.363772+00:00",
+  "last_valuation_session": "2026-11-09",
   "latest_available_roster_recorded_date": "2026-11-09",
   "min_hold_calendar_days": 35,
   "model_run": {
@@ -20,8 +47,9 @@
     "reason": "First paper session 2026-11-10: no verified actual execution-session market bar yet; the preceding close signal is recorded",
     "status": "WAITING_FIRST_EXECUTION_QUOTES"
   },
-  "nav_eur": 10000.0,
-  "new_orders": 0,
+  "nav_eur": 9992.4192,
+  "nav_net_liquidation_eur": 9984.8383,
+  "new_orders": 4,
   "next_preopen": {
     "any_market_preopen_eligible": false,
     "candidate_count": 300,
@@ -167,8 +195,10 @@
     "signal_published": true,
     "status": "SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF"
   },
-  "orders_cumulative": 0,
+  "orders_cumulative": 4,
   "paper_only": true,
+  "paper_orders_new": 4,
+  "paper_orders_not_real_market_fills": true,
   "per_symbol_execution_plan": {
     "ABBV": {
       "attested_before_first_candidate_open": false,
@@ -281,9 +311,12 @@
       "status": "DEFERRED_PAST_FIRST_LOCAL_OPEN"
     }
   },
-  "portfolio_report_session": null,
+  "portfolio_report_session": "2026-11-09",
+  "positions_count": 4,
   "proxy_ledger_unchanged": true,
   "real_money_orders": 0,
+  "reason": "Execution is ASSUMED at previous complete close, not verified market fill.",
+  "risk_universe_fidelity": "ETF_ACWI_AS_RECORDED_OR_VENDOR_MARKETCAP_PROXY_NOT_HISTORICAL_PIT",
   "signal_published": true,
   "signal_status": "SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF",
   "source": {
@@ -610,10 +643,12 @@
     },
     "universe_kind": "ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP"
   },
-  "status": "WAITING_FIRST_ACTUAL_EXECUTION_SESSION",
+  "status": "PAPER_APPROX_LEDGER_ACTIVE",
   "strict_exact_inbox_unchanged": true,
+  "tax_eur_total": 0.0,
   "tax_simulator": "FROZEN_T9_WITH_TERMINAL_LIQUIDATION_DISABLED",
   "universe_lock_recorded_date": "2026-11-05",
   "universe_market_cap_pit_certified": false,
-  "universe_policy": "DAILY_CAUSAL_AS_RECORDED_ROSTERS_WITH_GAP_REPLAY"
+  "universe_policy": "DAILY_CAUSAL_AS_RECORDED_ROSTERS_WITH_GAP_REPLAY",
+  "valuation_source_session": "2026-11-09"
 }

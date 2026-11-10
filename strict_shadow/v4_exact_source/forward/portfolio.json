@@ -1,20 +1,125 @@
 {
-  "buy_orders": 0,
-  "cash_eur": 10000.0,
-  "holdings": [],
+  "blocked_or_partial_sell_requests": 0,
+  "buy_orders": 4,
+  "capitalization_shadow_as_recorded": true,
+  "cash_eur": 6411.57,
+  "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
+  "estimated_slippage_eur": 3.5808,
+  "execution_adapter": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+  "execution_pricing_approximate": true,
+  "fees_eur_total": 4.0,
+  "holdings": [
+    {
+      "cost_basis_eur": 895.43,
+      "locked_shares": 2.7405416017,
+      "lots": [
+        {
+          "cost_basis_eur": 895.43,
+          "entry_date": "2026-11-10",
+          "fill_method": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+          "price_source_date": "2026-11-09",
+          "sale_eligible_date": "2026-12-15",
+          "shares": 2.740541601704473
+        }
+      ],
+      "market_close_eur": 326.04375098,
+      "market_symbol": "CB",
+      "market_value_eur": 893.5365,
+      "portfolio_weight_pct": 8.942,
+      "price_quality": "LAST_US_COMPLETED_EOD_CROSS_EXCHANGE",
+      "price_source_date": "2026-11-09",
+      "sell_eligible_shares": 0,
+      "shares": 2.740541601704473,
+      "ticker": "CB"
+    },
+    {
+      "cost_basis_eur": 902.0,
+      "locked_shares": 3.5566494469,
+      "lots": [
+        {
+          "cost_basis_eur": 902.0,
+          "entry_date": "2026-11-10",
+          "fill_method": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+          "price_source_date": "2026-11-09",
+          "sale_eligible_date": "2026-12-15",
+          "shares": 3.556649446901012
+        }
+      ],
+      "market_close_eur": 253.07523655,
+      "market_symbol": "JNJ",
+      "market_value_eur": 900.0999,
+      "portfolio_weight_pct": 9.008,
+      "price_quality": "LAST_US_COMPLETED_EOD_CROSS_EXCHANGE",
+      "price_source_date": "2026-11-09",
+      "sell_eligible_shares": 0,
+      "shares": 3.556649446901012,
+      "ticker": "JNJ"
+    },
+    {
+      "cost_basis_eur": 1097.27,
+      "locked_shares": 12.7129206331,
+      "lots": [
+        {
+          "cost_basis_eur": 1097.27,
+          "entry_date": "2026-11-10",
+          "fill_method": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+          "price_source_date": "2026-11-09",
+          "sale_eligible_date": "2026-12-15",
+          "shares": 12.712920633110294
+        }
+      ],
+      "market_close_eur": 86.14659501,
+      "market_symbol": "KO",
+      "market_value_eur": 1095.1748,
+      "portfolio_weight_pct": 10.96,
+      "price_quality": "LAST_US_COMPLETED_EOD_CROSS_EXCHANGE",
+      "price_source_date": "2026-11-09",
+      "sell_eligible_shares": 0,
+      "shares": 12.712920633110294,
+      "ticker": "KO"
+    },
+    {
+      "cost_basis_eur": 693.73,
+      "locked_shares": 5.1857618904,
+      "lots": [
+        {
+          "cost_basis_eur": 693.73,
+          "entry_date": "2026-11-10",
+          "fill_method": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
+          "price_source_date": "2026-11-09",
+          "sale_eligible_date": "2026-12-15",
+          "shares": 5.1857618904338985
+        }
+      ],
+      "market_close_eur": 133.44962161,
+      "market_symbol": "MRK",
+      "market_value_eur": 692.038,
+      "portfolio_weight_pct": 6.926,
+      "price_quality": "LAST_US_COMPLETED_EOD_CROSS_EXCHANGE",
+      "price_source_date": "2026-11-09",
+      "sell_eligible_shares": 0,
+      "shares": 5.1857618904338985,
+      "ticker": "MRK"
+    }
+  ],
   "initial_capital_eur": 10000.0,
-  "invested_eur": 0.0,
-  "nav_mark_to_market_eur": 10000.0,
-  "nav_net_liquidation_eur": 10000.0,
-  "orders_total": 0,
-  "pnl_mark_to_market_pct": 0.0,
-  "positions_count": 0,
+  "invested_eur": 3580.8492,
+  "nav_mark_to_market_eur": 9992.4192,
+  "nav_net_liquidation_eur": 9984.8383,
+  "orders_total": 4,
+  "pnl_mark_to_market_pct": -0.07581,
+  "positions_count": 4,
   "real_money_orders": 0,
-  "schema_version": 2,
+  "real_orders": 0,
+  "schema_version": 3,
   "sell_orders": 0,
+  "stale_quote_tickers": [],
   "strict_min_holding_calendar_days": 35,
+  "tax_eur_total": 0.0,
   "type": "PAPER_ONLY",
   "universe_market_cap_pit_certified": false,
-  "valuation_session": null,
+  "valuation_method": "LAST_CONFIRMED_DAILY_CLOSE_WITH_STALE_FLAG",
+  "valuation_recorded_at_utc": "2026-11-10T21:50:54.363772+00:00",
+  "valuation_session": "2026-11-09",
   "variant": "CONFIDENCE70_ORIGINAL_H4_STRICT_35_CALENDAR_DAYS_EVERY_LOT"
 }
