@@ -320,6 +320,21 @@ def main(now=None):
         status['signal_status']=evidence.get('status')
         status['signal_published']=bool(evidence.get('signal_published',True))
         status['per_symbol_execution_plan']=evidence.get('per_symbol_exchange_plan',{})
+        # Safe immediate end-to-end ORDER-PLANNER probe at the verified close:
+        # no fictitious fill, no write to the cumulative paper order ledger.
+        try:
+            from model_proposal import proposal
+            indicative=proposal(m,meta,asof)
+            write_json(FORWARD/'proposal_last_close.json',indicative)
+            status['indicative_order_test']={
+                'status':indicative['status'],
+                'possible_buys_meeting_threshold':indicative['possible_buys_meeting_threshold'],
+                'decision_session':indicative['decision_session'],
+                'actual_fills':0}
+        except Exception as propose_error:
+            status['indicative_order_test']={'status':'PROPOSAL_CALCULATION_PENDING',
+                'reason':str(propose_error)[:300],'actual_fills':0}
+
         result,operation=evaluate_model(m,meta)
         status['model_run']=operation
         if result is None:
