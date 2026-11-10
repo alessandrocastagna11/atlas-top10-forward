@@ -112,16 +112,16 @@ def write_report(out_dir,status,portfolio,orders):
         '', '| Titolo | Quote | Valore € | Peso | Quote vincolate | Prima data vendibile |',
         '|---|---:|---:|---:|---:|---|',
     ]
+    for p in portfolio.get('holdings',[]):
+        locked=[l['sale_eligible_date'] for l in p.get('lots',[]) if l['sale_eligible_date']>(asof or '9999-12-31')]
+        lines.append(f"| {p['ticker']} | {p['shares']:.6g} | {p['market_value_eur']:,.2f} | {p['portfolio_weight_pct']:.2f}% | {p['locked_shares']:.6g} | {min(locked) if locked else 'già vendibile'} |")
+    if not portfolio.get('holdings'):lines.append('| — Nessuna posizione | — | — | — | — | — |')
     lines.extend(['','## Piano delle aperture per singolo mercato','','| Titolo | Primo mercato utile | Stato del segnale | Prossima apertura locale prevista (UTC)* |', '|---|---|---|---|'])
     plans=(status.get('next_preopen') or {}).get('per_symbol_exchange_plan',{})
     for symbol,item in sorted(plans.items()):
         lines.append(f"| {symbol} | {item.get('first_candidate_session','n/d')} | {item.get('status','n/d')} | {item.get('next_eligible_open_utc','n/d')} |")
     if not plans:lines.append('| — Non ancora disponibile | — | — | — |')
     lines.extend(['','*Orari indicativi: festività, sospensioni e quotazioni reali devono essere verificate dal provider. Il segnale non equivale a un acquisto; un mercato già aperto non autorizza esecuzioni retroattive.*',''])
-    for p in portfolio.get('holdings',[]):
-        locked=[l['sale_eligible_date'] for l in p.get('lots',[]) if l['sale_eligible_date']>(asof or '9999-12-31')]
-        lines.append(f"| {p['ticker']} | {p['shares']:.6g} | {p['market_value_eur']:,.2f} | {p['portfolio_weight_pct']:.2f}% | {p['locked_shares']:.6g} | {min(locked) if locked else 'già vendibile'} |")
-    if not portfolio.get('holdings'):lines.append('| — Nessuna posizione | — | — | — | — | — |')
     lines.extend(['','## Ultime operazioni verificate','','| Seduta | Tipo | Titolo | Quote | Prezzo € | Causale |', '|---|---|---|---:|---:|---|'])
     for o in orders[-15:][::-1]:
         lines.append(f"| {str(o.get('date',''))[:10]} | {o.get('action','')} | {o.get('ticker','')} | {float(o.get('shares',0)):.6g} | {float(o.get('execution_price_eur',0)):.4f} | {o.get('reason','')} |")
