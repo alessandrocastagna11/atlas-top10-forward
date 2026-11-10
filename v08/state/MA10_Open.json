@@ -12,7 +12,7 @@
   "dividend_tax": 0.0,
   "first_trade_eligible": "2026-11-05",
   "initialized": true,
-  "last_date": "2026-11-08",
+  "last_date": "2026-11-09",
   "last_signal_month": "2026-11",
   "nav": [
     {
@@ -56,6 +56,18 @@
       "benchmark_return_pct": 0.0,
       "cash": 10000.0,
       "date": "2026-11-08",
+      "exposure": 1.0,
+      "invested": 0,
+      "nav": 10000.0,
+      "orders": 0,
+      "return_pct": 0.0,
+      "status": "PENDING_ORDERS"
+    },
+    {
+      "benchmark": 10000.0,
+      "benchmark_return_pct": 0.0,
+      "cash": 10000.0,
+      "date": "2026-11-09",
       "exposure": 1.0,
       "invested": 0,
       "nav": 10000.0,

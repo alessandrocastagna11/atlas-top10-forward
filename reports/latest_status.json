@@ -1,14 +1,14 @@
 {
-  "asof": "2026-11-08",
+  "asof": "2026-11-09",
   "source": "YAHOO_CHART",
-  "digest_sha256": "fe1cb66b47d380c1dd37866a6dfb5a982b379a47f0dbf08fd8b42d32cc521e54",
+  "digest_sha256": "31449e22447306e30d5558c9c04154f180bf63773c887a99096b231dc3b0ef5f",
   "results": {
     "MA10_Official": {
       "price_freshness": "VALUATION_WITH_STALE_QUOTES",
       "engine": "Atlas Top 10 Global A — MA10_Official",
-      "asof_requested": "2026-11-08",
+      "asof_requested": "2026-11-09",
       "last_verified_valuation": "2026-11-03",
-      "report_status": "WAITING_PRECOMMITTED_COMMON_SESSION",
+      "report_status": "PENDING_DATA",
       "source_status": "PENDING_FIRST_REAL_CLOSE",
       "initialized": false,
       "virtual_capital_start_eur": 10000.0,
@@ -39,40 +39,8 @@
       "data_warning": null,
       "missing_exact_closes": [
         {
-          "symbol": "AAPL",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "NVDA",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "MSFT",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "GOOG",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "AMZN",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "TSM",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "SPCX",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "TSLA",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "META",
-          "last_close_date": "2026-11-06"
+          "symbol": "2222.SR",
+          "last_close_date": "2026-11-08"
         },
         {
           "symbol": "IUSQ.DE",
@@ -80,10 +48,15 @@
         }
       ],
       "new_valuations": 0,
-      "execution_attempts_blocked": [],
+      "execution_attempts_blocked": [
+        {
+          "date": "2026-11-09",
+          "reason": "No exact close for 2026-11-09; last=2026-11-08"
+        }
+      ],
       "asof_price_audit": [
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "2222.SR",
           "bar_date": "2026-11-08",
           "close": 26.079999923706055,
@@ -91,47 +64,47 @@
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "AAPL",
-          "bar_date": "2026-11-06",
-          "close": 342.3699951171875,
+          "bar_date": "2026-11-09",
+          "close": 350.69000244140625,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "AMZN",
-          "bar_date": "2026-11-06",
-          "close": 259.29998779296875,
+          "bar_date": "2026-11-09",
+          "close": 266.92999267578125,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "EURSAR=X",
-          "bar_date": "2026-11-06",
-          "close": 4.075500011444092,
+          "bar_date": "2026-11-09",
+          "close": 4.082300186157227,
           "currency": "SAR",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "EURUSD=X",
-          "bar_date": "2026-11-06",
-          "close": 1.1228259801864624,
+          "bar_date": "2026-11-09",
+          "close": 1.1147277355194092,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "GOOG",
-          "bar_date": "2026-11-06",
-          "close": 283.92999267578125,
+          "bar_date": "2026-11-09",
+          "close": 286.010009765625,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "IUSQ.DE",
           "bar_date": "2026-11-06",
           "close": 106.27999877929688,
@@ -139,63 +112,63 @@
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "META",
-          "bar_date": "2026-11-06",
-          "close": 610.1500244140625,
+          "bar_date": "2026-11-09",
+          "close": 641.3699951171875,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "MSFT",
-          "bar_date": "2026-11-06",
-          "close": 530.6099853515625,
+          "bar_date": "2026-11-09",
+          "close": 545.1799926757812,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "NVDA",
-          "bar_date": "2026-11-06",
-          "close": 186.63999938964844,
+          "bar_date": "2026-11-09",
+          "close": 178.6699981689453,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "SPCX",
-          "bar_date": "2026-11-06",
-          "close": 134.27000427246094,
+          "bar_date": "2026-11-09",
+          "close": 142.07000732421875,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "TSLA",
-          "bar_date": "2026-11-06",
-          "close": 358.2200012207031,
+          "bar_date": "2026-11-09",
+          "close": 378.04998779296875,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "TSM",
-          "bar_date": "2026-11-06",
-          "close": 375.44000244140625,
+          "bar_date": "2026-11-09",
+          "close": 388.6199951171875,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         }
       ],
       "last_update_source": "Yahoo daily chart (delayed), provider time stamped; cash 0%",
-      "launch_guard": "WAITING_PRECOMMITTED_COMMON_SESSION"
+      "launch_guard": "PRECOMMITTED_PAPER_LAUNCH_APPROVED"
     },
     "MA6_MA12_Challenger": {
       "price_freshness": "VALUATION_WITH_STALE_QUOTES",
       "engine": "Atlas Top 10 Global A — MA6_MA12_Challenger",
-      "asof_requested": "2026-11-08",
+      "asof_requested": "2026-11-09",
       "last_verified_valuation": "2026-11-03",
-      "report_status": "WAITING_PRECOMMITTED_COMMON_SESSION",
+      "report_status": "PENDING_DATA",
       "source_status": "PENDING_FIRST_REAL_CLOSE",
       "initialized": false,
       "virtual_capital_start_eur": 10000.0,
@@ -226,40 +199,8 @@
       "data_warning": null,
       "missing_exact_closes": [
         {
-          "symbol": "AAPL",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "NVDA",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "MSFT",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "GOOG",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "AMZN",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "TSM",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "SPCX",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "TSLA",
-          "last_close_date": "2026-11-06"
-        },
-        {
-          "symbol": "META",
-          "last_close_date": "2026-11-06"
+          "symbol": "2222.SR",
+          "last_close_date": "2026-11-08"
         },
         {
           "symbol": "IUSQ.DE",
@@ -267,10 +208,15 @@
         }
       ],
       "new_valuations": 0,
-      "execution_attempts_blocked": [],
+      "execution_attempts_blocked": [
+        {
+          "date": "2026-11-09",
+          "reason": "No exact close for 2026-11-09; last=2026-11-08"
+        }
+      ],
       "asof_price_audit": [
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "2222.SR",
           "bar_date": "2026-11-08",
           "close": 26.079999923706055,
@@ -278,47 +224,47 @@
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "AAPL",
-          "bar_date": "2026-11-06",
-          "close": 342.3699951171875,
+          "bar_date": "2026-11-09",
+          "close": 350.69000244140625,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "AMZN",
-          "bar_date": "2026-11-06",
-          "close": 259.29998779296875,
+          "bar_date": "2026-11-09",
+          "close": 266.92999267578125,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "EURSAR=X",
-          "bar_date": "2026-11-06",
-          "close": 4.075500011444092,
+          "bar_date": "2026-11-09",
+          "close": 4.082300186157227,
           "currency": "SAR",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "EURUSD=X",
-          "bar_date": "2026-11-06",
-          "close": 1.1228259801864624,
+          "bar_date": "2026-11-09",
+          "close": 1.1147277355194092,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "GOOG",
-          "bar_date": "2026-11-06",
-          "close": 283.92999267578125,
+          "bar_date": "2026-11-09",
+          "close": 286.010009765625,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "IUSQ.DE",
           "bar_date": "2026-11-06",
           "close": 106.27999877929688,
@@ -326,56 +272,56 @@
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "META",
-          "bar_date": "2026-11-06",
-          "close": 610.1500244140625,
+          "bar_date": "2026-11-09",
+          "close": 641.3699951171875,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "MSFT",
-          "bar_date": "2026-11-06",
-          "close": 530.6099853515625,
+          "bar_date": "2026-11-09",
+          "close": 545.1799926757812,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "NVDA",
-          "bar_date": "2026-11-06",
-          "close": 186.63999938964844,
+          "bar_date": "2026-11-09",
+          "close": 178.6699981689453,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "SPCX",
-          "bar_date": "2026-11-06",
-          "close": 134.27000427246094,
+          "bar_date": "2026-11-09",
+          "close": 142.07000732421875,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "TSLA",
-          "bar_date": "2026-11-06",
-          "close": 358.2200012207031,
+          "bar_date": "2026-11-09",
+          "close": 378.04998779296875,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         },
         {
-          "asof_date": "2026-11-08",
+          "asof_date": "2026-11-09",
           "symbol": "TSM",
-          "bar_date": "2026-11-06",
-          "close": 375.44000244140625,
+          "bar_date": "2026-11-09",
+          "close": 388.6199951171875,
           "currency": "USD",
           "feed": "Yahoo Finance delayed daily chart (nominalized for splits)"
         }
       ],
       "last_update_source": "Yahoo daily chart (delayed), provider time stamped; cash 0%",
-      "launch_guard": "WAITING_PRECOMMITTED_COMMON_SESSION"
+      "launch_guard": "PRECOMMITTED_PAPER_LAUNCH_APPROVED"
     }
   }
 }

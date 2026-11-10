@@ -3,7 +3,7 @@
   "cutoff": "2026-11-05",
   "source_snapshot_asof": "2026-11-08",
   "data_source": "YAHOO_CHART",
-  "data_digest_sha256": "3347ea042036d28fbedcf7bce5640df9620e11250d33ab5a154b263f56498f09",
+  "data_digest_sha256": "fe1cb66b47d380c1dd37866a6dfb5a982b379a47f0dbf08fd8b42d32cc521e54",
   "retrospective_signal_only": true,
   "historical_pit_certified": false,
   "late_snapshot_may_contain_historical_revisions": true,

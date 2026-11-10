@@ -1,4 +1,4 @@
-# Atlas v0.8 — SHADOW research EOD 2026-11-08
+# Atlas v0.8 — SHADOW research EOD 2026-11-09
 
 **I portafogli ufficiali v0.7 non sono stati modificati.**
 **Prima data di ingresso autorizzata:** 2026-11-05, al primo OPEN successivo al congelamento delle regole.
@@ -15,17 +15,17 @@
 **Limiti:** split, prezzo dati e dividend withholding non certificati; classifica annuale richiede fonti e timestamp verificati; rischio di concentrazione delle prime dieci società.
 
 ## MA10_Open
-- Valutazione più recente: **2026-11-08**, richiesta: **2026-11-08**; peso primi tre: **0.0%**.
+- Valutazione più recente: **2026-11-09**, richiesta: **2026-11-09**; peso primi tre: **0.0%**.
 - Acquisti 0, vendite 0; imposte plusvalenze €0.00; bollo maturato €0.00.
 - Ordini ancora in attesa di apertura/fonte: **10**
 
 ## MA6_MA12_Open
-- Valutazione più recente: **2026-11-08**, richiesta: **2026-11-08**; peso primi tre: **0.0%**.
+- Valutazione più recente: **2026-11-09**, richiesta: **2026-11-09**; peso primi tre: **0.0%**.
 - Acquisti 0, vendite 0; imposte plusvalenze €0.00; bollo maturato €0.00.
 - Ordini ancora in attesa di apertura/fonte: **10**
 
 ## Adaptive_Risk
-- Valutazione più recente: **2026-11-08**, richiesta: **2026-11-08**; peso primi tre: **0.0%**.
+- Valutazione più recente: **2026-11-09**, richiesta: **2026-11-09**; peso primi tre: **0.0%**.
 - Acquisti 0, vendite 0; imposte plusvalenze €0.00; bollo maturato €0.00.
 - Ordini ancora in attesa di apertura/fonte: **10**
 

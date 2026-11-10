@@ -1,5 +1,5 @@
 {
-  "asof": "2026-11-08",
+  "asof": "2026-11-09",
   "results": {
     "Adaptive_Risk": {
       "benchmark_cum_pct": 0.0,
@@ -14,7 +14,7 @@
       "estimated_div_tax_eur": 0.0,
       "excess_pp": 0.0,
       "exposure_target": 1.0,
-      "last_nav_date": "2026-11-08",
+      "last_nav_date": "2026-11-09",
       "last_signal": {
         "decision_asof": "2026-10-30",
         "exposure": 1.0,
@@ -114,7 +114,7 @@
       ],
       "positions": 0,
       "realized_tax_eur": 0,
-      "requested_asof": "2026-11-08",
+      "requested_asof": "2026-11-09",
       "sells": 0,
       "status": "PENDING_ORDERS",
       "top3_weight": 0,
@@ -135,7 +135,7 @@
       "estimated_div_tax_eur": 0.0,
       "excess_pp": 0.0,
       "exposure_target": 1.0,
-      "last_nav_date": "2026-11-08",
+      "last_nav_date": "2026-11-09",
       "last_signal": {
         "decision_asof": "2026-10-30",
         "exposure": 1.0,
@@ -235,7 +235,7 @@
       ],
       "positions": 0,
       "realized_tax_eur": 0,
-      "requested_asof": "2026-11-08",
+      "requested_asof": "2026-11-09",
       "sells": 0,
       "status": "PENDING_ORDERS",
       "top3_weight": 0,
@@ -256,7 +256,7 @@
       "estimated_div_tax_eur": 0.0,
       "excess_pp": 0.0,
       "exposure_target": 1.0,
-      "last_nav_date": "2026-11-08",
+      "last_nav_date": "2026-11-09",
       "last_signal": {
         "decision_asof": "2026-10-30",
         "exposure": 1.0,
@@ -356,7 +356,7 @@
       ],
       "positions": 0,
       "realized_tax_eur": 0,
-      "requested_asof": "2026-11-08",
+      "requested_asof": "2026-11-09",
       "sells": 0,
       "status": "PENDING_ORDERS",
       "top3_weight": 0,
@@ -366,10 +366,10 @@
     }
   },
   "source": {
-    "asof": "2026-11-08",
+    "asof": "2026-11-09",
     "feed": "Yahoo delayed + separately verified supplements",
     "missing_symbols": {},
-    "sha256": "63185ae1126b2816c88212c7760fee735341fd6ed55dafb86495d6c19115aa52"
+    "sha256": "36891958d06019fdec855238ca9a7ad1f6d3f5c11263563f011b080a43c5dadb"
   },
   "type": "SHADOW"
 }
