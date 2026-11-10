@@ -42,9 +42,14 @@ START_PAPER=pd.Timestamp('2026-11-10') # no retroactive paper fills
 
 
 def latest_vintages(asof):
-    """Every global500 snapshot usable ONLY from recorded_on; no hindsight."""
+    """Only cohorts actually recorded by this decision date; no backdating.
+
+    From the first validated 100-USA/200-RoW market-cap observation onward,
+    switch the candidate ordering to issuer-cap within the ACWI candidate pool.
+    This is NOT the unrestricted historically certified Top200-by-market-cap.
+    """
     folder=LIVE/'dataset'/'universe'/'snapshots'
-    groups=[]
+    byday={}
     for source in folder.glob('*/source.json'):
         try:
             meta=json.loads(source.read_text())
@@ -59,10 +64,39 @@ def latest_vintages(asof):
             g=[r for r in rows if r['country']!='United States'][:200]
             if len(u)!=100 or len(g)!=200:continue
             h=hashlib.sha256((source.parent/'global500.csv').read_bytes()).hexdigest()
-            groups.append((recorded,observed,h,u,g))
+            byday[recorded]=(recorded,observed,h,u,g)
         except (KeyError,ValueError,FileNotFoundError):continue
+    # First verified vendor observation for a date is immutable once it is
+    # accepted. Incomplete matches do not replace the existing ETF universe.
+    capdir=LIVE/'dataset'/'marketcap_observed'/'observations'
+    cap_kind='MARKET_CAP_USD_AS_RECORDED_WITHIN_ACWI_NOT_HISTORICAL_PIT'
+    for source in sorted(capdir.glob('*/source.json')):
+        try:
+            meta=json.loads(source.read_text(encoding='utf8'))
+            recorded=dt.date.fromisoformat(meta['capture_day'])
+            observed=dt.datetime.fromisoformat(meta['observed_at_utc'])
+            if observed.tzinfo is None:continue
+            if observed.date()!=recorded or recorded>asof:continue
+            if not meta.get('sufficient_for_100_usa_200_nonusa',False):continue
+            if meta.get('historical_pit_market_cap_verified') is not False:continue
+            datafile=source.parent/'ranking.csv'
+            df=pd.read_csv(datafile)
+            if not {'market_cap_usd','symbol','sector','country','currency','market_cap_vendor_rank'}.issubset(df.columns):continue
+            if df.symbol.duplicated().any() or df.market_cap_vendor_rank.duplicated().any():continue
+            df['market_cap_usd']=pd.to_numeric(df['market_cap_usd'],errors='coerce')
+            if df.market_cap_usd.isna().any() or not (df.market_cap_usd>0).all():continue
+            ordered=df.sort_values('market_cap_usd',ascending=False).to_dict('records')
+            u=[r for r in ordered if r['country']=='United States'][:100]
+            g=[r for r in ordered if r['country']!='United States'][:200]
+            if len(u)!=100 or len(g)!=200:continue
+            h=hashlib.sha256(datafile.read_bytes()).hexdigest()
+            old=byday.get(recorded)
+            # Prefer the FIRST qualifying market-cap observation of the day.
+            if old is None or len(old)==5:
+                byday[recorded]=(recorded,recorded,h,u,g,cap_kind)
+        except (KeyError,ValueError,TypeError,FileNotFoundError):continue
+    groups=sorted(byday.values(),key=lambda x:x[0])
     if not groups:raise ValueError('No as-recorded contemporary universe snapshots')
-    groups.sort(key=lambda x:x[0])
     if (asof-groups[-1][1]).days>10:raise ValueError('Universe vintage stale >10 days')
     return groups
 
@@ -183,7 +217,8 @@ def build_model(snapshot,asof,frames):
     snapshots.sort(key=lambda v:v[0])
     if len({v[0] for v in snapshots})!=len(snapshots):
         raise ValueError('Duplicate roster date would make the forward ledger non-deterministic')
-    last,observed,vintage_hash,us,global_non=snapshots[-1]
+    last,observed,vintage_hash,us,global_non=snapshots[-1][:5]
+    latest_kind=(snapshots[-1][5] if len(snapshots[-1])>5 else 'ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP')
     symbols_us=list(dict.fromkeys(str(x['symbol']).upper() for v in snapshots for x in v[3]))
     symbols_row=list(dict.fromkeys(str(x['symbol']).upper() for v in snapshots for x in v[4]))
     if set(symbols_us)&set(symbols_row):raise ValueError('Regional symbol overlap')
@@ -396,7 +431,7 @@ def build_model(snapshot,asof,frames):
         m.features.close_eur.where(calibration_mask),
         str(signal_start.date()))
     return m,{'roster_recorded_date':str(last),'roster_source_asof':str(observed),'roster_sha256':vintage_hash,
-               'universe_kind':'ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP',
+               'universe_kind':latest_kind,
                'ticker_to_market_symbol':{x:x for x in symbols_us}|{'G::'+x:x for x in symbols_row},
                'active_roster_names':300,'known_historical_symbols':len(cols),
                'dated_vintages_applied':len(snapshots),
