@@ -12,7 +12,7 @@
 **Candidati segnalati (NON ORDINI):** PANW, CRWD, MRK, JNJ, KO, CB, PM, ABBV, WELL, MO; verifica: SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF
 **Segnale originale pubblicato:** SÌ; esito: SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF
 **Contabilità paper:** FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY — prezzi degli ordini APPROSSIMATI; nessun ordine reale.
-**Ultimo aggiornamento portafoglio:** 2026-11-10T21:50:54.363772+00:00; fonte ultimo prezzo 2026-11-09.
+**Ultimo aggiornamento portafoglio:** 2026-11-10T21:54:59.781774+00:00; fonte ultimo prezzo 2026-11-09.
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
 **Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.
 
@@ -25,7 +25,7 @@
 | Valore titoli | 3,580.85 € |
 | Posizioni | 4 |
 | Ordini complessivi | 4 |
-| Nuovi ordini verificati | 4 |
+| Nuovi ordini verificati | 0 |
 | Sedute paper ricostruite dopo interruzione | 0 |
 
 *NAV netto liquidabile = valutazione ipotetica dopo costi e imposte di liquidazione; **non è una vendita eseguita** e non supera il blocco dei 35 giorni.

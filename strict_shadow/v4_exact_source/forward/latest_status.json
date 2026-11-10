@@ -1,7 +1,7 @@
 {
   "capital_initial_eur": 10000.0,
   "cash_eur": 6411.57,
-  "checked_at_utc": "2026-11-10T21:48:09.170616+00:00",
+  "checked_at_utc": "2026-11-10T21:54:46.396045+00:00",
   "data_universe": "ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP",
   "decision_session": "2026-11-09",
   "engine": "FROZEN_ATLAS_V4_CONFIDENCE70",
@@ -38,30 +38,29 @@
   },
   "invested_eur": 3580.8492,
   "last_order_execution_mode": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
-  "last_report_recorded_at_utc": "2026-11-10T21:50:54.363772+00:00",
+  "last_report_recorded_at_utc": "2026-11-10T21:54:59.781774+00:00",
   "last_valuation_session": "2026-11-09",
   "latest_available_roster_recorded_date": "2026-11-09",
   "min_hold_calendar_days": 35,
   "model_run": {
-    "first_execution_session": "2026-11-10",
-    "reason": "First paper session 2026-11-10: no verified actual execution-session market bar yet; the preceding close signal is recorded",
-    "status": "WAITING_FIRST_EXECUTION_QUOTES"
+    "reason": "Paper ledger advanced by independent proxy account step",
+    "status": "ORIGINAL_MODEL_UPDATED_PAPER_ACCOUNT_SEPARATE"
   },
   "nav_eur": 9992.4192,
   "nav_net_liquidation_eur": 9984.8383,
-  "new_orders": 4,
+  "new_orders": 0,
   "next_preopen": {
     "any_market_preopen_eligible": false,
     "candidate_count": 300,
     "cutoff_utc": "2026-11-10T14:00:00+00:00",
-    "decision_model_sha256": "1bf9d46364f4eaeae74e0ab91d8d3c68640205625b4afa672d022741a5cb5954",
+    "decision_model_sha256": "4db9fba39a08906d9e8abee3d711507d73794e57b82f7447adc484c6eb749541",
     "decision_session": "2026-11-09",
     "earliest_open_utc": "2026-11-10T14:30:00+00:00",
     "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
     "exchange_execution_policy": "PER_SYMBOL_NEXT_UNOBSERVED_OPEN",
     "execution_session": "2026-11-10",
     "market_data_first_observed_before_open": false,
-    "model_source_sha256": "5271fad078a957edcf781f5f29d24dc9a2b3eff2fe4bc37a0d43d043c39c8b4c",
+    "model_source_sha256": "3820fb99feb5eac0eaf9d0f95b178fdf70b39d3780c008ffdcbd6c67e19d7f15",
     "not_authorized_for_original_past_open": true,
     "per_symbol_exchange_plan": {
       "ABBV": {
@@ -188,16 +187,16 @@
       "MO"
     ],
     "prior_sha256": "4fa61554ab5f7c36431c6b29dc108805641fceed033ceaf09d5a513f297cb743",
-    "produced_at_utc": "2026-11-10T21:48:09.170616+00:00",
-    "recomputed_sha256": "1bf9d46364f4eaeae74e0ab91d8d3c68640205625b4afa672d022741a5cb5954",
-    "risk_state": 0.6508431382355622,
+    "produced_at_utc": "2026-11-10T21:54:46.396045+00:00",
+    "recomputed_sha256": "4db9fba39a08906d9e8abee3d711507d73794e57b82f7447adc484c6eb749541",
+    "risk_state": 0.6508431325876806,
     "roster_sha256": "72764adee0ebbdb45c95600674ae6b0e6599692136ab9e90a4df4e56af3ca1f6",
     "signal_published": true,
     "status": "SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF"
   },
   "orders_cumulative": 4,
   "paper_only": true,
-  "paper_orders_new": 4,
+  "paper_orders_new": 0,
   "paper_orders_not_real_market_fills": true,
   "per_symbol_execution_plan": {
     "ABBV": {
