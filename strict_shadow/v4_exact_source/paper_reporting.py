@@ -9,7 +9,8 @@ from pathlib import Path
 
 ORDER_FIELDS=['scenario','strategy','decision_date','date','action','ticker','shares','reference_price_eur',
               'execution_price_eur','reference_value_eur','fee_eur','slippage_bps_per_side',
-              'capital_gains_tax_eur','reason']
+              'capital_gains_tax_eur','reason','order_id','execution_mode','price_source_date',
+              'price_quality','simulation_recorded_at_utc','paper_only','real_market_fill']
 
 
 def to_portfolio(result,model,meta):
@@ -77,7 +78,9 @@ def write_report(out_dir,status,portfolio,orders):
     source=status.get('source') or {}
     status_text=status.get('status','PENDING_DATA')
     asof=portfolio.get('valuation_session')
-    if status_text!='PAPER_LEDGER_VERIFIED':
+    if status_text=='PAPER_APPROX_LEDGER_ACTIVE':
+        recency='PAPER_LAST_EOD_CLOSE_APPROXIMATE_FILLS_NOT_REAL_BROKER_ORDERS'
+    elif status_text!='PAPER_LEDGER_VERIFIED':
         recency='INITIAL_CASH_ONLY_NOT_MARKET_VALUED' if not asof else 'LAST_VERIFIED_PORTFOLIO_NOT_NEW_VALUATION'
     else:
         recency='CURRENT_VERIFIED_MODEL_VALUATION'
@@ -92,6 +95,8 @@ def write_report(out_dir,status,portfolio,orders):
         f"**Primo segnale / apertura successiva:** {(status.get('next_preopen') or {}).get('decision_session','n/d')} / {(status.get('next_preopen') or {}).get('execution_session','n/d')}",
         f"**Candidati segnalati (NON ORDINI):** {', '.join((status.get('next_preopen') or {}).get('preopen_selected_symbols',[])) or 'nessuno'}; verifica: {(status.get('next_preopen') or {}).get('status','n/d')}",
         f"**Segnale originale pubblicato:** {'SÌ' if status.get('signal_published') else 'in attesa'}; esito: {status.get('signal_status','n/d')}",
+        f"**Contabilità paper:** {status.get('execution_policy','attesa')} — prezzi degli ordini {'APPROSSIMATI' if status.get('execution_pricing_approximate') else 'non verificati'}; nessun ordine reale.",
+        f"**Ultimo aggiornamento portafoglio:** {portfolio.get('valuation_recorded_at_utc','n/d')}; fonte ultimo prezzo {portfolio.get('valuation_session','n/d')}.",
         f"**Recuperi dopo interruzioni:** {status.get('recovered_paper_decision_count',0)} sedute; {status.get('new_orders_mode','in attesa')}",
         '**Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.',
         '',
@@ -122,9 +127,10 @@ def write_report(out_dir,status,portfolio,orders):
         lines.append(f"| {symbol} | {item.get('first_candidate_session','n/d')} | {item.get('status','n/d')} | {item.get('next_eligible_open_utc','n/d')} |")
     if not plans:lines.append('| — Non ancora disponibile | — | — | — |')
     lines.extend(['','*Orari indicativi: festività, sospensioni e quotazioni reali devono essere verificate dal provider. Il segnale non equivale a un acquisto; un mercato già aperto non autorizza esecuzioni retroattive.*',''])
-    lines.extend(['','## Ultime operazioni verificate','','| Seduta | Tipo | Titolo | Quote | Prezzo € | Causale |', '|---|---|---|---:|---:|---|'])
+    lines.extend(['','## Ultime operazioni paper registrate','','| Seduta simulata | Tipo | Titolo | Quote | Prezzo € | Metodo / fonte |', '|---|---|---|---:|---:|---|'])
     for o in orders[-15:][::-1]:
-        lines.append(f"| {str(o.get('date',''))[:10]} | {o.get('action','')} | {o.get('ticker','')} | {float(o.get('shares',0)):.6g} | {float(o.get('execution_price_eur',0)):.4f} | {o.get('reason','')} |")
+        mode=('PROXY ultima chiusura '+str(o.get('price_source_date','n/d')) if o.get('execution_mode') else str(o.get('reason','')))
+        lines.append(f"| {str(o.get('date',''))[:10]} | {o.get('action','')} | {o.get('ticker','')} | {float(o.get('shares',0)):.6g} | {float(o.get('execution_price_eur',0)):.4f} | {mode} |")
     if not orders:lines.append('| — Nessuna operazione | — | — | — | — | — |')
     if status.get('recovered_paper_decision_dates'):
         lines+=['','**Nota recupero:** operazioni ricostruite ex post con prezzi storici, NON esecuzioni osservate in diretta.',
