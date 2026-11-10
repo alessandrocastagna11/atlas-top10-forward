@@ -23,11 +23,15 @@ No cap on monthly order count. Broker API operations are impossible.
 ## Transparent market-data exception (NOT the historical universe)
 
 The historical 2012–2025 original ranked PIT USA and RoW universes; those exact
-2026 market-cap ranks were not supplied. This daily forward uses **as-recorded**
-iShares ACWI 500 holding-value roster, with 100 US and 200 non-US candidates,
-first usable on its actual recorded day. These contemporary candidates are
-not identical to the original historical market-cap selection and **must not
-be called original universe PIT parity**. No retroactive membership backfill
+2026 market-cap ranks were not supplied. The daily feed retains timestamped iShares ACWI 500 holdings as a fallback
+candidate pool. It also captures public issuer capitalizations in USD with
+the UTC first-observed time and explicit ticker/issuer/country crosswalks.
+When a captured cap table covers at least 100 US and 200 non-US companies,
+the chooser switches to **market-cap ordering within that ACWI candidate
+pool**, effective only from the observation day and never retrospectively.
+During source outages the last qualifying cap snapshot remains eligible until
+the 10-day staleness limit. This still is NOT the unrestricted original
+historical point-in-time market-cap universe or a certified audit of share counts. No retroactive membership backfill
 can create a trade. Prices are Yahoo adjusted daily OHLC with exchange-local
 session dates and FX per date; SPY and original sector ETF factors are required.
 Incomplete source data blocks trading without creating synthetic quotes.
@@ -45,11 +49,12 @@ cash and FIFO maturity dates: `forward/portfolio.json`; order ledger:
 model state: `forward/state.json`; operational/pending status: `forward/latest_status.json`;
 source-locked pre-open records: `forward/preopen/`. Empty accounts retain
 €10,000 cash and zero orders; missing prices never become invented fills.
-The initial as-recorded roster is **frozen for the inaugural paper cohort** so
-that subsequent Yahoo/ETF snapshot refreshes cannot rewrite prior trades.
-Daily *prices* and FX continue to update. A future roster rotation needs a
-separate causal membership-transition migration, and current 2026 ETF holdings
-are not identical to the historical PIT market-cap universe.
+Each membership vintage is effective only from its own **recorded date**.
+Daily prices, FX, and issuer-cap observations are archived without changing
+past rosters or previously registered paper orders. The new cap-ranked
+candidates are still constrained by the ACWI eligibility pool; results remain
+a research proxy, and 2012-2025 performance cannot be claimed as proven for
+this updated universe.
 
 This is a development deployment: **2026 source-code and input-to-signal parity
 with the 2012–2025 frozen universe is not certified**. The actual reference
