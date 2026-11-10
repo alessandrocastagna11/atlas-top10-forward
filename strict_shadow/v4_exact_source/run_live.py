@@ -315,6 +315,18 @@ def main(now=None):
             raise ValueError(f'Adjusted dataset incomplete ({len(fail)}/{len(required)}): '+str(first))
         m,meta=build_model(vintages,asof,frames)
         status.update({'decision_session':str(asof),'source':meta})
+        # Daily EUR mark-to-market quotes for the *persisted* PAPER ledger.
+        # As-of equals the latest complete US benchmark session; for local
+        # exchange holidays a prior close may be carried explicitly.
+        raw_close=m.raw.close_eur.loc[pd.Timestamp(asof)]
+        good_quotes={ticker:round(float(value),8) for ticker,value in raw_close.items()
+                     if pd.notna(value) and math.isfinite(float(value)) and float(value)>0}
+        write_json(FORWARD/'latest_quotes.json',{
+            'decision_session':str(asof),'recorded_at_utc':now.isoformat(),
+            'price_model':'RAW_UNADJUSTED_EUR_COMPLETED_US_EOD_WITH_LOCAL_FORWARD_FILL',
+            'close_eur':good_quotes,
+            'local_exchange_session_may_be_prior_date':True,
+            'not_executable_intraday_quotes':True})
         status['data_universe']=meta.get('universe_kind')
         evidence=preview(m,meta,asof,now,old.get('orders',[]))
         status['next_preopen']=evidence
@@ -336,10 +348,20 @@ def main(now=None):
             status['indicative_order_test']={'status':'PROPOSAL_CALCULATION_PENDING',
                 'reason':str(propose_error)[:300],'actual_fills':0}
 
-        result,operation=evaluate_model(m,meta)
+        # After launch the frozen-signal approximation owns the immutable
+        # ledger. The exact historical replay remains a diagnostics-only path
+        # and must never overwrite already-booked proxy fills.
+        if old.get('execution_adapter')=='FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY':
+            result=None
+            operation={'status':'ORIGINAL_MODEL_UPDATED_PAPER_ACCOUNT_SEPARATE',
+                       'reason':'Paper ledger advanced by independent proxy account step'}
+        else:
+            result,operation=evaluate_model(m,meta)
         status['model_run']=operation
         if result is None:
-            status['status']='WAITING_FIRST_ACTUAL_EXECUTION_SESSION'
+            status['status']=('PAPER_APPROX_LEDGER_HANDOFF' if
+                old.get('execution_adapter')=='FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY'
+                else 'WAITING_FIRST_ACTUAL_EXECUTION_SESSION')
         else:
             rows=serialize(result)
             fresh,recovered_dates=order_timecheck(rows,old.get('orders',[]),m,now,asof)
