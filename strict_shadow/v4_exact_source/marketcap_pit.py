@@ -180,6 +180,19 @@ def run(now=None,fetch=None):
     writer=csv.DictWriter(buf,fieldnames=fields,extrasaction="ignore")
     writer.writeheader();writer.writerows(matches)
     (observation_dir/"ranking.csv").write_text(buf.getvalue(),encoding="utf8")
+    # Preserve raw issuer evidence and unmatched ACWI rows for alias review.
+    raw_buf=io.StringIO()
+    original_fields=["vendor_rank","vendor_ticker","market_cap_usd","vendor_company_name","vendor_country"]
+    raw_writer=csv.DictWriter(raw_buf,fieldnames=original_fields)
+    raw_writer.writeheader();raw_writer.writerows(vendor)
+    (observation_dir/"raw_vendor.csv").write_text(raw_buf.getvalue(),encoding="utf8")
+    matched_tickers={x["symbol"] for x in matches}
+    unmatched_rows=[{"symbol":x["symbol"],"company_name":x["company_name"],
+                    "country":x["country"]} for x in etf if x["symbol"] not in matched_tickers]
+    out_buf=io.StringIO()
+    unmatched_writer=csv.DictWriter(out_buf,fieldnames=["symbol","company_name","country"])
+    unmatched_writer.writeheader();unmatched_writer.writerows(unmatched_rows)
+    (observation_dir/"unmatched_issuers.csv").write_text(out_buf.getvalue(),encoding="utf8")
     (observation_dir/"source.json").write_text(json.dumps(coverage,indent=2,sort_keys=True)+"\n")
     coverage["latest_observation_path"]=str(observation_dir.relative_to(ROOT))
     (OUT/"latest_status.json").write_text(json.dumps(coverage,indent=2,sort_keys=True)+"\n")
