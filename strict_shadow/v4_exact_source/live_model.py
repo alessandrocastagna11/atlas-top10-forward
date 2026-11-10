@@ -95,6 +95,15 @@ def latest_vintages(asof):
             if old is None or len(old)==5:
                 byday[recorded]=(recorded,recorded,h,u,g,cap_kind)
         except (KeyError,ValueError,TypeError,FileNotFoundError):continue
+    # Once the cap-ranked source has activated, use its most recent dated
+    # observation during temporary vendor gaps. Never silently revert to the
+    # ETF-weight ranking on an ordinary day just because today's cap page fails.
+    cap_days=[date for date,item in byday.items() if len(item)>5]
+    if cap_days:
+        cap_start=min(cap_days)
+        for date,item in list(byday.items()):
+            if date>cap_start and len(item)==5:
+                del byday[date]
     groups=sorted(byday.values(),key=lambda x:x[0])
     if not groups:raise ValueError('No as-recorded contemporary universe snapshots')
     if (asof-groups[-1][1]).days>10:raise ValueError('Universe vintage stale >10 days')
