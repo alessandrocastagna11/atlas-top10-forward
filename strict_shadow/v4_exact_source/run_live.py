@@ -83,18 +83,33 @@ def positions_asof(ledger,decision):
     return positions
 
 
-def preview(m,meta,asof,now,old_orders):
-    """Record source-hashed model decision BEFORE globally earliest next opening.
+def symbol_next_open(symbol, first_date, not_before=None):
+    """Exchange-local indicative open. Only an actual provider bar certifies a fill.
 
-    This may be a risk-only date. The simulator decides on actual weekly dates.
-    Here we attest only the data snapshot's temporal existence and integrity.
+    Use the exchange-specific trading week: Saudi Riyadh Sunday-Thursday;
+    all other currently supported exchanges Monday-Friday. Unlisted exchange
+    holidays remain unverified and must be checked against the actual quote.
+    """
+    day=first_date if isinstance(first_date,dt.date) else dt.date.fromisoformat(str(first_date))
+    for _ in range(15):
+        trading_weekday=(day.weekday() in (6,0,1,2,3)
+                         if str(symbol).upper().endswith('.SR') else day.weekday()<5)
+        if trading_weekday:
+            opening=earliest_open_utc([symbol],day)
+            if not_before is None or opening>not_before:
+                return day,opening
+        day+=dt.timedelta(days=1)
+    raise ValueError('No exchange opening in 15 calendar days: '+str(symbol))
+
+
+def preview(m,meta,asof,now,old_orders):
+    """Publish the original model signal even when exchange opens differ.
+
+    One delayed Asian open must not block a US/European signal. A late signal
+    is still a valid observable *signal*, but never certifies a past fill.
     """
     date=pd.Timestamp(asof)
-    # Attest the actual original chooser's current candidates, not every
-    # symbol in the 300-name research universe (which would incorrectly put
-    # Australian market cutoffs on baskets that contain no Australian stock).
     cfg=m.bundle['cfg']
-    date=pd.Timestamp(asof)
     selector,_,_,_=m.callbacks(None)
     scores=m.path_score.loc[date]
     eligible=m.eligible.loc[date]&m.membership.loc[date]
@@ -103,11 +118,28 @@ def preview(m,meta,asof,now,old_orders):
     selected_symbols=[meta['ticker_to_market_symbol'][x] for x in selected]
     if m.bear_floor.get(date,0)>0:selected_symbols.append('SPY')
     if not selected_symbols:selected_symbols=['SPY']
+    selected_symbols=list(dict.fromkeys(selected_symbols))
+    first_date=asof+dt.timedelta(days=1)
+    per_symbol={}
+    for symbol in selected_symbols:
+        first,opening=symbol_next_open(symbol,first_date)
+        deadline=opening-dt.timedelta(minutes=30)
+        on_time=now<deadline
+        next_date,next_open=(first,opening) if on_time else symbol_next_open(
+            symbol,first,not_before=now+dt.timedelta(minutes=30))
+        per_symbol[symbol]={
+            'first_candidate_session':str(first),
+            'first_candidate_open_utc':opening.isoformat(),
+            'first_candidate_cutoff_utc':deadline.isoformat(),
+            'attested_before_first_candidate_open':on_time,
+            'status':'PENDING_FIRST_LOCAL_OPEN' if on_time else 'DEFERRED_PAST_FIRST_LOCAL_OPEN',
+            'next_eligible_local_session':str(next_date),
+            'next_eligible_open_utc':next_open.isoformat(),
+            'execution_quote_required':True,
+            'exchange_holiday_calendar_verified':False}
     tomorrow=asof+dt.timedelta(days=1)
     while tomorrow.weekday()>=5:tomorrow+=dt.timedelta(days=1)
-    # All 300 plausible symbols matter for earliest global open: even absent a
-    # target we cannot assert next-day open fills after Asia has opened.
-    earliest=earliest_open_utc(selected_symbols,tomorrow)
+    earliest=min(dt.datetime.fromisoformat(item['first_candidate_open_utc']) for item in per_symbol.values())
     cutoff=earliest-dt.timedelta(minutes=30)
     source_files=list(CACHE.glob('*.csv.gz'))
     source_digest=hashlib.sha256(''.join(sorted(digest(p) for p in source_files)).encode()).hexdigest()
@@ -115,22 +147,41 @@ def preview(m,meta,asof,now,old_orders):
     decision_digest=hashlib.sha256(json.dumps({'selected':fingerprint,
           'risk_state':round(float(m.pr_regime.loc[date])*float(m.pr_t8.loc[date]),8)},
           sort_keys=True).encode()).hexdigest()
+    on_time_all=all(x['attested_before_first_candidate_open'] for x in per_symbol.values())
+    on_time_any=any(x['attested_before_first_candidate_open'] for x in per_symbol.values())
     record={'decision_session':str(asof),'execution_session':str(tomorrow),
             'decision_model_sha256':decision_digest,
             'produced_at_utc':now.isoformat(),'earliest_open_utc':earliest.isoformat(),
             'cutoff_utc':cutoff.isoformat(),'model_source_sha256':source_digest,
             'roster_sha256':meta['roster_sha256'],'engine_id':ENGINE,
-            'market_data_first_observed_before_open':now<cutoff,
+            'market_data_first_observed_before_open':on_time_all,
+            'any_market_preopen_eligible':on_time_any,
+            'exchange_execution_policy':'PER_SYMBOL_NEXT_UNOBSERVED_OPEN',
+            'per_symbol_exchange_plan':per_symbol,
             'candidate_count':meta['active_roster_names'],'preopen_selected_symbols':selected_symbols,
             'risk_state':float(m.pr_regime.loc[date])*float(m.pr_t8.loc[date])}
     path=PREOPEN/(str(asof)+'.json')
     if path.is_file():
         prior=json.loads(path.read_text())
         if prior.get('decision_model_sha256')==record['decision_model_sha256']:
-            return {'status':'ATTESTED_PREVIOUS_RUN' if prior.get('market_data_first_observed_before_open') else 'PREVIOUS_LATE_ATTESTATION',**prior}
-        # Before the NEXT market actually opens, a corrected decision can be
-        # published with a preserved proof of what changed. Never rewrite an
-        # already executed or overdue signal as if it had existed earlier.
+            # Never rewrite time-of-publication evidence. Update the display
+            # plan with present next eligible opens, not the immutable proof.
+            frozen_plan=prior.get('per_symbol_exchange_plan',{})
+            if frozen_plan:
+                for symbol,item in per_symbol.items():
+                    old_item=frozen_plan.get(symbol,{})
+                    published=bool(old_item.get('attested_before_first_candidate_open'))
+                    item['attested_before_first_candidate_open']=published
+                    item['original_proof_utc']=prior.get('produced_at_utc')
+            signal={'status':'ATTESTED_PREVIOUS_RUN','signal_published':True,
+                    **record,'per_symbol_exchange_plan':per_symbol,
+                    'original_proof_sha256':prior.get('decision_model_sha256'),
+                    'original_proof_utc':prior.get('produced_at_utc'),
+                    'first_publication_attested':prior.get('market_data_first_observed_before_open')}
+            write_json(FORWARD/'latest_signal.json',signal)
+            return signal
+        # Preserve the prior decision; late corrections are visibly distinct
+        # and cannot rewrite historical orders.
         if now<cutoff:
             superseded=PREOPEN/'superseded'/(str(asof)+'_'+str(prior.get('decision_model_sha256','unknown'))[:16]+'.json')
             if not superseded.is_file():write_json(superseded,prior)
@@ -139,14 +190,26 @@ def preview(m,meta,asof,now,old_orders):
                            'revision_reason':'CORRECTED_CAUSAL_ROSTER_AND_INITIAL_ALPHA',
                            'original_proof_archived':True})
             write_json(path,record)
-            return {'status':'ATTESTED_CORRECTION_BEFORE_OPEN',**record}
-        return {'status':'SIGNAL_REVISED_AFTER_OPEN_PAPER_RECOVERY_REQUIRED',
+            signal={'status':'ATTESTED_CORRECTION_BEFORE_OPEN','signal_published':True,**record}
+            write_json(FORWARD/'latest_signal.json',signal)
+            return signal
+        signal={'status':'SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF',
+                'signal_published':True,'not_authorized_for_original_past_open':True,
                 'prior_sha256':prior.get('decision_model_sha256'),
                 'recomputed_sha256':record['decision_model_sha256'],**record}
-    if now>=cutoff:
-        return {'status':'MISSED_GLOBAL_PREOPEN_CUTOFF',**record}
+        write_json(FORWARD/'latest_signal.json',signal)
+        return signal
+    # Publish score and exchange-local plan even when the first local opening
+    # was already missed. Do not fabricate pre-open certification.
+    if not on_time_any:
+        signal={'status':'SIGNAL_PUBLISHED_ALL_EXECUTIONS_DEFERRED',
+                'signal_published':True,**record}
+    else:
+        signal={'status':'SIGNAL_PUBLISHED_PER_EXCHANGE',
+                'signal_published':True,**record}
     write_json(path,record)
-    return {'status':'ATTESTED_BEFORE_GLOBAL_OPEN',**record}
+    write_json(FORWARD/'latest_signal.json',signal)
+    return signal
 
 
 def order_timecheck(rows,last_orders,model,now,asof):
@@ -254,6 +317,9 @@ def main(now=None):
         status.update({'decision_session':str(asof),'source':meta})
         evidence=preview(m,meta,asof,now,old.get('orders',[]))
         status['next_preopen']=evidence
+        status['signal_status']=evidence.get('status')
+        status['signal_published']=bool(evidence.get('signal_published',True))
+        status['per_symbol_execution_plan']=evidence.get('per_symbol_exchange_plan',{})
         result,operation=evaluate_model(m,meta)
         status['model_run']=operation
         if result is None:
