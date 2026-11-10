@@ -211,12 +211,20 @@ def build_model(snapshot,asof,frames):
     fx_prev={c:series.shift(1) for c,series in fx.items()}
     # Pre-close data: model is computed only after complete US close.
     close_usd={};close_eur={};open_eur={};local_close={};vol={};div={}
+    execution_close_eur={};execution_open_eur={}
     for symbol in symbols_us+symbols_row:
         a=frames[symbol].reindex(index)
         eur_close=a.adj_close/fx[currency[symbol]]
         usd_close=eur_close*fx['USD']
         eur_open=a.adj_open/fx_prev[currency[symbol]]
         key=symbol if symbol in symbols_us else 'G::'+symbol
+        # Signal prices use dividend-adjusted total-return history.
+        # PAPER executions and cash-dividend accounting MUST instead use
+        # actual split-adjusted exchange prices. Combining adjusted close
+        # with cash dividends would count the same dividend twice.
+        dividend_factor=(a.adj_close/a.raw_close.replace(0,np.nan))
+        execution_close_eur[key]=a.raw_close/fx[currency[symbol]]
+        execution_open_eur[key]=(a.adj_open/dividend_factor)/fx_prev[currency[symbol]]
         close_usd[key]=usd_close
         close_eur[key]=eur_close
         open_eur[key]=eur_open
@@ -287,8 +295,8 @@ def build_model(snapshot,asof,frames):
               +cfg.score_raw_12_1*uz('raw_12_1')
               +cfg.score_trend*uz('trend_strength')
               +cfg.score_low_volatility*rz((-usf.feature_tables['annual_vol_63'][symbols_us]).where(us_factor_mem)))
-    raw_close=pd.DataFrame(close_eur,index=index)
-    raw_open=pd.DataFrame(open_eur,index=index)
+    raw_close=pd.DataFrame(execution_close_eur,index=index)
+    raw_open=pd.DataFrame(execution_open_eur,index=index)
     dividends=pd.DataFrame(div,index=index).fillna(0)
     score=pd.concat([us_score,row_score],axis=1)
     elig=pd.concat([usf.eligible[symbols_us] & membership[symbols_us],
@@ -329,8 +337,9 @@ def build_model(snapshot,asof,frames):
                  max_positions=10,rebalance_band_weight=.06,minimum_trade_eur=500),
               'start':str(START_PAPER.date())}
     m.features=features;m.base_score=score;m.eligible=elig;m.membership=membership
-    raw_close['SPY']=sp.adj_close.reindex(index)/fx['USD']
-    raw_open['SPY']=sp.adj_open.reindex(index)/fx_prev['USD']
+    raw_close['SPY']=sp.raw_close.reindex(index)/fx['USD']
+    sp_factor=sp.adj_close.reindex(index)/sp.raw_close.reindex(index).replace(0,np.nan)
+    raw_open['SPY']=(sp.adj_open.reindex(index)/sp_factor)/fx_prev['USD']
     dividends['SPY']=sp.dividend.reindex(index).fillna(0)/fx['USD']
     taxable=dividends.ge(0)
     m.raw=t9.RawMarketData(raw_open,raw_close,dividends,taxable,pd.DataFrame(columns=['date','ticker','classification']))
