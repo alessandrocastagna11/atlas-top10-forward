@@ -4,7 +4,7 @@
 
 **Ultima sessione decisionale:** 2026-11-09
 **Ultima sessione valorizzata:** non ancora avviata
-**Dati mercato / universo:** ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP; fotografia registrata il 2026-11-06
+**Dati mercato / universo:** ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP; fotografia registrata il 2026-11-09
 **Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.
 
 | Portafoglio virtuale | Importo |
