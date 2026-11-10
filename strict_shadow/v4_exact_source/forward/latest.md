@@ -7,6 +7,7 @@
 **Dati mercato / universo:** ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP; fotografia utilizzata al 2026-11-09
 **Universo dinamico:** 4 fotografie cronologiche, ultima disponibile 2026-11-09; nuove società eleggibili SOLO dalla data registrata
 **Primo segnale / apertura successiva:** 2026-11-09 / 2026-11-10
+**Candidati segnalati (NON ORDINI):** PANW, CRWD, MRK, JNJ, KO, CB, PM, ABBV, WELL, MO; verifica: ATTESTED_CORRECTION_BEFORE_OPEN
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
 **Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.
 
