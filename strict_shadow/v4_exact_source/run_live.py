@@ -339,6 +339,21 @@ def main(now=None):
             from model_proposal import proposal
             indicative=proposal(m,meta,asof)
             write_json(FORWARD/'proposal_last_close.json',indicative)
+            # Immutable as-recorded decisions: a Monday cannot disappear when
+            # Tuesday's daily proposal replaces latest_status/proposal files.
+            # Future weekly reviews consume these preserved source decisions.
+            dated_path=FORWARD/'proposals_by_session'/(str(asof)+'.json')
+            if not dated_path.is_file():
+                write_json(dated_path,{**indicative,
+                    'first_recorded_at_utc':now.isoformat(),
+                    'first_signal_sha256':evidence.get('decision_model_sha256'),
+                    'universe_snapshot_recorded_date':meta.get('roster_recorded_date'),
+                    'as_recorded_no_retroactive_revisions':True})
+            else:
+                prior_proposal=json.loads(dated_path.read_text())
+                if prior_proposal.get('possible_candidates')!=indicative.get('possible_candidates'):
+                    status['proposal_revised_after_recording']=True
+                    status['immutable_historical_proposal_preserved']=str(asof)
             status['indicative_order_test']={
                 'status':indicative['status'],
                 'possible_buys_meeting_threshold':indicative['possible_buys_meeting_threshold'],
