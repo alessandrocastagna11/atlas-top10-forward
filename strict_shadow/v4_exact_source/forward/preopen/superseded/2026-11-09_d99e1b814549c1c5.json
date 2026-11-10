@@ -1,0 +1,30 @@
+{
+  "candidate_count": 300,
+  "cutoff_utc": "2026-11-10T14:00:00+00:00",
+  "decision_model_sha256": "d99e1b814549c1c56b3dfc350d7bbd22b8c39a86b0cb8129797b3f3dc1d8bc1e",
+  "decision_session": "2026-11-09",
+  "earliest_open_utc": "2026-11-10T14:30:00+00:00",
+  "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
+  "execution_session": "2026-11-10",
+  "market_data_first_observed_before_open": true,
+  "model_source_sha256": "fdf1d829f74d3dd86b5d81bf15077730ff5b1b89a7fcfb5e8397fe5f469408dd",
+  "original_proof_archived": true,
+  "preopen_selected_symbols": [
+    "PANW",
+    "CRWD",
+    "MRK",
+    "JNJ",
+    "KO",
+    "CB",
+    "PM",
+    "ABBV",
+    "WELL",
+    "MO"
+  ],
+  "produced_at_utc": "2026-11-10T09:44:28.016785+00:00",
+  "revision_reason": "CORRECTED_CAUSAL_ROSTER_AND_INITIAL_ALPHA",
+  "risk_state": 0.650843133999647,
+  "roster_sha256": "72764adee0ebbdb45c95600674ae6b0e6599692136ab9e90a4df4e56af3ca1f6",
+  "superseded_archive": "superseded/2026-11-09_98aac955483a22af.json",
+  "supersedes_sha256": "98aac955483a22af0c19e44169c92799803de806053c37841a0a8a42f89218bd"
+}
