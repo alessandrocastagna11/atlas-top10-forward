@@ -1,8 +1,8 @@
 {
   "asof": "2026-11-09",
   "source": "YAHOO_CHART",
-  "digest_sha256": "79b3f1c51fbf63842c6732068b5d1bb3f241d4be09c37fbf421af5bcfe08f305",
-  "downloaded_at_utc": "2026-11-10T04:44:05.708811+00:00",
+  "digest_sha256": "64eb5e3b98792b84933e195176f64f1b2277074ae401cc56e1879b6a3d7aecd9",
+  "downloaded_at_utc": "2026-11-10T04:48:53.889675+00:00",
   "data": {
     "AAPL": {
       "symbol": "AAPL",
@@ -317,7 +317,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart (nominalized for splits)",
-      "retrieved_utc": "2026-11-10T04:44:04.747032+00:00"
+      "retrieved_utc": "2026-11-10T04:48:52.596192+00:00"
     },
     "NVDA": {
       "symbol": "NVDA",
@@ -633,7 +633,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart (nominalized for splits)",
-      "retrieved_utc": "2026-11-10T04:44:04.829855+00:00"
+      "retrieved_utc": "2026-11-10T04:48:52.748966+00:00"
     },
     "MSFT": {
       "symbol": "MSFT",
@@ -948,7 +948,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart (nominalized for splits)",
-      "retrieved_utc": "2026-11-10T04:44:04.927459+00:00"
+      "retrieved_utc": "2026-11-10T04:48:52.849207+00:00"
     },
     "GOOG": {
       "symbol": "GOOG",
@@ -1264,7 +1264,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart (nominalized for splits)",
-      "retrieved_utc": "2026-11-10T04:44:05.028420+00:00"
+      "retrieved_utc": "2026-11-10T04:48:52.981149+00:00"
     },
     "AMZN": {
       "symbol": "AMZN",
@@ -1574,7 +1574,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart (nominalized for splits)",
-      "retrieved_utc": "2026-11-10T04:44:05.093595+00:00"
+      "retrieved_utc": "2026-11-10T04:48:53.069133+00:00"
     },
     "TSM": {
       "symbol": "TSM",
@@ -1890,7 +1890,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart (nominalized for splits)",
-      "retrieved_utc": "2026-11-10T04:44:05.179479+00:00"
+      "retrieved_utc": "2026-11-10T04:48:53.180125+00:00"
     },
     "SPCX": {
       "symbol": "SPCX",
@@ -2004,7 +2004,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart (nominalized for splits)",
-      "retrieved_utc": "2026-11-10T04:44:05.243883+00:00"
+      "retrieved_utc": "2026-11-10T04:48:53.271993+00:00"
     },
     "2222.SR": {
       "symbol": "2222.SR",
@@ -2316,7 +2316,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart (nominalized for splits)",
-      "retrieved_utc": "2026-11-10T04:44:05.347815+00:00"
+      "retrieved_utc": "2026-11-10T04:48:53.394765+00:00"
     },
     "TSLA": {
       "symbol": "TSLA",
@@ -2626,7 +2626,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart (nominalized for splits)",
-      "retrieved_utc": "2026-11-10T04:44:05.414353+00:00"
+      "retrieved_utc": "2026-11-10T04:48:53.520932+00:00"
     },
     "META": {
       "symbol": "META",
@@ -2942,7 +2942,7 @@
       },
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart (nominalized for splits)",
-      "retrieved_utc": "2026-11-10T04:44:05.484659+00:00"
+      "retrieved_utc": "2026-11-10T04:48:53.611694+00:00"
     },
     "IUSQ.DE": {
       "symbol": "IUSQ.DE",
@@ -3252,7 +3252,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart (nominalized for splits)",
-      "retrieved_utc": "2026-11-10T04:44:05.551398+00:00"
+      "retrieved_utc": "2026-11-10T04:48:53.705251+00:00"
     },
     "EURUSD=X": {
       "symbol": "EURUSD=X",
@@ -3571,7 +3571,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart (nominalized for splits)",
-      "retrieved_utc": "2026-11-10T04:44:05.630060+00:00"
+      "retrieved_utc": "2026-11-10T04:48:53.801873+00:00"
     },
     "EURSAR=X": {
       "symbol": "EURSAR=X",
@@ -3890,7 +3890,7 @@
       "dividends": {},
       "splits": {},
       "feed": "Yahoo Finance delayed daily chart (nominalized for splits)",
-      "retrieved_utc": "2026-11-10T04:44:05.704992+00:00"
+      "retrieved_utc": "2026-11-10T04:48:53.886043+00:00"
     }
   }
 }
