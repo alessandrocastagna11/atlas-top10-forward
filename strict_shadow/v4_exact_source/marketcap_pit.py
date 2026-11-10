@@ -91,7 +91,7 @@ def parse_ranking(source):
             continue
     return out
 
-def fetch_pages(count=9,fetch=None):
+def fetch_pages(count=25,fetch=None):
     fetch=fetch or _fetch
     retrieved=dt.datetime.now(dt.timezone.utc)
     result=[]
@@ -170,6 +170,18 @@ def run(now=None,fetch=None):
         writer.writeheader();writer.writerows(matches)
         fname.write_text(buf.getvalue(),encoding="utf8")
         (daydir/"source.json").write_text(json.dumps(coverage,indent=2,sort_keys=True)+"\n")
+    # Separate expanded observations preserve the initial same-day snapshot;
+    # no overwrite or backdating when the vendor ranking gets deeper/better.
+    observation_dir=OUT/"observations"/seen.strftime("%Y-%m-%dT%H%M%SZ")
+    observation_dir.mkdir(parents=True,exist_ok=True)
+    buf=io.StringIO()
+    fields=["market_cap_vendor_rank","market_cap_usd","symbol","company_name","country","sector",
+            "currency","capitalization_coverage_status","ranking_type"]
+    writer=csv.DictWriter(buf,fieldnames=fields,extrasaction="ignore")
+    writer.writeheader();writer.writerows(matches)
+    (observation_dir/"ranking.csv").write_text(buf.getvalue(),encoding="utf8")
+    (observation_dir/"source.json").write_text(json.dumps(coverage,indent=2,sort_keys=True)+"\n")
+    coverage["latest_observation_path"]=str(observation_dir.relative_to(ROOT))
     (OUT/"latest_status.json").write_text(json.dumps(coverage,indent=2,sort_keys=True)+"\n")
     print("MARKET_CAP_SHADOW",json.dumps({k:coverage[k] for k in
           ("capture_day","vendor_rankings_fetched","crosswalk_exact_ticker","crosswalk_usa",
