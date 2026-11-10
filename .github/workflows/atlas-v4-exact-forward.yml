@@ -14,7 +14,7 @@ on:
       - '.github/workflows/atlas-v4-exact-forward.yml'
   schedule:
     # NY 17:30 EOD cutoff. Aim before next Tokyo equity session.
-    - cron: '35 22 * * 1-5'
+    - cron: '35 22 * * *'
     - cron: '5 23 * * 1-5'
     # Late feed retry for US-only baskets (global open cutoff still enforced).
     # Late retry disabled to avoid write contention with the midnight dispatcher.
