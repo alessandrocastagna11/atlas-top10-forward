@@ -1,18 +1,61 @@
 {
-  "cash_eur": 7603.9177,
+  "cash_eur": 6995.535251885571,
   "decisions": [
     {
       "decision_session": "2026-11-05",
       "execution_session": "2026-11-06",
       "orders": 8,
       "signal_sha256": "c24302a253c359a785470a8efcc742541f1d610066da343ee60ce3cf1f150a05"
+    },
+    {
+      "decision_session": "2026-11-06",
+      "execution_session": "2026-11-09",
+      "orders": 2,
+      "signal_sha256": "3159acaa724f9a1f82f342db4f25e62e3bc9cc4f99c353c2b0d8c5694300e8e4"
     }
   ],
   "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
   "holdings": {
+    "1303.TW": {
+      "cost_basis_eur_per_share": 6.7071008968292,
+      "first_entry_date": "2026-11-09",
+      "lots": [
+        {
+          "cost_basis_eur_per_share": 6.7071008968292,
+          "entry_date": "2026-11-09",
+          "shares": 35.110829343075224
+        }
+      ],
+      "market_symbol": "1303.TW",
+      "region": "ROW",
+      "sector": "Materials",
+      "shares": 35.110829343075224
+    },
+    "6098.T": {
+      "cost_basis_eur_per_share": 96.69602238545187,
+      "first_entry_date": "2026-11-09",
+      "lots": [
+        {
+          "cost_basis_eur_per_share": 96.69602238545187,
+          "entry_date": "2026-11-09",
+          "shares": 3.856317601696663
+        }
+      ],
+      "market_symbol": "6098.T",
+      "region": "ROW",
+      "sector": "Industrials",
+      "shares": 3.856317601696663
+    },
     "ABBV": {
       "cost_basis_eur_per_share": 262.2542475936881,
       "first_entry_date": "2026-11-06",
+      "lots": [
+        {
+          "cost_basis_eur_per_share": 262.2542475936881,
+          "entry_date": "2026-11-06",
+          "shares": 1.750592427815646
+        }
+      ],
       "market_symbol": "ABBV",
       "region": "USA",
       "sector": "Health Care",
@@ -21,6 +64,13 @@
     "AMGN": {
       "cost_basis_eur_per_share": 415.29357860876297,
       "first_entry_date": "2026-11-06",
+      "lots": [
+        {
+          "cost_basis_eur_per_share": 415.29357860876297,
+          "entry_date": "2026-11-06",
+          "shares": 0.5884155512797128
+        }
+      ],
       "market_symbol": "AMGN",
       "region": "USA",
       "sector": "Health Care",
@@ -29,6 +79,13 @@
     "CRWD": {
       "cost_basis_eur_per_share": 195.746972319583,
       "first_entry_date": "2026-11-06",
+      "lots": [
+        {
+          "cost_basis_eur_per_share": 195.746972319583,
+          "entry_date": "2026-11-06",
+          "shares": 1.1034208981141505
+        }
+      ],
       "market_symbol": "CRWD",
       "region": "USA",
       "sector": "Information Technology",
@@ -37,6 +94,13 @@
     "DE": {
       "cost_basis_eur_per_share": 606.4819335645637,
       "first_entry_date": "2026-11-06",
+      "lots": [
+        {
+          "cost_basis_eur_per_share": 606.4819335645637,
+          "entry_date": "2026-11-06",
+          "shares": 0.31842415958700826
+        }
+      ],
       "market_symbol": "DE",
       "region": "USA",
       "sector": "Industrials",
@@ -45,6 +109,13 @@
     "MPC": {
       "cost_basis_eur_per_share": 335.41428021612523,
       "first_entry_date": "2026-11-06",
+      "lots": [
+        {
+          "cost_basis_eur_per_share": 335.41428021612523,
+          "entry_date": "2026-11-06",
+          "shares": 1.715508950988119
+        }
+      ],
       "market_symbol": "MPC",
       "region": "USA",
       "sector": "Energy",
@@ -53,6 +124,13 @@
     "MRK": {
       "cost_basis_eur_per_share": 132.23343038399403,
       "first_entry_date": "2026-11-06",
+      "lots": [
+        {
+          "cost_basis_eur_per_share": 132.23343038399403,
+          "entry_date": "2026-11-06",
+          "shares": 2.3460013031436113
+        }
+      ],
       "market_symbol": "MRK",
       "region": "USA",
       "sector": "Health Care",
@@ -61,6 +139,13 @@
     "PANW": {
       "cost_basis_eur_per_share": 283.2800647167753,
       "first_entry_date": "2026-11-06",
+      "lots": [
+        {
+          "cost_basis_eur_per_share": 283.2800647167753,
+          "entry_date": "2026-11-06",
+          "shares": 0.73615310773279
+        }
+      ],
       "market_symbol": "PANW",
       "region": "USA",
       "sector": "Information Technology",
@@ -69,6 +154,13 @@
     "TXN": {
       "cost_basis_eur_per_share": 250.47461100461845,
       "first_entry_date": "2026-11-06",
+      "lots": [
+        {
+          "cost_basis_eur_per_share": 250.47461100461845,
+          "entry_date": "2026-11-06",
+          "shares": 0.7559388923315215
+        }
+      ],
       "market_symbol": "TXN",
       "region": "USA",
       "sector": "Information Technology",
@@ -76,7 +168,7 @@
     }
   },
   "initial_cash_eur": 10000.0,
-  "last_execution_session": "2026-11-06",
+  "last_execution_session": "2026-11-09",
   "mode": "PAPER",
   "orders": [
     {
@@ -198,6 +290,34 @@
       "signal_sha256": "c24302a253c359a785470a8efcc742541f1d610066da343ee60ce3cf1f150a05",
       "tax_estimate_eur": 0.0,
       "ticker": "TXN"
+    },
+    {
+      "action": "BUY",
+      "cash_change_eur": -235.491875,
+      "execution_price_eur": 6.6786196556,
+      "fee_eur": 1.0,
+      "market_symbol": "1303.TW",
+      "mode": "PAPER",
+      "reference_open_eur": 6.6719477079,
+      "session": "2026-11-09",
+      "shares": 35.1108293431,
+      "signal_sha256": "3159acaa724f9a1f82f342db4f25e62e3bc9cc4f99c353c2b0d8c5694300e8e4",
+      "tax_estimate_eur": 0.0,
+      "ticker": "1303.TW"
+    },
+    {
+      "action": "BUY",
+      "cash_change_eur": -372.890573,
+      "execution_price_eur": 96.4367076445,
+      "fee_eur": 1.0,
+      "market_symbol": "6098.T",
+      "mode": "PAPER",
+      "reference_open_eur": 96.3403672772,
+      "session": "2026-11-09",
+      "shares": 3.8563176017,
+      "signal_sha256": "3159acaa724f9a1f82f342db4f25e62e3bc9cc4f99c353c2b0d8c5694300e8e4",
+      "tax_estimate_eur": 0.0,
+      "ticker": "6098.T"
     }
   ],
   "real_money_authorized": false,

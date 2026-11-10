@@ -2,122 +2,122 @@
   "authorization": {
     "real_money_authorized": false
   },
-  "decision_session": "2026-11-06",
+  "decision_session": "2026-11-09",
   "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
-  "execution_session": "2026-11-09",
+  "execution_session": "2026-11-11",
   "feature_source": "CURRENT_COHORT_H4_APPROX_NOT_ORIGINAL_OLS",
   "historical_engine_equivalent": false,
   "mode": "SHADOW",
   "model_variant": "V4_CONF70_FORWARD_COHORT_PROXY_V1",
-  "produced_at_utc": "2026-11-06T22:37:13.857146+00:00",
+  "produced_at_utc": "2026-11-10T07:12:35.731894+00:00",
   "provenance_sha256": {
-    "benchmark_price_file_sha256": "863475aedb22faf81ea7e37ac89a1ce700591acd99eaf7b20a21aacd064dc290",
-    "fx_files_sha256": "6a92e8a79511f578b07f2871d7ca29c8d20fa3fa68621b3cee8f3fc2369ee004",
-    "price_files_sha256": "149aca620a82b91698c02255eb16a3cddeb695d77b7a023b67a3cd2b13340b2e",
-    "roster_sha256": "88a5c6f6612bd0fc1b2468455ed1b334c79e90dc1a34e80d2dcc32b462496026"
+    "benchmark_price_file_sha256": "d5f21296a57fc39a9d6219b00f95046cc68ccebeb74c758651f9dd77048f179f",
+    "fx_files_sha256": "28d2ba6856135c7767eaee21744aa88f11eb2653a06a49fee21b3010192065b3",
+    "price_files_sha256": "a8adfdaa7e43d195bb1e89ed49c7906537afe6cf4a99602aeec2f24cf50f7018",
+    "roster_sha256": "72764adee0ebbdb45c95600674ae6b0e6599692136ab9e90a4df4e56af3ca1f6"
   },
-  "region_strength_proxy": -0.14146,
-  "risk_regime": "DEFENSIVE_PROXY",
+  "region_strength_proxy": -0.161,
+  "risk_regime": "RISK_ON",
   "row_slots": 2,
   "schema_version": "research-forward-1",
-  "target_exposure": 0.29999993999999996,
+  "target_exposure": 0.79999996,
   "targets": [
     {
       "market_symbol": "CRWD",
-      "price_eur": 194.646054,
+      "price_eur": 205.054557,
       "region": "USA",
-      "score": 1.90703341,
+      "score": 2.30335998,
       "sector": "Information Technology",
       "ticker": "CRWD",
-      "weight": 0.02678629
+      "weight": 0.06998667
     },
     {
       "market_symbol": "PANW",
-      "price_eur": 280.081488,
+      "price_eur": 296.834827,
       "region": "USA",
-      "score": 1.72415933,
+      "score": 2.13378257,
       "sector": "Information Technology",
       "ticker": "PANW",
-      "weight": 0.02562005
+      "weight": 0.06774833
     },
     {
       "market_symbol": "AMD",
-      "price_eur": 402.968502,
+      "price_eur": 456.236954,
       "region": "USA",
-      "score": 1.60337894,
+      "score": 1.6638926,
       "sector": "Information Technology",
       "ticker": "AMD",
-      "weight": 0.01914409
+      "weight": 0.04783855
     },
     {
       "market_symbol": "MRK",
-      "price_eur": 130.788359,
+      "price_eur": 133.449622,
       "region": "USA",
-      "score": 1.15315924,
+      "score": 1.50157774,
       "sector": "Health Care",
       "ticker": "MRK",
-      "weight": 0.03262184
+      "weight": 0.08626602
     },
     {
       "market_symbol": "ABBV",
-      "price_eur": 256.556653,
+      "price_eur": 263.113564,
       "region": "USA",
-      "score": 0.62203183,
+      "score": 0.78594104,
       "sector": "Health Care",
       "ticker": "ABBV",
-      "weight": 0.04827771
-    },
-    {
-      "market_symbol": "AMGN",
-      "price_eur": 409.686025,
-      "region": "USA",
-      "score": 0.50088311,
-      "sector": "Health Care",
-      "ticker": "AMGN",
-      "weight": 0.02569676
+      "weight": 0.12728767
     },
     {
       "market_symbol": "COP",
-      "price_eur": 122.288701,
+      "price_eur": 120.630354,
       "region": "USA",
-      "score": 0.45992169,
+      "score": 0.65237107,
       "sector": "Energy",
       "ticker": "COP",
-      "weight": 0.02397645
+      "weight": 0.07432299
+    },
+    {
+      "market_symbol": "TMO",
+      "price_eur": 647.359872,
+      "region": "USA",
+      "score": 0.58191474,
+      "sector": "Health Care",
+      "ticker": "TMO",
+      "weight": 0.0709243
     },
     {
       "market_symbol": "XOM",
-      "price_eur": 148.851733,
+      "price_eur": 147.775991,
       "region": "USA",
-      "score": 0.34362255,
+      "score": 0.36578737,
       "sector": "Energy",
       "ticker": "XOM",
-      "weight": 0.02476456
+      "weight": 0.06524384
     },
     {
       "market_symbol": "6098.T",
-      "price_eur": 96.270914,
+      "price_eur": 100.114482,
       "region": "ROW",
-      "score": 2.4059971,
+      "score": 2.41224248,
       "sector": "Industrials",
       "ticker": "6098.T",
-      "weight": 0.04481202
+      "weight": 0.11750108
     },
     {
       "market_symbol": "1303.TW",
-      "price_eur": 6.551413,
+      "price_eur": 7.401154,
       "region": "ROW",
-      "score": 2.38158445,
+      "score": 2.39679987,
       "sector": "Materials",
       "ticker": "1303.TW",
-      "weight": 0.02830017
+      "weight": 0.07288051
     }
   ],
   "universe_source": {
-    "asof": "2026-11-04",
+    "asof": "2026-11-06",
     "provider": "ISHARES_ACWI",
-    "recorded_on": "2026-11-06",
-    "sha256": "88a5c6f6612bd0fc1b2468455ed1b334c79e90dc1a34e80d2dcc32b462496026",
+    "recorded_on": "2026-11-09",
+    "sha256": "72764adee0ebbdb45c95600674ae6b0e6599692136ab9e90a4df4e56af3ca1f6",
     "type": "ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP"
   }
 }
