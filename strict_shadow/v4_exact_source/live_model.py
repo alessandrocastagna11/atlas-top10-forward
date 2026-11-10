@@ -214,7 +214,12 @@ def build_model(snapshot,asof,frames):
     execution_close_eur={};execution_open_eur={}
     for symbol in symbols_us+symbols_row:
         a=frames[symbol].reindex(index)
-        eur_close=a.adj_close/fx[currency[symbol]]
+        # Different exchanges have different holidays. Carry the LAST known
+        # close for marking and rolling signals (never a fabricated open).
+        # A missed trading session is not a zero-value position.
+        usable_adj_close=a.adj_close.ffill(limit=5)
+        usable_raw_close=a.raw_close.ffill(limit=5)
+        eur_close=usable_adj_close/fx[currency[symbol]]
         usd_close=eur_close*fx['USD']
         eur_open=a.adj_open/fx_prev[currency[symbol]]
         key=symbol if symbol in symbols_us else 'G::'+symbol
@@ -222,14 +227,14 @@ def build_model(snapshot,asof,frames):
         # PAPER executions and cash-dividend accounting MUST instead use
         # actual split-adjusted exchange prices. Combining adjusted close
         # with cash dividends would count the same dividend twice.
-        dividend_factor=(a.adj_close/a.raw_close.replace(0,np.nan))
-        execution_close_eur[key]=a.raw_close/fx[currency[symbol]]
+        dividend_factor=usable_adj_close/usable_raw_close.replace(0,np.nan)
+        execution_close_eur[key]=usable_raw_close/fx[currency[symbol]]
         execution_open_eur[key]=(a.adj_open/dividend_factor)/fx_prev[currency[symbol]]
         close_usd[key]=usd_close
         close_eur[key]=eur_close
         open_eur[key]=eur_open
         local_close[key]=a.adj_close
-        vol[key]=a.raw_close*a.volume*fx['USD']/fx[currency[symbol]]
+        vol[key]=usable_raw_close*a.volume.fillna(0.)*fx['USD']/fx[currency[symbol]]
         div[key]=a.dividend/fx[currency[symbol]]
     stock_us=pd.DataFrame({s:close_usd[s] for s in symbols_us},index=index)
     dollar_vol=pd.DataFrame({s:vol[s] for s in cols},index=index)
