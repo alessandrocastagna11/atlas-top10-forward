@@ -57,9 +57,14 @@ def next_available_price(ticker,quotes,proposal,positions,now_date):
     """Verified last completed close; if absent use stored entry quote with stale flag."""
     if ticker in quotes.get("close_eur",{}):
         price=positive(quotes["close_eur"][ticker],"quote "+ticker)
-        asof=quotes["decision_session"]
-        if dt.date.fromisoformat(asof)>now_date:raise ValueError("Future quote "+ticker)
-        return price,asof,"LAST_US_COMPLETED_EOD_CROSS_EXCHANGE"
+        asof=quotes.get("ticker_price_dates",{}).get(ticker,quotes["decision_session"])
+        age=(now_date-dt.date.fromisoformat(asof)).days
+        if age<0:raise ValueError("Future quote "+ticker)
+        # Use each exchange's last completed LOCAL close; never pretend that
+        # every market closed on the US benchmark session.
+        quality=("STALE_LAST_LOCAL_EOD_OVER_FOUR_CALENDAR_DAYS" if age>4
+                 else "LAST_VERIFIED_LOCAL_EXCHANGE_EOD")
+        return price,asof,quality
     if ticker in positions:
         p=positions[ticker]
         return positive(p["last_price_eur"],"stored quote "+ticker),p["last_price_date"],"STALE_LAST_RECORDED_EOD"
@@ -378,6 +383,10 @@ def run(now=None):
     write_csv(EQUITY,["report_date","source_close_session","mark_to_market_nav_eur","net_liquidation_nav_eur","approximate_fills"],state["equity_points"])
     published.update({
        "status":"PAPER_APPROX_LEDGER_ACTIVE",
+       "portfolio_account_status":"PAPER_APPROX_LEDGER_ACTIVE",
+       "portfolio_data_lag_calendar_days":(now.date()-dt.date.fromisoformat(port["valuation_session"])).days,
+       "signal_engine_status":published.get("signal_engine_status","NOT_REPORTED"),
+       "signal_engine_error":published.get("signal_engine_error"),
        "execution_policy":POLICY,"execution_pricing_approximate":True,
        "paper_orders_not_real_market_fills":True,
        "paper_orders_new":len(state["orders"])-before,
