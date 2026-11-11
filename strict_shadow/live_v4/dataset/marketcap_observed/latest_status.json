@@ -5,8 +5,8 @@
   "crosswalk_usa": 276,
   "daily_new_source_can_change_yesterdays_original_signal": false,
   "historical_pit_market_cap_verified": false,
-  "latest_observation_path": "marketcap_observed/observations/2026-11-11T180041Z",
-  "observed_at_utc": "2026-11-11T18:00:41.544056+00:00",
+  "latest_observation_path": "marketcap_observed/observations/2026-11-11T180300Z",
+  "observed_at_utc": "2026-11-11T18:03:00.893655+00:00",
   "purpose": "SHADOW_CAPITALIZATION_RANKING_NOT_LIVE_UNIVERSE_UNTIL_COVERAGE_VALIDATED",
   "sufficient_for_100_usa_200_nonusa": true,
   "type": "MARKET_CAP_USD_OBSERVED_ONLY_NOT_HISTORICAL_PIT_CERTIFIED",
@@ -14,127 +14,127 @@
   "vendor_page_sha256": [
     {
       "page": 1,
-      "sha256": "7bca9f67316cc9c3d31773c91e8e2452ca54fff364775b0ce85e8459800eff12",
+      "sha256": "349a4320ad460918426b07962f0bf3807f9224c4aed5b79d3695b9592c2e040c",
       "url": "https://companiesmarketcap.com/"
     },
     {
       "page": 2,
-      "sha256": "6fffec1b9e305937dfc934a22e784f4df0a71a44db4f8d4ef3ce4dcfe3a685af",
+      "sha256": "760e6acf0e4a19d09a9ec7b4153d3236cbea27c151003750dd022d492eec9a70",
       "url": "https://companiesmarketcap.com/page/2/"
     },
     {
       "page": 3,
-      "sha256": "e2314a191bf1dbae7129d019f411b58dae9cabf4dc19307564fa8eff908a93d6",
+      "sha256": "d5978edff923ba2bce574994a0452a539edc4a233e264d5f5acbfc3c2f72c8d2",
       "url": "https://companiesmarketcap.com/page/3/"
     },
     {
       "page": 4,
-      "sha256": "f62899a2daa8f1c54eb31d81c58c7953d789d332d197e194b1e2b9859c537d5d",
+      "sha256": "5f7a82c8564769377b283c9018427ff28c4c202cd39fee49c615f3bf598626db",
       "url": "https://companiesmarketcap.com/page/4/"
     },
     {
       "page": 5,
-      "sha256": "c2b8281516972f0dff5a227a31db4dcb0c4977fe2ae52046a860c8bedac7c786",
+      "sha256": "5c5007a621c3d24795f6b62b104719a4f33169013961a486696ccf00e195d21f",
       "url": "https://companiesmarketcap.com/page/5/"
     },
     {
       "page": 6,
-      "sha256": "445182739c75d135235f76f738d6c0349608ca697e97d5bf9188d45cda03cfa7",
+      "sha256": "7fc942798201a659c9f77018d404d87f7919210ac1464087816f975a22ce88f1",
       "url": "https://companiesmarketcap.com/page/6/"
     },
     {
       "page": 7,
-      "sha256": "fefdb5a80757414dc00a053b5bf5eed8eac034032168c42b37493f28e603c28f",
+      "sha256": "63907873c7b02e1704d691a081ca8d2b5cbf46af2f494daaa0cb70f1c068b241",
       "url": "https://companiesmarketcap.com/page/7/"
     },
     {
       "page": 8,
-      "sha256": "6651580e6b286773f3f89360f7549a6cd3d150a7bef1ac0573b461b75a350fc1",
+      "sha256": "9be9ec5dc1d12a7defeb719dc5d93cf1af4a059fa9a579c10f540685a66e807b",
       "url": "https://companiesmarketcap.com/page/8/"
     },
     {
       "page": 9,
-      "sha256": "409c658ad8132f4d48e6b04f6bdf9d83b5243bfa8867c5c62e99fdc7d729f954",
+      "sha256": "0a9fae24f03439851477dd2118559b0c81f93816fc5f4e2323d44fa66bf0a632",
       "url": "https://companiesmarketcap.com/page/9/"
     },
     {
       "page": 10,
-      "sha256": "c0d462640f0b7dd05c5d7857a3bf9e206cbb865bdafa420aa6e8772d2fc92c81",
+      "sha256": "5856f27ea2f84bcd470de3a6831d665eb29352b49cdffd46fb7c34d412420493",
       "url": "https://companiesmarketcap.com/page/10/"
     },
     {
       "page": 11,
-      "sha256": "0478e20817fd7de56ca735704c463d6c69168d6d06b660ccd89b57684dd6d96d",
+      "sha256": "1546d8d48e05d60dc902a9d9a0f3f65de247279dd57ebb37a0fd774c7c4372ef",
       "url": "https://companiesmarketcap.com/page/11/"
     },
     {
       "page": 12,
-      "sha256": "99aa103377e407528138d200ce4b605109c11fcc0128c7f0cdca84d5786a53b0",
+      "sha256": "30a8f07d600faf23b310b40bf90cc40f4a13ac057766c4aa9a1b7cd640324e6b",
       "url": "https://companiesmarketcap.com/page/12/"
     },
     {
       "page": 13,
-      "sha256": "b9226b900f4fd520593329514bd443577293474d0822a8ec42376e3d96999867",
+      "sha256": "4ccf4dd0cb18eb49c011433f56a7c0d2fbe6b8c4b86a05c0139170d81c765351",
       "url": "https://companiesmarketcap.com/page/13/"
     },
     {
       "page": 14,
-      "sha256": "a6b65452b07479450e6b40d99f2979e0fbf0f33f4034074db1edf59390bf8e4f",
+      "sha256": "6346857b2a02ec4d602f9d0e6f91f5bda02ad01c3acffeba3c09428fa08131f4",
       "url": "https://companiesmarketcap.com/page/14/"
     },
     {
       "page": 15,
-      "sha256": "ba7a4b2814215e0511dae1478792e59f0106195f0e5e69d5c2da3feedf3e188e",
+      "sha256": "7c7d4a8495b8b70c5d115fb6ab1598ef9faa3fc9dd4b1ec537f0663a9d87222c",
       "url": "https://companiesmarketcap.com/page/15/"
     },
     {
       "page": 16,
-      "sha256": "41b00dcf8275d39788a4963d2929bebcaceb78131687f0229abe8f90e222e4a1",
+      "sha256": "b5323e6e5f5f542541c15c6f8ab63c9eb59a5944327e85f6e69e65215c382bc5",
       "url": "https://companiesmarketcap.com/page/16/"
     },
     {
       "page": 17,
-      "sha256": "2e5e062cdaa74081d9206efdd66296f0d07b3f3678e4a4f72fb8be9e83ec529c",
+      "sha256": "30da587a867c3d97e77bb89f56a7895df3c6508e585ad73ac45fd1b8bd340d76",
       "url": "https://companiesmarketcap.com/page/17/"
     },
     {
       "page": 18,
-      "sha256": "85e45483f5b15ee4ad1f5dddc4c32277cd8e98feb8d5f2c7afc3464e044e9fbc",
+      "sha256": "0eb27c243173117a749d2bdbca5eb81f1a5d36446afdff5c18f9dd85d3cfa533",
       "url": "https://companiesmarketcap.com/page/18/"
     },
     {
       "page": 19,
-      "sha256": "354d3c96ec276258af9d2f5154118ec4910ba6fedce7c3f0bea422eb24abf628",
+      "sha256": "04dd04523787d1701ba2c0af1e084c81bb5fe60651ce60575f2e773bbaa725df",
       "url": "https://companiesmarketcap.com/page/19/"
     },
     {
       "page": 20,
-      "sha256": "cd448dcd4668d9a3bbf0d7c3dbd8fe49fada888d9fc01ef04d0d02d63f3c3211",
+      "sha256": "7f43d4ce0d6c99a7fe29d40f0dac058f7d0ad2bf1e4f0105ba185466b0be4a1f",
       "url": "https://companiesmarketcap.com/page/20/"
     },
     {
       "page": 21,
-      "sha256": "749e6025d22000ed336d625792c59e94a48a8b02bb18fdb5c03a1882118502d1",
+      "sha256": "214c6237bae8ef60dec844d3fbe6e7f4f92bc5f1bad404495bbba4859ae02348",
       "url": "https://companiesmarketcap.com/page/21/"
     },
     {
       "page": 22,
-      "sha256": "a8a02aba1c3a9d24bb2c56710a708105cd525570ce5778aa7a107b3046ccdb36",
+      "sha256": "304e4e12934f267c0e42769b677401c1b9b6b3792e038e986b07481cd763274d",
       "url": "https://companiesmarketcap.com/page/22/"
     },
     {
       "page": 23,
-      "sha256": "b4be65be3d0aa327d8c38edde74a0d0dda9899e3eb70893e230eca4e94e6aa30",
+      "sha256": "dd93615b2a9d4146b2d007547f400ec8b391e3c433a134548eefaeb2c902b35e",
       "url": "https://companiesmarketcap.com/page/23/"
     },
     {
       "page": 24,
-      "sha256": "30587dd15d0a840b454a9a666abd6ec5a1a5b2d566c0b249f1fb2ff1789c685a",
+      "sha256": "194e4242e08b75804d75a0320f37a626f58efd7c9991b871908136f6606cb059",
       "url": "https://companiesmarketcap.com/page/24/"
     },
     {
       "page": 25,
-      "sha256": "103caaa81ed83303c7e116ddda51d5db9dd39840b0ef6f11d35a1b2b86d9ea70",
+      "sha256": "900a0cb80246da75adcc30991357cce4dee6d13ae72646321ebf01c3dc0bc1f9",
       "url": "https://companiesmarketcap.com/page/25/"
     }
   ],
