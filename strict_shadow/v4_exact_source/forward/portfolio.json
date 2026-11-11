@@ -119,7 +119,7 @@
   "type": "PAPER_ONLY",
   "universe_market_cap_pit_certified": false,
   "valuation_method": "LAST_CONFIRMED_DAILY_CLOSE_WITH_STALE_FLAG",
-  "valuation_recorded_at_utc": "2026-11-11T18:21:49.673918+00:00",
+  "valuation_recorded_at_utc": "2026-11-11T18:30:25.442919+00:00",
   "valuation_session": "2026-11-10",
   "variant": "CONFIDENCE70_ORIGINAL_H4_STRICT_35_CALENDAR_DAYS_EVERY_LOT"
 }

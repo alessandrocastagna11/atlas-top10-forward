@@ -16,7 +16,7 @@
 **Candidati segnalati (NON ORDINI):** MRK, JNJ, KO, CB, PANW, CRWD, DE, ABBV, WELL, ABNB; verifica: SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF
 **Segnale originale pubblicato:** SÌ; esito: SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF
 **Contabilità paper:** FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY — prezzi degli ordini APPROSSIMATI; nessun ordine reale.
-**Ultimo aggiornamento portafoglio:** 2026-11-11T18:21:49.673918+00:00; fonte ultimo prezzo 2026-11-10.
+**Ultimo aggiornamento portafoglio:** 2026-11-11T18:30:25.442919+00:00; fonte ultimo prezzo 2026-11-10.
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
 **Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.
 

@@ -1,16 +1,20 @@
 {
   "capital_eur": 9984.7238,
+  "cash_room_before_buys_eur": 6311.57,
   "computed_from_last_complete_close": true,
   "decision_session": "2026-11-10",
   "engine_source": "frozen RegionSlotAtlas chooser and original volatility constrained target builder",
   "execution_price_is_not_yesterdays_close": true,
+  "existing_equity_value_eur": 3573.1538,
   "existing_position_count": 4,
+  "exposure_room_before_buys_eur": 2783.5741,
   "min_order_eur": 599.08,
   "note": "Only INCREMENTAL buy budgets, reflecting existing positions. Final fills require completed local-exchange session evidence.",
-  "possible_buys_meeting_threshold": 6,
+  "possible_buys_meeting_threshold": 4,
   "possible_candidates": [
     {
       "existing_position_value_eur": 684.12,
+      "increment_required_to_reach_target_eur": 0.0,
       "indicative_allocation_eur": 635.67,
       "indicative_new_buy_eur": 0.0,
       "indicative_new_shares_at_previous_close": 0.0,
@@ -25,6 +29,7 @@
     },
     {
       "existing_position_value_eur": 889.85,
+      "increment_required_to_reach_target_eur": 0.0,
       "indicative_allocation_eur": 635.67,
       "indicative_new_buy_eur": 0.0,
       "indicative_new_shares_at_previous_close": 0.0,
@@ -39,6 +44,7 @@
     },
     {
       "existing_position_value_eur": 1097.81,
+      "increment_required_to_reach_target_eur": 0.0,
       "indicative_allocation_eur": 635.67,
       "indicative_new_buy_eur": 0.0,
       "indicative_new_shares_at_previous_close": 0.0,
@@ -53,6 +59,7 @@
     },
     {
       "existing_position_value_eur": 901.37,
+      "increment_required_to_reach_target_eur": 0.0,
       "indicative_allocation_eur": 635.67,
       "indicative_new_buy_eur": 0.0,
       "indicative_new_shares_at_previous_close": 0.0,
@@ -67,6 +74,7 @@
     },
     {
       "existing_position_value_eur": 0.0,
+      "increment_required_to_reach_target_eur": 635.67,
       "indicative_allocation_eur": 635.67,
       "indicative_new_buy_eur": 635.67,
       "indicative_new_shares_at_previous_close": 2.18587283,
@@ -81,6 +89,7 @@
     },
     {
       "existing_position_value_eur": 0.0,
+      "increment_required_to_reach_target_eur": 635.67,
       "indicative_allocation_eur": 635.67,
       "indicative_new_buy_eur": 635.67,
       "indicative_new_shares_at_previous_close": 3.1599107,
@@ -95,6 +104,7 @@
     },
     {
       "existing_position_value_eur": 0.0,
+      "increment_required_to_reach_target_eur": 635.67,
       "indicative_allocation_eur": 635.67,
       "indicative_new_buy_eur": 635.67,
       "indicative_new_shares_at_previous_close": 1.03743443,
@@ -109,6 +119,7 @@
     },
     {
       "existing_position_value_eur": 0.0,
+      "increment_required_to_reach_target_eur": 635.67,
       "indicative_allocation_eur": 635.67,
       "indicative_new_buy_eur": 635.67,
       "indicative_new_shares_at_previous_close": 2.42737551,
@@ -123,13 +134,14 @@
     },
     {
       "existing_position_value_eur": 0.0,
+      "increment_required_to_reach_target_eur": 635.67,
       "indicative_allocation_eur": 635.67,
-      "indicative_new_buy_eur": 635.67,
-      "indicative_new_shares_at_previous_close": 2.88048701,
+      "indicative_new_buy_eur": 0.0,
+      "indicative_new_shares_at_previous_close": 0.0,
       "indicative_shares_at_previous_close": 2.88048701,
       "market_symbol": "WELL",
-      "meets_minimum_order_threshold": true,
-      "proposed_action": "POTENTIAL_INCREMENTAL_BUY_ONLY_NOT_ORDER",
+      "meets_minimum_order_threshold": false,
+      "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER",
       "reference_previous_close_eur": 220.68240394,
       "ticker": "WELL",
       "trade_threshold_eur": 599.08,
@@ -137,13 +149,14 @@
     },
     {
       "existing_position_value_eur": 0.0,
+      "increment_required_to_reach_target_eur": 635.67,
       "indicative_allocation_eur": 635.67,
-      "indicative_new_buy_eur": 635.67,
-      "indicative_new_shares_at_previous_close": 3.81691518,
+      "indicative_new_buy_eur": 0.0,
+      "indicative_new_shares_at_previous_close": 0.0,
       "indicative_shares_at_previous_close": 3.81691518,
       "market_symbol": "ABNB",
-      "meets_minimum_order_threshold": true,
-      "proposed_action": "POTENTIAL_INCREMENTAL_BUY_ONLY_NOT_ORDER",
+      "meets_minimum_order_threshold": false,
+      "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER",
       "reference_previous_close_eur": 166.54098094,
       "ticker": "ABNB",
       "trade_threshold_eur": 599.08,
@@ -156,5 +169,7 @@
   "selection_considers_existing_lots": true,
   "source_original_engine": true,
   "status": "INDICATIVE_ONLY_NO_ORDER_NO_FILL",
-  "unscaled_risky_volatility": 0.149332
+  "target_total_equity_value_eur": 6356.728,
+  "unscaled_risky_volatility": 0.149332,
+  "unused_budget_after_planned_buys_eur": 240.883
 }
