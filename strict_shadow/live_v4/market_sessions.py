@@ -67,6 +67,26 @@ def venue(symbol:str)->tuple[str,Market]:
         raise ValueError('Unknown market suffix, no safe local-close clock: '+symbol)
     return 'USA',US
 
+# Opening-clock estimates are used ONLY for advance signal cutoffs. An
+# observed vendor trade bar is still required to certify a true session.
+OPENING={
+ 'USA':(9,30),'.T':(9,0),'.HK':(9,30),'.KS':(9,0),'.KQ':(9,0),
+ '.TW':(9,0),'.L':(8,0),'.SW':(9,0),'.TO':(9,30),'.V':(9,30),
+ '.AS':(9,0),'.PA':(9,0),'.BR':(9,0),'.DE':(9,0),'.F':(9,0),
+ '.AX':(10,0),'.BO':(9,15),'.NS':(9,15),
+ '.ST':(9,0),'.CO':(9,0),'.OL':(9,0),'.HE':(10,0),
+ '.MI':(9,0),'.MC':(9,0),'.SI':(9,0),'.SR':(10,0),'.SA':(10,0)
+}
+def open_time_utc(symbol:str,session:dt.date)->dt.datetime:
+    name,market=venue(symbol)
+    if name not in OPENING:
+        raise ValueError('No verified indicative equity opening for '+str(symbol))
+    if not isinstance(session,dt.date) or isinstance(session,dt.datetime):
+        session=dt.date.fromisoformat(str(session)[:10])
+    hour,minute=OPENING[name]
+    return dt.datetime.combine(session,dt.time(hour,minute),
+                               tzinfo=ZoneInfo(market.zone)).astimezone(UTC)
+
 def release_time_utc(symbol:str,session:dt.date)->dt.datetime:
     if not isinstance(session,dt.date) or isinstance(session,dt.datetime):
         session=dt.date.fromisoformat(str(session)[:10])
