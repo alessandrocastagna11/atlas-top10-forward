@@ -30,6 +30,28 @@ class PaperAccountTests(unittest.TestCase):
         self.assertTrue(all(x["execution_mode"]==pa.POLICY for x in s["orders"]))
         pa.validate_state(s)
 
+    def test_new_buy_allowed_during_old_lot_35_day_lock(self):
+        state=fixture_state()
+        t0=dt.datetime(2026,11,10,20,0,tzinfo=UTC)
+        self.assertTrue(pa.buy(state,"KO",1000.,85.,"2026-11-09",t0,
+                               "2026-11-09","FROZEN_PREVIOUS_CLOSE"))
+        # Cash and signal permitting, new positions AND additional lots are
+        # legal even though earlier purchases have not matured for sale.
+        t1=t0+dt.timedelta(days=7)
+        self.assertTrue(pa.buy(state,"ABBV",700.,250.,"2026-11-16",t1,
+                               "2026-11-16","FROZEN_PREVIOUS_CLOSE"))
+        self.assertTrue(pa.buy(state,"KO",700.,88.,"2026-11-16",t1,
+                               "2026-11-16","FROZEN_PREVIOUS_CLOSE"))
+        self.assertEqual(len(state["holdings"]["KO"]["lots"]),2)
+        self.assertEqual(state["holdings"]["KO"]["lots"][0]["sale_eligible_date"],
+                         "2026-12-15")
+        self.assertEqual(state["holdings"]["KO"]["lots"][1]["sale_eligible_date"],
+                         "2026-12-22")
+        pa.validate_state(state)
+        self.assertFalse(pa.sell(state,"KO",9999.,90.,"2026-11-17",
+                                 t1+dt.timedelta(days=1),"2026-11-17","EOD","risk"))
+        pa.validate_state(state)
+
     def test_conservation_rejects_unbacked_cash_and_shares(self):
         state=fixture_state()
         when=dt.datetime(2026,11,10,20,0,tzinfo=UTC)
