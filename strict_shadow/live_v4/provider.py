@@ -11,6 +11,7 @@ import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from zoneinfo import ZoneInfo
+from market_sessions import normalize_currency
 
 class DataUnavailable(ValueError):
     pass
@@ -57,8 +58,8 @@ class YahooChart:
             raw=result['indicators']['quote'][0]
             raw_currency=str(meta.get('currency',''))
             if not raw_currency: raise DataUnavailable(f'currency missing: {symbol}')
-            unit_scale=0.01 if raw_currency in ('GBp','GBX') else 1.0
-            currency='GBP' if unit_scale!=1.0 else raw_currency.upper()
+            try:currency,unit_scale=normalize_currency(raw_currency)
+            except ValueError as exc:raise DataUnavailable(f'Unsupported Yahoo quote currency for {symbol}: {raw_currency}') from exc
             candles={}
             digest=hashlib.sha256(data).hexdigest()
             for i,timestamp in enumerate(result.get('timestamp') or []):
@@ -85,12 +86,16 @@ class YahooChart:
         # GBp means pence Sterling; Yahoo historical prices normally use GBp for UK equities.
         if curr in ('GBX','GBPENCE','GBPENNY') : curr='GBP'
         target=_date(session)
-        end=target-dt.timedelta(days=1) if for_open else target
+        # A Yahoo daily FX bar is not an intraday executable fixing. The
+        # same-day FX close may be published AFTER a Tokyo, London or US
+        # stock close. Always use the last completed *prior weekday* FX day.
+        # Weekend/Sunday FX bars are excluded (some are Monday rollover bars).
+        end=target-dt.timedelta(days=1)
         start=end-dt.timedelta(days=10)
         pair='EUR'+curr+'=X'
         def last_close(pair_name):
             candles=self.history(pair_name,start,end)
-            eligible=[x for d,x in candles.items() if d<=end]
+            eligible=[x for d,x in candles.items() if d<=end and d.weekday()<5]
             if not eligible: raise DataUnavailable(f'FX missing {pair_name} as of {end}')
             b=max(eligible,key=lambda x:x.session)
             if (end-b.session).days>4: raise DataUnavailable(f'stale FX {pair_name}: {b.session}')
@@ -102,6 +107,8 @@ class YahooChart:
         except DataUnavailable:
             if curr!='SAR':raise
             a=last_close('EURUSD=X'); b=last_close('USDSAR=X')
+            if abs((a.session-b.session).days)>2:
+                raise DataUnavailable('Incoherent SAR cross-rate session dates')
             return a.close*b.close,{'fx_symbol':'EURUSD=X*USDSAR=X','fx_session':str(min(a.session,b.session)),'fx_sha256':a.source_sha256+':'+b.source_sha256}
 
     def latest_published_eur_quote(self,symbol,asof,max_age_days=5):
@@ -134,4 +141,5 @@ class YahooChart:
         if not math.isfinite(quote) or quote<=0:raise DataUnavailable(f'invalid EUR quote: {symbol}')
         return {'symbol':symbol,'session':str(bar.session),'field':field,'price_eur':round(quote,10),
                 'local_price':getattr(bar,field),'local_unit_scale':unit_factor,'currency':curr,'fx_units_per_eur':rate,
+                'conversion_convention':'LAST_PREVIOUS_COMPLETED_WEEKDAY_FX_CLOSE_NOT_SAME_DAY',
                 'market_sha256':bar.source_sha256,**fx}
