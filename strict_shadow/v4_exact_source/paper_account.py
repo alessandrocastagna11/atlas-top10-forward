@@ -32,6 +32,8 @@ FIRST_DECISION="2026-11-09"
 FEE=1.0
 SLIPPAGE_BPS=10.0
 MIN_HOLD_DAYS=35
+# Original five-week rotation remains champion; weekly buys are research-only.
+WEEKLY_BUYS_ENABLED=False
 TAX_RATE=0.26
 RESERVE=100.0
 
@@ -397,42 +399,43 @@ def run(now=None):
                          decision,now,asof,source,"weekly_risk_reduction_35day_guarded")
                     residual=state["holdings"].get(ticker,{}).get("shares",0.)
                     reduction-=max(0.,previous_shares-residual)*px
-            # Weekly BUY challenger: the 35-day restriction applies ONLY to
-            # sells. Buy using an observed Monday decision, NEVER an intraday
-            # or retrospectively inferred weekly ranking.
-            candidates=current_proposal.get("possible_candidates",[])
-            # Backwards-compatible frozen proposals may contain target EUR
-            # without explicit weight_pct. This is a target weight, NOT a
-            # second cash grant or an unbacked order.
-            def target_weight_pct(candidate):
-                if "weight_pct" in candidate:
-                    return float(candidate["weight_pct"])
-                original_cap=float(current_proposal.get("capital_eur",INITIAL))
-                return 100.*float(candidate["indicative_allocation_eur"])/original_cap
-            portfolio_nav=state["cash_eur"]+sum(
-                p["shares"]*pricecache[t][0] for t,p in state["holdings"].items())
-            target_equity=portfolio_nav*sum(
-                max(0.,target_weight_pct(p)) for p in candidates)/100.
-            owned_equity=sum(
-                p["shares"]*pricecache[t][0] for t,p in state["holdings"].items())
-            room=max(0.,target_equity-owned_equity)
-            threshold=max(500.,0.06*portfolio_nav)
-            for candidate in candidates:
-                ticker=candidate["ticker"]
-                if ticker not in state["holdings"] and len(state["holdings"])>=10:
-                    continue
-                price,asof,source=next_available_price(
-                    ticker,quote,current_proposal,state["holdings"],now.date())
-                if source.startswith("STALE"):
-                    continue
-                owned=state["holdings"].get(ticker,{}).get("shares",0.)*price
-                target=portfolio_nav*target_weight_pct(candidate)/100.
-                addition=min(room,max(0.,target-owned))
-                if addition>=threshold and buy(
-                    state,ticker,addition,price,decision,now,asof,source):
-                    # Shares were paid entirely from settled cash, including
-                    # fees and slippage, never from synthetic credit.
-                    room=max(0.,room-addition)
+            if WEEKLY_BUYS_ENABLED:
+                # Weekly BUY challenger: the 35-day restriction applies ONLY to
+                # sells. Buy using an observed Monday decision, NEVER an intraday
+                # or retrospectively inferred weekly ranking.
+                candidates=current_proposal.get("possible_candidates",[])
+                # Backwards-compatible frozen proposals may contain target EUR
+                # without explicit weight_pct. This is a target weight, NOT a
+                # second cash grant or an unbacked order.
+                def target_weight_pct(candidate):
+                    if "weight_pct" in candidate:
+                        return float(candidate["weight_pct"])
+                    original_cap=float(current_proposal.get("capital_eur",INITIAL))
+                    return 100.*float(candidate["indicative_allocation_eur"])/original_cap
+                portfolio_nav=state["cash_eur"]+sum(
+                    p["shares"]*pricecache[t][0] for t,p in state["holdings"].items())
+                target_equity=portfolio_nav*sum(
+                    max(0.,target_weight_pct(p)) for p in candidates)/100.
+                owned_equity=sum(
+                    p["shares"]*pricecache[t][0] for t,p in state["holdings"].items())
+                room=max(0.,target_equity-owned_equity)
+                threshold=max(500.,0.06*portfolio_nav)
+                for candidate in candidates:
+                    ticker=candidate["ticker"]
+                    if ticker not in state["holdings"] and len(state["holdings"])>=10:
+                        continue
+                    price,asof,source=next_available_price(
+                        ticker,quote,current_proposal,state["holdings"],now.date())
+                    if source.startswith("STALE"):
+                        continue
+                    owned=state["holdings"].get(ticker,{}).get("shares",0.)*price
+                    target=portfolio_nav*target_weight_pct(candidate)/100.
+                    addition=min(room,max(0.,target-owned))
+                    if addition>=threshold and buy(
+                        state,ticker,addition,price,decision,now,asof,source):
+                        # Shares were paid entirely from settled cash, including
+                        # fees and slippage, never from synthetic credit.
+                        room=max(0.,room-addition)
         state["processed_decision_dates"].append(decision)
     # The last recorded quote is not necessarily the latest decision's quote.
     # The preserved first-day prices remain available for new-lot validation.
