@@ -1,0 +1,79 @@
+name: Atlas V4 — live multi-exchange FX smoke (READ ONLY)
+on:
+  workflow_dispatch:
+  push:
+    branches: [atlas-v4-confidence70-live-paper]
+    paths:
+      - '.github/workflows/atlas-v4-live-data-smoke.yml'
+permissions:
+  contents: read
+concurrency:
+  group: atlas-v4-dataset-live-smoke
+  cancel-in-progress: true
+jobs:
+  validate_data_and_original_signal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: atlas-v4-confidence70-live-paper
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: strict_shadow/v4_exact_source/requirements-live.txt
+      - run: pip install -r strict_shadow/v4_exact_source/requirements-live.txt
+      - name: Restore independent adjusted history caches
+        uses: actions/cache/restore@v4
+        with:
+          path: strict_shadow/v4_exact_source/cache_adjusted
+          key: atlas-v4-adjusted-${{ runner.os }}-read-only-miss
+          restore-keys: |
+            atlas-v4-adjusted-${{ runner.os }}-
+      - name: Refresh actual global market and FX quotes using local EOD gates
+        run: python strict_shadow/live_v4/dataset_daily.py --limit 300 --start 2024-01-01
+      - name: Update observed company capitalization roster
+        run: python strict_shadow/v4_exact_source/marketcap_pit.py
+      - name: Collect ECB independent reference (audit only)
+        run: python strict_shadow/live_v4/ecb_fx.py --start 2012-01-01
+      - name: Generate ORIGINAL model signal without executing paper account
+        env:
+          ATLAS_EXACT_DEBUG: '1'
+        run: python strict_shadow/v4_exact_source/run_live.py
+      - name: Verify live EOD FX source provenance and original signals
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path('strict_shadow/v4_exact_source/forward')
+          report=json.loads((root/'latest_status.json').read_text())
+          quotes=json.loads((root/'latest_quotes.json').read_text())
+          audit=json.loads(Path('strict_shadow/live_v4/dataset/audit/latest.json').read_text())
+          original=json.loads((root/'state.json').read_text())
+          if report.get('signal_engine_status')!='SIGNAL_READY':
+              raise RuntimeError('Signal not ready: '+str(report.get('signal_engine_error')))
+          if not quotes.get('exchange_local_eod_enforced'):
+              raise RuntimeError('No exchange-local EOD provenance in actual quotes')
+          rates=quotes.get('fx_units_per_eur_asof') or {}
+          dates=quotes.get('fx_currency_source_sessions') or {}
+          if 'USD' not in rates or 'USD' not in dates:
+              raise RuntimeError('No dated EUR/USD quote')
+          if audit.get('local_exchange_eod_gate_enabled') is not True:
+              raise RuntimeError('Daily downloader not exchange-local EOD gated')
+          if len(quotes.get('close_eur',{}))<200:
+              raise RuntimeError('Insufficient live market quotes')
+          print(json.dumps({
+              'status':'LIVE_DATASOURCE_QA_PASS',
+              'decision_session':report.get('decision_session'),
+              'source_universe':report.get('data_universe'),
+              'quote_count':len(quotes['close_eur']),
+              'currency_dates':dates,
+              'FX_units_per_EUR':rates,
+              'original_orders_in_checkout':len(original['orders']),
+              'new_broker_orders':0
+              },sort_keys=True))
+          PY
+      - name: Assert official ledger is not modified by this test
+        run: |
+          git diff --exit-code -- strict_shadow/v4_exact_source/forward/state.json strict_shadow/v4_exact_source/forward/orders.csv
