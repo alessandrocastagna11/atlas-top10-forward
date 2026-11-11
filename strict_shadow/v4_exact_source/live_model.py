@@ -111,6 +111,11 @@ def latest_vintages(asof, excluded_symbols=None):
     return groups
 
 
+def _quote_unit_scale(symbol, vendor_currency):
+    """Convert vendor GBp (pence) quotes to GBP, keeping GBP-denominated prices."""
+    return 0.01 if str(symbol).upper().endswith('.L') and str(vendor_currency) in ('GBp','GBX') else 1.0
+
+
 def _cache_filename(symbol):
     return hashlib.sha1(symbol.encode()).hexdigest()[:12]+'.csv.gz'
 
@@ -166,6 +171,12 @@ def _chart(symbol,end_day,refresh=True):
                     # Split-adjust historical dividend; source is explicit event.
                     frame.loc[day,'dividend']+=float(ev['amount'])
             frame=frame[~frame.index.duplicated(keep='last')].sort_index()
+            # Yahoo returns many London Stock Exchange prices in GBp, while
+            # the security roster and FX feed correctly specify GBP.
+            # Normalize *all* prices and dividends without changing returns.
+            unit=_quote_unit_scale(symbol,raw.get('meta',{}).get('currency',''))
+            if unit!=1.0:
+                frame[['adj_open','adj_close','raw_close','dividend']]*=unit
             frame=frame.loc[:pd.Timestamp(end_day)].dropna(subset=['adj_open','adj_close'])
             frame=frame[(frame.adj_open>0)&(frame.adj_close>0)]
             if len(frame)<300:raise RuntimeError('few clean adjusted closes')
