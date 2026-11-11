@@ -374,7 +374,17 @@ def main(now=None):
         # no fictitious fill, no write to the cumulative paper order ledger.
         try:
             from model_proposal import proposal
-            indicative=proposal(m,meta,asof)
+            # Freeze the actual ledger holdings at this decision close. A
+            # target weight is NOT an order for the whole target amount.
+            live_positions=positions_asof(old.get('orders',[]),asof)
+            close_prices=m.raw.close_eur.loc[pd.Timestamp(asof)]
+            ledger_cash=float(old.get('cash_eur',INITIAL))
+            current_nav=ledger_cash
+            for ticker,pos in live_positions.items():
+                if ticker not in close_prices or pd.isna(close_prices[ticker]):
+                    raise ValueError('Existing holding missing latest valuation: '+ticker)
+                current_nav+=pos.shares*float(close_prices[ticker])
+            indicative=proposal(m,meta,asof,positions=live_positions,nav_eur=current_nav)
             write_json(FORWARD/'proposal_last_close.json',indicative)
             # Immutable as-recorded decisions: a Monday cannot disappear when
             # Tuesday's daily proposal replaces latest_status/proposal files.
