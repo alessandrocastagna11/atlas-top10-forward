@@ -1,6 +1,12 @@
 name: Atlas V4 ORIGINAL Confidence70 — forward PAPER
 on:
   workflow_dispatch:
+  # One safe self-change trigger permits manual maintenance/recovery without
+  # subscribing the entire paper account to each incremental Python commit.
+  push:
+    branches: [atlas-v4-confidence70-live-paper]
+    paths:
+      - '.github/workflows/atlas-v4-exact-forward.yml'
   # The production paper workflow MUST NOT run for every intermediate code commit:
   # during development, failed regression tests generated a burst of emails.
   # Scheduled daily checks and explicit manual dispatch remain enabled, and
