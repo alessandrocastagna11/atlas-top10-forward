@@ -30,6 +30,29 @@ class PaperAccountTests(unittest.TestCase):
         self.assertTrue(all(x["execution_mode"]==pa.POLICY for x in s["orders"]))
         pa.validate_state(s)
 
+    def test_conservation_rejects_unbacked_cash_and_shares(self):
+        state=fixture_state()
+        when=dt.datetime(2026,11,10,20,0,tzinfo=UTC)
+        self.assertTrue(pa.buy(state,"KO",1000.,85.,"2026-11-09",when,
+                               "2026-11-09","FROZEN_PREVIOUS_CLOSE"))
+        pa.validate_state(state)
+        forged=__import__("copy").deepcopy(state)
+        forged["cash_eur"]+=200.
+        with self.assertRaisesRegex(ValueError,"Cash creation/loss"):
+            pa.validate_state(forged)
+        forged=__import__("copy").deepcopy(state)
+        forged["holdings"]["KO"]["shares"]+=1.
+        forged["holdings"]["KO"]["lots"][0]["shares"]+=1.
+        with self.assertRaisesRegex(ValueError,"Unbacked shares"):
+            pa.validate_state(forged)
+        self.assertTrue(pa.sell(state,"KO",800.,90.,"2026-12-15",
+            when+dt.timedelta(days=35),"2026-12-15","EOD","matured_sell"))
+        pa.validate_state(state)
+        forged=__import__("copy").deepcopy(state)
+        forged["estimated_slippage_eur"]=0.
+        with self.assertRaisesRegex(ValueError,"Non-reconciled accounting total"):
+            pa.validate_state(forged)
+
     def test_end_to_end_first_buys_persist_idempotently(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);out=root/"forward";pre=out/"preopen";pre.mkdir(parents=True)
