@@ -163,7 +163,11 @@ class PaperAccountTests(unittest.TestCase):
                         ("KO","JNJ","ABBV","WELL")}}))
                 (out/"latest_status.json").write_text(
                     json.dumps({"decision_session":"2026-11-23"}))
-                weekly=pa.run(dt.datetime(2026,11,24,20,0,tzinfo=UTC))
+                self.assertFalse(pa.WEEKLY_BUYS_ENABLED)
+                # The original account must NEVER follow this challenger branch;
+                # only test its mechanics when deliberately opted in in isolation.
+                with mock.patch.object(pa,"WEEKLY_BUYS_ENABLED",True):
+                    weekly=pa.run(dt.datetime(2026,11,24,20,0,tzinfo=UTC))
                 self.assertGreaterEqual(weekly["new_orders"],2)
                 after=json.loads((out/"state.json").read_text())
                 self.assertIn("ABBV",after["holdings"])
