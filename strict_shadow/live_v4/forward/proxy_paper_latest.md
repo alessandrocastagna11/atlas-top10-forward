@@ -5,7 +5,7 @@
 All next-session opens verified
 
 Model: V4_CONF70_FORWARD_COHORT_PROXY_V1 — NOT historically identical to the frozen V4 engine.
-Virtual NAV: EUR 10103.52
-Paper orders: 10
+Virtual NAV: EUR 10183.57
+Paper orders: 16
 Real broker orders: 0
 Strict Confidence70 model remains separate and fail-closed.

@@ -1,6 +1,6 @@
 # Atlas V4 daily research dataset
 
-Checked: 2026-11-11T18:29:53.108037+00:00
+Checked: 2026-11-11T23:08:17.225164+00:00
 Original symbols cached: 287/288
 Originals accounted incl. delistings: 288/288
 Inactive verified delistings: WBD
@@ -10,7 +10,7 @@ Provider errors: 0
 Unique symbols with a quote dated within 7 days: 556/557
 Cache status: ALL_ACTIVE_SYMBOLS_HAVE_SOME_DATA
 Forward universe: Nov 10, 2026
-Confidence70 live forward signal: **NOT READY** (fail closed).
+La qualita del dataset indipendente non sostituisce lo stato del motore ufficiale: consultare v4_exact_source/forward/latest_status.json.
 iShares universe ranks are holding-value proxies, not historical market cap ranks.
 Raw Yahoo Chart quotes are unofficial; adjusted/dividend total-return data are NOT claimed.
 Research paper data only; no real-money orders.

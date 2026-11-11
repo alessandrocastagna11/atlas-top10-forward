@@ -1,13 +1,13 @@
 {
-  "checked_at_utc": "2026-11-10T07:12:35.731894+00:00",
-  "decision_session": "2026-11-09",
+  "checked_at_utc": "2026-11-11T23:08:22.631852+00:00",
+  "decision_session": "2026-11-11",
   "eligible_feature_history": {
     "eligibility": "POST_TREND_MOMENTUM_LIQUIDITY_AND_FX_FILTERS",
     "required_row": 20,
     "required_usa": 20,
-    "row": 82,
+    "row": 88,
     "universe_candidates": 300,
-    "usa": 45
+    "usa": 47
   },
   "historical_model_parity": "NOT_CLAIMED",
   "mode": "RESEARCH_PROXY_PAPER_ONLY",
@@ -15,8 +15,8 @@
   "notes": "Research proxy; not frozen H4 V4 Confidence70 exact engine",
   "num_targets": 10,
   "real_broker_orders": 0,
-  "roster_date": "2026-11-06",
-  "signal_session": "2026-11-09",
+  "roster_date": "2026-11-10",
+  "signal_session": "2026-11-11",
   "status": "RESEARCH_SIGNAL_READY",
   "target_exposure_pct": 80.0
 }

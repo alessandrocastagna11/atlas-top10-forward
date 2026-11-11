@@ -1,5 +1,5 @@
 {
-  "cash_eur": 6995.535251885571,
+  "cash_eur": 3387.995841981953,
   "decisions": [
     {
       "decision_session": "2026-11-05",
@@ -12,54 +12,75 @@
       "execution_session": "2026-11-09",
       "orders": 2,
       "signal_sha256": "3159acaa724f9a1f82f342db4f25e62e3bc9cc4f99c353c2b0d8c5694300e8e4"
+    },
+    {
+      "decision_session": "2026-11-09",
+      "execution_session": "2026-11-11",
+      "orders": 6,
+      "signal_sha256": "f825f8a0edc22c32451bad98f7a4cec23662507d6613382135913b6bda8da462"
     }
   ],
   "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
   "holdings": {
     "1303.TW": {
-      "cost_basis_eur_per_share": 6.7071008968292,
+      "cost_basis_eur_per_share": 7.547285417301506,
       "first_entry_date": "2026-11-09",
       "lots": [
         {
           "cost_basis_eur_per_share": 6.7071008968292,
           "entry_date": "2026-11-09",
           "shares": 35.110829343075224
+        },
+        {
+          "cost_basis_eur_per_share": 8.070268779465128,
+          "entry_date": "2026-11-11",
+          "shares": 56.40633612693661
         }
       ],
       "market_symbol": "1303.TW",
       "region": "ROW",
       "sector": "Materials",
-      "shares": 35.110829343075224
+      "shares": 91.51716547001183
     },
     "6098.T": {
-      "cost_basis_eur_per_share": 96.69602238545187,
+      "cost_basis_eur_per_share": 97.84944234870261,
       "first_entry_date": "2026-11-09",
       "lots": [
         {
           "cost_basis_eur_per_share": 96.69602238545187,
           "entry_date": "2026-11-09",
           "shares": 3.856317601696663
+        },
+        {
+          "cost_basis_eur_per_share": 98.38924840949704,
+          "entry_date": "2026-11-11",
+          "shares": 8.239910644733996
         }
       ],
       "market_symbol": "6098.T",
       "region": "ROW",
       "sector": "Industrials",
-      "shares": 3.856317601696663
+      "shares": 12.096228246430659
     },
     "ABBV": {
-      "cost_basis_eur_per_share": 262.2542475936881,
+      "cost_basis_eur_per_share": 260.92170703128346,
       "first_entry_date": "2026-11-06",
       "lots": [
         {
           "cost_basis_eur_per_share": 262.2542475936881,
           "entry_date": "2026-11-06",
           "shares": 1.750592427815646
+        },
+        {
+          "cost_basis_eur_per_share": 260.19380677270556,
+          "entry_date": "2026-11-11",
+          "shares": 3.2047459673394108
         }
       ],
       "market_symbol": "ABBV",
       "region": "USA",
       "sector": "Health Care",
-      "shares": 1.750592427815646
+      "shares": 4.9553383951550565
     },
     "AMGN": {
       "cost_basis_eur_per_share": 415.29357860876297,
@@ -77,19 +98,24 @@
       "shares": 0.5884155512797128
     },
     "CRWD": {
-      "cost_basis_eur_per_share": 195.746972319583,
+      "cost_basis_eur_per_share": 205.5820951481897,
       "first_entry_date": "2026-11-06",
       "lots": [
         {
           "cost_basis_eur_per_share": 195.746972319583,
           "entry_date": "2026-11-06",
           "shares": 1.1034208981141505
+        },
+        {
+          "cost_basis_eur_per_share": 210.36855363902993,
+          "entry_date": "2026-11-11",
+          "shares": 2.2672880346444
         }
       ],
       "market_symbol": "CRWD",
       "region": "USA",
       "sector": "Information Technology",
-      "shares": 1.1034208981141505
+      "shares": 3.3707089327585504
     },
     "DE": {
       "cost_basis_eur_per_share": 606.4819335645637,
@@ -122,34 +148,44 @@
       "shares": 1.715508950988119
     },
     "MRK": {
-      "cost_basis_eur_per_share": 132.23343038399403,
+      "cost_basis_eur_per_share": 131.43475632386367,
       "first_entry_date": "2026-11-06",
       "lots": [
         {
           "cost_basis_eur_per_share": 132.23343038399403,
           "entry_date": "2026-11-06",
           "shares": 2.3460013031436113
+        },
+        {
+          "cost_basis_eur_per_share": 131.00159598623557,
+          "entry_date": "2026-11-11",
+          "shares": 4.32562777126087
         }
       ],
       "market_symbol": "MRK",
       "region": "USA",
       "sector": "Health Care",
-      "shares": 2.3460013031436113
+      "shares": 6.671629074404482
     },
     "PANW": {
-      "cost_basis_eur_per_share": 283.2800647167753,
+      "cost_basis_eur_per_share": 295.91801919168495,
       "first_entry_date": "2026-11-06",
       "lots": [
         {
           "cost_basis_eur_per_share": 283.2800647167753,
           "entry_date": "2026-11-06",
           "shares": 0.73615310773279
+        },
+        {
+          "cost_basis_eur_per_share": 301.97113466593356,
+          "entry_date": "2026-11-11",
+          "shares": 1.5369720768865751
         }
       ],
       "market_symbol": "PANW",
       "region": "USA",
       "sector": "Information Technology",
-      "shares": 0.73615310773279
+      "shares": 2.273125184619365
     },
     "TXN": {
       "cost_basis_eur_per_share": 250.47461100461845,
@@ -168,7 +204,7 @@
     }
   },
   "initial_cash_eur": 10000.0,
-  "last_execution_session": "2026-11-09",
+  "last_execution_session": "2026-11-11",
   "mode": "PAPER",
   "orders": [
     {
@@ -318,6 +354,90 @@
       "signal_sha256": "3159acaa724f9a1f82f342db4f25e62e3bc9cc4f99c353c2b0d8c5694300e8e4",
       "tax_estimate_eur": 0.0,
       "ticker": "6098.T"
+    },
+    {
+      "action": "BUY",
+      "cash_change_eur": -455.214293,
+      "execution_price_eur": 8.0525402747,
+      "fee_eur": 1.0,
+      "market_symbol": "1303.TW",
+      "mode": "PAPER",
+      "reference_open_eur": 8.0444957789,
+      "session": "2026-11-11",
+      "shares": 56.4063361269,
+      "signal_sha256": "f825f8a0edc22c32451bad98f7a4cec23662507d6613382135913b6bda8da462",
+      "tax_estimate_eur": 0.0,
+      "ticker": "1303.TW"
+    },
+    {
+      "action": "BUY",
+      "cash_change_eur": -810.718615,
+      "execution_price_eur": 98.2678878702,
+      "fee_eur": 1.0,
+      "market_symbol": "6098.T",
+      "mode": "PAPER",
+      "reference_open_eur": 98.169718152,
+      "session": "2026-11-11",
+      "shares": 8.2399106447,
+      "signal_sha256": "f825f8a0edc22c32451bad98f7a4cec23662507d6613382135913b6bda8da462",
+      "tax_estimate_eur": 0.0,
+      "ticker": "6098.T"
+    },
+    {
+      "action": "BUY",
+      "cash_change_eur": -833.855053,
+      "execution_price_eur": 259.8817695597,
+      "fee_eur": 1.0,
+      "market_symbol": "ABBV",
+      "mode": "PAPER",
+      "reference_open_eur": 259.6221474123,
+      "session": "2026-11-11",
+      "shares": 3.2047459673,
+      "signal_sha256": "f825f8a0edc22c32451bad98f7a4cec23662507d6613382135913b6bda8da462",
+      "tax_estimate_eur": 0.0,
+      "ticker": "ABBV"
+    },
+    {
+      "action": "BUY",
+      "cash_change_eur": -476.966105,
+      "execution_price_eur": 209.9274980763,
+      "fee_eur": 1.0,
+      "market_symbol": "CRWD",
+      "mode": "PAPER",
+      "reference_open_eur": 209.717780296,
+      "session": "2026-11-11",
+      "shares": 2.2672880346,
+      "signal_sha256": "f825f8a0edc22c32451bad98f7a4cec23662507d6613382135913b6bda8da462",
+      "tax_estimate_eur": 0.0,
+      "ticker": "CRWD"
+    },
+    {
+      "action": "BUY",
+      "cash_change_eur": -566.664142,
+      "execution_price_eur": 130.7704156691,
+      "fee_eur": 1.0,
+      "market_symbol": "MRK",
+      "mode": "PAPER",
+      "reference_open_eur": 130.6397758932,
+      "session": "2026-11-11",
+      "shares": 4.3256277713,
+      "signal_sha256": "f825f8a0edc22c32451bad98f7a4cec23662507d6613382135913b6bda8da462",
+      "tax_estimate_eur": 0.0,
+      "ticker": "MRK"
+    },
+    {
+      "action": "BUY",
+      "cash_change_eur": -464.121202,
+      "execution_price_eur": 301.3205047586,
+      "fee_eur": 1.0,
+      "market_symbol": "PANW",
+      "mode": "PAPER",
+      "reference_open_eur": 301.0194852733,
+      "session": "2026-11-11",
+      "shares": 1.5369720769,
+      "signal_sha256": "f825f8a0edc22c32451bad98f7a4cec23662507d6613382135913b6bda8da462",
+      "tax_estimate_eur": 0.0,
+      "ticker": "PANW"
     }
   ],
   "real_money_authorized": false,

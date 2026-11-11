@@ -1,13 +1,15 @@
 {
   "FX": {
     "annual_interpolated_fx_allowed_in_pit_engine": false,
-    "ecb_currencies_stale_over_14_days": [],
-    "ecb_currencies_with_history": 0,
-    "ecb_daily_reference_available": false,
+    "ecb_currencies_stale_over_14_days": [
+      "TWD"
+    ],
+    "ecb_currencies_with_history": 16,
+    "ecb_daily_reference_available": true,
     "ecb_retroactive_archive_not_original_vintage": true,
     "yahoo_execution_fx_separately_sourced": true
   },
-  "checked_at_utc": "2026-11-10T07:12:36.790879+00:00",
+  "checked_at_utc": "2026-11-11T23:08:24.034235+00:00",
   "historical_pit_issues_remaining": [
     "POINT_IN_TIME_USA100_MARKET_CAP_RANKING",
     "POINT_IN_TIME_ROW_MARKET_CAP_AND_ISSUER_SCORING",
@@ -22,8 +24,8 @@
   "real_money_authorized": false,
   "research_proxy_execution_status": "PROXY_PAPER_EXECUTED",
   "research_proxy_model_ready": true,
-  "research_proxy_nav_eur": 10103.52,
-  "research_proxy_orders": 10,
+  "research_proxy_nav_eur": 10183.57,
+  "research_proxy_orders": 16,
   "universe_ranking_type": "ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP",
   "workflow": "PAPER_ONLY"
 }
