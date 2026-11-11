@@ -75,6 +75,12 @@ class DailyUniverseTests(unittest.TestCase):
                 self.assertEqual(today[-1][0], dt.date(2026, 11, 10))
                 self.assertEqual(len(today[-1][3]) + len(today[-1][4]), 300)
 
+    def test_gbp_pence_quotes_are_normalized_before_fx_conversion(self):
+        self.assertEqual(mod._quote_unit_scale("AZN.L", "GBp"), 0.01)
+        self.assertEqual(mod._quote_unit_scale("AZN.L", "GBX"), 0.01)
+        self.assertEqual(mod._quote_unit_scale("AZN.L", "GBP"), 1.0)
+        self.assertEqual(mod._quote_unit_scale("AAPL", "USD"), 1.0)
+
     def test_local_exchange_price_asof_is_not_us_session_stamp(self):
         quotes = {
             "decision_session": "2026-11-10",
