@@ -49,5 +49,18 @@ class PlannerTests(unittest.TestCase):
         self.assertFalse(row['KO']['meets_minimum_order_threshold'])
         self.assertTrue(row['ABBV']['meets_minimum_order_threshold'])
         self.assertEqual(data['possible_buys_meeting_threshold'],1)
+        # If still-locked existing shares consume the entire risk budget,
+        # the planner must not invent a second allocation by spending cash.
+        overweight={'KO':lm.v2.Position(18.,1800.,pd.Timestamp('2026-11-09'))}
+        with mock.patch.object(planner.v2,'estimate_risky_volatility',
+                               return_value=(.15,pd.Series({'KO':.5,'ABBV':.5}),
+                                             np.eye(2)*.001)):
+            capped=planner.proposal(m,meta,day.date(),positions=overweight,
+                                    nav_eur=10000.)
+        self.assertEqual(capped['possible_buys_meeting_threshold'],0)
+        self.assertAlmostEqual(capped['exposure_room_before_buys_eur'],200.,places=2)
+        self.assertEqual(sum(x['indicative_new_buy_eur']
+                             for x in capped['possible_candidates']),0.)
+
 
 if __name__=='__main__':unittest.main()
