@@ -136,6 +136,45 @@ class PaperAccountTests(unittest.TestCase):
                 self.assertEqual(updated["orders_cumulative"],2)
                 self.assertEqual(pa.run(tuesday+dt.timedelta(minutes=30))["new_orders"],0)
                 self.assertEqual(len(json.loads((out/"state.json").read_text())["equity_points"]),2)
+                # A later Monday can create new lots, even while every
+                # existing lot is still under its absolute 35d sale lock.
+                more=[
+                    {"ticker":"KO","market_symbol":"KO","weight_pct":19.,
+                     "indicative_allocation_eur":1900.,
+                     "reference_previous_close_eur":85.,"meets_minimum_order_threshold":True},
+                    {"ticker":"JNJ","market_symbol":"JNJ","weight_pct":14.,
+                     "indicative_allocation_eur":1400.,
+                     "reference_previous_close_eur":250.,"meets_minimum_order_threshold":True},
+                    {"ticker":"ABBV","market_symbol":"ABBV","weight_pct":14.,
+                     "indicative_allocation_eur":1400.,
+                     "reference_previous_close_eur":260.,"meets_minimum_order_threshold":True},
+                    {"ticker":"WELL","market_symbol":"WELL","weight_pct":8.,
+                     "indicative_allocation_eur":800.,
+                     "reference_previous_close_eur":200.,"meets_minimum_order_threshold":True},
+                ]
+                (out/"proposals_by_session"/"2026-11-23.json").write_text(
+                    json.dumps({"decision_session":"2026-11-23",
+                                "regime_multiplier":.7,
+                                "possible_candidates":more}))
+                (out/"latest_quotes.json").write_text(json.dumps({
+                    "decision_session":"2026-11-23",
+                    "close_eur":{"KO":85.,"JNJ":250.,"ABBV":260.,"WELL":200.},
+                    "ticker_price_dates":{k:"2026-11-23" for k in
+                        ("KO","JNJ","ABBV","WELL")}}))
+                (out/"latest_status.json").write_text(
+                    json.dumps({"decision_session":"2026-11-23"}))
+                weekly=pa.run(dt.datetime(2026,11,24,20,0,tzinfo=UTC))
+                self.assertGreaterEqual(weekly["new_orders"],2)
+                after=json.loads((out/"state.json").read_text())
+                self.assertIn("ABBV",after["holdings"])
+                self.assertIn("WELL",after["holdings"])
+                self.assertGreaterEqual(len(after["holdings"]["KO"]["lots"]),2)
+                self.assertEqual(after["holdings"]["KO"]["lots"][0]["sale_eligible_date"],
+                                 "2026-12-15")
+                self.assertTrue(all(lot["sale_eligible_date"]>="2026-12-15"
+                                    for p in after["holdings"].values()
+                                    for lot in p["lots"]))
+                pa.validate_state(after)
 
 
 if __name__=="__main__":unittest.main()
