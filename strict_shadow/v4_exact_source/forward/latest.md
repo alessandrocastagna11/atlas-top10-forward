@@ -12,7 +12,7 @@
 **Candidati segnalati (NON ORDINI):** nessuno; verifica: n/d
 **Segnale originale pubblicato:** in attesa; esito: n/d
 **Contabilità paper:** FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY — prezzi degli ordini APPROSSIMATI; nessun ordine reale.
-**Ultimo aggiornamento portafoglio:** 2026-11-11T02:14:43.543004+00:00; fonte ultimo prezzo 2026-11-09.
+**Ultimo aggiornamento portafoglio:** 2026-11-11T02:44:42.467485+00:00; fonte ultimo prezzo 2026-11-09.
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
 **Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.
 

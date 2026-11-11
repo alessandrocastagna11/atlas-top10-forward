@@ -1,7 +1,7 @@
 {
   "capital_initial_eur": 10000.0,
   "cash_eur": 6411.57,
-  "checked_at_utc": "2026-11-11T02:14:31.028837+00:00",
+  "checked_at_utc": "2026-11-11T02:44:27.076958+00:00",
   "data_universe": "AS_RECORDED_ACWI_ETF_HOLDING_PROXY_2026",
   "engine": "FROZEN_ATLAS_V4_CONFIDENCE70",
   "estimated_slippage_eur": 3.5808,
@@ -32,7 +32,7 @@
   ],
   "invested_eur": 3580.8492,
   "last_order_execution_mode": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
-  "last_report_recorded_at_utc": "2026-11-11T02:14:43.543004+00:00",
+  "last_report_recorded_at_utc": "2026-11-11T02:44:42.467485+00:00",
   "last_valuation_session": "2026-11-09",
   "latest_available_roster_recorded_date": "2026-11-10",
   "min_hold_calendar_days": 35,
