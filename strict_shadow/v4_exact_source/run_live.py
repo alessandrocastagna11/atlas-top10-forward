@@ -310,9 +310,10 @@ def main(now=None):
         # Deterministically replace it with the next ranked eligible issuer.
         # Do not suppress missing benchmark/FX data or transient vendor errors.
         excluded_short_history=set()
+        excluded_quote_currency=set()
         frames={}
         for attempt in range(40):
-            vintages=latest_vintages(asof, excluded_symbols=excluded_short_history)
+            vintages=latest_vintages(asof, excluded_symbols=excluded_short_history|excluded_quote_currency)
             all_constituents=[row for v in vintages for row in v[3]+v[4]]
             symbols={str(x['symbol']).upper() for x in all_constituents}
             required=set(symbols)|set(SECTOR.values())|{'SPY','EURUSD=X'}
@@ -320,7 +321,29 @@ def main(now=None):
                        if str(x['currency']).upper()!='EUR'}
             fetched,failed=get_adjusted(required-set(frames),asof,max_workers=8)
             frames.update(fetched)
-            if not failed:break
+            # ACWI reports the listing denomination, but Yahoo may return a
+            # different one (e.g., London pence vs pounds, dual listings).
+            # A wrong denomination silently multiplies EUR prices by 100 or
+            # applies the wrong FX pair. Quarantine mismatched issuers and
+            # deterministically refill the 100-USA/200-nonUSA ranked cohort.
+            mismatched={}
+            for row in all_constituents:
+                ticker=str(row['symbol']).upper()
+                frame=frames.get(ticker)
+                if frame is None or 'quote_currency' not in frame:continue
+                quoted=frame['quote_currency'].dropna()
+                if quoted.empty:continue
+                actual=str(quoted.iloc[-1]).upper()
+                expected=str(row['currency']).upper()
+                if actual!=expected:mismatched[ticker]=(expected,actual)
+            if mismatched:
+                excluded_quote_currency.update(mismatched)
+                for ticker in mismatched:frames.pop(ticker,None)
+                status['excluded_wrong_quote_currency']={k:{'roster_currency':v[0],
+                    'vendor_currency':v[1]} for k,v in sorted(mismatched.items())}
+            if not failed and not mismatched:break
+            if mismatched and not failed:
+                continue
             removable={ticker for ticker,reason in failed.items()
                        if ticker in symbols and
                        ('insufficient history' in reason.lower() or
@@ -336,6 +359,7 @@ def main(now=None):
         else:
             raise ValueError('Too many short-history candidate replacements (>40)')
         status['short_history_excluded_from_daily_universe']=sorted(excluded_short_history)
+        status['wrong_currency_excluded_from_daily_universe']=sorted(excluded_quote_currency)
         status['daily_universe_replacement_rounds']=attempt
         # Each immutable recorded vintage becomes active only from its own
         # capture date. Replaying after downtime uses that same dated history.
@@ -360,9 +384,20 @@ def main(now=None):
             'close_eur':good_quotes,
             'ticker_price_dates':{key:date for key,date in
                 meta.get('ticker_price_dates',{}).items() if key in good_quotes},
+            'fx_currency_source_sessions':meta.get('fx_currency_source_sessions',{}),
+            'fx_units_per_eur_asof':meta.get('fx_units_per_eur_asof',{}),
+            'fx_rate_source':meta.get('fx_rate_source'),
+            'exchange_local_eod_enforced':meta.get('exchange_local_eod_enforced',False),
             'local_exchange_session_may_be_prior_date':True,
             'not_executable_intraday_quotes':True})
         status['data_universe']=meta.get('universe_kind')
+        status['fx_audit']={
+           'quote_currency_source':'RECORDED_VENDOR_LISTING_DENOMINATION',
+           'fx_rates':meta.get('fx_units_per_eur_asof',{}),
+           'fx_quote_sessions':meta.get('fx_currency_source_sessions',{}),
+           'independent_ecb_is_audit_only':True,
+           'retrospective_historical_pit_fx_claimed':False}
+        status['exchange_local_eod_enforced']=meta.get('exchange_local_eod_enforced',False)
         status['signal_engine_status']='SIGNAL_READY'
         status['signal_engine_error']=None
         evidence=preview(m,meta,asof,now,old.get('orders',[]))
