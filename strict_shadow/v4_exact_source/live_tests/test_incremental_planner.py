@@ -45,7 +45,8 @@ class PlannerTests(unittest.TestCase):
         row={x['ticker']:x for x in data['possible_candidates']}
         self.assertAlmostEqual(row['KO']['indicative_allocation_eur'],1200.,places=2)
         self.assertAlmostEqual(row['KO']['existing_position_value_eur'],1100.,places=2)
-        self.assertAlmostEqual(row['KO']['indicative_new_buy_eur'],100.,places=2)
+        self.assertAlmostEqual(row['KO']['increment_required_to_reach_target_eur'],100.,places=2)
+        self.assertEqual(row['KO']['indicative_new_buy_eur'],0.)
         self.assertFalse(row['KO']['meets_minimum_order_threshold'])
         self.assertTrue(row['ABBV']['meets_minimum_order_threshold'])
         self.assertEqual(data['possible_buys_meeting_threshold'],1)
