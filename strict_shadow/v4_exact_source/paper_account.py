@@ -394,6 +394,34 @@ def run(now=None):
                          decision,now,asof,source,"weekly_risk_reduction_35day_guarded")
                     residual=state["holdings"].get(ticker,{}).get("shares",0.)
                     reduction-=max(0.,previous_shares-residual)*px
+            # Weekly BUY challenger: the 35-day restriction applies ONLY to
+            # sells. Buy using an observed Monday decision, NEVER an intraday
+            # or retrospectively inferred weekly ranking.
+            candidates=current_proposal.get("possible_candidates",[])
+            portfolio_nav=state["cash_eur"]+sum(
+                p["shares"]*pricecache[t][0] for t,p in state["holdings"].items())
+            target_equity=portfolio_nav*sum(
+                max(0.,float(p["weight_pct"])) for p in candidates)/100.
+            owned_equity=sum(
+                p["shares"]*pricecache[t][0] for t,p in state["holdings"].items())
+            room=max(0.,target_equity-owned_equity)
+            threshold=max(500.,0.06*portfolio_nav)
+            for candidate in candidates:
+                ticker=candidate["ticker"]
+                if ticker not in state["holdings"] and len(state["holdings"])>=10:
+                    continue
+                price,asof,source=next_available_price(
+                    ticker,quote,current_proposal,state["holdings"],now.date())
+                if source.startswith("STALE"):
+                    continue
+                owned=state["holdings"].get(ticker,{}).get("shares",0.)*price
+                target=portfolio_nav*float(candidate["weight_pct"])/100.
+                addition=min(room,max(0.,target-owned))
+                if addition>=threshold and buy(
+                    state,ticker,addition,price,decision,now,asof,source):
+                    # Shares were paid entirely from settled cash, including
+                    # fees and slippage, never from synthetic credit.
+                    room=max(0.,room-addition)
         state["processed_decision_dates"].append(decision)
     # The last recorded quote is not necessarily the latest decision's quote.
     # The preserved first-day prices remain available for new-lot validation.
