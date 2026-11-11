@@ -8,6 +8,7 @@ import datetime as dt,math
 import numpy as np,pandas as pd
 from dataclasses import replace
 from live_model import v1,v2,inc,INITIAL
+from paper_account import RESERVE as PAPER_CASH_RESERVE
 
 def proposal(m,meta,asof,positions=None,nav_eur=None):
     """Original target builder with *incremental* orders against real PAPER holdings.
@@ -40,6 +41,18 @@ def proposal(m,meta,asof,positions=None,nav_eur=None):
     portfolio_value=float(nav_eur) if nav_eur is not None else float(INITIAL)
     if not math.isfinite(portfolio_value) or portfolio_value<=0:raise ValueError('Invalid portfolio NAV')
     threshold=max(float(cfg.minimum_trade_eur),float(cfg.rebalance_band_weight)*portfolio_value)
+    existing_value=0.0
+    close_row=m.raw.close_eur.loc[date]
+    for ticker,pos in positions.items():
+        price=float(close_row.get(ticker,float('nan')))
+        if not math.isfinite(price) or price<=0:
+            raise ValueError('Missing owned holding valuation: '+str(ticker))
+        existing_value+=float(pos.shares)*price
+    # No phantom cash and no exposure above the original strategy target.
+    target_total=portfolio_value*float(targets.sum())
+    exposure_room=max(0.0,target_total-existing_value)
+    cash_room=max(0.0,portfolio_value-existing_value-PAPER_CASH_RESERVE)
+    remaining=min(exposure_room,cash_room)
     indicative=[]
     for ticker,weight in targets.sort_values(ascending=False).items():
         weight=float(weight)
@@ -48,12 +61,16 @@ def proposal(m,meta,asof,positions=None,nav_eur=None):
         close=float(m.raw.close_eur.at[date,ticker])
         if not math.isfinite(close) or close<=0:continue
         owned=close*float(positions[ticker].shares) if ticker in positions else 0.0
-        addition=max(0.0,nominal-owned)
-        qualifies=addition>=threshold-1e-8
+        desired_addition=max(0.0,nominal-owned)
+        feasible_addition=min(desired_addition,remaining)
+        qualifies=feasible_addition>=threshold-1e-8
+        addition=feasible_addition if qualifies else 0.0
+        if qualifies:remaining=max(0.0,remaining-addition)
         indicative.append({
             "market_symbol":market_ticker,"ticker":ticker,"weight_pct":round(weight*100,5),
             "indicative_allocation_eur":round(nominal,2),
             "existing_position_value_eur":round(owned,2),
+            "increment_required_to_reach_target_eur":round(desired_addition,2),
             "indicative_new_buy_eur":round(addition,2),
             "reference_previous_close_eur":round(close,8),
             "indicative_shares_at_previous_close":round(nominal/close,8),
@@ -69,6 +86,11 @@ def proposal(m,meta,asof,positions=None,nav_eur=None):
        "execution_price_is_not_yesterdays_close":True,
        "capital_eur":round(portfolio_value,4),
        "existing_position_count":len(positions),
+       "existing_equity_value_eur":round(existing_value,4),
+       "target_total_equity_value_eur":round(target_total,4),
+       "exposure_room_before_buys_eur":round(exposure_room,4),
+       "cash_room_before_buys_eur":round(cash_room,4),
+       "unused_budget_after_planned_buys_eur":round(remaining,4),
        "selection_considers_existing_lots":True,
        "proposal_budget_is_incremental":True,
        "engine_source":"frozen RegionSlotAtlas chooser and original volatility constrained target builder",
