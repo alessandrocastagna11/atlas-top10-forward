@@ -41,13 +41,14 @@ INITIAL=10000.0
 START_PAPER=pd.Timestamp('2026-11-10') # no retroactive paper fills
 
 
-def latest_vintages(asof):
+def latest_vintages(asof, excluded_symbols=None):
     """Only cohorts actually recorded by this decision date; no backdating.
 
     From the first validated 100-USA/200-RoW market-cap observation onward,
     switch the candidate ordering to issuer-cap within the ACWI candidate pool.
     This is NOT the unrestricted historically certified Top200-by-market-cap.
     """
+    excluded={str(x).upper() for x in (excluded_symbols or ())}
     folder=LIVE/'dataset'/'universe'/'snapshots'
     byday={}
     for source in folder.glob('*/source.json'):
@@ -60,8 +61,8 @@ def latest_vintages(asof):
             if len(df)!=500:continue
             rows=[r for r in df.to_dict('records') if pd.notna(r['symbol']) and str(r['symbol']).strip()]
             if len(rows)<450:continue
-            u=[r for r in rows if r['country']=='United States'][:100]
-            g=[r for r in rows if r['country']!='United States'][:200]
+            u=[r for r in rows if r['country']=='United States' and str(r['symbol']).upper() not in excluded][:100]
+            g=[r for r in rows if r['country']!='United States' and str(r['symbol']).upper() not in excluded][:200]
             if len(u)!=100 or len(g)!=200:continue
             h=hashlib.sha256((source.parent/'global500.csv').read_bytes()).hexdigest()
             byday[recorded]=(recorded,observed,h,u,g)
@@ -86,8 +87,8 @@ def latest_vintages(asof):
             df['market_cap_usd']=pd.to_numeric(df['market_cap_usd'],errors='coerce')
             if df.market_cap_usd.isna().any() or not (df.market_cap_usd>0).all():continue
             ordered=df.sort_values('market_cap_usd',ascending=False).to_dict('records')
-            u=[r for r in ordered if r['country']=='United States'][:100]
-            g=[r for r in ordered if r['country']!='United States'][:200]
+            u=[r for r in ordered if r['country']=='United States' and str(r['symbol']).upper() not in excluded][:100]
+            g=[r for r in ordered if r['country']!='United States' and str(r['symbol']).upper() not in excluded][:200]
             if len(u)!=100 or len(g)!=200:continue
             h=hashlib.sha256(datafile.read_bytes()).hexdigest()
             old=byday.get(recorded)
@@ -255,7 +256,7 @@ def build_model(snapshot,asof,frames):
     fx_prev={c:series.shift(1) for c,series in fx.items()}
     # Pre-close data: model is computed only after complete US close.
     close_usd={};close_eur={};open_eur={};local_close={};vol={};div={}
-    execution_close_eur={};execution_open_eur={}
+    execution_close_eur={};execution_open_eur={};local_price_dates={}
     for symbol in symbols_us+symbols_row:
         a=frames[symbol].reindex(index)
         # Different exchanges have different holidays. Carry the LAST known
@@ -267,6 +268,8 @@ def build_model(snapshot,asof,frames):
         usd_close=eur_close*fx['USD']
         eur_open=a.adj_open/fx_prev[currency[symbol]]
         key=symbol if symbol in symbols_us else 'G::'+symbol
+        known=a.raw_close.loc[:pd.Timestamp(asof)].dropna()
+        if not known.empty:local_price_dates[key]=str(known.index[-1].date())
         # Signal prices use dividend-adjusted total-return history.
         # PAPER executions and cash-dividend accounting MUST instead use
         # actual split-adjusted exchange prices. Combining adjusted close
@@ -441,6 +444,7 @@ def build_model(snapshot,asof,frames):
         str(signal_start.date()))
     return m,{'roster_recorded_date':str(last),'roster_source_asof':str(observed),'roster_sha256':vintage_hash,
                'universe_kind':latest_kind,
+               'ticker_price_dates':local_price_dates,
                'ticker_to_market_symbol':{x:x for x in symbols_us}|{'G::'+x:x for x in symbols_row},
                'active_roster_names':300,'known_historical_symbols':len(cols),
                'dated_vintages_applied':len(snapshots),
