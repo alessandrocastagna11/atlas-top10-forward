@@ -88,6 +88,9 @@ def write_report(out_dir,status,portfolio,orders):
     lines=[
         '# Atlas V4 Confidence70 — paper originale, vincolo 35 giorni',
         '',f"**Stato:** `{status_text}` — **Validità della valutazione:** `{recency}`",
+        '',f"**Motore segnali:** {status.get('signal_engine_status','NON_VERIFICATO')}; errore: {status.get('signal_engine_error') or 'nessuno'}",
+        f"**Capitalizzazione osservata:** {status.get('universe_observed_capture_day') or 'non disponibile'}; copertura USA/RoW: {status.get('universe_observed_marketcap_usa_count','n/d')}/{status.get('universe_observed_marketcap_nonusa_count','n/d')}; NON PIT storico",
+        f"**Titoli sostituiti per storico insufficiente:** {', '.join(status.get('short_history_excluded_from_daily_universe',[])) or 'nessuno'}",
         '',f"**Ultima sessione decisionale:** {status.get('decision_session') or 'non disponibile'}",
         f"**Ultima sessione valorizzata:** {asof or 'non ancora avviata'}",
         f"**Dati mercato / universo:** {source.get('universe_kind') or 'in attesa'}; fotografia utilizzata al {source.get('roster_recorded_date') or 'n/d'}",
