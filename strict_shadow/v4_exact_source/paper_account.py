@@ -91,6 +91,47 @@ def validate_state(state):
     if len(holdings)>10:raise ValueError("More than ten core positions")
     ids=[o["order_id"] for o in orders]
     if len(ids)!=len(set(ids)):raise ValueError("Duplicate order ID")
+    # Conservation audit: forward PAPER has no cash flows except recorded
+    # buys/sells yet. Every share must originate from a recorded purchase;
+    # every EUR of cash must reconcile with executed notional, fees and tax.
+    # When interest/dividend funding is introduced it must be booked as
+    # explicit ledger cash-flow events, not silently added to state["cash_eur"].
+    expected_cash=float(state.get("initial_cash_eur",INITIAL))
+    expected_shares={}
+    expected_fees=expected_slippage=expected_tax=0.0
+    for order in orders:
+        action=order.get("action")
+        if action not in ("BUY","SELL"):raise ValueError("Unknown accounting action")
+        ticker=str(order["ticker"])
+        shares=positive(order["shares"],"ledger shares")
+        execution=positive(order["execution_price_eur"],"ledger execution price")
+        reference=positive(order["reference_price_eur"],"ledger reference price")
+        fee=float(order["fee_eur"])
+        tax=float(order.get("capital_gains_tax_eur",0.0))
+        if not all(math.isfinite(v) and v>=0 for v in (fee,tax)):
+            raise ValueError("Invalid accounting charge")
+        if action=="BUY" and tax>1e-8:raise ValueError("Purchase charged capital gains tax")
+        expected_fees+=fee
+        expected_tax+=tax
+        expected_slippage+=shares*abs(execution-reference)
+        if action=="BUY":
+            expected_cash-=shares*execution+fee
+            expected_shares[ticker]=expected_shares.get(ticker,0.0)+shares
+        else:
+            expected_cash+=shares*execution-fee-tax
+            expected_shares[ticker]=expected_shares.get(ticker,0.0)-shares
+    tolerance=max(1e-5,1e-8*float(state.get("initial_cash_eur",INITIAL)))
+    if abs(expected_cash-cash)>tolerance:
+        raise ValueError(f"Cash creation/loss: recorded={cash:.6f}, ledger={expected_cash:.6f}")
+    for ticker in set(expected_shares)|set(holdings):
+        actual=float(holdings.get(ticker,{}).get("shares",0.0))
+        if abs(expected_shares.get(ticker,0.0)-actual)>max(1e-8,1e-7*abs(actual)):
+            raise ValueError("Unbacked shares / share conservation: "+ticker)
+    for field,expected in (("fees_eur_total",expected_fees),
+                           ("estimated_slippage_eur",expected_slippage),
+                           ("tax_eur_total",expected_tax)):
+        if abs(float(state.get(field,0.0))-expected)>tolerance:
+            raise ValueError("Non-reconciled accounting total: "+field)
 
 
 def buy(state,ticker,budget,reference,decision,now,price_date,price_source):
