@@ -1,127 +1,127 @@
 {
   "capital_eur": 10000.0,
   "computed_from_last_complete_close": true,
-  "decision_session": "2026-11-09",
+  "decision_session": "2026-11-10",
   "engine_source": "frozen RegionSlotAtlas chooser and original volatility constrained target builder",
   "execution_price_is_not_yesterdays_close": true,
   "min_order_eur": 600.0,
   "note": "Final buys require actual next-session open quotes and full original simulator execution.",
-  "possible_buys_meeting_threshold": 4,
+  "possible_buys_meeting_threshold": 5,
   "possible_candidates": [
     {
-      "indicative_allocation_eur": 1097.27,
-      "indicative_shares_at_previous_close": 12.73729946,
+      "indicative_allocation_eur": 1204.39,
+      "indicative_shares_at_previous_close": 13.94720061,
       "market_symbol": "KO",
       "meets_minimum_order_threshold": true,
       "proposed_action": "POTENTIAL_BUY_ONLY_NOT_ORDER",
-      "reference_previous_close_eur": 86.14659501,
+      "reference_previous_close_eur": 86.35359871,
       "ticker": "KO",
       "trade_threshold_eur": 600.0,
-      "weight_pct": 10.97275
+      "weight_pct": 12.04391
     },
     {
-      "indicative_allocation_eur": 902.0,
-      "indicative_shares_at_previous_close": 3.56416191,
+      "indicative_allocation_eur": 984.57,
+      "indicative_shares_at_previous_close": 3.93522581,
       "market_symbol": "JNJ",
       "meets_minimum_order_threshold": true,
       "proposed_action": "POTENTIAL_BUY_ONLY_NOT_ORDER",
-      "reference_previous_close_eur": 253.07523655,
+      "reference_previous_close_eur": 250.19463859,
       "ticker": "JNJ",
       "trade_threshold_eur": 600.0,
-      "weight_pct": 9.02001
+      "weight_pct": 9.84572
     },
     {
-      "indicative_allocation_eur": 895.43,
-      "indicative_shares_at_previous_close": 2.74634378,
-      "market_symbol": "CB",
-      "meets_minimum_order_threshold": true,
-      "proposed_action": "POTENTIAL_BUY_ONLY_NOT_ORDER",
-      "reference_previous_close_eur": 326.04375098,
-      "ticker": "CB",
-      "trade_threshold_eur": 600.0,
-      "weight_pct": 8.95428
-    },
-    {
-      "indicative_allocation_eur": 693.73,
-      "indicative_shares_at_previous_close": 5.19846723,
+      "indicative_allocation_eur": 762.24,
+      "indicative_shares_at_previous_close": 5.77792192,
       "market_symbol": "MRK",
       "meets_minimum_order_threshold": true,
       "proposed_action": "POTENTIAL_BUY_ONLY_NOT_ORDER",
-      "reference_previous_close_eur": 133.44962161,
+      "reference_previous_close_eur": 131.92291889,
       "ticker": "MRK",
       "trade_threshold_eur": 600.0,
-      "weight_pct": 6.93733
+      "weight_pct": 7.6224
     },
     {
-      "indicative_allocation_eur": 558.75,
-      "indicative_shares_at_previous_close": 2.12361415,
+      "indicative_allocation_eur": 716.7,
+      "indicative_shares_at_previous_close": 2.73679403,
       "market_symbol": "ABBV",
-      "meets_minimum_order_threshold": false,
+      "meets_minimum_order_threshold": true,
       "proposed_action": "POTENTIAL_BUY_ONLY_NOT_ORDER",
-      "reference_previous_close_eur": 263.11356437,
+      "reference_previous_close_eur": 261.87658066,
       "ticker": "ABBV",
       "trade_threshold_eur": 600.0,
-      "weight_pct": 5.58752
+      "weight_pct": 7.16702
     },
     {
-      "indicative_allocation_eur": 550.04,
-      "indicative_shares_at_previous_close": 3.17495991,
-      "market_symbol": "PM",
-      "meets_minimum_order_threshold": false,
+      "indicative_allocation_eur": 621.32,
+      "indicative_shares_at_previous_close": 2.8154515,
+      "market_symbol": "WELL",
+      "meets_minimum_order_threshold": true,
       "proposed_action": "POTENTIAL_BUY_ONLY_NOT_ORDER",
-      "reference_previous_close_eur": 173.24409267,
-      "ticker": "PM",
+      "reference_previous_close_eur": 220.68240394,
+      "ticker": "WELL",
       "trade_threshold_eur": 600.0,
-      "weight_pct": 5.50043
+      "weight_pct": 6.21321
     },
     {
-      "indicative_allocation_eur": 544.46,
-      "indicative_shares_at_previous_close": 1.83420937,
+      "indicative_allocation_eur": 596.85,
+      "indicative_shares_at_previous_close": 2.05237459,
       "market_symbol": "PANW",
       "meets_minimum_order_threshold": false,
       "proposed_action": "POTENTIAL_BUY_ONLY_NOT_ORDER",
-      "reference_previous_close_eur": 296.83482711,
+      "reference_previous_close_eur": 290.80959804,
       "ticker": "PANW",
       "trade_threshold_eur": 600.0,
-      "weight_pct": 5.44457
+      "weight_pct": 5.9685
     },
     {
-      "indicative_allocation_eur": 475.67,
-      "indicative_shares_at_previous_close": 2.14370575,
-      "market_symbol": "WELL",
+      "indicative_allocation_eur": 553.44,
+      "indicative_shares_at_previous_close": 0.90322206,
+      "market_symbol": "DE",
       "meets_minimum_order_threshold": false,
       "proposed_action": "POTENTIAL_BUY_ONLY_NOT_ORDER",
-      "reference_previous_close_eur": 221.89275302,
-      "ticker": "WELL",
+      "reference_previous_close_eur": 612.73540028,
+      "ticker": "DE",
       "trade_threshold_eur": 600.0,
-      "weight_pct": 4.75673
+      "weight_pct": 5.53436
     },
     {
-      "indicative_allocation_eur": 403.29,
-      "indicative_shares_at_previous_close": 1.96672596,
+      "indicative_allocation_eur": 441.98,
+      "indicative_shares_at_previous_close": 2.19708583,
       "market_symbol": "CRWD",
       "meets_minimum_order_threshold": false,
       "proposed_action": "POTENTIAL_BUY_ONLY_NOT_ORDER",
-      "reference_previous_close_eur": 205.05455686,
+      "reference_previous_close_eur": 201.16796238,
       "ticker": "CRWD",
       "trade_threshold_eur": 600.0,
-      "weight_pct": 4.03286
+      "weight_pct": 4.41983
     },
     {
-      "indicative_allocation_eur": 387.78,
-      "indicative_shares_at_previous_close": 5.70204606,
-      "market_symbol": "MO",
+      "indicative_allocation_eur": 266.9,
+      "indicative_shares_at_previous_close": 1.60258317,
+      "market_symbol": "ABNB",
       "meets_minimum_order_threshold": false,
       "proposed_action": "POTENTIAL_BUY_ONLY_NOT_ORDER",
-      "reference_previous_close_eur": 68.00763554,
-      "ticker": "MO",
+      "reference_previous_close_eur": 166.54098094,
+      "ticker": "ABNB",
       "trade_threshold_eur": 600.0,
-      "weight_pct": 3.87783
+      "weight_pct": 2.66896
+    },
+    {
+      "indicative_allocation_eur": 218.06,
+      "indicative_shares_at_previous_close": 0.62221897,
+      "market_symbol": "ADI",
+      "meets_minimum_order_threshold": false,
+      "proposed_action": "POTENTIAL_BUY_ONLY_NOT_ORDER",
+      "reference_previous_close_eur": 350.45782723,
+      "ticker": "ADI",
+      "trade_threshold_eur": 600.0,
+      "weight_pct": 2.18062
     }
   ],
   "real_paper_orders_created": 0,
-  "regime_multiplier": 0.6508431,
+  "regime_multiplier": 0.6366453,
   "source_original_engine": true,
   "status": "INDICATIVE_ONLY_NO_ORDER_NO_FILL",
-  "unscaled_risky_volatility": 0.1637181
+  "unscaled_risky_volatility": 0.1457399
 }
