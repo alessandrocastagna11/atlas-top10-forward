@@ -1,0 +1,41 @@
+name: Atlas V4 — exchange/FX data QA (NO PAPER ORDERS)
+on:
+  workflow_dispatch:
+  push:
+    branches: [atlas-v4-confidence70-live-paper]
+    paths:
+      - '.github/workflows/atlas-v4-data-quality-audit.yml'
+permissions:
+  contents: read
+jobs:
+  offline_exchange_fx_quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: atlas-v4-confidence70-live-paper
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: strict_shadow/v4_exact_source/requirements-live.txt
+      - run: pip install -r strict_shadow/v4_exact_source/requirements-live.txt
+      - name: Python syntax/static compilation (no external provider needed)
+        run: |
+          python -m compileall -q strict_shadow/live_v4/market_sessions.py strict_shadow/live_v4/provider.py strict_shadow/live_v4/dataset_daily.py strict_shadow/v4_exact_source/live_model.py strict_shadow/v4_exact_source/run_live.py
+      - name: Run all original guard regression tests plus global venue and FX tests
+        run: python -m unittest discover -s strict_shadow/v4_exact_source/live_tests -p 'test_*.py' -v
+      - name: Assert production trading invariants unchanged
+        run: |
+          python - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0,str(Path('strict_shadow/v4_exact_source').resolve()))
+          import paper_account
+          assert paper_account.WEEKLY_BUYS_ENABLED is False
+          assert paper_account.MIN_HOLD_DAYS == 35
+          assert paper_account.TAX_RATE == 0.26
+          assert paper_account.FEE == 1.0
+          print('PASS original five-week buys, strict 35-day lock, EUR1 fee, 26% tax')
+          PY
