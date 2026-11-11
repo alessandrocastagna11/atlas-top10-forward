@@ -398,10 +398,18 @@ def run(now=None):
             # sells. Buy using an observed Monday decision, NEVER an intraday
             # or retrospectively inferred weekly ranking.
             candidates=current_proposal.get("possible_candidates",[])
+            # Backwards-compatible frozen proposals may contain target EUR
+            # without explicit weight_pct. This is a target weight, NOT a
+            # second cash grant or an unbacked order.
+            def target_weight_pct(candidate):
+                if "weight_pct" in candidate:
+                    return float(candidate["weight_pct"])
+                original_cap=float(current_proposal.get("capital_eur",INITIAL))
+                return 100.*float(candidate["indicative_allocation_eur"])/original_cap
             portfolio_nav=state["cash_eur"]+sum(
                 p["shares"]*pricecache[t][0] for t,p in state["holdings"].items())
             target_equity=portfolio_nav*sum(
-                max(0.,float(p["weight_pct"])) for p in candidates)/100.
+                max(0.,target_weight_pct(p)) for p in candidates)/100.
             owned_equity=sum(
                 p["shares"]*pricecache[t][0] for t,p in state["holdings"].items())
             room=max(0.,target_equity-owned_equity)
@@ -415,7 +423,7 @@ def run(now=None):
                 if source.startswith("STALE"):
                     continue
                 owned=state["holdings"].get(ticker,{}).get("shares",0.)*price
-                target=portfolio_nav*float(candidate["weight_pct"])/100.
+                target=portfolio_nav*target_weight_pct(candidate)/100.
                 addition=min(room,max(0.,target-owned))
                 if addition>=threshold and buy(
                     state,ticker,addition,price,decision,now,asof,source):
