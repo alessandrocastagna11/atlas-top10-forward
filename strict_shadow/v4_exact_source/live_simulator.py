@@ -35,6 +35,7 @@ def simulate_tax_aware(
     name_selector: Optional[Callable] = None,
     target_weight_builder: Optional[Callable] = None,
     liquidate_on_final_session: bool = False,
+    weekly_core_entries: bool = False,
 ) -> TaxAwareResult:
     if not 0.0 <= cash_reserve_fraction < 1.0:
         raise ValueError("cash_reserve_fraction must be in [0, 1)")
@@ -415,6 +416,11 @@ def simulate_tax_aware(
             )
             if scheduled:
                 decision_type = "full"
+            elif weekly_core_entries and preview_regime > 0.0:
+                # Challenger: allow NEW purchases between five-week rotations
+                # without increasing risk above the current portfolio target.
+                # The original sell protection and FIFO remain unchanged.
+                decision_type = "weekly_entry"
             elif weekly_risk_overlay is not None and any(t != v1.BENCHMARK for t in positions) and (overlay_check or emergency):
                 decision_type = "core_risk_only"
             elif sleeve_needed:
@@ -428,7 +434,7 @@ def simulate_tax_aware(
             eligible_row = (eligible.loc[decision_date] & membership.loc[decision_date]).fillna(False)
             score_row = score.loc[decision_date]
             rank_row = rank.loc[decision_date]
-            if decision_type == "full":
+            if decision_type in {"full", "weekly_entry"}:
                 selector = name_selector or v2.choose_names
                 names = selector(decision_date, score_row, rank_row, eligible_row, core_positions, cfg)
             else:
@@ -534,7 +540,7 @@ def simulate_tax_aware(
             )
             target_values = {ticker: nav_open * float(weight) for ticker, weight in all_targets.items()}
 
-            if decision_type in {"full", "core_risk_only"}:
+            if decision_type in {"full", "core_risk_only", "weekly_entry"}:
                 for ticker in list(core_positions):
                     price = open_values.at[date, ticker]
                     if pd.isna(price):
@@ -543,7 +549,10 @@ def simulate_tax_aware(
                     target_value = target_values.get(ticker, 0.0)
                     reduction = current_value - target_value
                     full_exit = ticker not in targets
-                    if full_exit or reduction >= core_threshold:
+                    if ((decision_type == "full" and (full_exit or reduction >= core_threshold))
+                        or (decision_type == "core_risk_only" and (full_exit or reduction >= core_threshold))
+                        or (decision_type == "weekly_entry" and emergency
+                            and (full_exit or reduction >= core_threshold))):
                         sell(
                             date, decision_date, ticker, float(price),
                             current_value if full_exit else reduction,
@@ -568,8 +577,14 @@ def simulate_tax_aware(
                             "bear_sleeve_exit" if target_value <= 0.0 else "bear_sleeve_reduction",
                         )
 
-            if decision_type == "full":
+            if decision_type in {"full", "weekly_entry"}:
                 nav_after_sales = nav_at(date, open_values)
+                # Protected and overweight holdings may consume most of the
+                # risk budget; new weekly orders cannot exceed what's left.
+                # The original 5-week full rotation path is unchanged.
+                room = max(0.0, nav_after_sales * float(targets.sum())
+                           - sum(position_value(date, ticker, open_values)
+                                 for ticker in positions if ticker != v1.BENCHMARK))
                 for ticker, weight in targets.sort_values(ascending=False).items():
                     active_core_count = sum(1 for key in positions if key != v1.BENCHMARK)
                     if ticker not in positions and active_core_count >= cfg.max_positions:
@@ -580,8 +595,15 @@ def simulate_tax_aware(
                     current_value = position_value(date, ticker, open_values)
                     desired_value = nav_after_sales * float(weight)
                     addition = desired_value - current_value
+                    if decision_type == "weekly_entry":
+                        addition = min(addition,room)
                     if addition >= core_threshold:
-                        buy(date, decision_date, ticker, float(price), addition, "target_rebalance")
+                        spent_before=cash
+                        buy(date, decision_date, ticker, float(price), addition,
+                            "weekly_entry_from_cash" if decision_type == "weekly_entry"
+                            else "target_rebalance")
+                        if decision_type == "weekly_entry":
+                            room=max(0.0,room-(spent_before-cash))
 
             if bear_floor is not None and sleeve_weight > 0.0:
                 price = open_values.at[date, v1.BENCHMARK]
