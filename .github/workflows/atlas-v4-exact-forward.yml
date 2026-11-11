@@ -1,19 +1,8 @@
 name: Atlas V4 ORIGINAL Confidence70 — forward PAPER
 on:
   workflow_dispatch:
-  push:
-    branches: [atlas-v4-confidence70-live-paper]
-    paths:
-      - 'strict_shadow/v4_exact_source/live_model.py'
-      - 'strict_shadow/v4_exact_source/marketcap_pit.py'
-      - 'strict_shadow/v4_exact_source/model_proposal.py'
-      - 'strict_shadow/v4_exact_source/run_live.py'
-      - 'strict_shadow/v4_exact_source/frozen_region.py'
-      - 'strict_shadow/v4_exact_source/live_simulator.py'
-      - 'strict_shadow/v4_exact_source/paper_reporting.py'
-      - 'strict_shadow/v4_exact_source/live_tests/**'
-      - 'strict_shadow/v4_exact_source/requirements-live.txt'
-      - '.github/workflows/atlas-v4-exact-forward.yml'
+  # Avoid a flood of temporary CI failures from intermediate code pushes.
+  # Scheduled original-PAPER updates and explicit manual runs remain enabled.
   schedule:
     # NY 17:30 EOD cutoff. Aim before next Tokyo equity session.
     - cron: '35 22 * * *'
