@@ -113,6 +113,37 @@ class GlobalSessionAndFXTests(unittest.TestCase):
         self.assertAlmostEqual(rate,4.125)
         self.assertEqual(meta['fx_session'],'2026-11-13')
 
+    def test_daily_gbp_units_and_legacy_pence_migrated_exactly_once(self):
+        import csv
+        day=dt.date(2026,11,10)
+        b=provider.Bar(day,100.,120.,'GBP','AZN.L','YAHOO_UK',.01,50.)
+        class Stub:
+            def history(self,symbol,start,end):return {day:b}
+        with tempfile.TemporaryDirectory() as folder:
+            path=Path(folder)
+            file=path/'prices'/daily.symbol_filename('AZN.L')
+            file.parent.mkdir(parents=True,exist_ok=True)
+            old_fields=[x for x in daily.FIELDS if x!='price_unit_is_normalized']
+            with file.open('w',newline='',encoding='utf8') as out:
+                writer=csv.DictWriter(out,fieldnames=old_fields)
+                writer.writeheader()
+                writer.writerow({'date':day.isoformat(),'symbol':'AZN.L','open':'100',
+                    'close':'120','volume':'50','currency':'GBP','unit_scale':'.01',
+                    'source_sha256':'YAHOO_UK','first_seen_at_utc':'2026-11-10T23:00:00+00:00',
+                    'last_verified_at_utc':'2026-11-10T23:00:00+00:00'})
+            with mock.patch.object(daily,'DATA',path),mock.patch.object(
+                daily,'is_final_bar',return_value=True):
+                report=daily.update_history(Stub(),'AZN.L','prices',day,day)
+                self.assertEqual(report['normalized_legacy_rows'],1)
+                q=daily.rows_load(file)[0]
+                self.assertEqual(q['price_unit_is_normalized'],'true')
+                self.assertEqual(q['currency'],'GBP')
+                self.assertAlmostEqual(float(q['open']),1.)
+                self.assertAlmostEqual(float(q['close']),1.2)
+                again=daily.update_history(Stub(),'AZN.L','prices',day,day)
+                self.assertEqual(again['normalized_legacy_rows'],0)
+                self.assertAlmostEqual(float(daily.rows_load(file)[0]['close']),1.2)
+
     def test_intraday_local_candle_not_saved_as_eod_and_old_partial_removed(self):
         d0=dt.date(2026,11,10);d1=dt.date(2026,11,11)
         rows={d:provider.Bar(d,20.,21.,'JPY','7203.T','HASH',1.,1000.)
