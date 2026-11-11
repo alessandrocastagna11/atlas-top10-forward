@@ -138,10 +138,13 @@ def buy(state,ticker,budget,reference,decision,now,price_date,price_source):
     if ticker in state["holdings"]:
         # Additional independent FIFO lot is permitted, but stays locked 35d.
         pass
-    if budget<max(500,0.06*float(state.get("last_nav_eur",INITIAL)))-1e-8:return False
+    threshold=max(500.,0.06*float(state.get("last_nav_eur",INITIAL)))
+    if budget<threshold-1e-8:return False
     cash=state["cash_eur"]
     budget=min(float(budget),max(0.,cash-RESERVE))
-    if budget<=FEE+1:return False
+    # Never execute a sub-minimum order after remaining cash/reserve limits
+    # have clipped an initially eligible request.
+    if budget<threshold-1e-8 or budget<=FEE+1:return False
     ref=positive(reference,"purchase ref")
     px=ref*(1.+SLIPPAGE_BPS/10_000)
     shares=(budget-FEE)/px
