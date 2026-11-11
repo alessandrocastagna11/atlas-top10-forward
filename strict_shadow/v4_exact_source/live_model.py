@@ -16,6 +16,10 @@ import pandas as pd
 from scipy import optimize
 HERE=Path(__file__).resolve().parent
 LIVE=HERE.parent/'live_v4'
+# Use a single exchange-session/quote-unit policy for research downloader and
+# original-engine market adapter; no strategy weights or decision rules change.
+if str(LIVE) not in sys.path:sys.path.insert(0,str(LIVE))
+from market_sessions import is_final_bar,normalize_currency
 CODE=HERE/'code';E=CODE/'engine'
 for directory in (str(E),str(CODE),str(HERE)):
     if directory not in sys.path:sys.path.insert(0,directory)
@@ -112,8 +116,9 @@ def latest_vintages(asof, excluded_symbols=None):
 
 
 def _quote_unit_scale(symbol, vendor_currency):
-    """Convert vendor GBp (pence) quotes to GBP, keeping GBP-denominated prices."""
-    return 0.01 if str(symbol).upper().endswith('.L') and str(vendor_currency) in ('GBp','GBX') else 1.0
+    """Vendor metadata decides quote units; GBp/GBX is 1/100 GBP."""
+    _,scale=normalize_currency(vendor_currency)
+    return scale
 
 
 def _cache_filename(symbol):
@@ -173,10 +178,19 @@ def _chart(symbol,end_day,refresh=True):
             frame=frame[~frame.index.duplicated(keep='last')].sort_index()
             # Yahoo returns many London Stock Exchange prices in GBp, while
             # the security roster and FX feed correctly specify GBP.
-            # Normalize *all* prices and dividends without changing returns.
-            unit=_quote_unit_scale(symbol,raw.get('meta',{}).get('currency',''))
+            # Vendor currency/quote unit is audited against the dated roster
+            # before any instrument is allowed into the 300-stock selection.
+            quote_ccy,unit=normalize_currency(raw.get('meta',{}).get('currency',''))
             if unit!=1.0:
                 frame[['adj_open','adj_close','raw_close','dividend']]*=unit
+            frame['quote_currency']=quote_ccy
+            frame['quote_unit_scale']=unit
+            # Prevent an incomplete local stock/FX daily bar entering the
+            # signal just because the US benchmark already closed.
+            observed_utc=dt.datetime.now(dt.timezone.utc)
+            complete=[is_final_bar(symbol,day.date(),observed_utc)
+                      for day in frame.index]
+            frame=frame.loc[complete]
             frame=frame.loc[:pd.Timestamp(end_day)].dropna(subset=['adj_open','adj_close'])
             frame=frame[(frame.adj_open>0)&(frame.adj_close>0)]
             if len(frame)<300:raise RuntimeError('few clean adjusted closes')
@@ -187,7 +201,9 @@ def _chart(symbol,end_day,refresh=True):
             time.sleep((attempt+1)*0.8)
     if existing is not None:
         old=existing.loc[:str(end_day)].sort_index()
-        if (end_day-old.index[-1].date()).days<=4:return old
+        now_utc=dt.datetime.now(dt.timezone.utc)
+        old=old.loc[[is_final_bar(symbol,day.date(),now_utc) for day in old.index]]
+        if not old.empty and (end_day-old.index[-1].date()).days<=4:return old
     raise RuntimeError(f'Yahoo adjusted chart unavailable: {symbol}: {last}')
 
 
@@ -206,8 +222,16 @@ def _fx(frames,code,index):
     if code=='EUR':return pd.Series(1.0,index=index)
     key='EUR'+code+'=X'
     if key not in frames:raise ValueError('Missing FX: '+key)
+    observations=frames[key]['adj_close'].loc[:index[-1]].dropna()
+    if observations.empty:raise ValueError('Missing settled FX close '+key)
+    # Five SPY sessions may be longer than five calendar days across holidays.
+    # Report the actual observation, refuse indefinitely carried exchange rates.
+    latest=observations.index[-1].date()
+    if (index[-1].date()-latest).days>7:
+        raise ValueError('Stale FX '+key+' last='+str(latest))
     vals=frames[key]['adj_close'].reindex(index).ffill(limit=5)
-    if vals.loc[index[-1]]<=0 or not np.isfinite(vals.loc[index[-1]]):raise ValueError('Stale FX '+key)
+    if vals.loc[index[-1]]<=0 or not np.isfinite(vals.loc[index[-1]]):
+        raise ValueError('Stale FX '+key)
     return vals
 
 
@@ -453,7 +477,22 @@ def build_model(snapshot,asof,frames):
         m.path_score.where(calibration_mask),
         m.features.close_eur.where(calibration_mask),
         str(signal_start.date()))
+    fx_source_dates={}
+    fx_rates_eur={}
+    for c in set(currency.values())|{'USD'}:
+        if c=='EUR':
+            fx_source_dates[c]='NATIVE_EUR'
+            fx_rates_eur[c]=1.0
+            continue
+        fx_symbol='EUR'+c+'=X'
+        observed_fx=frames[fx_symbol]['adj_close'].loc[:pd.Timestamp(asof)].dropna()
+        fx_source_dates[c]=str(observed_fx.index[-1].date())
+        fx_rates_eur[c]=round(float(fx[c].loc[pd.Timestamp(asof)]),10)
     return m,{'roster_recorded_date':str(last),'roster_source_asof':str(observed),'roster_sha256':vintage_hash,
+                'fx_currency_source_sessions':fx_source_dates,
+                'fx_units_per_eur_asof':fx_rates_eur,
+                'fx_rate_source':'YAHOO_DAILY_FX_COMPLETED_EOD_NOT_BROKER_CONVERSION',
+                'exchange_local_eod_enforced':True,
                'universe_kind':latest_kind,
                'ticker_price_dates':local_price_dates,
                'ticker_to_market_symbol':{x:x for x in symbols_us}|{'G::'+x:x for x in symbols_row},
