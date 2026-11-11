@@ -40,6 +40,23 @@ class GlobalSessionAndFXTests(unittest.TestCase):
         self.assertEqual(session.release_time_utc('2222.SR',dt.date(2026,11,15)),
                          at('2026-11-15T13:20:00Z'))
 
+    def test_preopen_and_eod_share_exactly_one_timezone_mapping(self):
+        from paper import earliest_open_utc
+        monday=dt.date(2026,11,16)
+        self.assertEqual(session.open_time_utc('AAPL',monday),
+                         at('2026-11-16T14:30:00Z'))
+        self.assertEqual(session.open_time_utc('7203.T',monday),
+                         at('2026-11-16T00:00:00Z'))
+        self.assertEqual(session.open_time_utc('AZN.L',monday),
+                         at('2026-11-16T08:00:00Z'))
+        self.assertEqual(session.open_time_utc('2222.SR',
+                                               dt.date(2026,11,15)),
+                         at('2026-11-15T07:00:00Z'))
+        self.assertEqual(earliest_open_utc(['AAPL','7203.T'],monday),
+                         session.open_time_utc('7203.T',monday))
+        with self.assertRaises(ValueError):
+            session.open_time_utc('ABC.ZZ',monday)
+
     def test_unknown_market_fails_closed_no_invented_calendar(self):
         with self.assertRaisesRegex(ValueError,'Unknown market'):
             session.release_time_utc('ABC.ZZ',dt.date(2026,11,11))
