@@ -4,15 +4,15 @@
 
 **Stato:** `PAPER_APPROX_LEDGER_ACTIVE` — **Validità della valutazione:** `PAPER_LAST_EOD_CLOSE_APPROXIMATE_FILLS_NOT_REAL_BROKER_ORDERS`
 
-**Ultima sessione decisionale:** 2026-11-09
+**Ultima sessione decisionale:** non disponibile
 **Ultima sessione valorizzata:** 2026-11-09
-**Dati mercato / universo:** ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP; fotografia utilizzata al 2026-11-09
-**Universo dinamico:** 4 fotografie cronologiche, ultima disponibile 2026-11-09; nuove società eleggibili SOLO dalla data registrata
-**Primo segnale / apertura successiva:** 2026-11-09 / 2026-11-10
-**Candidati segnalati (NON ORDINI):** PANW, CRWD, MRK, JNJ, KO, CB, PM, ABBV, WELL, MO; verifica: SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF
-**Segnale originale pubblicato:** SÌ; esito: SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF
+**Dati mercato / universo:** in attesa; fotografia utilizzata al n/d
+**Universo dinamico:** 5 fotografie cronologiche, ultima disponibile 2026-11-10; nuove società eleggibili SOLO dalla data registrata
+**Primo segnale / apertura successiva:** n/d / n/d
+**Candidati segnalati (NON ORDINI):** nessuno; verifica: n/d
+**Segnale originale pubblicato:** in attesa; esito: n/d
 **Contabilità paper:** FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY — prezzi degli ordini APPROSSIMATI; nessun ordine reale.
-**Ultimo aggiornamento portafoglio:** 2026-11-10T22:00:53.168062+00:00; fonte ultimo prezzo 2026-11-09.
+**Ultimo aggiornamento portafoglio:** 2026-11-11T02:14:43.543004+00:00; fonte ultimo prezzo 2026-11-09.
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
 **Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.
 
@@ -43,16 +43,7 @@
 
 | Titolo | Primo mercato utile | Stato del segnale | Prossima apertura locale prevista (UTC)* |
 |---|---|---|---|
-| ABBV | 2026-11-10 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-11T14:30:00+00:00 |
-| CB | 2026-11-10 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-11T14:30:00+00:00 |
-| CRWD | 2026-11-10 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-11T14:30:00+00:00 |
-| JNJ | 2026-11-10 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-11T14:30:00+00:00 |
-| KO | 2026-11-10 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-11T14:30:00+00:00 |
-| MO | 2026-11-10 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-11T14:30:00+00:00 |
-| MRK | 2026-11-10 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-11T14:30:00+00:00 |
-| PANW | 2026-11-10 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-11T14:30:00+00:00 |
-| PM | 2026-11-10 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-11T14:30:00+00:00 |
-| WELL | 2026-11-10 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-11T14:30:00+00:00 |
+| — Non ancora disponibile | — | — | — |
 
 *Orari indicativi: festività, sospensioni e quotazioni reali devono essere verificate dal provider. Il segnale non equivale a un acquisto; un mercato già aperto non autorizza esecuzioni retroattive.*
 

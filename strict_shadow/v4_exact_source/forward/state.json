@@ -9,6 +9,13 @@
       "net_liquidation_nav_eur": 9984.8383,
       "report_date": "2026-11-10",
       "source_close_session": "2026-11-09"
+    },
+    {
+      "approximate_fills": true,
+      "mark_to_market_nav_eur": 9992.4192,
+      "net_liquidation_nav_eur": 9984.8383,
+      "report_date": "2026-11-11",
+      "source_close_session": "2026-11-09"
     }
   ],
   "estimated_slippage_eur": 3.580849150848845,
