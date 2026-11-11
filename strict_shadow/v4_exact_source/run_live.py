@@ -293,7 +293,38 @@ def main(now=None):
         if not dates:raise ValueError('No completed benchmark history')
         asof=max(dates)
         if (candidate-asof).days>4:raise ValueError('Stale SPY benchmark')
-        vintages=latest_vintages(asof)
+        # Use the latest dated ranking, but never let one newly listed issuer
+        # without sufficient calibration history veto the entire 300-name model.
+        # Deterministically replace it with the next ranked eligible issuer.
+        # Do not suppress missing benchmark/FX data or transient vendor errors.
+        excluded_short_history=set()
+        frames={}
+        for attempt in range(40):
+            vintages=latest_vintages(asof, excluded_symbols=excluded_short_history)
+            all_constituents=[row for v in vintages for row in v[3]+v[4]]
+            symbols={str(x['symbol']).upper() for x in all_constituents}
+            required=set(symbols)|set(SECTOR.values())|{'SPY','EURUSD=X'}
+            required|={'EUR'+str(x['currency']).upper()+'=X' for x in all_constituents
+                       if str(x['currency']).upper()!='EUR'}
+            fetched,failed=get_adjusted(required-set(frames),asof,max_workers=8)
+            frames.update(fetched)
+            if not failed:break
+            removable={ticker for ticker,reason in failed.items()
+                       if ticker in symbols and
+                       ('insufficient history' in reason.lower() or
+                        'few clean adjusted closes' in reason.lower())}
+            other={ticker:reason for ticker,reason in failed.items()
+                   if ticker not in removable}
+            if other:
+                raise ValueError('Required market/FX data unavailable; no fake substitute: '
+                                 +str(sorted(other.items())[:10]))
+            if not removable-excluded_short_history:
+                raise ValueError('No progress while replacing short-history issuers: '+str(sorted(failed)))
+            excluded_short_history.update(removable)
+        else:
+            raise ValueError('Too many short-history candidate replacements (>40)')
+        status['short_history_excluded_from_daily_universe']=sorted(excluded_short_history)
+        status['daily_universe_replacement_rounds']=attempt
         # Each immutable recorded vintage becomes active only from its own
         # capture date. Replaying after downtime uses that same dated history.
         # A newly captured 2026 roster never changes yesterday's membership.
@@ -303,16 +334,6 @@ def main(now=None):
         status['latest_available_roster_recorded_date']=str(vintage[0])
         status['universe_policy']='DAILY_CAUSAL_AS_RECORDED_ROSTERS_WITH_GAP_REPLAY'
         status['historical_universe_vintages']=len(vintages)
-        all_constituents=[row for v in vintages for row in v[3]+v[4]]
-        symbols=[str(x['symbol']).upper() for x in all_constituents]
-        required=set(symbols)|set(SECTOR.values())|{'SPY','EURUSD=X'}
-        required|={'EUR'+str(x['currency']).upper()+'=X' for x in all_constituents if str(x['currency']).upper()!='EUR'}
-        frames,fail=get_adjusted(required,asof,max_workers=8)
-        # Every chosen 2026 constituent is required; silently dropping a leader
-        # would change H4 selection and misstate source equivalence.
-        if fail:
-            first=list(sorted(fail.items()))[:10]
-            raise ValueError(f'Adjusted dataset incomplete ({len(fail)}/{len(required)}): '+str(first))
         m,meta=build_model(vintages,asof,frames)
         status.update({'decision_session':str(asof),'source':meta})
         # Daily EUR mark-to-market quotes for the *persisted* PAPER ledger.
@@ -323,11 +344,15 @@ def main(now=None):
                      if pd.notna(value) and math.isfinite(float(value)) and float(value)>0}
         write_json(FORWARD/'latest_quotes.json',{
             'decision_session':str(asof),'recorded_at_utc':now.isoformat(),
-            'price_model':'RAW_UNADJUSTED_EUR_COMPLETED_US_EOD_WITH_LOCAL_FORWARD_FILL',
+            'price_model':'RAW_UNADJUSTED_EUR_LAST_COMPLETED_PER_EXCHANGE_CLOSE',
             'close_eur':good_quotes,
+            'ticker_price_dates':{key:date for key,date in
+                meta.get('ticker_price_dates',{}).items() if key in good_quotes},
             'local_exchange_session_may_be_prior_date':True,
             'not_executable_intraday_quotes':True})
         status['data_universe']=meta.get('universe_kind')
+        status['signal_engine_status']='SIGNAL_READY'
+        status['signal_engine_error']=None
         evidence=preview(m,meta,asof,now,old.get('orders',[]))
         status['next_preopen']=evidence
         status['signal_status']=evidence.get('status')
@@ -426,6 +451,8 @@ def main(now=None):
             if len(cols):result.orders.to_csv(FORWARD/'orders.csv',index=False)
     except Exception as exc:
         status.update({'status':'PENDING_EXACT_DATA_OR_PARITY','reason':str(exc)[:2000],
+                       'signal_engine_status':'FAILED',
+                       'signal_engine_error':str(exc)[:2000],
                        'no_new_official_orders':True})
         if os.environ.get('ATLAS_EXACT_DEBUG')=='1':traceback.print_exc()
     # Persist a readable status even before the first actual trade/valuation.
