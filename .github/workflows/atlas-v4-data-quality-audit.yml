@@ -1,4 +1,5 @@
 name: Atlas V4 — exchange/FX data QA (NO PAPER ORDERS)
+# Final offline QA for unified exchange opens and normalized GBp CSV migration.
 on:
   workflow_dispatch:
   push:
