@@ -150,18 +150,37 @@ def universe_snapshot(today):
     csv_write(latest,allrows,fields)
     return allrows,meta
 
-FIELDS=['date','symbol','open','close','volume','currency','unit_scale','source_sha256','first_seen_at_utc','last_verified_at_utc']
+FIELDS=['date','symbol','open','close','volume','currency','unit_scale','source_sha256','first_seen_at_utc','last_verified_at_utc',
+        'price_unit_is_normalized']
 def update_history(provider,symbol,kind,today,base_date,overlap_days=10):
     folder=DATA/kind
     file=folder/symbol_filename(symbol)
     past=rows_load(file)
+    # Older rows stored UK GBp *numbers* with a GBP currency label and scale
+    # metadata. Convert them exactly once before merging new Yahoo candles.
+    # All stored open/close values now have units of the declared currency.
+    normalized_legacy=0
+    for historic in past:
+        if historic.get('price_unit_is_normalized')=='true':continue
+        unit=float(historic.get('unit_scale') or 1.)
+        if not 0.<unit<=1.:
+            raise DataUnavailable('Invalid historic unit scale: '+symbol)
+        if unit!=1.:
+            historic['open']=format(float(historic['open'])*unit,'.10g')
+            historic['close']=format(float(historic['close'])*unit,'.10g')
+        historic['price_unit_is_normalized']='true'
+        normalized_legacy+=1
     if past:
         last=max(dt.date.fromisoformat(row['date']) for row in past)
         first=min(dt.date.fromisoformat(row['date']) for row in past)
         # A backtest-grade warm-up must predate the latest 252-session signals.
         start=base_date if first>base_date+dt.timedelta(days=30) else max(base_date,last-dt.timedelta(days=overlap_days))
     else:start=base_date
-    if start>today:return {'symbol':symbol,'kind':kind,'status':'UP_TO_DATE','records':len(past),'first':past[0]['date'],'last':past[-1]['date']}
+    if start>today:
+        if normalized_legacy:csv_write(file,past,FIELDS)
+        return {'symbol':symbol,'kind':kind,'status':'UP_TO_DATE','records':len(past),
+                'first':past[0]['date'],'last':past[-1]['date'],
+                'normalized_legacy_rows':normalized_legacy}
     candles=provider.history(symbol,start,today)
     old={r['date']:r for r in past}
     inserted=0;revised=0;upgraded=0;provisional_blocked=0;provisional_purged=0
@@ -179,10 +198,15 @@ def update_history(provider,symbol,kind,today,base_date,overlap_days=10):
                 provisional_purged+=1
             continue
         observed=observed_utc.isoformat()
-        row={'date':d.isoformat(),'symbol':symbol,'open':format(b.open,'.10g'),
-            'close':format(b.close,'.10g'),'volume':format(b.volume,'.10g'),'currency':b.currency,
+        # Yahoo GBp becomes GBP before persistence: no reader is required to
+        # guess whether the numeric price must be multiplied by 0.01 again.
+        unit=float(b.unit_scale)
+        if not 0.<unit<=1.:raise DataUnavailable('Bad provider quote scale for '+symbol)
+        row={'date':d.isoformat(),'symbol':symbol,'open':format(b.open*unit,'.10g'),
+            'close':format(b.close*unit,'.10g'),'volume':format(b.volume,'.10g'),'currency':b.currency,
             'unit_scale':str(b.unit_scale),'source_sha256':b.source_sha256,
-            'first_seen_at_utc':observed,'last_verified_at_utc':observed}
+            'first_seen_at_utc':observed,'last_verified_at_utc':observed,
+            'price_unit_is_normalized':'true'}
         prev=old.get(row['date'])
         if prev is None:old[row['date']]=row;inserted+=1
         elif any(prev.get(k)!=row[k] for k in ('open','close','currency','unit_scale')):
@@ -205,11 +229,14 @@ def update_history(provider,symbol,kind,today,base_date,overlap_days=10):
             row['last_verified_at_utc']=prev.get('last_verified_at_utc','')
             old[row['date']]=row;upgraded+=1
     ordered=[old[d] for d in sorted(old)]
-    if inserted or revised or upgraded or provisional_purged or not file.exists():csv_write(file,ordered,FIELDS)
+    if inserted or revised or upgraded or provisional_purged or normalized_legacy or not file.exists():
+        csv_write(file,ordered,FIELDS)
     if not ordered:raise DataUnavailable('provider returned no valid rows: '+symbol)
     return {'symbol':symbol,'kind':kind,'status':'OK','inserted':inserted,'revised':revised,'volume_rows_updated':upgraded,
             'provisional_bars_blocked':provisional_blocked,
             'prior_intraday_bars_removed':provisional_purged,
+            'normalized_legacy_rows':normalized_legacy,
+            'prices_in_declared_currency_units':True,
             'market_session_rule':venue(symbol)[0],
             'records':len(ordered),'first':ordered[0]['date'],'last':ordered[-1]['date'],
             'latest_file_sha256':sha(file.read_bytes())}
@@ -309,6 +336,8 @@ def main():
           'local_exchange_eod_gate_enabled':True,
           'provisional_bars_blocked':sum(int(x.get('provisional_bars_blocked',0)) for x in metrics),
           'older_provisional_bars_removed':sum(int(x.get('prior_intraday_bars_removed',0)) for x in metrics),
+          'legacy_price_rows_normalized_to_currency_units':sum(int(x.get('normalized_legacy_rows',0)) for x in metrics),
+          'quote_prices_in_declared_currency_units':True,
           'fx_partial_daily_bar_blocked':True,
           'fx_observation_provenance':'first_seen_at_utc on newly inserted rows; legacy blanks not retroactively certified',
           'provider_errors':errors,
