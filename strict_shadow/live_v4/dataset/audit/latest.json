@@ -1,15 +1,15 @@
 {
   "base_date": "2024-01-01",
   "cached_required_quotes_complete": true,
-  "checked_at_utc": "2026-11-11T17:18:58.020239+00:00",
+  "checked_at_utc": "2026-11-11T17:21:53.232889+00:00",
   "data_ready_for_confidence70_model": false,
   "dataset_use": "FORWARD_RESEARCH_NOT_PIT_CERTIFIED",
   "forward_universe": {
     "count": 500,
     "mapped_symbols": 500,
-    "raw_sha256": "7615f5f92c21b1f7646ae4772c540f59a789a76003a824940e2e56656714ed6b",
+    "raw_sha256": "e5bce3c98f4579c10e24f15d3c150bc0b71c092e4c6841bb9737e9fad1e7c9b1",
     "recorded_on": "2026-11-11",
-    "source_as_of": "Nov 09, 2026",
+    "source_as_of": "Nov 10, 2026",
     "type": "ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP"
   },
   "fx_observation_provenance": "first_seen_at_utc on newly inserted rows; legacy blanks not retroactively certified",
@@ -28,7 +28,7 @@
   "quotes_cache_status": "ALL_ACTIVE_SYMBOLS_HAVE_SOME_DATA",
   "reason_not_model_ready": "PIT validated forward USA100 rankings, RoW issuer scores, full technical features, independent daily FX provenance and true engine forward signal still missing",
   "required_symbols_fresh_7_calendar_days": 556,
-  "round_robin_cursor": 260,
+  "round_robin_cursor": 3,
   "source": "Yahoo Chart unofficial",
   "total_candidate_symbols": 557,
   "verified_terminal_delisted_symbols": [
