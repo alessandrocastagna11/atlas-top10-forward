@@ -7,6 +7,7 @@ import argparse,csv,datetime as dt,hashlib,io,json,os,re,time,urllib.request
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from provider import YahooChart,DataUnavailable
+from market_sessions import is_final_bar,release_time_utc,venue
 
 ROOT=Path(__file__).resolve().parent
 LIST=ROOT.parent/'acquisition/input/global200_symbols_recovered.csv'
@@ -163,20 +164,21 @@ def update_history(provider,symbol,kind,today,base_date,overlap_days=10):
     if start>today:return {'symbol':symbol,'kind':kind,'status':'UP_TO_DATE','records':len(past),'first':past[0]['date'],'last':past[-1]['date']}
     candles=provider.history(symbol,start,today)
     old={r['date']:r for r in past}
-    inserted=0;revised=0;upgraded=0
+    inserted=0;revised=0;upgraded=0;provisional_blocked=0;provisional_purged=0
+    observed_utc=dt.datetime.now(dt.timezone.utc)
+    # A partial Tokyo/Hong Kong/London/Saudi quote is just as dangerous as a
+    # partial US candle. Use the actual venue's DST-aware *local* close.
     for d,b in sorted(candles.items()):
         if d<base_date or d>today:continue
-        # US/Canada Chart daily candles can be provisional until provider settlement.
-        # The dataset must not promote an intraday partial candle to a final close.
-        ny=dt.datetime.now(dt.timezone.utc).astimezone(NY)
-        north_america=('.' not in symbol or symbol.endswith(('.TO','.V')))
-        if d==ny.date() and ny.time()<dt.time(17,30) and (
-                kind=='fx' or (kind=='prices' and north_america)):
-            # A daily FX observation can still be provisional before the
-            # New York 17:00 FX rollover. Conservative 17:30 release guard.
-            # Do NOT write partial intraday values as completed EOD.
+        if not is_final_bar(symbol,d,observed_utc):
+            provisional_blocked+=1
+            if d.isoformat() in old:
+                # Older downloader versions could cache intraday local bars.
+                # They must not be passed onward as certified EOD closes.
+                del old[d.isoformat()]
+                provisional_purged+=1
             continue
-        observed=dt.datetime.now(dt.timezone.utc).isoformat()
+        observed=observed_utc.isoformat()
         row={'date':d.isoformat(),'symbol':symbol,'open':format(b.open,'.10g'),
             'close':format(b.close,'.10g'),'volume':format(b.volume,'.10g'),'currency':b.currency,
             'unit_scale':str(b.unit_scale),'source_sha256':b.source_sha256,
@@ -203,9 +205,12 @@ def update_history(provider,symbol,kind,today,base_date,overlap_days=10):
             row['last_verified_at_utc']=prev.get('last_verified_at_utc','')
             old[row['date']]=row;upgraded+=1
     ordered=[old[d] for d in sorted(old)]
-    if inserted or revised or upgraded or not file.exists():csv_write(file,ordered,FIELDS)
+    if inserted or revised or upgraded or provisional_purged or not file.exists():csv_write(file,ordered,FIELDS)
     if not ordered:raise DataUnavailable('provider returned no valid rows: '+symbol)
     return {'symbol':symbol,'kind':kind,'status':'OK','inserted':inserted,'revised':revised,'volume_rows_updated':upgraded,
+            'provisional_bars_blocked':provisional_blocked,
+            'prior_intraday_bars_removed':provisional_purged,
+            'market_session_rule':venue(symbol)[0],
             'records':len(ordered),'first':ordered[0]['date'],'last':ordered[-1]['date'],
             'latest_file_sha256':sha(file.read_bytes())}
 
@@ -300,7 +305,10 @@ def main():
           'original_288_symbols_cached':sum(x in price_set for x in historic),
           'original_288_symbols_missing':missing,'fx_symbols_cached':len(required_fx_set & cached_fx_set),
           'fx_symbols_expected':len(required_fx_set),'fx_symbols_missing_required':missing_fx,
-          'fx_validation':'YAHOO_DAILY_EOD_AFTER_NY_1730_NO_ANNUAL_INTERPOLATION_NOT_HISTORICAL_PIT',
+          'fx_validation':'EXCHANGE_LOCAL_CLOSE_PLUS_BUFFER_AND_NY_FX_ROLLOVER_NO_ANNUAL_INTERPOLATION_NOT_HISTORICAL_PIT',
+          'local_exchange_eod_gate_enabled':True,
+          'provisional_bars_blocked':sum(int(x.get('provisional_bars_blocked',0)) for x in metrics),
+          'older_provisional_bars_removed':sum(int(x.get('prior_intraday_bars_removed',0)) for x in metrics),
           'fx_partial_daily_bar_blocked':True,
           'fx_observation_provenance':'first_seen_at_utc on newly inserted rows; legacy blanks not retroactively certified',
           'provider_errors':errors,
@@ -317,7 +325,7 @@ def main():
            f'Unique symbols with a quote dated within 7 days: {recent}/{total}',
            f'Cache status: {meta["quotes_cache_status"]}',
            f'Forward universe: {universe_meta.get("source_as_of",universe_meta.get("status","UNKNOWN"))}',
-           'Confidence70 live forward signal: **NOT READY** (fail closed).',
+           'La qualita del dataset indipendente non sostituisce lo stato del motore ufficiale: consultare v4_exact_source/forward/latest_status.json.',
            'iShares universe ranks are holding-value proxies, not historical market cap ranks.',
            'Raw Yahoo Chart quotes are unofficial; adjusted/dividend total-return data are NOT claimed.',
            'Research paper data only; no real-money orders.','']
