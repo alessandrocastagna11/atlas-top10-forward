@@ -52,7 +52,19 @@ def serialize(result):
 
 
 def status_base(now):
+    # Capture of today's observed market-cap universe is independent from
+    # yesterday's completed US benchmark. Never silently promote future ranks
+    # into an earlier decision session.
+    cap_file=LIVE/'dataset'/'marketcap_observed'/'latest_status.json'
+    try: cap=json.loads(cap_file.read_text(encoding='utf8')) if cap_file.is_file() else {}
+    except (ValueError,OSError):cap={}
     return {'checked_at_utc':now.isoformat(),'engine':'FROZEN_ATLAS_V4_CONFIDENCE70',
+            'universe_observed_capture_day':cap.get('capture_day'),
+            'universe_observed_capture_at_utc':cap.get('observed_at_utc'),
+            'universe_observed_marketcap_usa_count':cap.get('crosswalk_usa'),
+            'universe_observed_marketcap_nonusa_count':cap.get('crosswalk_non_usa'),
+            'universe_observed_marketcap_ready':bool(cap.get('sufficient_for_100_usa_200_nonusa')),
+            'universe_observed_is_historical_pit':False,
             'capital_initial_eur':INITIAL,'paper_only':True,'real_money_orders':0,
             'historical_alpha_code':'VERBATIM_REGION_SLOT_ATLAS_FROM_2012_2025',
             'tax_simulator':'FROZEN_T9_WITH_TERMINAL_LIQUIDATION_DISABLED',
