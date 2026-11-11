@@ -117,3 +117,21 @@ jobs:
             echo "::error::V4 paper ledger publish failed after five non-force retries"
             exit 1
           fi
+      - name: Require an actual updated model signal (not merely a successful paper account)
+        if: always()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path('strict_shadow/v4_exact_source/forward/latest_status.json')
+          status=json.loads(path.read_text()) if path.is_file() else {}
+          engine=status.get('signal_engine_status')
+          plan=status.get('indicative_order_test') or {}
+          if engine!='SIGNAL_READY' or plan.get('status')!='INDICATIVE_ONLY_NO_ORDER_NO_FILL':
+              print('::error::V4 model/plan failed; paper account alone does not prove success. '
+                    +str(status.get('signal_engine_error') or plan.get('reason') or engine))
+              raise SystemExit(1)
+          print('V4 ORIGINAL SIGNAL HEALTHY',status.get('decision_session'),
+                status.get('data_universe'),
+                status.get('short_history_excluded_from_daily_universe',[]))
+          PY
