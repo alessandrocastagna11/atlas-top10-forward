@@ -12,10 +12,10 @@
     },
     {
       "approximate_fills": true,
-      "mark_to_market_nav_eur": 9984.7238,
-      "net_liquidation_nav_eur": 9975.4663,
+      "mark_to_market_nav_eur": 10029.061,
+      "net_liquidation_nav_eur": 10011.3352,
       "report_date": "2026-11-11",
-      "source_close_session": "2026-11-10"
+      "source_close_session": "2026-11-11"
     }
   ],
   "estimated_slippage_eur": 3.580849150848845,
@@ -24,8 +24,8 @@
   "holdings": {
     "CB": {
       "cost_basis_eur": 895.43,
-      "last_price_date": "2026-11-10",
-      "last_price_eur": 328.90284132,
+      "last_price_date": "2026-11-11",
+      "last_price_eur": 333.5932472,
       "lots": [
         {
           "cost_basis_eur": 895.43,
@@ -40,8 +40,8 @@
     },
     "JNJ": {
       "cost_basis_eur": 902.0,
-      "last_price_date": "2026-11-10",
-      "last_price_eur": 250.19463859,
+      "last_price_date": "2026-11-11",
+      "last_price_eur": 252.59332773,
       "lots": [
         {
           "cost_basis_eur": 902.0,
@@ -56,8 +56,8 @@
     },
     "KO": {
       "cost_basis_eur": 1097.27,
-      "last_price_date": "2026-11-10",
-      "last_price_eur": 86.35359871,
+      "last_price_date": "2026-11-11",
+      "last_price_eur": 87.89105448,
       "lots": [
         {
           "cost_basis_eur": 1097.27,
@@ -72,8 +72,8 @@
     },
     "MRK": {
       "cost_basis_eur": 693.73,
-      "last_price_date": "2026-11-10",
-      "last_price_eur": 131.92291889,
+      "last_price_date": "2026-11-11",
+      "last_price_eur": 132.57973553,
       "lots": [
         {
           "cost_basis_eur": 693.73,
@@ -88,8 +88,8 @@
     }
   },
   "initial_cash_eur": 10000.0,
-  "last_nav_eur": 9984.7238,
-  "last_valuation_session": "2026-11-10",
+  "last_nav_eur": 10029.061,
+  "last_valuation_session": "2026-11-11",
   "orders": [
     {
       "action": "BUY",

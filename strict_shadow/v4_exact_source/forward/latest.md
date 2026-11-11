@@ -8,25 +8,25 @@
 **Capitalizzazione osservata:** 2026-11-11; copertura USA/RoW: 276/201; NON PIT storico
 **Titoli sostituiti per storico insufficiente:** SPCX
 
-**Ultima sessione decisionale:** 2026-11-10
-**Ultima sessione valorizzata:** 2026-11-10
-**Dati mercato / universo:** MARKET_CAP_USD_AS_RECORDED_WITHIN_ACWI_NOT_HISTORICAL_PIT; fotografia utilizzata al 2026-11-10
-**Universo dinamico:** 5 fotografie cronologiche, ultima disponibile 2026-11-10; nuove società eleggibili SOLO dalla data registrata
-**Primo segnale / apertura successiva:** 2026-11-10 / 2026-11-11
-**Candidati segnalati (NON ORDINI):** MRK, JNJ, KO, CB, PANW, CRWD, DE, ABBV, WELL, ABNB; verifica: SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF
-**Segnale originale pubblicato:** SÌ; esito: SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF
+**Ultima sessione decisionale:** 2026-11-11
+**Ultima sessione valorizzata:** 2026-11-11
+**Dati mercato / universo:** MARKET_CAP_USD_AS_RECORDED_WITHIN_ACWI_NOT_HISTORICAL_PIT; fotografia utilizzata al 2026-11-11
+**Universo dinamico:** 6 fotografie cronologiche, ultima disponibile 2026-11-11; nuove società eleggibili SOLO dalla data registrata
+**Primo segnale / apertura successiva:** 2026-11-11 / 2026-11-12
+**Candidati segnalati (NON ORDINI):** KO, JNJ, CB, MRK, DELL, PANW, MU, DE, ABNB, ABBV; verifica: SIGNAL_PUBLISHED_PER_EXCHANGE
+**Segnale originale pubblicato:** SÌ; esito: SIGNAL_PUBLISHED_PER_EXCHANGE
 **Contabilità paper:** FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY — prezzi degli ordini APPROSSIMATI; nessun ordine reale.
-**Ultimo aggiornamento portafoglio:** 2026-11-11T18:30:25.442919+00:00; fonte ultimo prezzo 2026-11-10.
+**Ultimo aggiornamento portafoglio:** 2026-11-11T23:12:28.684439+00:00; fonte ultimo prezzo 2026-11-11.
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
 **Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.
 
 | Portafoglio virtuale | Importo |
 |---|---:|
 | Capitale iniziale | 10,000.00 € |
-| NAV netto liquidabile ipotetico* | 9,975.47 € |
-| NAV a prezzi di mercato | 9,984.72 € |
+| NAV netto liquidabile ipotetico* | 10,011.34 € |
+| NAV a prezzi di mercato | 10,029.06 € |
 | Liquidità | 6,411.57 € |
-| Valore titoli | 3,573.15 € |
+| Valore titoli | 3,617.49 € |
 | Posizioni | 4 |
 | Ordini complessivi | 4 |
 | Nuovi ordini verificati | 0 |
@@ -38,25 +38,25 @@
 
 | Titolo | Quote | Valore € | Peso | Quote vincolate | Prima data vendibile |
 |---|---:|---:|---:|---:|---|
-| CB | 2.74054 | 901.37 | 9.03% | 2.74054 | 2026-12-15 |
-| JNJ | 3.55665 | 889.85 | 8.91% | 3.55665 | 2026-12-15 |
-| KO | 12.7129 | 1,097.81 | 10.99% | 12.7129 | 2026-12-15 |
-| MRK | 5.18576 | 684.12 | 6.85% | 5.18576 | 2026-12-15 |
+| CB | 2.74054 | 914.23 | 9.12% | 2.74054 | 2026-12-15 |
+| JNJ | 3.55665 | 898.39 | 8.96% | 3.55665 | 2026-12-15 |
+| KO | 12.7129 | 1,117.35 | 11.14% | 12.7129 | 2026-12-15 |
+| MRK | 5.18576 | 687.53 | 6.86% | 5.18576 | 2026-12-15 |
 
 ## Piano delle aperture per singolo mercato
 
 | Titolo | Primo mercato utile | Stato del segnale | Prossima apertura locale prevista (UTC)* |
 |---|---|---|---|
-| ABBV | 2026-11-11 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
-| ABNB | 2026-11-11 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
-| CB | 2026-11-11 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
-| CRWD | 2026-11-11 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
-| DE | 2026-11-11 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
-| JNJ | 2026-11-11 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
-| KO | 2026-11-11 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
-| MRK | 2026-11-11 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
-| PANW | 2026-11-11 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
-| WELL | 2026-11-11 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
+| ABBV | 2026-11-12 | PENDING_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
+| ABNB | 2026-11-12 | PENDING_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
+| CB | 2026-11-12 | PENDING_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
+| DE | 2026-11-12 | PENDING_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
+| DELL | 2026-11-12 | PENDING_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
+| JNJ | 2026-11-12 | PENDING_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
+| KO | 2026-11-12 | PENDING_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
+| MRK | 2026-11-12 | PENDING_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
+| MU | 2026-11-12 | PENDING_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
+| PANW | 2026-11-12 | PENDING_FIRST_LOCAL_OPEN | 2026-11-12T14:30:00+00:00 |
 
 *Orari indicativi: festività, sospensioni e quotazioni reali devono essere verificate dal provider. Il segnale non equivale a un acquisto; un mercato già aperto non autorizza esecuzioni retroattive.*
 
