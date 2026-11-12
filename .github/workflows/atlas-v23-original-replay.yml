@@ -56,6 +56,9 @@ jobs:
       - name: Extend official source where available, SPY only where necessary; sensitivity on unavailable 2026 macro
         run: |
           python -u atlas_etf_pac/v23_original/run_extended.py --end 2026-11-11 --scenario all --out atlas_etf_pac/v23_original/reports
+      - name: Modern matched 2016–2026 original V2.3 vs passive benchmark
+        run: |
+          python -u atlas_etf_pac/v23_original/run_extended.py --start 2016-01-04 --end 2026-11-11 --scenario all --out atlas_etf_pac/v23_original/reports_modern
       - name: Validate research provenance, cutoff and model identity
         run: |
           python - <<'PY'
@@ -69,6 +72,9 @@ jobs:
           assert x['engine_sha256']=='aef2809b8a3bfe01e3b0fa6b3f0d564b8ad0db90340a04a7480d7266d9141c7a'
           assert x['2026_extension_not_exact_frozen']
           assert len(x['scenarios'])==3
+          m=json.loads(Path('atlas_etf_pac/v23_original/reports_modern/summary.json').read_text())
+          assert m['start_date']=='2016-01-04' and m['requested_end_date']=='2026-11-11'
+          assert len(m['scenarios'])==3
           assert not Path('atlas_etf_pac/v23_original/reference').is_symlink()
           for k,v in x['scenarios'].items():
               assert v['strategy']['end_date']=='2026-11-11'
@@ -86,7 +92,7 @@ jobs:
         run: |
           git config user.name 'Atlas V2.3 Original Research Bot'
           git config user.email 'atlas-v23-original@users.noreply.github.com'
-          git add atlas_etf_pac/v23_original/reports/summary.json
+          git add atlas_etf_pac/v23_original/reports/summary.json atlas_etf_pac/v23_original/reports_modern/summary.json
           if ! git diff --cached --quiet; then
             git commit -m "Atlas V2.3 original: 1926-2026 proxy replay with macro scenario audit"
             git pull --rebase origin atlas-etf-v23-original
