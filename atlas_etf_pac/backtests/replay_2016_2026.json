@@ -1,0 +1,94 @@
+{
+  "active": {
+    "contributions_eur": 32500.0,
+    "end_session": "2026-11-11",
+    "final_nav_eur": 56942.07,
+    "initial_eur": 1000.0,
+    "max_drawdown_pct": -26.4209,
+    "orders": 279,
+    "profit_eur": 23442.07,
+    "start_session": "2015-12-30",
+    "total_paid_eur": 33500.0,
+    "trades": {
+      "BUY": 258,
+      "SELL": 21
+    },
+    "twr_cagr_pct": 8.3866,
+    "twr_total_pct": 139.9183,
+    "xirr_pct": 9.2162
+  },
+  "average_invested_eur": 20889.48,
+  "bias_note": "Backtest uses currently accessible OHLC histories and is not point-in-time validation of original vintage provider data",
+  "blocked_actions_count": 1128,
+  "costs_note": "Engine fees/slippage/taxes/annual stamp estimates; passive baseline also annual stamp but no fees or slippage",
+  "data_feed": "Yahoo daily OHLC, unofficial, as retrieved in a 2026 snapshot",
+  "fees_eur": 21.0,
+  "final_positions": {
+    "EM": 119.25757503,
+    "GOLD": 78.56656917,
+    "NASDAQ": 6.01242396,
+    "WORLD": 286.74080339
+  },
+  "gold_history_extension": {
+    "historical_proxy": "8PSG.DE",
+    "original_gold_ticker": "PPFB.DE",
+    "proxy_until_exclusive": "2021-07-16",
+    "raw_proxy_sha256": "51a25bf7395178adfa67a55714b44a1d798d442431315ee9c448c68b9717af52",
+    "splice_factor": 0.2016434261412746,
+    "warning": "Pre-switch backtest proxy ETC has different fees, issuer and possible tracking difference"
+  },
+  "last_available_session": "2026-11-11",
+  "max_total_orders_per_month": 3,
+  "model_method": "historical reconstructed next-session Xetra open replay",
+  "param_mutations": [
+    "First decision date set to Jan 2016 for research",
+    "Monthly contribution begins Feb 2016"
+  ],
+  "passive_4etf_pac": {
+    "contributions_eur": 32500.0,
+    "end_session": "2026-11-11",
+    "final_nav_eur": 76264.87,
+    "initial_eur": 1000.0,
+    "max_drawdown_pct": -29.8307,
+    "orders": 0,
+    "profit_eur": 42764.87,
+    "start_session": "2015-12-30",
+    "total_paid_eur": 33500.0,
+    "trades": {},
+    "twr_cagr_pct": 13.101,
+    "twr_total_pct": 281.0618,
+    "xirr_pct": 14.1035
+  },
+  "period": "2016-01 to 2026-11 (observed common exchange sessions)",
+  "quotes": {
+    "EUNL.DE": {
+      "count": 3266,
+      "first_day": "2014-01-02",
+      "last_day": "2026-11-11",
+      "raw_source_sha256": "e14587939fa99f149f3e476864750370723979a06f079d37d2804b0bfed43dd0"
+    },
+    "IS3N.DE": {
+      "count": 3154,
+      "first_day": "2014-06-11",
+      "last_day": "2026-11-11",
+      "raw_source_sha256": "ddda54cc9c460c29a95a8a05c6a101d8835646ea7be0f285f502672cbffeabb8"
+    },
+    "PPFB.DE": {
+      "count": 3265,
+      "first_day": "2014-01-02",
+      "last_day": "2026-11-11",
+      "raw_source_sha256": "dc3f489dc8ce463928596d7722de7670d4765afacff434d8e3ee13345f3765f9"
+    },
+    "SXRV.DE": {
+      "count": 3266,
+      "first_day": "2014-01-02",
+      "last_day": "2026-11-11",
+      "raw_source_sha256": "4578c2b9f80fbabd3900a84a96d974764b0f431c77137bdc3882c9925d89b06d"
+    }
+  },
+  "risk_limit_note": "35-day min hold is enforced by current engine using latest buy date per sleeve, not exact per-lot sales",
+  "sessions": 2759,
+  "stamp_accrued_eur": 453.16,
+  "strategy": "ATLAS_ETF_PAC_4SLEEVE_RESTART_V1",
+  "tax_proxy_paid_eur": 3418.89
+}
