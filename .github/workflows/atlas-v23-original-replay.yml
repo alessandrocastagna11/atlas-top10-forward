@@ -27,6 +27,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Verify published original source integrity
+        run: |
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          p=Path('atlas_etf_pac/v23_original/atlas_v23_pac_stress.py')
+          want='aef2809b8a3bfe01e3b0fa6b3f0d564b8ad0db90340a04a7480d7266d9141c7a'
+          got=hashlib.sha256(p.read_bytes()).hexdigest()
+          assert got==want,(got,want)
+          print('PUBLISHED ORIGINAL SOURCE IDENTICAL TO FROZEN V2.3')
+          PY
       - name: Reproduce exact historical frozen 1926–2025 engine
         run: |
           python atlas_etf_pac/v23_original/run_extended.py --end 2025-12-31 --no-online --scenario carry --out atlas_etf_pac/v23_original/frozen_audit
