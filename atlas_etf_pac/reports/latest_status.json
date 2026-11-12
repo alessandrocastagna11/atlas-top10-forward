@@ -1,7 +1,7 @@
 {
   "blocked_actions": [],
   "cash_eur": 1000.0,
-  "checked_at_utc": "2026-11-12T22:39:25.474327+00:00",
+  "checked_at_utc": "2026-11-12T22:42:19.459097+00:00",
   "contributed_eur": 1000.0,
   "cumulative_twr_pct": 0.0,
   "historical_frozen_v23_parity": "ORIGINAL_LIVE_SHA256_VERIFIED; TRADABLE_ETF_PROXY_DIFFERS_FROM_1926_FF",
@@ -100,8 +100,13 @@
     "equity_last": "2026-11-12",
     "macro_previous_month": "2026-10",
     "macro_quality": "ONLINE_OR_PERSISTED_CACHE",
+    "missing_macro_inputs": [
+      "FF_RF",
+      "FF_BREADTH_3M"
+    ],
+    "observed_macro_month": "2026-09",
     "quote_lag_days": 0,
-    "stress_source": "CARRIED_FROZEN_2025-11"
+    "stress_source": "CARRIED_OBSERVED_2026-09"
   },
   "status": "WAITING_NEW_EQUITY_ETF_CLOSE__MACRO_PROXY_STALE"
 }

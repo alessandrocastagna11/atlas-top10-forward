@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-11-12T22:39:25.474327+00:00",
+  "checked_at_utc": "2026-11-12T22:42:19.459097+00:00",
   "first_quote_date": "2010-01-04",
   "market_session": "2026-11-12",
   "original_live_sha256": "703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e",
@@ -12,7 +12,12 @@
     "equity_last": "2026-11-12",
     "macro_previous_month": "2026-10",
     "macro_quality": "ONLINE_OR_PERSISTED_CACHE",
+    "missing_macro_inputs": [
+      "FF_RF",
+      "FF_BREADTH_3M"
+    ],
+    "observed_macro_month": "2026-09",
     "quote_lag_days": 0,
-    "stress_source": "CARRIED_FROZEN_2025-11"
+    "stress_source": "CARRIED_OBSERVED_2026-09"
   }
 }
