@@ -46,6 +46,22 @@ def run():
             nav2026=[r for r in nav if r['date'].startswith('2026-')]
             prev=next((r for r in reversed(nav) if r['date']<='2025-12-31'),None)
             ret2026=(nav2026[-1]['twr_index']/prev['twr_index']-1) if (prev and nav2026) else None
+            def segment_stats(start,end):
+                part=[r for r in nav if start<=r['date']<=end]
+                if len(part)<2:return None
+                tw0=part[0]['twr_index']
+                twlast=part[-1]['twr_index']
+                years=v.years_between(part[0]['date'],part[-1]['date'])
+                return {'cagr_pct':100*((twlast/tw0)**(1/years)-1),
+                        'maxdd_pct':100*v.max_dd([q['twr_index']/tw0 for q in part]),
+                        'first':part[0]['date'],'last':part[-1]['date']}
+            segments={label:segment_stats(a,b) for label,a,b in (
+                ('1926_1969','1926-07-01','1969-12-31'),
+                ('1970_1999','1970-01-01','1999-12-31'),
+                ('2000_2025','2000-01-01','2025-12-31'),
+                ('2016_2025','2016-01-04','2025-12-31'),
+                ('2026_ytd','2025-12-31','2026-11-11'),
+            )}
             data={
                 'start':start,'end':args.end,'satellite_rebound':threshold,
                 'cagr_pct':z['twr_cagr_net']*100,'maxdd_pct':z['max_drawdown']*100,
@@ -54,6 +70,8 @@ def run():
                 'realized_taxes_eur':z['realized_taxes_eur'],
                 'fees_eur':z['fixed_fees_eur'],'slippage_eur':z['slippage_proxy_eur'],
                 'stamp_eur':z['stamp_proxy_eur'],'2026_return_pct':ret2026*100 if ret2026 is not None else None,
+                'subperiods':segments,
+                '2026_satellite_out_sessions':sum(int(q['satellite_in'])==0 for q in nav2026),
                 '2026_sales':[q for q in sim.events if q['date']>='2026-01-01' and q['kind']=='STRATEGY_EQ_SELL'],
                 '2026_reentries':[q for q in sim.events if q['date']>='2026-01-01' and q['kind']=='STRATEGY_EQ_BUY'],
                 'benchmark':{k:benchmark[k] for k in ['twr_cagr_net','max_drawdown','xirr','final_liquidated_eur']}
