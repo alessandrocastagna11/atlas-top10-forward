@@ -58,25 +58,25 @@
       "count": 3266,
       "first_day": "2014-01-02",
       "last_day": "2026-11-11",
-      "raw_source_sha256": "a865d8acbc6cf691011c47c7516d70a79c6a1cae98cd7f0182fbe48c97dd3589"
+      "raw_source_sha256": "c8784a1fa5a18b9adaecc648b91f21d7af8d08e860fc6a5c73614aa8fbaa7254"
     },
     "IS3N.DE": {
       "count": 3154,
       "first_day": "2014-06-11",
       "last_day": "2026-11-11",
-      "raw_source_sha256": "67db98a607dcaea0dba46aa3ff2858f1a53c8644d91faba7d26f05b319f39cfd"
+      "raw_source_sha256": "29375550e58125284bffc4b3c2fec619dc8800f24fbf240b552907df2c6d1425"
     },
     "PPFB.DE": {
       "count": 1357,
       "first_day": "2021-07-16",
       "last_day": "2026-11-11",
-      "raw_source_sha256": "7f1749a8fe0b4f4dca82e063342dcaa872bfb924161c4683a912f58993c80b1b"
+      "raw_source_sha256": "16b4de29e064c1837310a5c730fe828aba336218e1a8744ce72793c30b3808ef"
     },
     "SXRV.DE": {
       "count": 3266,
       "first_day": "2014-01-02",
       "last_day": "2026-11-11",
-      "raw_source_sha256": "3dc85fd726fb799ded3952f9610999c4dbf76cf812675dbf72c40f22b9e4c603"
+      "raw_source_sha256": "6ef4033ff52a4617de4d872d4ff2ff6a7e05f25b135c9dc744b6b8008cd636c2"
     }
   },
   "risk_limit_note": "35-day min hold is enforced by current engine using latest buy date per sleeve, not exact per-lot sales",

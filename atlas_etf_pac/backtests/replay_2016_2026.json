@@ -33,7 +33,7 @@
     "historical_proxy": "8PSG.DE",
     "original_gold_ticker": "PPFB.DE",
     "proxy_until_exclusive": "2021-07-16",
-    "raw_proxy_sha256": "1b9df6b1b188c94a13e0427b132ef2a514faba8e5194f3400b1c87cd10ef60f3",
+    "raw_proxy_sha256": "6c25f846bb99b2c593e5dfde7e05a88561ea7545bac6089de24b74e2f43f118b",
     "splice_factor": 0.2016434261412746,
     "warning": "Pre-switch backtest proxy ETC has different fees, issuer and possible tracking difference"
   },
@@ -65,25 +65,25 @@
       "count": 3266,
       "first_day": "2014-01-02",
       "last_day": "2026-11-11",
-      "raw_source_sha256": "f2fd33f08c14b23376af595433b9559b62276c472a9c637a5577f06742a2e444"
+      "raw_source_sha256": "f042131cf01fb55f91498a8ed0e4725fdcdff78e45bea9e85e0b76a44d1e0d5b"
     },
     "IS3N.DE": {
       "count": 3154,
       "first_day": "2014-06-11",
       "last_day": "2026-11-11",
-      "raw_source_sha256": "f55c9360cc68c3ce5bb89df7761e3b8ba296cd9822b5b2759d09f0eea55aeb95"
+      "raw_source_sha256": "0ed8140f59da9c0e3490eec40dc1771c27d123b155d0c74f3394777e894cb5b7"
     },
     "PPFB.DE": {
       "count": 3265,
       "first_day": "2014-01-02",
       "last_day": "2026-11-11",
-      "raw_source_sha256": "a916decd16536c386a8b9257a26d59e5449853d9f2727738d3ec2a2e97277768"
+      "raw_source_sha256": "ed44a05dd595ffcffe42b7deb3e405514e543a207cd845801a0dafc14456f8db"
     },
     "SXRV.DE": {
       "count": 3266,
       "first_day": "2014-01-02",
       "last_day": "2026-11-11",
-      "raw_source_sha256": "b129cc16dcd9754337dd695e2a3baf0b3c16ffdef19bfa41e6beb26d53d5f98f"
+      "raw_source_sha256": "946e840c9b293b281357871b4648193720caffd95a95a99acdfea1a1ca147f2c"
     }
   },
   "risk_limit_note": "35-day min hold is enforced by current engine using latest buy date per sleeve, not exact per-lot sales",
