@@ -17,9 +17,11 @@ import engine as e
 ROOT=Path(__file__).resolve().parent
 START_HISTORY=dt.date(2014,1,1)
 FIRST_DATE=dt.date.fromisoformat(os.environ.get('ATLAS_BACKTEST_FIRST_DATE','2016-01-04'))
-END_DATE=dt.date(2026,11,11)
+END_DATE=dt.date.fromisoformat(os.environ.get('ATLAS_BACKTEST_END_DATE','2026-11-11'))
 USE_GOLD_PROXY=os.environ.get('ATLAS_BACKTEST_GOLD_PROXY','1')=='1'
-OUT=ROOT/'backtests'/('replay_2016_2026.json' if USE_GOLD_PROXY else 'replay_2022_2026_actual4.json')
+OUT=ROOT/'backtests'/(
+    ('replay_2016_2025.json' if END_DATE==dt.date(2025,12,31) else 'replay_2016_2026.json')
+    if USE_GOLD_PROXY else 'replay_2022_2026_actual4.json')
 
 def xirr(flows):
     origin=flows[0][0]
@@ -162,7 +164,7 @@ def main():
     all_day=dt.date.fromisoformat(sessions[-1])
     out={
         'strategy':'ATLAS_ETF_PAC_4SLEEVE_RESTART_V1',
-        'period':str(FIRST_DATE)[:7]+' to 2026-11 (observed common exchange sessions)',
+        'period':str(FIRST_DATE)[:7]+' to '+END_DATE.isoformat()[:7]+' (observed common exchange sessions)',
         'model_method':'historical reconstructed next-session Xetra open replay',
         'data_feed':'Yahoo daily OHLC, unofficial, as retrieved in a 2026 snapshot',
         'gold_history_extension':({'historical_proxy':proxy_sym,
