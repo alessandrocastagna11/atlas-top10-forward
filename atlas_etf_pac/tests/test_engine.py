@@ -134,7 +134,12 @@ class PACLiveTests(unittest.TestCase):
                           dt.datetime.fromisoformat('2026-11-14T00:20:00+00:00'))
         self.assertEqual(done,1)
         self.assertEqual(st['orders'][0]['execution_session'],'2026-11-13')
-        self.assertIsNone(st['pending'])
+        # With two unused monthly slots, a NEW instruction may be generated
+        # for underweight sleeves; the old instruction must be consumed.
+        self.assertTrue(st['pending'] is None or
+                        st['pending']['decision_session']=='2026-11-13')
+        self.assertTrue(all(x['asset']!='WORLD'
+                            for x in (st['pending'] or {}).get('proposed_orders',[])))
 
 
 if __name__=='__main__':unittest.main()
