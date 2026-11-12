@@ -1,0 +1,61 @@
+name: Atlas ETF PAC V2.3 original — migration verification
+on:
+  push:
+    branches: [atlas-etf-pac-v23-migration-staging]
+    paths:
+      - '.github/workflows/atlas-etf-v23-migration-staging.yml'
+      - 'atlas_etf_pac/engine.py'
+      - 'atlas_etf_pac/config.json'
+      - 'atlas_etf_pac/state.json'
+      - 'atlas_etf_pac/tests/**'
+      - 'atlas_etf_pac/v23_original/**'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: atlas-etf-pac-v23-migration-staging
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: atlas-etf-pac-v23-migration-staging
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Deterministic offline tests on exact V2.3 source
+        run: python -m unittest discover -s atlas_etf_pac/tests -p 'test_*.py' -v
+      - name: Refresh V2.3 actual EUR equity and bond ETF prices and monthly stress data
+        run: python -u atlas_etf_pac/engine.py
+      - name: Check real signal, paper-only constraints and snapshot provenance
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=Path('atlas_etf_pac')
+          c=json.loads((d/'config.json').read_text())
+          s=json.loads((d/'state.json').read_text())
+          r=json.loads((d/'reports/latest_status.json').read_text())
+          assert c['no_broker_execution'] and r['real_broker_orders']==0
+          assert c['model']==s['model']==r['model']=='ATLAS_ETF_PAC_V23_ORIGINAL_LIVE_V1'
+          assert all(o['mode']=='VIRTUAL_ONLY' and o['decision_session']<o['execution_session'] for o in s['orders'])
+          assert r['contributed_eur']==1000.0+sum(x['amount_eur'] for x in s['contributions'])
+          print('V23_PAPER_AUDIT',r['status'],r['last_nav_session'],r['orders_total'],r['source_quality'])
+          assert not r['status'].startswith('PENDING_DATA'), r['status']
+          assert r['latest_signal'] and r['last_nav_session']
+          PY
+      - name: Persist isolated EOD signals, virtual account and real source cache
+        if: always()
+        run: |
+          git config user.name 'Atlas ETF V2.3 Migration Bot'
+          git config user.email 'atlas-v23-migration@users.noreply.github.com'
+          git add -A atlas_etf_pac/state.json atlas_etf_pac/reports atlas_etf_pac/live_cache
+          if ! git diff --cached --quiet; then
+            git commit -m "Atlas V2.3 staging paper EOD $(date -u +%F)"
+            git pull --rebase origin atlas-etf-pac-v23-migration-staging
+            git push origin HEAD:atlas-etf-pac-v23-migration-staging
+          fi

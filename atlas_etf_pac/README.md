@@ -1,92 +1,17 @@
-# Atlas ETF — PAC riattivato a novembre 2026
+# Atlas ETF PAC — V2.3 ORIGINAL LIVE (virtual forward)
 
-## Altro progetto recuperato: app ATLAS ETF Live / CIA40
+Dal 12/11/2026 il precedente PAC ricostruito a **quattro ETF 65/15/10/10** è stato sostituito dall'**adattatore live originale V2.3 (rilascio 01/10/2026)**. Vecchi file archiviati in `archive/2026-11-12-4sleeve/`, nessuna operazione retrodatata, zero broker/denaro reale. Il ramo stabile è `atlas-etf-pac-paper` ed è quello letto dal report quotidiano.
 
-La Libreria conserva anche l'app pubblicata con slug "atlas-etf-live",
-non riconducibile alla release V2.3 né al nuovo PAC paper.
-Fotografia storica del 27/09/2026: modello CIA40, pesi 60% World,
-25% Nasdaq, 10% EM, 5% Gold; segnali market regime a cinque fattori,
-"Governor" del conto a -10% drawdown TWR; massimo una vendita e
-due acquisti mensili, ordini da confermare manualmente, registro
-conto sul dispositivo. I dati di quella fotografia NON sono
-quotazioni di novembre 2026. La Libreria segnala sito pubblicato,
-ma il browser automatico non ha potuto verificarne l'accessibilità:
-https://atlas-etf-live.alessandro-castagn76.chatgpt.site
+Il segnale operativo viene calcolato eseguendo senza modifiche `v23_original/atlas_v23_live.py` (SHA256 originale `703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e`). Il codice congelato per il backtest 1926–2025 è in `v23_original/atlas_v23_pac_stress.py`. L'adattatore LIVE è quello contenuto nell'archivio originale del 1° ottobre, **non** il replay semplificato 4-ETF né una riscrittura dei segnali.
 
-## Progetto originale recuperato
+Strategia: **50% CORE + 50% SATELLITE** entrambi azionario globale EUNL.DE, eventuale difesa tramite CSBGE3.MI se momentum a 126 sedute positivo, altrimenti liquidità. Per il filtro macro si utilizzano credito AAA/BAA, breadth Fama/French e GS10-rendimento privo rischio, con il mese precedente COMPLETATO. La soglia di rientro è la **3% originale**. Non è applicato un vincolo di 35 giorni né un limite di tre operazioni mensili: non fanno parte della V2.3 originale.
 
-Archivio originale recuperato: ATLAS_ETF_GLOBAL_V2_3_COMPLETE_2026-10-01.zip.
-L'archivio è stato estratto e verificato in locale il 7 novembre 2026:
-self-test motore, validazione dataset integrato (4.853 sedute 2007–2026)
-e smoke-test del motore live hanno tutti superato i controlli.
+Simulazione prospettica: **1.000 € iniziali** dal 12/11/2026; versamenti virtuali di **250 €/mese** dalla prima seduta utile di dicembre 2026. Il motore registra i segnali al termine delle sedute EUR, prepara ordini virtuali e li valuta al **close osservato della successiva seduta completata**, ma soltanto se la decisione è stata registrata prima di quella chiusura. Non sono ordini del broker e non è dichiarata alcuna esecuzione al prezzo realmente ottenibile. Le posizioni iniziano a ZERO: sul primo report operativo si genera una proposta; i primi acquisti virtuali possono essere simulati non prima di una seduta successiva verificata.
 
-La V2.3 originale CONGELATA aveva:
-- 1.000 EUR iniziali + 250 EUR mensili; 50% core / 50% satellite;
-- uscita satellite per drawdown di 7,5% / 5% o Fast10 <= -10%;
-- primo rebound satellite a +3 punti percentuali;
-- reset di regime bull 5/10 sedute e override bear di -5pp;
-- al secondo exit del satellite, score di stress su credito (Moody's
-  Baa-Aaa), breadth Fama/French e tassi, valutati sul precedente mese completo;
-  core OUT con score 2/3, WARNING fino a 10 sedute con score 1/3;
-- capitale difensivo in Treasury/governativi quando il momentum 126 giorni è
-  positivo, altrimenti cash; contributi PAC riservati se un comparto è OUT;
-- backtest proxy 1926–2025: 9,3604% CAGR netto, -36,5368% MaxDD,
-  XIRR 9,177%; non è un vero fondo MSCI World del 1926 né una
-  certificazione out-of-sample.
+Costi: 1 € per ordine strategico, 0 € per PAC automatico, slippage 0,05% per lato, tassazione teorica 26% su plusvalenze equity / 12,5% bond, bollo proxy 0,2%/anno. Liquidità **senza interesse (0%)** per prudenza: deviazione rispetto al proxy RF usato nei backtest secolari. ETF reali e valute EUR non equivalgono alle serie Fama/French in dollari del secolo scorso: i CAGR storici **non sono** una previsione del conto virtuale.
 
-L'adattatore live storico usava principalmente EUNL.DE (azionario globale)
-e CSBGE3.MI (obbligazionario difensivo). NON era ancora un ledger completo
-a quattro ETF 65/15/10/10.
+Dati online: feed Yahoo daily adjusted close per EUNL.DE e CSBGE3.MI; FRED AAA/BAA/GS10; Kenneth French 6 portafogli mensili + RF. Il codice originale salva cache in `live_cache/`. Se i provider macro sono indisponibili o il mese precedente è mancante, il filtro **dichiara** esplicitamente `CARRIED_FROZEN_2025-11` o un altro riferimento storico. Questo ripiego non è *point-in-time* autentico per il 2026: non va interpretato come stress filter aggiornato. Se il prezzo equity è troppo vecchio o manca, non vengono preparati né eseguiti nuovi ordini.
 
-## Riavvio operativo indipendente
+I report e gli ordini virtuali vengono aggiornati dai workflow già esistenti in GitHub: il dispatcher sul ramo principale alle 19:50 e 00:20 UTC nei giorni lavorativi e la verifica su push. Ledger su `state.json`, riepilogo su `reports/latest_status.json`, fonte e freschezza in `reports/latest_quote_audit.json`; gli ordini sono pubblicati con data di decisione, esecuzione, prezzo close, commissioni, slippage e imposte simulate.
 
-Modello: ATLAS_ETF_PAC_4SLEEVE_RESTART_V1, PAPER ONLY.
-Non è il frozen Stress Filter V2.3 esatto, e non gli attribuiamo
-il 9,36% CAGR del backtest originale.
-
-Target PAC approvato: 65% World, 15% Nasdaq, 10% Emerging, 10% Gold.
-Prezzi quotati in EUR su Xetra:
-- WORLD EUNL.DE — iShares Core MSCI World UCITS Acc;
-- NASDAQ SXRV.DE — iShares NASDAQ 100 UCITS Acc;
-- EM IS3N.DE — iShares Core MSCI EM IMI UCITS Acc;
-- GOLD PPFB.DE — iShares Physical Gold ETC (ETC, non ETF UCITS azionario).
-
-1.000 EUR virtuali iniziali dal 7 novembre e zero ordini retrodatati.
-Prima decisione utile non prima del 9 novembre 2026. PAC 250 EUR/mese
-virtuale da dicembre 2026, accreditato una volta al mese alla prima seduta
-valida. Nessun invio di ordini al broker.
-
-La ricostruzione usa per World MA10 mensile ±1% da mesi COMPLETATI,
-Fast10 -10% per emergenza, stato difensivo con 50% del World core,
-oro permanente al target 10%. Le esecuzioni sono simulazioni al prossimo
-OPEN effettivamente osservato, con segnali registrati prima dell'apertura.
-MAX tre ordini complessivi mensili, prima vendite difensive, poi acquisti
-dei comparti sottopeso; vendita solo dopo almeno 35 giorni dal buy.
-
-Assunzioni: PAC senza fee fissa, ordini strategici 1 EUR, slippage 0,05%
-per lato, 26% imposta indicativa sulle plusvalenze realizzate,
-bollo maturato stimato 0,20% annuo, liquidità 0%.
-Nessuna leva, crypto o azioni singole. L'oro è un ETC con regime fiscale
-e rischio emittente da verificare, diverso da un ETF azionario UCITS.
-
-## Monitoraggio automatico
-
-Workflow dal ramo main: .github/workflows/atlas-etf-pac-dispatcher.yml
-20:50 e 01:20 CET (ora solare, UTC 19:50 e 00:20).
-Aggiorna solo il ramo atlas-etf-pac-paper; un workflow del ramo controlla
-inoltre le modifiche al codice. Task ChatGPT separato giornaliero al mattino.
-
-File aggiornati:
-- atlas_etf_pac/state.json — posizioni, flussi, ordini, segnali;
-- atlas_etf_pac/reports/latest_status.json — NAV, TWR, drawdown, ordini;
-- atlas_etf_pac/reports/latest_quote_audit.json — data e hash feed.
-Il semplice successo dei test non prova un acquisto virtuale.
-
-## Lavoro ancora necessario per il FULL V2.3
-
-L'implementazione di questo ramo è una ripartenza trasparente dei quattro
-comparti, non una migrazione fedele del motore storico. Servono porting
-della macchina a stati originale, feed macro credito/breadth/tassi completi,
-gestione difensivo bond, compensazione delle minusvalenze, validazione
-di replay identico e controllo di correttezza PIT prima di dichiarare
-la parità V2.3. Il monitor che gira oggi non ha tali certificazioni.
+Nota: per l'uso reale serve verificare prezzo, commissioni, regime fiscale, negoziabilità e coerenza del benchmark. Questo motore non invia nulla a Trade Republic. Il funzionamento futuro richiede che GitHub Actions e i provider siano effettivamente disponibili: un workflow `success` non costituisce da solo la prova di acquisto virtuale.
