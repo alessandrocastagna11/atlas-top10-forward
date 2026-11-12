@@ -1,0 +1,1 @@
+Staging-only integration test of the frozen October 2026 Atlas ETF V2.3 live adapter with an isolated prospective virtual ledger. Does not trade real money. The previous 4-ETF paper state is preserved in archive/2026-11-12-4sleeve/.\n
