@@ -659,8 +659,13 @@ def run(now=None):
                "prior_net_liquidation_nav_eur","new_net_liquidation_nav_eur",
                "prior_evidence_sha256","new_evidence_sha256"],
               state.get("valuation_revisions",[]))
+    first_rotation=dt.date.fromisoformat(FIRST_DECISION)
+    next_rotation=first_rotation+dt.timedelta(days=35)
+    while next_rotation<=now.date() and next_rotation.isoformat() in state["processed_decision_dates"]:
+        next_rotation+=dt.timedelta(days=35)
     published.update({
        "status":"PAPER_APPROX_LEDGER_ACTIVE",
+       "next_full_rotation_decision_date":next_rotation.isoformat(),
        "valuation_audit":valuation_audit,
        "daily_performance_basis":"UNIQUE_EXCHANGE_CLOSE_SESSION_AFTER_FX_REVISIONS",
        "daily_performance_revision_guard":True,
