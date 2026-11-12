@@ -1,0 +1,209 @@
+{
+  "model": "Atlas V2.3 ORIGINAL FROZEN STATE MACHINE (SHA256 verified)",
+  "engine_sha256": "aef2809b8a3bfe01e3b0fa6b3f0d564b8ad0db90340a04a7480d7266d9141c7a",
+  "start_date": "1926-07-01",
+  "requested_end_date": "2026-11-11",
+  "historical_frozen_through": "2025-12-31",
+  "macro_pinned_last_month": "2025-11",
+  "2026_extension_not_exact_frozen": true,
+  "coverage": {
+    "official": {
+      "source": "Ken French daily CSV ZIP",
+      "url": "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Research_Data_Factors_daily_CSV.zip",
+      "sha256": "96c23b88e651cbfff3740a53f8225e59ee39893371e96385a1d8125ec2cd9c89",
+      "max_session": "2026-09-30",
+      "status": "OK"
+    },
+    "market_proxy": {
+      "ticker": "SPY",
+      "provider": "Yahoo adjusted daily close",
+      "sha256": "44d70fb238e03d5397e05f25c251110482cff0799e435759130bf0cc0ab7b500",
+      "max_session": "2026-11-12"
+    },
+    "proxy_start": "2026-10-01",
+    "proxy_last": "2026-11-11",
+    "rf_approximation": "last available Fama French daily RF repeated for SPY extension",
+    "source_counts": {
+      "pinned_frozen_through_2025": 26151,
+      "pinned_2026": 102,
+      "official_new_sessions": 85,
+      "SPY_proxy_sessions": 30
+    },
+    "last_session": "2026-11-11",
+    "total_sessions": 26368,
+    "first_proxy_session": "2026-10-01"
+  },
+  "scenarios": {
+    "neutral": {
+      "strategy": {
+        "strategy": "ATLAS V2.3-PAC Stress Filter Frozen",
+        "start_date": "1926-07-01",
+        "end_date": "2026-11-11",
+        "initial_eur": 1000.0,
+        "monthly_pac_eur": 250.0,
+        "total_contributions_eur": 302000.0,
+        "twr_cagr_net": 0.09380773560141176,
+        "max_drawdown": -0.3653683735789598,
+        "xirr": 0.09186636965338277,
+        "final_liquidated_eur": 237058084.03939593,
+        "orders_total": 1167,
+        "orders_pac": 846,
+        "orders_strategy": 319,
+        "orders_initial": 2,
+        "order_breakdown": {
+          "INITIAL": 2,
+          "PAC_ORDER": 846,
+          "STRATEGY_EQ_BUY": 150,
+          "STRATEGY_EQ_SELL": 151,
+          "STRATEGY_BOND_BUY": 9,
+          "STRATEGY_BOND_SELL": 9
+        },
+        "fixed_fees_eur": 321.0,
+        "slippage_proxy_eur": 760302.5129927394,
+        "realized_taxes_eur": 50934388.87741886,
+        "stamp_proxy_eur": 4954505.146575734,
+        "stress_events": 38,
+        "pac_months_total": 1204,
+        "pac_months_with_immediate_order": 846,
+        "pac_months_held_as_cash_or_defensive": 358
+      },
+      "passive_same_ff_proxy": {
+        "twr_cagr_net": 0.10197248566063011,
+        "max_drawdown": -0.8452467188616626,
+        "xirr": 0.10520141807765984,
+        "final_liquidated_eur": 706818529.2313317,
+        "total_contributions_eur": 302000.0
+      },
+      "unknown_macro_months": [
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ],
+      "stress_events_2026": [],
+      "benchmark_definition": "Passive holds identical original FF equity proxy; both include cost/slippage/taxes and stamp convention; final amounts net liquidation"
+    },
+    "carry": {
+      "strategy": {
+        "strategy": "ATLAS V2.3-PAC Stress Filter Frozen",
+        "start_date": "1926-07-01",
+        "end_date": "2026-11-11",
+        "initial_eur": 1000.0,
+        "monthly_pac_eur": 250.0,
+        "total_contributions_eur": 302000.0,
+        "twr_cagr_net": 0.09380773560141176,
+        "max_drawdown": -0.3653683735789598,
+        "xirr": 0.09186636965338277,
+        "final_liquidated_eur": 237058084.03939593,
+        "orders_total": 1167,
+        "orders_pac": 846,
+        "orders_strategy": 319,
+        "orders_initial": 2,
+        "order_breakdown": {
+          "INITIAL": 2,
+          "PAC_ORDER": 846,
+          "STRATEGY_EQ_BUY": 150,
+          "STRATEGY_EQ_SELL": 151,
+          "STRATEGY_BOND_BUY": 9,
+          "STRATEGY_BOND_SELL": 9
+        },
+        "fixed_fees_eur": 321.0,
+        "slippage_proxy_eur": 760302.5129927394,
+        "realized_taxes_eur": 50934388.87741886,
+        "stamp_proxy_eur": 4954505.146575734,
+        "stress_events": 38,
+        "pac_months_total": 1204,
+        "pac_months_with_immediate_order": 846,
+        "pac_months_held_as_cash_or_defensive": 358
+      },
+      "passive_same_ff_proxy": {
+        "twr_cagr_net": 0.10197248566063011,
+        "max_drawdown": -0.8452467188616626,
+        "xirr": 0.10520141807765984,
+        "final_liquidated_eur": 706818529.2313317,
+        "total_contributions_eur": 302000.0
+      },
+      "unknown_macro_months": [
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ],
+      "stress_events_2026": [],
+      "benchmark_definition": "Passive holds identical original FF equity proxy; both include cost/slippage/taxes and stamp convention; final amounts net liquidation"
+    },
+    "stressed": {
+      "strategy": {
+        "strategy": "ATLAS V2.3-PAC Stress Filter Frozen",
+        "start_date": "1926-07-01",
+        "end_date": "2026-11-11",
+        "initial_eur": 1000.0,
+        "monthly_pac_eur": 250.0,
+        "total_contributions_eur": 302000.0,
+        "twr_cagr_net": 0.09380773560141176,
+        "max_drawdown": -0.3653683735789598,
+        "xirr": 0.09186636965338277,
+        "final_liquidated_eur": 237058084.03939593,
+        "orders_total": 1167,
+        "orders_pac": 846,
+        "orders_strategy": 319,
+        "orders_initial": 2,
+        "order_breakdown": {
+          "INITIAL": 2,
+          "PAC_ORDER": 846,
+          "STRATEGY_EQ_BUY": 150,
+          "STRATEGY_EQ_SELL": 151,
+          "STRATEGY_BOND_BUY": 9,
+          "STRATEGY_BOND_SELL": 9
+        },
+        "fixed_fees_eur": 321.0,
+        "slippage_proxy_eur": 760302.5129927394,
+        "realized_taxes_eur": 50934388.87741886,
+        "stamp_proxy_eur": 4954505.146575734,
+        "stress_events": 38,
+        "pac_months_total": 1204,
+        "pac_months_with_immediate_order": 846,
+        "pac_months_held_as_cash_or_defensive": 358
+      },
+      "passive_same_ff_proxy": {
+        "twr_cagr_net": 0.10197248566063011,
+        "max_drawdown": -0.8452467188616626,
+        "xirr": 0.10520141807765984,
+        "final_liquidated_eur": 706818529.2313317,
+        "total_contributions_eur": 302000.0
+      },
+      "unknown_macro_months": [
+        "2025-12",
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06",
+        "2026-07",
+        "2026-08",
+        "2026-09",
+        "2026-10"
+      ],
+      "stress_events_2026": [],
+      "benchmark_definition": "Passive holds identical original FF equity proxy; both include cost/slippage/taxes and stamp convention; final amounts net liquidation"
+    }
+  },
+  "audit": {
+    "frozen": null
+  }
+}
