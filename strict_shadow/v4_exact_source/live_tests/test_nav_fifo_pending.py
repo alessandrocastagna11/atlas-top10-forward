@@ -67,6 +67,21 @@ class RevisionAndFifoTests(unittest.TestCase):
               sum(x["cost_basis_eur"] for x in remaining["lots"]),places=5)
         pa.validate_state(s)
 
+    def test_defensive_sale_cannot_use_pre_maturity_or_stale_quote(self):
+        s=fresh()
+        pa.buy(s,"KO",1000.,100.,"2026-11-09",tm("2026-11-10"),"2026-11-09","EOD")
+        self.assertFalse(pa.sell(s,"KO",600.,110.,"2026-12-14",
+                  tm("2026-12-15"),"2026-12-14","LAST_VERIFIED_LOCAL_EXCHANGE_EOD",
+                  "weekly_risk_reduction_35day_guarded"))
+        self.assertFalse(pa.sell(s,"KO",600.,110.,"2026-12-14",
+                  tm("2026-12-15"),"2026-12-15","STALE_LAST_RECORDED_EOD",
+                  "weekly_risk_reduction_35day_guarded"))
+        self.assertEqual(len(s["orders"]),1)
+        self.assertTrue(pa.sell(s,"KO",600.,110.,"2026-12-14",
+                  tm("2026-12-16"),"2026-12-15","LAST_VERIFIED_LOCAL_EXCHANGE_EOD",
+                  "weekly_risk_reduction_35day_guarded"))
+        pa.validate_state(s)
+
     def test_14_dec_full_rotation_not_executed_at_14_dec_close_before_15_dec_unlock(self):
         s=fresh()
         pa.buy(s,"KO",1000.,100.,"2026-11-09",tm("2026-11-10"),"2026-11-09","EOD")
