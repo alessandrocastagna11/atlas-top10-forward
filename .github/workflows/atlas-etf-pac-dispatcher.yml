@@ -1,4 +1,4 @@
-name: Atlas ETF PAC — daily dispatcher (PAPER ONLY)
+name: Atlas ETF V2.3 ORIGINAL — daily paper dispatcher
 on:
   workflow_dispatch:
   schedule:
@@ -14,7 +14,7 @@ concurrency:
 jobs:
   pac_paper:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
         with:
@@ -24,9 +24,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Test PAC rules before changes
+      - name: Verify original V2.3 live code, causal macro and prospective paper accounting
         run: python -m unittest discover -s atlas_etf_pac/tests -p 'test_*.py' -v
-      - name: Verify and update forward PAC paper
+      - name: Update original V2.3 EOD dataset, signals and paper account
         run: python atlas_etf_pac/engine.py
       - name: Validate zero real-broker access and no historical backfill
         run: |
@@ -52,10 +52,10 @@ jobs:
           p=Path('atlas_etf_pac/reports/latest_status.json')
           r=json.loads(p.read_text()) if p.exists() else {}
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
-              f.write('## Atlas ETF PAC four-sleeve virtual tracker\n\n')
+              f.write('## Atlas ETF PAC ORIGINAL V2.3 CORE/SATELLITE paper tracker\n\n')
               for k in ('status','nav_eur','cash_eur','orders_total','last_nav_session','max_drawdown_pct'):
                   f.write('- '+k+': '+str(r.get(k,'UNKNOWN'))+'\n')
-              f.write('\nNo real money orders. Research reconstruction; not exact V2.3 replay.\n')
+              f.write('\nNo real money orders. Exact original V2.3 LIVE adapter; 2026 macro may use explicitly marked carry from the latest observed completed month.\n')
           PY
       - name: Commit isolated PAC ledger and quote audit
         if: success()
