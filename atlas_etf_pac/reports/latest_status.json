@@ -1,7 +1,7 @@
 {
   "blocked_actions": [],
   "cash_eur": 1000.0,
-  "checked_at_utc": "2026-11-12T22:42:19.459097+00:00",
+  "checked_at_utc": "2026-11-12T22:43:51.220370+00:00",
   "contributed_eur": 1000.0,
   "cumulative_twr_pct": 0.0,
   "historical_frozen_v23_parity": "ORIGINAL_LIVE_SHA256_VERIFIED; TRADABLE_ETF_PROXY_DIFFERS_FROM_1926_FF",
