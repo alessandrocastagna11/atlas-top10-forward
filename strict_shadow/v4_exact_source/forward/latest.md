@@ -5,7 +5,7 @@
 **Stato:** `PAPER_APPROX_LEDGER_ACTIVE` — **Validità della valutazione:** `PAPER_LAST_EOD_CLOSE_APPROXIMATE_FILLS_NOT_REAL_BROKER_ORDERS`
 
 **Motore segnali:** SIGNAL_READY; errore: nessuno
-**Capitalizzazione osservata:** 2026-11-11; copertura USA/RoW: 276/201; NON PIT storico
+**Capitalizzazione osservata:** 2026-11-12; copertura USA/RoW: 276/201; NON PIT storico
 **Titoli sostituiti per storico insufficiente:** SPCX
 
 **Ultima sessione decisionale:** 2026-11-11
@@ -13,20 +13,20 @@
 **Dati mercato / universo:** MARKET_CAP_USD_AS_RECORDED_WITHIN_ACWI_NOT_HISTORICAL_PIT; fotografia utilizzata al 2026-11-11
 **Universo dinamico:** 6 fotografie cronologiche, ultima disponibile 2026-11-11; nuove società eleggibili SOLO dalla data registrata
 **Primo segnale / apertura successiva:** 2026-11-11 / 2026-11-12
-**Candidati segnalati (NON ORDINI):** KO, JNJ, CB, MRK, DELL, PANW, MU, DE, ABNB, ABBV; verifica: SIGNAL_PUBLISHED_PER_EXCHANGE
-**Segnale originale pubblicato:** SÌ; esito: SIGNAL_PUBLISHED_PER_EXCHANGE
+**Candidati segnalati (NON ORDINI):** KO, JNJ, CB, MRK, DELL, PANW, MU, DE, ABNB, ABBV; verifica: ATTESTED_CORRECTION_BEFORE_OPEN
+**Segnale originale pubblicato:** SÌ; esito: ATTESTED_CORRECTION_BEFORE_OPEN
 **Contabilità paper:** FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY — prezzi degli ordini APPROSSIMATI; nessun ordine reale.
-**Ultimo aggiornamento portafoglio:** 2026-11-11T23:12:28.684439+00:00; fonte ultimo prezzo 2026-11-11.
+**Ultimo aggiornamento portafoglio:** 2026-11-12T03:20:59.618961+00:00; fonte ultimo prezzo 2026-11-11.
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
 **Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.
 
 | Portafoglio virtuale | Importo |
 |---|---:|
 | Capitale iniziale | 10,000.00 € |
-| NAV netto liquidabile ipotetico* | 10,011.34 € |
-| NAV a prezzi di mercato | 10,029.06 € |
+| NAV netto liquidabile ipotetico* | 9,992.63 € |
+| NAV a prezzi di mercato | 10,007.13 € |
 | Liquidità | 6,411.57 € |
-| Valore titoli | 3,617.49 € |
+| Valore titoli | 3,595.56 € |
 | Posizioni | 4 |
 | Ordini complessivi | 4 |
 | Nuovi ordini verificati | 0 |
@@ -38,10 +38,10 @@
 
 | Titolo | Quote | Valore € | Peso | Quote vincolate | Prima data vendibile |
 |---|---:|---:|---:|---:|---|
-| CB | 2.74054 | 914.23 | 9.12% | 2.74054 | 2026-12-15 |
-| JNJ | 3.55665 | 898.39 | 8.96% | 3.55665 | 2026-12-15 |
-| KO | 12.7129 | 1,117.35 | 11.14% | 12.7129 | 2026-12-15 |
-| MRK | 5.18576 | 687.53 | 6.86% | 5.18576 | 2026-12-15 |
+| CB | 2.74054 | 908.68 | 9.08% | 2.74054 | 2026-12-15 |
+| JNJ | 3.55665 | 892.94 | 8.92% | 3.55665 | 2026-12-15 |
+| KO | 12.7129 | 1,110.58 | 11.10% | 12.7129 | 2026-12-15 |
+| MRK | 5.18576 | 683.36 | 6.83% | 5.18576 | 2026-12-15 |
 
 ## Piano delle aperture per singolo mercato
 
