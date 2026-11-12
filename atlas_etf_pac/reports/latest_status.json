@@ -8,14 +8,14 @@
     }
   ],
   "cash_eur": 1000,
-  "checked_at_utc": "2026-11-12T09:39:47.151204+00:00",
+  "checked_at_utc": "2026-11-12T09:41:50.211761+00:00",
   "contributed_eur": 1000,
   "cumulative_twr_pct": 0.0,
   "historical_frozen_v23_parity": "NOT_CLAIMED",
   "invested_eur": 0,
   "last_nav_session": "2026-11-10",
   "last_orders": [],
-  "latest_day_pct": 0.0,
+  "latest_day_pct": 0,
   "latest_signal": {
     "fast10_pct": -2.2454,
     "method": "RESEARCH_RECONSTRUCTION_MONTHLY_MA10_FAST10_NOT_FROZEN_V23_STRESS",
@@ -36,33 +36,33 @@
   "mode": "PAPER_ONLY_RESEARCH_RECONSTRUCTION",
   "model": "ATLAS_ETF_PAC_4SLEEVE_RESTART_V1",
   "monthly_cash_contributions": 0,
-  "nav_eur": 1000.0,
+  "nav_eur": 1000,
   "notes": "Research shadow; not identical to original V2.3 with macro stress and bond defense.",
   "orders_total": 0,
   "pending_orders": {
-    "created_at_utc": "2026-11-12T09:35:04.962206+00:00",
-    "decision_session": "2026-11-10",
-    "input_quote_digest": "01f5e7c3697ffd5c6f527f8e49c3cc14e98906ea125b63cebac3476dd2646d1a",
+    "created_at_utc": "2026-11-11T00:15:13.853406+00:00",
+    "decision_session": "2026-11-09",
+    "input_quote_digest": "0d6e76943f8f138712515d64bd5703c5a702c97cec09d4ac916e0a892117dffc",
     "policy": "NEXT_VERIFIED_COMMON_SESSION_OPEN_PAPER",
     "proposed_orders": [
       {
         "asset": "WORLD",
-        "budget_eur": 650.0,
-        "date": "2026-11-10",
+        "budget_eur": 650,
+        "date": "2026-11-09",
         "reason": "PAC_UNDERWEIGHT_DEFICIT_FIRST",
         "side": "BUY"
       },
       {
         "asset": "NASDAQ",
-        "budget_eur": 150.0,
-        "date": "2026-11-10",
+        "budget_eur": 150,
+        "date": "2026-11-09",
         "reason": "PAC_UNDERWEIGHT_DEFICIT_FIRST",
         "side": "BUY"
       },
       {
         "asset": "GOLD",
-        "budget_eur": 100.0,
-        "date": "2026-11-10",
+        "budget_eur": 100,
+        "date": "2026-11-09",
         "reason": "PAC_UNDERWEIGHT_DEFICIT_FIRST",
         "side": "BUY"
       }
