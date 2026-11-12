@@ -303,6 +303,92 @@ def generate_portfolio(state,quote_data,proposal,now):
     }
 
 
+def reconcile_daily_nav(state,portfolio,quotes,now):
+    """One observation per ACTUAL market-close session, not per runner date.
+
+    Vendor FX/chart revisions can revalue an already-seen EOD. Keep the latest
+    mark for that session but audit the previous numerical version. Neither
+    the revision nor a rerun counts as an additional trading day, and neither
+    mutates any historical order, position or cash.
+    """
+    session=portfolio["valuation_session"]
+    observed=now.isoformat()
+    fx_rates=quotes.get("fx_units_per_eur_asof") or {}
+    fx_dates=quotes.get("fx_currency_source_sessions") or {}
+    owned_quotes={ticker:{"price_eur":float(pos["market_close_eur"]),
+                           "exchange_session":str(pos.get("price_source_date",""))}
+                  for ticker,pos in state["holdings"].items()}
+    evidence={"exchange_close_session":session,"held_quotes":owned_quotes,
+              "fx_units_per_eur":fx_rates,"fx_source_sessions":fx_dates}
+    fingerprint=hashlib.sha256(json.dumps(evidence,sort_keys=True,
+                separators=(",",":"),allow_nan=False).encode()).hexdigest()
+    current={"report_date":now.date().isoformat(),
+             "source_close_session":session,
+             "mark_to_market_nav_eur":portfolio["nav_mark_to_market_eur"],
+             "net_liquidation_nav_eur":portfolio["nav_net_liquidation_eur"],
+             "approximate_fills":True,
+             "first_observed_at_utc":observed,
+             "last_observed_at_utc":observed,
+             "quote_evidence_sha256":fingerprint,
+             "fx_source_sessions":fx_dates,"fx_units_per_eur":fx_rates,
+             "held_quotes":owned_quotes}
+    history={}
+    revisions=state.setdefault("valuation_revisions",[])
+    def materially_different(before,after):
+        return (abs(float(before["mark_to_market_nav_eur"])-
+                    float(after["mark_to_market_nav_eur"]))>0.0001 or
+                abs(float(before["net_liquidation_nav_eur"])-
+                    float(after["net_liquidation_nav_eur"]))>0.0001)
+    def archive(old,new,why):
+        revisions.append({"source_close_session":new["source_close_session"],
+            "detected_at_utc":observed,"reason":why,
+            "prior_report_date":old.get("report_date"),
+            "prior_mark_to_market_nav_eur":old["mark_to_market_nav_eur"],
+            "new_mark_to_market_nav_eur":new["mark_to_market_nav_eur"],
+            "prior_net_liquidation_nav_eur":old["net_liquidation_nav_eur"],
+            "new_net_liquidation_nav_eur":new["net_liquidation_nav_eur"],
+            "prior_fx_units_per_eur":old.get("fx_units_per_eur",{}),
+            "new_fx_units_per_eur":new.get("fx_units_per_eur",{}),
+            "prior_held_quotes":old.get("held_quotes",{}),
+            "new_held_quotes":new.get("held_quotes",{}),
+            "prior_evidence_sha256":old.get("quote_evidence_sha256","LEGACY_UNAVAILABLE"),
+            "new_evidence_sha256":new.get("quote_evidence_sha256","LEGACY_UNAVAILABLE")})
+    # Prior runner-version convention could save the same EOD two times
+    # under separate UTC dates. Audit both values, keeping the later mark.
+    for old in sorted(state.get("equity_points",[]),
+                      key=lambda v:(v.get("report_date",""),v.get("last_observed_at_utc",""))):
+        key=old.get("source_close_session") or old["report_date"]
+        if key in history and materially_different(history[key],old):
+            archive(history[key],old,"LEGACY_DUPLICATE_CLOSE_REVALUED")
+        history[key]=old
+    prior=history.get(session)
+    if prior is not None:
+        current["first_observed_at_utc"]=prior.get("first_observed_at_utc",
+                                                   prior.get("last_observed_at_utc",
+                                                             "LEGACY_UNKNOWN"))
+        current["report_date"]=prior.get("report_date",current["report_date"])
+        if materially_different(prior,current):
+            reason=("FX_REFERENCE_REVISED_FOR_SAME_CLOSE"
+                    if prior.get("fx_units_per_eur") and
+                       prior.get("fx_units_per_eur")!=fx_rates and
+                       prior.get("held_quotes")==owned_quotes
+                    else "SAME_CLOSE_REVALUED_PRICE_OR_FX")
+            archive(prior,current,reason)
+        else:
+            # Even an unchanged NAV can gain new currency provenance. This
+            # is metadata enrichment, never a second daily P&L observation.
+            current["last_observed_at_utc"]=observed
+    history[session]=current
+    state["equity_points"]=[history[x] for x in sorted(history)]
+    if len({p["source_close_session"] for p in state["equity_points"]})!=len(state["equity_points"]):
+        raise ValueError("Multiple daily NAV points from one exchange session")
+    return {"valuation_session":session,"historical_daily_sessions":len(history),
+            "valuation_revision_count":len(revisions),
+            "valuation_revised_in_current_run":any(
+                row["detected_at_utc"]==observed for row in revisions),
+            "quote_evidence_sha256":fingerprint}
+
+
 def write_csv(path,headers,rows):
     path.parent.mkdir(parents=True,exist_ok=True)
     with path.open("w",encoding="utf8",newline="") as f:
@@ -471,23 +557,28 @@ def run(now=None):
     port=generate_portfolio(state,quote,proposal,now)
     state["last_nav_eur"]=port["nav_mark_to_market_eur"]
     state["last_valuation_session"]=port["valuation_session"]
-    today=now.date().isoformat()
-    # Keep one current observation per observation day, no fake historical NAV.
-    states=[x for x in state["equity_points"] if x["report_date"]!=today]
-    states.append({"report_date":today,
-        "source_close_session":port["valuation_session"],
-        "mark_to_market_nav_eur":port["nav_mark_to_market_eur"],
-        "net_liquidation_nav_eur":port["nav_net_liquidation_eur"],
-        "approximate_fills":True})
-    state["equity_points"]=sorted(states,key=lambda x:x["report_date"])
+    # Never count the same market session twice due to a second run or a
+    # corrected end-of-day FX rate. Archive the previously published valuation.
+    valuation_audit=reconcile_daily_nav(state,port,quote,now)
     # Orders, state and report written consistently inside one GitHub Actions
     # transaction; next run's append-only checks ensure no retroactive rewrite.
     save(STATE,state)
     save(PORTFOLIO,port)
     write_csv(ORDER_PATH,ORDER_FIELDS,state["orders"])
     write_csv(EQUITY,["report_date","source_close_session","mark_to_market_nav_eur","net_liquidation_nav_eur","approximate_fills"],state["equity_points"])
+    # Auditable append-only revisions; never recast an FX correction as
+    # a new daily gain/loss. JSON state also stores the full provenance.
+    write_csv(ROOT/"valuation_revisions.csv",
+              ["source_close_session","detected_at_utc","reason","prior_report_date",
+               "prior_mark_to_market_nav_eur","new_mark_to_market_nav_eur",
+               "prior_net_liquidation_nav_eur","new_net_liquidation_nav_eur",
+               "prior_evidence_sha256","new_evidence_sha256"],
+              state.get("valuation_revisions",[]))
     published.update({
        "status":"PAPER_APPROX_LEDGER_ACTIVE",
+       "valuation_audit":valuation_audit,
+       "daily_performance_basis":"UNIQUE_EXCHANGE_CLOSE_SESSION_AFTER_FX_REVISIONS",
+       "daily_performance_revision_guard":True,
        "portfolio_account_status":"PAPER_APPROX_LEDGER_ACTIVE",
        "portfolio_data_lag_calendar_days":(now.date()-dt.date.fromisoformat(port["valuation_session"])).days,
        "signal_engine_status":published.get("signal_engine_status","NOT_REPORTED"),
