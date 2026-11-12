@@ -1,6 +1,7 @@
 name: Atlas V4 ORIGINAL Confidence70 — forward PAPER
 on:
   workflow_dispatch:
+  # Targeted 2026-11-12 integration verification: EOD NAV audit, FIFO rotation, tax.
   # One safe self-change trigger permits manual maintenance/recovery without
   # subscribing the entire paper account to each incremental Python commit.
   push:
