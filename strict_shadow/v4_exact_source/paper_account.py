@@ -185,8 +185,16 @@ def sell(state,ticker,requested_value,reference,decision,now,price_date,price_so
     """FIFO 35-day absolute lock; applies to risk reductions and all exits."""
     p=state["holdings"][ticker]
     ref=positive(reference,"sale ref")
+    # A previous-day proxy close dated BEFORE sale eligibility cannot be
+    # used to sell newly matured lots, even if the runner starts next day.
+    # Apply this to ALL defensive and rotational sells, not only full rebalance.
+    if str(price_source).startswith("STALE"):
+        state["blocked_sell_requests"]+=1
+        return False
+    quote_day=dt.date.fromisoformat(str(price_date))
     matured=[lot for lot in p["lots"] if
-             dt.date.fromisoformat(lot["sale_eligible_date"])<=now.date()]
+             dt.date.fromisoformat(lot["sale_eligible_date"])<=now.date()
+             and dt.date.fromisoformat(lot["sale_eligible_date"])<=quote_day]
     available=sum(lot["shares"] for lot in matured)
     req=max(0.,float(requested_value))/ref
     amount=min(available,p["shares"],req)
