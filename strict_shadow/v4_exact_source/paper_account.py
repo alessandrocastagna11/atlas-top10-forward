@@ -137,6 +137,8 @@ def validate_state(state):
 
 
 def buy(state,ticker,budget,reference,decision,now,price_date,price_source):
+    if ticker not in state["holdings"] and len(state["holdings"])>=10:
+        return False  # Exposure/position cap is absolute, including locked lots.
     if ticker in state["holdings"]:
         # Additional independent FIFO lot is permitted, but stays locked 35d.
         pass
@@ -231,6 +233,70 @@ def sell(state,ticker,requested_value,reference,decision,now,price_date,price_so
        "price_source_date":price_date,"price_quality":price_source,
        "paper_only":True,"real_market_fill":False})
     return True
+
+
+def execute_or_defer_five_week_rebalance(state,candidates,decision,quotes,now,
+                                         deferred=False):
+    """One frozen five-week signal, executed only with sale-eligible LOCAL bars.
+
+    No retroactive fills and no relaxation of FIFO. If any mandatory replacement
+    requires immature shares, keep the WHOLE rotation as an explicit pending
+    decision (rather than losing it for the next 5-week interval).
+    """
+    nav=float(state["cash_eur"])
+    priced={}
+    for ticker,p in state["holdings"].items():
+        px,session,quality=next_available_price(ticker,quotes,
+            {"possible_candidates":candidates},state["holdings"],now.date())
+        if quality.startswith("STALE"):
+            return {"completed":False,"blocked":[ticker],"reason":"STALE_HELD_QUOTE"}
+        priced[ticker]=(px,session,quality)
+        nav+=p["shares"]*px
+    targets={x["ticker"]:nav*float(x["weight_pct"])/100.
+             for x in candidates}
+    threshold=max(500.,nav*.06)
+    planned=[]
+    blocked=[]
+    for ticker,p in list(state["holdings"].items()):
+        px,price_day,quality=priced[ticker]
+        excess=p["shares"]*px-targets.get(ticker,0.)
+        if ticker in targets and excess<threshold:continue
+        required_shares=min(p["shares"],max(0.,excess)/px)
+        if required_shares<=1e-10:continue
+        mature_shares=0.
+        for lot in p["lots"]:
+            # Never treat a Dec 14 close as the executable price for a
+            # Dec 15-matured lot even when the GitHub runner starts Dec 15.
+            if (dt.date.fromisoformat(lot["sale_eligible_date"])<=now.date()
+                and dt.date.fromisoformat(lot["sale_eligible_date"])<=dt.date.fromisoformat(price_day)):
+                mature_shares+=lot["shares"]
+        if mature_shares+1e-9<required_shares:
+            blocked.append(ticker)
+        else:
+            planned.append((ticker,max(0.,excess),px,price_day,quality))
+    if blocked:
+        return {"completed":False,"blocked":sorted(blocked),
+                "reason":"FIFO_OR_COMPLETED_LOCAL_CLOSE_NOT_YET_AVAILABLE",
+                "earliest_unlock_dates":{t:min(x["sale_eligible_date"] for x in
+                  state["holdings"][t]["lots"]) for t in blocked}}
+    for ticker,excess,px,price_day,quality in planned:
+        if not sell(state,ticker,excess,px,decision,now,price_day,quality,
+                    "original_five_week_rotation_deferred_after_fifo" if deferred
+                    else "original_five_week_rotation_proxy"):
+            raise ValueError("Prevalidated mature 35-day sale unexpectedly blocked")
+    for candidate in candidates:
+        ticker=candidate["ticker"]
+        if ticker not in quotes.get("close_eur",{}):
+            continue   # No imaginary fill from an old planner close.
+        px,price_day,quality=next_available_price(ticker,quotes,
+                    {"possible_candidates":candidates},state["holdings"],now.date())
+        if quality.startswith("STALE") or dt.date.fromisoformat(price_day)<dt.date.fromisoformat(decision):
+            continue
+        owned=state["holdings"].get(ticker,{}).get("shares",0.)*px
+        budget=nav*float(candidate["weight_pct"])/100.-owned
+        if budget>=threshold:buy(state,ticker,budget,px,decision,now,price_day,quality)
+    return {"completed":True,"blocked":[],"reason":"FIVE_WEEK_TARGET_EXECUTED",
+            "deferred":deferred}
 
 
 def generate_portfolio(state,quote_data,proposal,now):
@@ -476,23 +542,22 @@ def run(now=None):
         for t in list(state["holdings"]):
             pricecache[t]=next_available_price(t,quote,current_proposal,state["holdings"],now.date())
         if full:
-            targets={p["ticker"]:NAV*float(p["weight_pct"])/100.
-                     for p in current_proposal.get("possible_candidates",[])}
-            threshold=max(500.,NAV*.06)
-            for ticker,p in list(state["holdings"].items()):
-                price,asof,source=pricecache[ticker]
-                excess=p["shares"]*price-targets.get(ticker,0.)
-                if ticker not in targets or excess>=threshold:
-                    sell(state,ticker,max(excess,0.),price,decision,now,asof,source,
-                         "original_five_week_rotation_proxy")
-            for candidate in current_proposal.get("possible_candidates",[]):
-                ticker=candidate["ticker"]
-                price,asof,source=next_available_price(
-                    ticker,quote,current_proposal,state["holdings"],now.date())
-                owned=state["holdings"].get(ticker,{}).get("shares",0.)*price
-                budget=NAV*float(candidate["weight_pct"])/100.-owned
-                if budget>=threshold:
-                    buy(state,ticker,budget,price,decision,now,asof,source)
+            frozen_candidates=current_proposal.get("possible_candidates",[])
+            if not frozen_candidates or any("weight_pct" not in x for x in frozen_candidates):
+                raise ValueError("Missing original frozen target weights for "+decision)
+            outcome=execute_or_defer_five_week_rebalance(
+                state,frozen_candidates,decision,quote,now)
+            if not outcome["completed"]:
+                state["pending_full_rotation"]={
+                    "original_decision_session":decision,
+                    "frozen_candidates":frozen_candidates,
+                    "first_deferred_at_utc":now.isoformat(),
+                    "blocked_tickers":outcome["blocked"],
+                    "earliest_unlock_dates":outcome.get("earliest_unlock_dates",{}),
+                    "defer_reason":outcome["reason"],
+                    "executed":False}
+            else:
+                state.pop("pending_full_rotation",None)
         else:
             desired=float(current_proposal.get("regime_multiplier",1.))
             invested=sum(p["shares"]*pricecache[t][0] for t,p in state["holdings"].items())
@@ -545,6 +610,26 @@ def run(now=None):
                         # fees and slippage, never from synthetic credit.
                         room=max(0.,room-addition)
         state["processed_decision_dates"].append(decision)
+    # A Monday's frozen full rotation is not silently discarded simply
+    # because the youngest lot becomes sellable on the following Tuesday.
+    # Retry ONLY with subsequently completed, eligible market data and record
+    # the actual runner date; no retroactive price or execution timestamp.
+    deferred_rotation=state.get("pending_full_rotation")
+    if deferred_rotation and not deferred_rotation.get("executed"):
+        outcome=execute_or_defer_five_week_rebalance(
+            state,deferred_rotation["frozen_candidates"],
+            deferred_rotation["original_decision_session"],quote,now,deferred=True)
+        if outcome["completed"]:
+            state.setdefault("completed_deferred_rotations",[]).append({
+                "original_decision_session":deferred_rotation["original_decision_session"],
+                "completed_at_utc":now.isoformat(),
+                "source_close_session":quote.get("decision_session"),
+                "retroactive_execution":False})
+            state.pop("pending_full_rotation",None)
+        else:
+            deferred_rotation["blocked_tickers"]=outcome["blocked"]
+            deferred_rotation["defer_reason"]=outcome["reason"]
+            deferred_rotation["earliest_unlock_dates"]=outcome.get("earliest_unlock_dates",{})
     # The last recorded quote is not necessarily the latest decision's quote.
     # The preserved first-day prices remain available for new-lot validation.
     if not quote.get("close_eur"):
@@ -601,6 +686,9 @@ def run(now=None):
        "portfolio_report_session":port["valuation_session"],
        "last_order_execution_mode":POLICY,
        "processed_review_dates":state["processed_decision_dates"],
+       "pending_full_rotation":{k:v for k,v in state.get("pending_full_rotation",{}).items()
+                                if k!="frozen_candidates"} if state.get("pending_full_rotation") else None,
+       "completed_deferred_rotation_count":len(state.get("completed_deferred_rotations",[])),
        "weekly_monday_review":True,"full_rebalance_every_five_weeks":True,
        "risk_universe_fidelity":"ETF_ACWI_AS_RECORDED_OR_VENDOR_MARKETCAP_PROXY_NOT_HISTORICAL_PIT",
        "reason":"Execution is ASSUMED at previous complete close, not verified market fill.",
