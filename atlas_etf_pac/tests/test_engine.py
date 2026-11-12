@@ -111,9 +111,30 @@ class PACLiveTests(unittest.TestCase):
         self.assertEqual(st['orders'],[])
         self.assertTrue(any(x['reason']=='DEFERRED_NO_PREOPEN_SIGNAL_PROVENANCE'
                             for x in st['blocked_actions']))
-        self.assertEqual(st['pending']['decision_session'],'2026-11-10')
+        self.assertEqual(st['pending']['decision_session'],'2026-11-09')
+        self.assertEqual(st['pending']['created_at_utc'],'2026-11-10T12:00:00+00:00')
         st,done=e.process(CFG,st,'2026-11-11',synthetic(),time_for('2026-11-11'))
-        self.assertEqual(done,3)
-        self.assertTrue(all(x['execution_session']=='2026-11-11' for x in st['orders']))
+        self.assertEqual(done,1)
+        self.assertEqual(st['orders'][0]['execution_session'],'2026-11-11')
+
+    def test_delayed_quotes_retain_original_preopen_timestamp(self):
+        d=synthetic();st=pristine_state()
+        st['last_processed_session']='2026-11-09'
+        st['nav'][-1]['date']='2026-11-09'
+        st['pending']={'decision_session':'2026-11-09',
+                       'created_at_utc':'2026-11-12T09:35:00+00:00',
+                       'proposed_orders':[{'asset':'WORLD','side':'BUY',
+                         'budget_eur':650,'date':'2026-11-09','reason':'synthetic'}]}
+        for session in ('2026-11-10','2026-11-11','2026-11-12'):
+            st,done=e.process(CFG,st,session,d,time_for('2026-11-12'))
+            self.assertEqual(done,0)
+            self.assertEqual(st['pending']['created_at_utc'],'2026-11-12T09:35:00+00:00')
+            self.assertEqual(len(st['orders']),0)
+        st,done=e.process(CFG,st,'2026-11-13',d,
+                          dt.datetime.fromisoformat('2026-11-14T00:20:00+00:00'))
+        self.assertEqual(done,1)
+        self.assertEqual(st['orders'][0]['execution_session'],'2026-11-13')
+        self.assertIsNone(st['pending'])
+
 
 if __name__=='__main__':unittest.main()
