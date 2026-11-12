@@ -25,6 +25,20 @@ def synthetic():
 
 def time_for(day):return dt.datetime.fromisoformat(day+'T20:10:00+00:00')
 
+def pristine_state():
+    """Deterministic fixture, independent of the live mutable paper ledger."""
+    st=copy.deepcopy(SEED)
+    st.update({'last_processed_session':'2026-11-07',
+               'last_deposit_month':'2026-11','last_risk_on':None,
+               'cash_eur':1000.,'positions':{},'orders':[],
+               'contributions':[],'signal_history':[],'blocked_actions':[],
+               'pending':None,'stamp_accrued_eur':0.,'off_trough':None,
+               'nav':[{'date':'2026-11-07','nav_eur':1000.,
+                       'cash_eur':1000.,'holdings_eur':0.,
+                       'twr_index':1.,'market_session':False,
+                       'source_status':'SYNTHETIC_SEED_NO_ORDERS'}]})
+    return st
+
 class PACLiveTests(unittest.TestCase):
     def test_original_approved_weights_and_no_real_broker(self):
         self.assertEqual(CFG['weights'],{'WORLD':.65,'NASDAQ':.15,'EM':.10,'GOLD':.10})
@@ -34,7 +48,7 @@ class PACLiveTests(unittest.TestCase):
         d=synthetic();del d['IS3N.DE']['bars']['2026-11-09']
         self.assertEqual(e.common_day(d,D('2026-11-09')),'2026-11-06')
     def test_precommit_next_open_not_same_day(self):
-        d=synthetic();st=copy.deepcopy(SEED)
+        d=synthetic();st=pristine_state()
         st,done=e.process(CFG,st,'2026-11-09',d,time_for('2026-11-09'))
         self.assertEqual(done,0)
         self.assertEqual(len(st['orders']),0)
@@ -50,7 +64,7 @@ class PACLiveTests(unittest.TestCase):
             self.assertEqual(order['execution_session'],'2026-11-10')
             self.assertEqual(order['mode'],'VIRTUAL_ONLY')
     def test_retry_cannot_duplicate_orders_or_contributions(self):
-        d=synthetic();st=copy.deepcopy(SEED)
+        d=synthetic();st=pristine_state()
         st,_=e.process(CFG,st,'2026-11-09',d,time_for('2026-11-09'))
         st,_=e.process(CFG,st,'2026-11-10',d,time_for('2026-11-10'))
         a=copy.deepcopy(st)
@@ -58,7 +72,7 @@ class PACLiveTests(unittest.TestCase):
         self.assertEqual(done,0)
         self.assertEqual(again,a)
     def test_monthly_pac_is_cashflow_not_fake_return(self):
-        d=synthetic();st=copy.deepcopy(SEED)
+        d=synthetic();st=pristine_state()
         st['last_processed_session']='2026-11-30'
         st['nav'][-1]['date']='2026-11-30'
         st,done=e.process(CFG,st,'2026-12-01',d,time_for('2026-12-01'))
@@ -70,7 +84,7 @@ class PACLiveTests(unittest.TestCase):
         st,_=e.process(CFG,st,'2026-12-02',d,time_for('2026-12-02'))
         self.assertEqual(len(st['contributions']),1)
     def test_35_days_protects_recently_bought_units(self):
-        s=copy.deepcopy(SEED)
+        s=pristine_state()
         s['positions']={'WORLD':{'shares':100,'cost_basis_eur':10000,
                                 'last_buy_session':'2026-11-01'}}
         signal={'signal_session':'2026-11-09','target_weights':
@@ -79,17 +93,27 @@ class PACLiveTests(unittest.TestCase):
         self.assertFalse(any(x['side']=='SELL' for x in orders))
         self.assertTrue(any(x.startswith('MIN_35_DAY_HOLD_WORLD') for x in blocked))
     def test_no_fabricated_entries_before_first_future_session(self):
-        self.assertEqual(SEED['orders'],[])
-        self.assertEqual(SEED['last_processed_session'],'2026-11-07')
-        self.assertEqual(SEED['cash_eur'],1000)
+        seed=pristine_state()
+        self.assertEqual(seed['orders'],[])
+        self.assertEqual(seed['last_processed_session'],'2026-11-07')
+        self.assertEqual(seed['cash_eur'],1000)
+        # Persisted live state is allowed to advance independently of tests.
+        self.assertGreaterEqual(SEED['last_processed_session'],seed['last_processed_session'])
     def test_future_produced_signal_rejected_before_fill(self):
-        st=copy.deepcopy(SEED)
+        st=pristine_state()
         st['pending']={'decision_session':'2026-11-09',
                        'created_at_utc':'2026-11-10T12:00:00+00:00',
                        'proposed_orders':[{'asset':'WORLD','side':'BUY',
                          'budget_eur':600,'date':'2026-11-09','reason':'synthetic'}]}
         st['last_processed_session']='2026-11-09'
-        with self.assertRaisesRegex(ValueError,'NO_PREOPEN_SIGNAL_PROVENANCE'):
-            e.process(CFG,st,'2026-11-10',synthetic(),time_for('2026-11-10'))
+        st,done=e.process(CFG,st,'2026-11-10',synthetic(),time_for('2026-11-10'))
+        self.assertEqual(done,0)
+        self.assertEqual(st['orders'],[])
+        self.assertTrue(any(x['reason']=='DEFERRED_NO_PREOPEN_SIGNAL_PROVENANCE'
+                            for x in st['blocked_actions']))
+        self.assertEqual(st['pending']['decision_session'],'2026-11-10')
+        st,done=e.process(CFG,st,'2026-11-11',synthetic(),time_for('2026-11-11'))
+        self.assertEqual(done,3)
+        self.assertTrue(all(x['execution_session']=='2026-11-11' for x in st['orders']))
 
 if __name__=='__main__':unittest.main()
