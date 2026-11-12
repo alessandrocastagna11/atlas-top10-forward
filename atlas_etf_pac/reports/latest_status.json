@@ -8,7 +8,7 @@
     }
   ],
   "cash_eur": 1000,
-  "checked_at_utc": "2026-11-12T09:35:04.962206+00:00",
+  "checked_at_utc": "2026-11-12T09:35:19.778702+00:00",
   "contributed_eur": 1000,
   "cumulative_twr_pct": 0.0,
   "historical_frozen_v23_parity": "NOT_CLAIMED",
@@ -70,5 +70,5 @@
   },
   "positions": {},
   "real_broker_orders": 0,
-  "status": "SIGNAL_PENDING_NEXT_VERIFIED_OPEN"
+  "status": "WAITING_NEW_XETRA_CLOSE"
 }

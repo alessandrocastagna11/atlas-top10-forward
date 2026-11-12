@@ -3,19 +3,19 @@
   "symbols": {
     "EUNL.DE": {
       "latest_bar": "2026-11-10",
-      "source_sha256": "deea26195b1c29ab7a58aaf7ee7f60e89ba9f83ab2d1a5c514ed1b315035eadf"
+      "source_sha256": "5785cd8387530924286c488af38fd4989c63fa671def4a69949fa30b956589e6"
     },
     "IS3N.DE": {
       "latest_bar": "2026-11-10",
-      "source_sha256": "0fff1f6a670d68af74c0b641a629d3202cb4da0899bb3fdf37319a368a31fdfc"
+      "source_sha256": "5cd64e2b2eae52151629ecb2677457d70d7492f09c9a9e8d021754f598c6d669"
     },
     "PPFB.DE": {
       "latest_bar": "2026-11-10",
-      "source_sha256": "b789e5453f559f34f40786c51be2324e39d9fdc1193cb79c11eb3f20e87f12ed"
+      "source_sha256": "1fb19711b7c284ed589267a70321402d4236989b2e750f9bfde6edbf418af9dd"
     },
     "SXRV.DE": {
       "latest_bar": "2026-11-10",
-      "source_sha256": "28818e6f7e73a854aa791f30d5b3bbbb86508d4039f382f7808736db174c0483"
+      "source_sha256": "9d29b258a5c525deff1498f15a2a539406761133f3b7b639143758d0fea577aa"
     }
   }
 }
