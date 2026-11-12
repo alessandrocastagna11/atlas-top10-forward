@@ -31,6 +31,38 @@ jobs:
         run: python -m unittest discover -s strict_shadow/live_v4/tests -p 'test_*.py' -v
       - name: Verify no paper ledger changes during all offline tests
         run: git diff --exit-code -- strict_shadow/v4_exact_source/forward/state.json strict_shadow/v4_exact_source/forward/orders.csv
+      - name: Recompute verified capitalization matching on frozen provider evidence (NO PIT backdating)
+        run: |
+          python - <<'PY'
+          import csv,sys,json
+          from pathlib import Path
+          root=Path('strict_shadow/live_v4/dataset')
+          source=sorted((root/'marketcap_observed/observations').glob('*/raw_vendor.csv'))
+          if not source:raise RuntimeError('No persisted source vendor evidence')
+          def read(path):
+              with path.open(newline='',encoding='utf8') as f:return list(csv.DictReader(f))
+          sys.path.insert(0,str(Path('strict_shadow/v4_exact_source').resolve()))
+          import marketcap_pit as cap
+          vendor=read(source[-1])
+          for v in vendor:
+              v['vendor_rank']=int(v['vendor_rank'])
+              v['market_cap_usd']=float(v['market_cap_usd'])
+          roster=read(root/'universe/global500_latest.csv')
+          matches=cap.crosswalk(vendor,roster)
+          usa=sum(x['country']=='United States' for x in matches)
+          nonusa=len(matches)-usa
+          methods={}
+          for x in matches:
+              method=x['capitalization_coverage_status'].replace('_NOT_FULL_PIT_CERTIFIED','')
+              methods[method]=methods.get(method,0)+1
+          print('AS_RECORDED_ROSTER_VALIDATION',json.dumps({
+              'vendor_source':str(source[-1]),'total_verified_matches':len(matches),
+              'USA_count':usa,'RoW_count':nonusa,'RoW_replacement_spare':nonusa-200,
+              'methods':methods,'historical_PIT_certified':False},sort_keys=True))
+          if usa<100 or nonusa<200:raise RuntimeError('Cannot build required 100 US + 200 RoW from verified evidence')
+          with open(__import__('os').environ['GITHUB_STEP_SUMMARY'],'a') as out:
+              out.write(f'### Observed-cap matching: {usa} USA / {nonusa} RoW; spare {nonusa-200}; NON-PIT\\n')
+          PY
       - name: Assert production trading invariants unchanged
         run: |
           python - <<'PY'
