@@ -24,9 +24,13 @@ jobs:
       - run: pip install -r strict_shadow/v4_exact_source/requirements-live.txt
       - name: Python syntax/static compilation (no external provider needed)
         run: |
-          python -m compileall -q strict_shadow/live_v4/market_sessions.py strict_shadow/live_v4/provider.py strict_shadow/live_v4/dataset_daily.py strict_shadow/v4_exact_source/live_model.py strict_shadow/v4_exact_source/run_live.py
+          python -m compileall -q strict_shadow/live_v4/market_sessions.py strict_shadow/live_v4/provider.py strict_shadow/live_v4/dataset_daily.py strict_shadow/v4_exact_source/live_model.py strict_shadow/v4_exact_source/run_live.py strict_shadow/v4_exact_source/paper_account.py strict_shadow/v4_exact_source/paper_reporting.py strict_shadow/v4_exact_source/marketcap_pit.py
       - name: Run all original guard regression tests plus global venue and FX tests
         run: python -m unittest discover -s strict_shadow/v4_exact_source/live_tests -p 'test_*.py' -v
+      - name: Run isolated data provider regression tests (GBP/FX)
+        run: python -m unittest discover -s strict_shadow/live_v4/tests -p 'test_*.py' -v
+      - name: Verify no paper ledger changes during all offline tests
+        run: git diff --exit-code -- strict_shadow/v4_exact_source/forward/state.json strict_shadow/v4_exact_source/forward/orders.csv
       - name: Assert production trading invariants unchanged
         run: |
           python - <<'PY'
