@@ -16,14 +16,29 @@
 **Candidati segnalati (NON ORDINI):** KO, JNJ, CB, MRK, DELL, PANW, MU, DE, ABNB, ABBV; verifica: ATTESTED_CORRECTION_BEFORE_OPEN
 **Segnale originale pubblicato:** SÌ; esito: ATTESTED_CORRECTION_BEFORE_OPEN
 **Contabilità paper:** FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY — prezzi degli ordini APPROSSIMATI; nessun ordine reale.
-**Ultimo aggiornamento portafoglio:** 2026-11-12T03:48:34.854158+00:00; fonte ultimo prezzo 2026-11-11.
+**Ultimo aggiornamento portafoglio:** 2026-11-12T09:46:29.163430+00:00; fonte ultimo prezzo 2026-11-11.
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
+
+## Segnali, proposte e ordini: tre cose diverse
+
+**Segnale giornaliero:** pubblicato — NON equivale a un ordine.
+**Proposte sopra soglia (solo indicazioni):** 4.
+**Rotazione completa:** ogni 5 settimane; prossimo lunedi teorico: 2026-12-14; non sono previsti nuovi acquisti quotidiani.
+**Ordini registrati nell'ultimo aggiornamento:** 0.
+**Rotazione differita a causa dei 35 giorni:** NESSUNA.
+
+## Audit delle valutazioni e cambi
+
+**Numero di chiusure di mercato distinte:** 2; **revisioni di valutazione:** 2.
+**Revisione della stessa chiusura durante il run:** SI, vedere valuation_revisions.csv. Una revisione non genera una seconda giornata di rendimento.
+**Cambio EUR/USD:** 1.1168941259 USD per EUR; seduta FX 2026-11-11. Il fixing giornaliero non e un cambio di broker.
+**Fingerprint dei dati:** dcf5c9828f1ddd46c6d783d6159bdcbcaa3c7b1e47b730a40b15c2ef0c2d52e0.
 **Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.
 
 | Portafoglio virtuale | Importo |
 |---|---:|
 | Capitale iniziale | 10,000.00 € |
-| NAV netto liquidabile ipotetico* | 9,992.63 € |
+| NAV netto liquidabile ipotetico* | 9,999.54 € |
 | NAV a prezzi di mercato | 10,007.13 € |
 | Liquidità | 6,411.57 € |
 | Valore titoli | 3,595.56 € |
@@ -32,7 +47,7 @@
 | Nuovi ordini verificati | 0 |
 | Sedute paper ricostruite dopo interruzione | 0 |
 
-*NAV netto liquidabile = valutazione ipotetica dopo costi e imposte di liquidazione; **non è una vendita eseguita** e non supera il blocco dei 35 giorni.
+*NAV netto liquidabile: vendita simultanea IPOTETICA dopo lo sblocco dei lotti, con compensazione delle minusvalenze azionarie ammissibili e costi teorici. Non equivale a una vendita attualmente consentita dal blocco FIFO.
 
 ## Posizioni e lotti
 

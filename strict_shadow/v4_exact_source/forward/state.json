@@ -12,15 +12,61 @@
     },
     {
       "approximate_fills": true,
-      "mark_to_market_nav_eur": 10029.061,
-      "net_liquidation_nav_eur": 10011.3352,
-      "report_date": "2026-11-11",
-      "source_close_session": "2026-11-11"
-    },
-    {
-      "approximate_fills": true,
+      "first_observed_at_utc": "LEGACY_UNKNOWN",
+      "fx_source_sessions": {
+        "AUD": "2026-11-11",
+        "CAD": "2026-11-11",
+        "CHF": "2026-11-11",
+        "DKK": "2026-11-11",
+        "EUR": "NATIVE_EUR",
+        "GBP": "2026-11-11",
+        "HKD": "2026-11-11",
+        "INR": "2026-11-11",
+        "JPY": "2026-11-11",
+        "KRW": "2026-11-11",
+        "SAR": "2026-11-11",
+        "SGD": "2026-11-11",
+        "TWD": "2026-11-11",
+        "USD": "2026-11-11"
+      },
+      "fx_units_per_eur": {
+        "AUD": 1.6257799864,
+        "CAD": 1.584280014,
+        "CHF": 0.9214100242,
+        "DKK": 7.4748001099,
+        "EUR": 1.0,
+        "GBP": 0.8366000056,
+        "HKD": 8.7615995407,
+        "INR": 104.8249969482,
+        "JPY": 177.2530059814,
+        "KRW": 1498.0100097656,
+        "SAR": 4.0640001297,
+        "SGD": 1.4314299822,
+        "TWD": 36.8050842285,
+        "USD": 1.1168941259
+      },
+      "held_quotes": {
+        "CB": {
+          "exchange_session": "2026-11-11",
+          "price_eur": 331.57125458
+        },
+        "JNJ": {
+          "exchange_session": "2026-11-11",
+          "price_eur": 251.06229601
+        },
+        "KO": {
+          "exchange_session": "2026-11-11",
+          "price_eur": 87.35832469
+        },
+        "MRK": {
+          "exchange_session": "2026-11-11",
+          "price_eur": 131.77613639
+        }
+      },
+      "last_observed_at_utc": "2026-11-12T09:46:29.163430+00:00",
       "mark_to_market_nav_eur": 10007.1345,
-      "net_liquidation_nav_eur": 9992.6322,
+      "net_liquidation_nav_eur": 9999.5389,
+      "quote_evidence_sha256": "dcf5c9828f1ddd46c6d783d6159bdcbcaa3c7b1e47b730a40b15c2ef0c2d52e0",
       "report_date": "2026-11-12",
       "source_close_session": "2026-11-11"
     }
@@ -199,5 +245,71 @@
   "schema_version": 3,
   "start_recorded_at_utc": "2026-11-10T21:50:54.363772+00:00",
   "tax_eur_total": 0.0,
-  "universe_lock_recorded_date": "2026-11-06"
+  "universe_lock_recorded_date": "2026-11-06",
+  "valuation_revisions": [
+    {
+      "detected_at_utc": "2026-11-12T09:46:29.163430+00:00",
+      "new_evidence_sha256": "LEGACY_UNAVAILABLE",
+      "new_fx_units_per_eur": {},
+      "new_held_quotes": {},
+      "new_mark_to_market_nav_eur": 10007.1345,
+      "new_net_liquidation_nav_eur": 9992.6322,
+      "prior_evidence_sha256": "LEGACY_UNAVAILABLE",
+      "prior_fx_units_per_eur": {},
+      "prior_held_quotes": {},
+      "prior_mark_to_market_nav_eur": 10029.061,
+      "prior_net_liquidation_nav_eur": 10011.3352,
+      "prior_report_date": "2026-11-11",
+      "reason": "LEGACY_DUPLICATE_CLOSE_REVALUED",
+      "source_close_session": "2026-11-11"
+    },
+    {
+      "detected_at_utc": "2026-11-12T09:46:29.163430+00:00",
+      "new_evidence_sha256": "dcf5c9828f1ddd46c6d783d6159bdcbcaa3c7b1e47b730a40b15c2ef0c2d52e0",
+      "new_fx_units_per_eur": {
+        "AUD": 1.6257799864,
+        "CAD": 1.584280014,
+        "CHF": 0.9214100242,
+        "DKK": 7.4748001099,
+        "EUR": 1.0,
+        "GBP": 0.8366000056,
+        "HKD": 8.7615995407,
+        "INR": 104.8249969482,
+        "JPY": 177.2530059814,
+        "KRW": 1498.0100097656,
+        "SAR": 4.0640001297,
+        "SGD": 1.4314299822,
+        "TWD": 36.8050842285,
+        "USD": 1.1168941259
+      },
+      "new_held_quotes": {
+        "CB": {
+          "exchange_session": "2026-11-11",
+          "price_eur": 331.57125458
+        },
+        "JNJ": {
+          "exchange_session": "2026-11-11",
+          "price_eur": 251.06229601
+        },
+        "KO": {
+          "exchange_session": "2026-11-11",
+          "price_eur": 87.35832469
+        },
+        "MRK": {
+          "exchange_session": "2026-11-11",
+          "price_eur": 131.77613639
+        }
+      },
+      "new_mark_to_market_nav_eur": 10007.1345,
+      "new_net_liquidation_nav_eur": 9999.5389,
+      "prior_evidence_sha256": "LEGACY_UNAVAILABLE",
+      "prior_fx_units_per_eur": {},
+      "prior_held_quotes": {},
+      "prior_mark_to_market_nav_eur": 10007.1345,
+      "prior_net_liquidation_nav_eur": 9992.6322,
+      "prior_report_date": "2026-11-12",
+      "reason": "HYPOTHETICAL_LIQUIDATION_TAX_MODEL_REVISED",
+      "source_close_session": "2026-11-11"
+    }
+  ]
 }

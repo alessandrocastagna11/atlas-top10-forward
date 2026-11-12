@@ -2,14 +2,14 @@
   "any_market_preopen_eligible": true,
   "candidate_count": 300,
   "cutoff_utc": "2026-11-12T14:00:00+00:00",
-  "decision_model_sha256": "e574ba83a1b1b46f95417df8512cda6bc7ae58adab56bf1bc41459f4b17d5e27",
+  "decision_model_sha256": "fb6e6554819530d7d580ec697bdc4772fe758611235aeb1a384daf894acf551f",
   "decision_session": "2026-11-11",
   "earliest_open_utc": "2026-11-12T14:30:00+00:00",
   "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
   "exchange_execution_policy": "PER_SYMBOL_NEXT_UNOBSERVED_OPEN",
   "execution_session": "2026-11-12",
   "market_data_first_observed_before_open": true,
-  "model_source_sha256": "fadbdf25118b1a2d173852aecd4aa40306af7e661396b143587825547eba62a4",
+  "model_source_sha256": "f5e0ce9b9167d13a146a089f8c4f41d6c8d384d19ee3e7f032a35db72d079a27",
   "original_proof_archived": true,
   "per_symbol_exchange_plan": {
     "ABBV": {
@@ -135,12 +135,12 @@
     "ABNB",
     "ABBV"
   ],
-  "produced_at_utc": "2026-11-12T03:48:14.133673+00:00",
+  "produced_at_utc": "2026-11-12T09:46:02.860325+00:00",
   "revision_reason": "CORRECTED_CAUSAL_ROSTER_AND_INITIAL_ALPHA",
-  "risk_state": 0.6497789035323208,
+  "risk_state": 0.6497789006715723,
   "roster_sha256": "a27f8b8e91b3ab021bcb95446a7222e9824bbc71cbb2c64044d9f8458900c845",
   "signal_published": true,
   "status": "ATTESTED_CORRECTION_BEFORE_OPEN",
-  "superseded_archive": "superseded/2026-11-11_ee9a21ff81183d96.json",
-  "supersedes_sha256": "ee9a21ff81183d96865d6a69d27eee41d058bea151a4b1cd334236c38eeeb4d5"
+  "superseded_archive": "superseded/2026-11-11_e574ba83a1b1b46f.json",
+  "supersedes_sha256": "e574ba83a1b1b46f95417df8512cda6bc7ae58adab56bf1bc41459f4b17d5e27"
 }

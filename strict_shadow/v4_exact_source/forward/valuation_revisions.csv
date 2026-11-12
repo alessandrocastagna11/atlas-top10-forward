@@ -1,0 +1,3 @@
+source_close_session,detected_at_utc,reason,prior_report_date,prior_mark_to_market_nav_eur,new_mark_to_market_nav_eur,prior_net_liquidation_nav_eur,new_net_liquidation_nav_eur,prior_evidence_sha256,new_evidence_sha256
+2026-11-11,2026-11-12T09:46:29.163430+00:00,LEGACY_DUPLICATE_CLOSE_REVALUED,2026-11-11,10029.061,10007.1345,10011.3352,9992.6322,LEGACY_UNAVAILABLE,LEGACY_UNAVAILABLE
+2026-11-11,2026-11-12T09:46:29.163430+00:00,HYPOTHETICAL_LIQUIDATION_TAX_MODEL_REVISED,2026-11-12,10007.1345,10007.1345,9992.6322,9999.5389,LEGACY_UNAVAILABLE,dcf5c9828f1ddd46c6d783d6159bdcbcaa3c7b1e47b730a40b15c2ef0c2d52e0

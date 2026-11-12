@@ -102,10 +102,15 @@
       "ticker": "MRK"
     }
   ],
+  "hypothetical_liquidation_assumes_all_lots_mature": true,
+  "hypothetical_liquidation_net_gain_eur": -0.4611,
+  "hypothetical_liquidation_sale_cost_eur": 7.5956,
+  "hypothetical_liquidation_tax_eur": 0.0,
+  "hypothetical_liquidation_tax_method": "SIMULTANEOUS_COMPENSABLE_EQUITY_GAINS_LOSSES_26PCT",
   "initial_capital_eur": 10000.0,
   "invested_eur": 3595.5645,
   "nav_mark_to_market_eur": 10007.1345,
-  "nav_net_liquidation_eur": 9992.6322,
+  "nav_net_liquidation_eur": 9999.5389,
   "orders_total": 4,
   "pnl_mark_to_market_pct": 0.07135,
   "positions_count": 4,
@@ -119,7 +124,7 @@
   "type": "PAPER_ONLY",
   "universe_market_cap_pit_certified": false,
   "valuation_method": "LAST_CONFIRMED_DAILY_CLOSE_WITH_STALE_FLAG",
-  "valuation_recorded_at_utc": "2026-11-12T03:48:34.854158+00:00",
+  "valuation_recorded_at_utc": "2026-11-12T09:46:29.163430+00:00",
   "valuation_session": "2026-11-11",
   "variant": "CONFIDENCE70_ORIGINAL_H4_STRICT_35_CALENDAR_DAYS_EVERY_LOT"
 }
