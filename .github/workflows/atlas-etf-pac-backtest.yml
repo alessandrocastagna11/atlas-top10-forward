@@ -28,6 +28,8 @@ jobs:
         run: python -m unittest discover -s atlas_etf_pac/tests -p 'test_*.py' -v
       - name: Historical research replay (never alters forward state)
         run: python -u atlas_etf_pac/backtest_replay.py
+      - name: Matched 2016-2025 comparison with original frozen V2.3
+        run: ATLAS_BACKTEST_END_DATE=2025-12-31 python -u atlas_etf_pac/backtest_replay.py
       - name: Robustness check on actual four ETF histories (2022 onward)
         run: ATLAS_BACKTEST_FIRST_DATE=2022-01-03 ATLAS_BACKTEST_GOLD_PROXY=0 python -u atlas_etf_pac/backtest_replay.py
       - name: Summarize replay
@@ -36,7 +38,7 @@ jobs:
           import json,os
           from pathlib import Path
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
-            for filename,label in [('replay_2016_2026.json','2016-2026 incl. gold proxy'),('replay_2022_2026_actual4.json','2022-2026 four actual ETFs')]:
+            for filename,label in [('replay_2016_2026.json','2016-2026 incl. gold proxy'),('replay_2016_2025.json','2016-2025 matched V2.3 window'),('replay_2022_2026_actual4.json','2022-2026 four actual ETFs')]:
               d=json.loads((Path('atlas_etf_pac/backtests')/filename).read_text())
               f.write('## Atlas ETF PAC backtest '+label+'\n')
               for name in ('active','passive_4etf_pac'):
@@ -48,7 +50,7 @@ jobs:
         run: |
           git config user.name 'Atlas ETF Backtest Bot'
           git config user.email 'atlas-etf-backtest@users.noreply.github.com'
-          git add atlas_etf_pac/backtests/replay_2016_2026.json atlas_etf_pac/backtests/replay_2022_2026_actual4.json
+          git add atlas_etf_pac/backtests/replay_2016_2026.json atlas_etf_pac/backtests/replay_2016_2025.json atlas_etf_pac/backtests/replay_2022_2026_actual4.json
           if ! git diff --cached --quiet; then
             git commit -m "Research: 4-sleeve PAC historical results"
             git pull --rebase origin atlas-etf-pac-paper
