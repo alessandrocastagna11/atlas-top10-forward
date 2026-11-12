@@ -1,6 +1,18 @@
 {
-  "model": "ATLAS_ETF_PAC_V23_ORIGINAL_LIVE_V1",
-  "market_session": null,
-  "source_quality": {},
-  "status": "AWAITING_FIRST_COMPLETED_SIGNAL"
+  "checked_at_utc": "2026-11-12T22:38:56.621901+00:00",
+  "first_quote_date": "2010-01-04",
+  "market_session": "2026-11-12",
+  "original_live_sha256": "703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e",
+  "provider": "Yahoo adjusted close EUR; FRED and Kenneth French monthly",
+  "quote_samples": 4284,
+  "source_quality": {
+    "bond_last": "2026-11-12",
+    "bond_quality": "OK",
+    "defensive_source": "OBSERVED_BOND_ADJUSTED_CLOSE",
+    "equity_last": "2026-11-12",
+    "macro_previous_month": "2026-10",
+    "macro_quality": "ONLINE_OR_PERSISTED_CACHE",
+    "quote_lag_days": 0,
+    "stress_source": "CARRIED_FROZEN_2025-11"
+  }
 }
