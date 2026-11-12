@@ -64,19 +64,19 @@
       "count": 3154,
       "first_day": "2014-06-11",
       "last_day": "2026-11-11",
-      "raw_source_sha256": "359a79fe66fcab2dfa9599bde645996f561f0692a9d97677bc9286869ea19878"
+      "raw_source_sha256": "67db98a607dcaea0dba46aa3ff2858f1a53c8644d91faba7d26f05b319f39cfd"
     },
     "PPFB.DE": {
       "count": 1357,
       "first_day": "2021-07-16",
       "last_day": "2026-11-11",
-      "raw_source_sha256": "7018f892d73b90f8c143b653c724de72e07e98517c32ec8f3b7397213e85f0a9"
+      "raw_source_sha256": "7f1749a8fe0b4f4dca82e063342dcaa872bfb924161c4683a912f58993c80b1b"
     },
     "SXRV.DE": {
       "count": 3266,
       "first_day": "2014-01-02",
       "last_day": "2026-11-11",
-      "raw_source_sha256": "19e65c4003e8bfd2550dcba509fd66d81e9bb07dc516961b8e6f0023cef4c36c"
+      "raw_source_sha256": "3dc85fd726fb799ded3952f9610999c4dbf76cf812675dbf72c40f22b9e4c603"
     }
   },
   "risk_limit_note": "35-day min hold is enforced by current engine using latest buy date per sleeve, not exact per-lot sales",
