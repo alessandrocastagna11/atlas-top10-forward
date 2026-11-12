@@ -50,3 +50,21 @@ Audit GitHub Actions: [ultimo workflow di ricerca](https://github.com/alessandro
 | Ordini Atlas | 142 | — |
 
 La macchina a stati V2.3 originale non usa la costruzione 4-ETF 65/15/10/10. Questo confronto isola la logica di timing e difesa originale sullo stesso proxy azionario; non è un confronto di asset allocation. Il report verificabile è in [reports_modern/summary.json](reports_modern/summary.json).
+
+
+## Challenger: rientro satellite più rapido — verificato 12 novembre 2026
+
+Esperimento isolato e replicabile in [reentry_experiment.py](reentry_experiment.py); [risultati JSON](reports/reentry_challengers_2026.json). **La versione originale V2.3 rimane immutata, con satellite_rebound=0.03.** Sono cambiati soltanto i valori nel config del replay challenger: 0.025, 0.02, 0.015. Uscite, stress gate, core, costi, versamenti e benchmark restano invariati. Stesso pannello di dati per le quattro varianti in ogni replay.
+
+| Soglia | CAGR 2016–2026 | MaxDD 2016–2026 | YTD 2026 con avvio 2016 | CAGR 1926–2026 | MaxDD 1926–2026 | Ordini 1926–2026 |
+|---|---:|---:|---:|---:|---:|---:|
+| **3% congelato** | **11,6876%** | −21,7154% | 3,87196% | **9,3808%** | −36,5368% | 1.167 |
+| 2,5% | 12,0168% | −21,6441% | 3,8097% | 9,1886% | −35,2756% | 1.221 |
+| 2% | 12,8940% | −21,8267% | 4,0279% | 8,8093% | −42,1959% | 1.248 |
+| 1,5% | 11,3001% | −24,6844% | 3,9611% | 8,4222% | −41,2900% | 1.296 |
+
+Nel replay inizializzato nel 2016, la prima rientrata del 2026 è: originale 16/04; 2,5% 15/04; 2% o 1,5% 14/04. Le uscite 2026 restano 16/03 e 06/11 per tutte le varianti. Un rientro anticipato di due sedute recupera solo 0,156 punti percentuali di TWR YTD 2026 in un portafoglio nato nel 2016.
+
+**Decisione di ricerca:** la soglia 2% non supera la validazione secolare (CAGR e DD peggiori). La soglia 2,5% ha miglior DD secolare ma rendimento inferiore; nessuna variante è un miglioramento inequivocabile della baseline. Non promuovere un challenger alla strategia ufficiale né mutare il conto forward.
+
+Limiti: storico lungo su proxy Fama/French, estensione 2026 con dati ufficiali fino al 30 settembre e SPY da ottobre, macro 2026 sensibile a dati non osservati, nessun test di generalizzazione su un ETF direttamente negoziato, varianti scelte ex post. Inoltre il vecchio `ATLAS_V23_RECOVERY_ACCEL_TEST_2026-10-01.zip` e il `ATLAS_V23_DYNAMIC_RECOVERY_TEST_2026-10-01.zip` erano test *diversi*: acceleratori con ETF e selettori su motore di ricerca semplificato, **non** sostituiscono la validazione sul motore esatto.
