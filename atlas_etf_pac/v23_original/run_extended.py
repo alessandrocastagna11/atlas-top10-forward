@@ -193,13 +193,16 @@ def stress_override(v,scenario,scoremap):
 
 def main():
     ap=argparse.ArgumentParser()
+    ap.add_argument('--start',default='1926-07-01')
     ap.add_argument('--end',default=TARGET);ap.add_argument('--no-online',action='store_true')
     ap.add_argument('--scenario',choices=('neutral','carry','stressed','all'),default='all')
     ap.add_argument('--out',default=str(OUT))
     args=ap.parse_args()
     engine_path,engine_sha=check_reference()
     v=load_original_engine(engine_path);v.xirr=stable_xirr_factory(v)
-    cfg=json.loads((EXTRACT/'config.json').read_text());cfg['end_date']=args.end
+    cfg=json.loads((EXTRACT/'config.json').read_text())
+    cfg['start_date']=args.start
+    cfg['end_date']=args.end
     pinned=json.loads((EXTRACT/'data/stress_scores_precomputed.json').read_text())
     y,m=map(int,pinned['start'].split('-'));scores={}
     for val in pinned['scores']:
