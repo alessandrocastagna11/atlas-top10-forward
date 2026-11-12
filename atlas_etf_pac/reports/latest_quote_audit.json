@@ -1,21 +1,21 @@
 {
-  "session": "2026-11-09",
+  "session": "2026-11-10",
   "symbols": {
     "EUNL.DE": {
-      "latest_bar": "2026-11-09",
-      "source_sha256": "1e88016b0934135c8c02b9e046a791e365ff6ce8ebcff3e486dd44ab16cd1975"
+      "latest_bar": "2026-11-10",
+      "source_sha256": "deea26195b1c29ab7a58aaf7ee7f60e89ba9f83ab2d1a5c514ed1b315035eadf"
     },
     "IS3N.DE": {
-      "latest_bar": "2026-11-09",
-      "source_sha256": "51c378d9836bb0760812084146cbdf308270dd93e8336fd547a562e73deb6a3b"
+      "latest_bar": "2026-11-10",
+      "source_sha256": "0fff1f6a670d68af74c0b641a629d3202cb4da0899bb3fdf37319a368a31fdfc"
     },
     "PPFB.DE": {
-      "latest_bar": "2026-11-09",
-      "source_sha256": "c561273c8d51e0334d16a979ab3442128fab4f6220212a4ee194a31a45d7feb0"
+      "latest_bar": "2026-11-10",
+      "source_sha256": "b789e5453f559f34f40786c51be2324e39d9fdc1193cb79c11eb3f20e87f12ed"
     },
     "SXRV.DE": {
-      "latest_bar": "2026-11-09",
-      "source_sha256": "d5e5377e8a9a30334361b9cca94f2a80406514aec6dcc06bd699493f1049d09c"
+      "latest_bar": "2026-11-10",
+      "source_sha256": "28818e6f7e73a854aa791f30d5b3bbbb86508d4039f382f7808736db174c0483"
     }
   }
 }

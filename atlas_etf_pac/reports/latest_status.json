@@ -1,22 +1,28 @@
 {
-  "asof_requested": "2026-11-10",
-  "blocked_actions": [],
+  "asof_requested": "2026-11-11",
+  "blocked_actions": [
+    {
+      "decision_session": "2026-11-09",
+      "reason": "DEFERRED_NO_PREOPEN_SIGNAL_PROVENANCE",
+      "session": "2026-11-10"
+    }
+  ],
   "cash_eur": 1000,
-  "checked_at_utc": "2026-11-11T00:15:13.853406+00:00",
+  "checked_at_utc": "2026-11-12T09:35:04.962206+00:00",
   "contributed_eur": 1000,
   "cumulative_twr_pct": 0.0,
   "historical_frozen_v23_parity": "NOT_CLAIMED",
   "invested_eur": 0,
-  "last_nav_session": "2026-11-09",
+  "last_nav_session": "2026-11-10",
   "last_orders": [],
   "latest_day_pct": 0.0,
   "latest_signal": {
-    "fast10_pct": -1.5521,
+    "fast10_pct": -2.2454,
     "method": "RESEARCH_RECONSTRUCTION_MONTHLY_MA10_FAST10_NOT_FROZEN_V23_STRESS",
     "monthly_regime": true,
     "risk_level": "RISK_ON",
     "signal_month": "2026-10",
-    "signal_session": "2026-11-09",
+    "signal_session": "2026-11-10",
     "target_weights": {
       "EM": 0.1,
       "GOLD": 0.1,
@@ -34,29 +40,29 @@
   "notes": "Research shadow; not identical to original V2.3 with macro stress and bond defense.",
   "orders_total": 0,
   "pending_orders": {
-    "created_at_utc": "2026-11-11T00:15:13.853406+00:00",
-    "decision_session": "2026-11-09",
-    "input_quote_digest": "0d6e76943f8f138712515d64bd5703c5a702c97cec09d4ac916e0a892117dffc",
+    "created_at_utc": "2026-11-12T09:35:04.962206+00:00",
+    "decision_session": "2026-11-10",
+    "input_quote_digest": "01f5e7c3697ffd5c6f527f8e49c3cc14e98906ea125b63cebac3476dd2646d1a",
     "policy": "NEXT_VERIFIED_COMMON_SESSION_OPEN_PAPER",
     "proposed_orders": [
       {
         "asset": "WORLD",
         "budget_eur": 650.0,
-        "date": "2026-11-09",
+        "date": "2026-11-10",
         "reason": "PAC_UNDERWEIGHT_DEFICIT_FIRST",
         "side": "BUY"
       },
       {
         "asset": "NASDAQ",
         "budget_eur": 150.0,
-        "date": "2026-11-09",
+        "date": "2026-11-10",
         "reason": "PAC_UNDERWEIGHT_DEFICIT_FIRST",
         "side": "BUY"
       },
       {
         "asset": "GOLD",
         "budget_eur": 100.0,
-        "date": "2026-11-09",
+        "date": "2026-11-10",
         "reason": "PAC_UNDERWEIGHT_DEFICIT_FIRST",
         "side": "BUY"
       }

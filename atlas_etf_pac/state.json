@@ -1,9 +1,15 @@
 {
-  "blocked_actions": [],
+  "blocked_actions": [
+    {
+      "decision_session": "2026-11-09",
+      "reason": "DEFERRED_NO_PREOPEN_SIGNAL_PROVENANCE",
+      "session": "2026-11-10"
+    }
+  ],
   "cash_eur": 1000,
   "contributions": [],
   "last_deposit_month": "2026-11",
-  "last_processed_session": "2026-11-09",
+  "last_processed_session": "2026-11-10",
   "last_risk_on": true,
   "mode": "PAPER_ONLY_RESEARCH_RECONSTRUCTION",
   "model": "ATLAS_ETF_PAC_4SLEEVE_RESTART_V1",
@@ -28,34 +34,47 @@
       "source_status": "VERIFIED_COMMON_EXCHANGE_SESSION",
       "twr_day_pct": 0.0,
       "twr_index": 1.0
+    },
+    {
+      "cash_eur": 1000,
+      "contribution_eur": 0.0,
+      "date": "2026-11-10",
+      "drawdown_pct": 0.0,
+      "holdings_eur": 0,
+      "market_session": true,
+      "nav_eur": 1000.0,
+      "positions": 0,
+      "source_status": "VERIFIED_COMMON_EXCHANGE_SESSION",
+      "twr_day_pct": 0.0,
+      "twr_index": 1.0
     }
   ],
   "off_trough": null,
   "orders": [],
   "pending": {
-    "created_at_utc": "2026-11-11T00:15:13.853406+00:00",
-    "decision_session": "2026-11-09",
-    "input_quote_digest": "0d6e76943f8f138712515d64bd5703c5a702c97cec09d4ac916e0a892117dffc",
+    "created_at_utc": "2026-11-12T09:35:04.962206+00:00",
+    "decision_session": "2026-11-10",
+    "input_quote_digest": "01f5e7c3697ffd5c6f527f8e49c3cc14e98906ea125b63cebac3476dd2646d1a",
     "policy": "NEXT_VERIFIED_COMMON_SESSION_OPEN_PAPER",
     "proposed_orders": [
       {
         "asset": "WORLD",
         "budget_eur": 650.0,
-        "date": "2026-11-09",
+        "date": "2026-11-10",
         "reason": "PAC_UNDERWEIGHT_DEFICIT_FIRST",
         "side": "BUY"
       },
       {
         "asset": "NASDAQ",
         "budget_eur": 150.0,
-        "date": "2026-11-09",
+        "date": "2026-11-10",
         "reason": "PAC_UNDERWEIGHT_DEFICIT_FIRST",
         "side": "BUY"
       },
       {
         "asset": "GOLD",
         "budget_eur": 100.0,
-        "date": "2026-11-09",
+        "date": "2026-11-10",
         "reason": "PAC_UNDERWEIGHT_DEFICIT_FIRST",
         "side": "BUY"
       }
@@ -71,6 +90,22 @@
       "risk_level": "RISK_ON",
       "signal_month": "2026-10",
       "signal_session": "2026-11-09",
+      "target_weights": {
+        "EM": 0.1,
+        "GOLD": 0.1,
+        "NASDAQ": 0.15,
+        "WORLD": 0.65
+      },
+      "world_ma10": 120.9235,
+      "world_monthly_close": 129.684998
+    },
+    {
+      "fast10_pct": -2.2454,
+      "method": "RESEARCH_RECONSTRUCTION_MONTHLY_MA10_FAST10_NOT_FROZEN_V23_STRESS",
+      "monthly_regime": true,
+      "risk_level": "RISK_ON",
+      "signal_month": "2026-10",
+      "signal_session": "2026-11-10",
       "target_weights": {
         "EM": 0.1,
         "GOLD": 0.1,
