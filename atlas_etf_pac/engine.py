@@ -136,14 +136,42 @@ class CausalStress:
         if self.real and self.is_complete(month):
             x=self.real.regime(date)
             x['source']='OBSERVED_COMPLETED_MONTH'
+            x['missing_inputs']=[]
             self.quality_history[month]='OBSERVED_COMPLETED_MONTH'
             return x
+        missing=[]
+        if self.macro is None:missing=['FRED_AAA','FRED_BAA','FRED_GS10','FF_RF','FF_BREADTH_3M']
+        else:
+            for key,label in [('aaa','FRED_AAA'),('baa','FRED_BAA'),('gs10','FRED_GS10'),('rf_annualized','FF_RF')]:
+                if month not in self.macro[key]:missing.append(label)
+            if not all(v23.add_months(month,-i) in self.macro['six'] for i in range(3)):
+                missing.append('FF_BREADTH_3M')
+        # Prefer the MOST RECENT fully observed historical monthly macro state,
+        # not a stale score carried unchanged since November 2025. Keep the
+        # origin explicit; this is NOT the fully observed requested month.
+        observed_month=None;carried=None
+        if self.real:
+            candidates=[k for k in self.macro['aaa'] if k<=month and self.is_complete(k)]
+            if candidates:
+                observed_month=max(candidates)
+                future=v23.add_months(observed_month,1)
+                synthetic_decision_date=future+'-01'
+                carried=self.real.regime(synthetic_decision_date)
+        if carried is not None:
+            carried['month']=month
+            carried['source']='CARRIED_OBSERVED_'+observed_month
+            carried['observed_macro_month']=observed_month
+            carried['missing_inputs']=missing
+            self.quality_history[month]=carried['source']
+            return carried
         score=self.scores.get(month,self.last_score)
         source='FROZEN_HISTORICAL_SCORE' if month in self.scores else 'CARRIED_FROZEN_'+self.last_month
         self.quality_history[month]=source
         return {'month':month,'score':score,'credit':None,'breadth':None,'rates':None,
                 'credit_spread':None,'credit_p80':None,'credit_change_3m':None,
-                'breadth_healthy':None,'term_spread':None,'term_p20':None,'source':source}
+                'breadth_healthy':None,'term_spread':None,'term_p20':None,
+                'missing_inputs':missing,'observed_macro_month':self.last_month,
+                'source':source}
 
 
 def estimate_defensive(feeds,cfg):
@@ -401,6 +429,8 @@ def main(now=None):
                  'macro_quality':feeds['macro_problem'] or 'ONLINE_OR_PERSISTED_CACHE'}
         sig=signal(feeds,cfg)
         quality['stress_source']=sig['stress'].get('source')
+        quality['missing_macro_inputs']=sig['stress'].get('missing_inputs',[])
+        quality['observed_macro_month']=sig['stress'].get('observed_macro_month',sig['stress'].get('month'))
         quality['macro_previous_month']=sig['stress'].get('month')
         quality['defensive_source']=sig['defensive'].get('source')
         if feeds['session']>=(st['last_processed_session'] or cfg['activation_date']) and \
@@ -409,7 +439,7 @@ def main(now=None):
             save(STATE,st)
             status='PAPER_ORDERS_EXECUTED' if executed else 'V23_SIGNAL_PENDING_NEXT_COMPLETED_CLOSE'
         else:status='WAITING_NEW_EQUITY_ETF_CLOSE'
-        if sig['stress'].get('source','').startswith('CARRIED_FROZEN_'):
+        if sig['stress'].get('source','').startswith(('CARRIED_FROZEN_','CARRIED_OBSERVED_')):
             status+='__MACRO_PROXY_STALE'
         save(AUDIT,{'checked_at_utc':now.astimezone(dt.timezone.utc).isoformat(),
                     'market_session':feeds['session'], 'source_quality':quality,

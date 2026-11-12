@@ -75,6 +75,15 @@ class TestOriginalV23(unittest.TestCase):
         s=pac.CausalStress(CFG,None).regime('2026-11-12')
         self.assertTrue(s['source'].startswith('CARRIED_FROZEN_'))
         self.assertEqual(s['month'],'2026-10')
+    def test_2026_macro_missing_prefers_latest_observed_month(self):
+        m=pac.v23.synthetic_macro()
+        m['rf_annualized'].pop('2026-10')
+        m['six'].pop('2026-10')
+        s=pac.CausalStress(CFG,m).regime('2026-11-12')
+        self.assertEqual(s['source'],'CARRIED_OBSERVED_2026-09')
+        self.assertEqual(s['observed_macro_month'],'2026-09')
+        self.assertIn('FF_BREADTH_3M',s['missing_inputs'])
+
     def test_paper_rules_no_35days_no_monthly_cap(self):
         self.assertEqual(CFG['min_hold_days_before_sell'],0)
         self.assertIsNone(CFG['max_total_orders_per_month'])
