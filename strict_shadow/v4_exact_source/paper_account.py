@@ -434,11 +434,15 @@ def reconcile_daily_nav(state,portfolio,quotes,now):
                                                              "LEGACY_UNKNOWN"))
         current["report_date"]=prior.get("report_date",current["report_date"])
         if materially_different(prior,current):
-            reason=("FX_REFERENCE_REVISED_FOR_SAME_CLOSE"
-                    if prior.get("fx_units_per_eur") and
-                       prior.get("fx_units_per_eur")!=fx_rates and
-                       prior.get("held_quotes")==owned_quotes
-                    else "SAME_CLOSE_REVALUED_PRICE_OR_FX")
+            if (abs(float(prior["mark_to_market_nav_eur"])-
+                    float(current["mark_to_market_nav_eur"]))<=0.0001):
+                reason="HYPOTHETICAL_LIQUIDATION_TAX_MODEL_REVISED"
+            elif (prior.get("fx_units_per_eur") and
+                  prior.get("fx_units_per_eur")!=fx_rates and
+                  prior.get("held_quotes")==owned_quotes):
+                reason="FX_REFERENCE_REVISED_FOR_SAME_CLOSE"
+            else:
+                reason="SAME_CLOSE_REVALUED_PRICE_OR_FX"
             archive(prior,current,reason)
         else:
             # Even an unchanged NAV can gain new currency provenance. This
