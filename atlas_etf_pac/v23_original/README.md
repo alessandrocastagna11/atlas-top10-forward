@@ -31,9 +31,22 @@ La V2.3 originale è una strategia proxy azionaria globale con core/satellite 50
 | Max drawdown | -36,5368% | -84,5247% |
 | XIRR | 9,1866% | 10,5201% |
 | Valore netto liquidabile finale | EUR 237.058.084,04 | EUR 706.818.529,23 |
-| Capitale versato | EUR 300.500 | EUR 300.500 |
+| Capitale versato | EUR 302.000 | EUR 302.000 |
 | Ordini Atlas | 1.167 | — |
 
 Copertura: dati FF congelati fino al 31 dicembre 2025, FF aggiornati fino al 30 settembre 2026 (85 sedute aggiunte oltre maggio), SPY con prezzi aggiustati per 30 sedute dal 1° ottobre all'11 novembre. Le tre ipotesi macro 2026 (`neutral`, `carry`, `stressed`) restituiscono gli stessi valori perché nel 2026 non ci sono trigger di stress nella macchina a stati. Gli 11 mesi macro successivi a novembre 2025 non sono dati originali osservati; non utilizzare questa estensione come test esatto PIT.
 
 Audit GitHub Actions: [ultimo workflow di ricerca](https://github.com/alessandrocastagna11/atlas-top10-forward/actions/workflows/atlas-v23-original-replay.yml). Risultati: [summary.json](reports/summary.json), originale leggibile: [atlas_v23_pac_stress.py](atlas_v23_pac_stress.py).
+
+## Ulteriore confronto omogeneo: 2016–2026
+
+| Metrica | Atlas V2.3 originale | PAC passivo sullo stesso proxy FF |
+|---|---:|---:|
+| CAGR TWR | 11,6876% | 14,7115% |
+| Max drawdown | −21,7154% | −34,3602% |
+| XIRR | 10,7984% | 12,1567% |
+| Capitale finale netto liquidabile | EUR 62.548,94 | EUR 67.837,28 |
+| Capitale versato | EUR 33.500 | EUR 33.500 |
+| Ordini Atlas | 142 | — |
+
+La macchina a stati V2.3 originale non usa la costruzione 4-ETF 65/15/10/10. Questo confronto isola la logica di timing e difesa originale sullo stesso proxy azionario; non è un confronto di asset allocation. Il report verificabile è in [reports_modern/summary.json](reports_modern/summary.json).
