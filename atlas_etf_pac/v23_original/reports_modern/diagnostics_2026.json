@@ -1,0 +1,177 @@
+{
+  "source": "Atlas V2.3 original frozen state machine, existing 2016-2026 daily NAV and order ledgers",
+  "cutoff": "2026-11-11",
+  "research_not_live": true,
+  "performance_years": {
+    "2024": {
+      "begin_snapshot": "2023-12-29",
+      "end_session": "2024-12-31",
+      "atlas_twr_return_pct": 18.24211,
+      "market_ff_proxy_return_pct": 24.8929,
+      "atlas_minus_market_pct_points": -6.65079,
+      "atlas_intrayear_drawdown_pct": -10.06734,
+      "atlas_marked_nav_start_eur": 38621.73,
+      "atlas_marked_nav_end_eur": 48895.6,
+      "market_index_start": 273.6484,
+      "market_index_end": 341.7674,
+      "state": {
+        "core_in_out_sessions": 0,
+        "core_in_off_periods": [],
+        "satellite_in_out_sessions": 13,
+        "satellite_in_off_periods": [
+          {
+            "start": "2024-08-06",
+            "end_exclusive": "2024-08-23"
+          }
+        ]
+      }
+    },
+    "2025": {
+      "begin_snapshot": "2024-12-31",
+      "end_session": "2025-12-31",
+      "atlas_twr_return_pct": 19.59986,
+      "market_ff_proxy_return_pct": 18.60464,
+      "atlas_minus_market_pct_points": 0.99522,
+      "atlas_intrayear_drawdown_pct": -13.09757,
+      "atlas_marked_nav_start_eur": 48895.6,
+      "atlas_marked_nav_end_eur": 61866.98,
+      "market_index_start": 341.7674,
+      "market_index_end": 405.352,
+      "state": {
+        "core_in_out_sessions": 0,
+        "core_in_off_periods": [],
+        "satellite_in_out_sessions": 41,
+        "satellite_in_off_periods": [
+          {
+            "start": "2025-03-05",
+            "end_exclusive": "2025-05-02"
+          }
+        ]
+      }
+    },
+    "2026": {
+      "begin_snapshot": "2025-12-31",
+      "end_session": "2026-11-11",
+      "atlas_twr_return_pct": 3.87196,
+      "market_ff_proxy_return_pct": 11.18732,
+      "atlas_minus_market_pct_points": -7.31536,
+      "atlas_intrayear_drawdown_pct": -9.04726,
+      "atlas_marked_nav_start_eur": 61866.98,
+      "atlas_marked_nav_end_eur": 67037.54,
+      "market_index_start": 405.352,
+      "market_index_end": 450.7,
+      "state": {
+        "core_in_out_sessions": 0,
+        "core_in_off_periods": [],
+        "satellite_in_out_sessions": 26,
+        "satellite_in_off_periods": [
+          {
+            "start": "2026-03-16",
+            "end_exclusive": "2026-04-16"
+          },
+          {
+            "start": "2026-11-06",
+            "end_inclusive": "2026-11-11"
+          }
+        ]
+      }
+    }
+  },
+  "order_years": {
+    "2024": {
+      "count": 14,
+      "sells": 1,
+      "strategic_orders": [
+        {
+          "date": "2024-08-06",
+          "kind": "STRATEGY_EQ_SELL",
+          "note": "satellite exit",
+          "gross_eur": 22321.86,
+          "tax_eur": 788.62,
+          "slippage_eur": 11.17
+        },
+        {
+          "date": "2024-08-23",
+          "kind": "STRATEGY_EQ_BUY",
+          "note": "satellite re-entry",
+          "gross_eur": 21561.93,
+          "tax_eur": 0.0,
+          "slippage_eur": 10.78
+        }
+      ],
+      "tax_total_eur": 788.62
+    },
+    "2025": {
+      "count": 13,
+      "sells": 1,
+      "strategic_orders": [
+        {
+          "date": "2025-03-05",
+          "kind": "STRATEGY_EQ_SELL",
+          "note": "satellite exit",
+          "gross_eur": 24349.38,
+          "tax_eur": 269.71,
+          "slippage_eur": 12.18
+        },
+        {
+          "date": "2025-05-02",
+          "kind": "STRATEGY_EQ_BUY",
+          "note": "satellite re-entry",
+          "gross_eur": 24462.8,
+          "tax_eur": 0.0,
+          "slippage_eur": 12.23
+        }
+      ],
+      "tax_total_eur": 269.71
+    },
+    "2026": {
+      "count": 13,
+      "sells": 2,
+      "strategic_orders": [
+        {
+          "date": "2026-03-16",
+          "kind": "STRATEGY_EQ_SELL",
+          "note": "satellite exit",
+          "gross_eur": 30864.23,
+          "tax_eur": 1274.31,
+          "slippage_eur": 15.44
+        },
+        {
+          "date": "2026-04-16",
+          "kind": "STRATEGY_EQ_BUY",
+          "note": "satellite re-entry",
+          "gross_eur": 29871.38,
+          "tax_eur": 0.0,
+          "slippage_eur": 14.94
+        },
+        {
+          "date": "2026-11-06",
+          "kind": "STRATEGY_EQ_SELL",
+          "note": "satellite exit",
+          "gross_eur": 32940.73,
+          "tax_eur": 343.0,
+          "slippage_eur": 16.48
+        }
+      ],
+      "tax_total_eur": 1617.3
+    }
+  },
+  "data_quality": {
+    "official_ff_asof": "2026-09-30",
+    "spy_proxy_start": "2026-10-01",
+    "unknown_2026_macro_months": [
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09",
+      "2026-10"
+    ],
+    "2026_stress_gate_events": []
+  }
+}
