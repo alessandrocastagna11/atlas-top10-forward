@@ -231,15 +231,18 @@ def process(cfg,st,session,data,now):
             x['blocked_actions'].append({'session':session,
                                          'reason':'DEFERRED_NO_PREOPEN_SIGNAL_PROVENANCE',
                                          'decision_session':pending['decision_session']})
+            # Keep the ORIGINAL immutable precommit timestamp: rolling it
+            # forward on each lagged quote would starve execution forever.
         # Only an observed session close and a verifiably pre-open decision
         # authorize a paper open fill. Do not backfill old sessions.
         elif (now.astimezone(ROME).date()-date(session)).days>1:
             x['blocked_actions'].append({'session':session,'reason':'EXPIRED_SIGNAL_NO_BACKFILL'})
+            x['pending']=None
         else:
             opens={k:num(data[symbol]['bars'][session]['open'])
                    for k,symbol in cfg['tickers'].items()}
             executed=fill(cfg,x,pending['proposed_orders'],opens,session)
-        x['pending']=None
+            x['pending']=None
     closes={k:num(data[symbol]['bars'][session]['close'])
             for k,symbol in cfg['tickers'].items()}
     vals=current_values(x,closes)
@@ -261,8 +264,13 @@ def process(cfg,st,session,data,now):
     s=signal(cfg,x,data[cfg['tickers']['WORLD']]['bars'],session)
     x['last_risk_on']=s['monthly_regime']
     x['signal_history'].append(s)
-    proposed,blocked=plan(cfg,x,s,closes,session[:7])
-    x['blocked_actions'].extend({'session':session,'reason':z} for z in blocked)
+    # Do not overwrite a previously recorded pending instruction just
+    # because the source provider is one or two sessions behind.
+    if x.get('pending') is None:
+        proposed,blocked=plan(cfg,x,s,closes,session[:7])
+        x['blocked_actions'].extend({'session':session,'reason':z} for z in blocked)
+    else:
+        proposed=[]
     if proposed:
         x['pending']={'decision_session':session,
              'created_at_utc':now.astimezone(dt.timezone.utc).isoformat(),
