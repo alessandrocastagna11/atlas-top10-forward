@@ -1,5 +1,5 @@
 name: Atlas V4 — exchange/FX data QA (NO PAPER ORDERS)
-# Re-run final offline QA for NAV/FX revision audit, FIFO basis and deferred rotation.
+# Re-run full non-mutating QA after conservative market-cap crosswalk and audit reason fixes.
 on:
   workflow_dispatch:
   push:
