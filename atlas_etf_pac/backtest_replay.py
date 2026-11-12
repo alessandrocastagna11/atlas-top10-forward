@@ -138,7 +138,7 @@ def main():
         'period':'2016-01 to 2026-11 (observed common exchange sessions)',
         'model_method':'historical reconstructed next-session Xetra open replay',
         'data_feed':'Yahoo daily OHLC, unofficial, as retrieved in a 2026 snapshot',
-        'bias_note':'Backtest uses today's accessible OHLC histories and is not point-in-time validation of original vintage provider data',
+        'bias_note':'Backtest uses currently accessible OHLC histories and is not point-in-time validation of original vintage provider data',
         'param_mutations':['First decision date set to Jan 2016 for research', 'Monthly contribution begins Feb 2016'],
         'costs_note':'Engine fees/slippage/taxes/annual stamp estimates; passive baseline also annual stamp but no fees or slippage',
         'active':active,'passive_4etf_pac':passive,
