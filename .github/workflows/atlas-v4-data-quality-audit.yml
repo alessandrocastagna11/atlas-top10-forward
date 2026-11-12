@@ -1,5 +1,5 @@
 name: Atlas V4 — exchange/FX data QA (NO PAPER ORDERS)
-# Re-run full non-mutating QA after conservative market-cap crosswalk and audit reason fixes.
+# Final regression: NO sales on stale or before-maturity local quotes; frozen original rule unchanged.
 on:
   workflow_dispatch:
   push:
