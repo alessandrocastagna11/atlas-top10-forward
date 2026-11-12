@@ -381,9 +381,9 @@ def reconcile_daily_nav(state,portfolio,quotes,now):
     observed=now.isoformat()
     fx_rates=quotes.get("fx_units_per_eur_asof") or {}
     fx_dates=quotes.get("fx_currency_source_sessions") or {}
-    owned_quotes={ticker:{"price_eur":float(pos["market_close_eur"]),
+    owned_quotes={pos["ticker"]:{"price_eur":float(pos["market_close_eur"]),
                            "exchange_session":str(pos.get("price_source_date",""))}
-                  for ticker,pos in state["holdings"].items()}
+                  for pos in portfolio.get("holdings",[])}
     evidence={"exchange_close_session":session,"held_quotes":owned_quotes,
               "fx_units_per_eur":fx_rates,"fx_source_sessions":fx_dates}
     fingerprint=hashlib.sha256(json.dumps(evidence,sort_keys=True,
