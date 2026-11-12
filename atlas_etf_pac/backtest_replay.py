@@ -9,15 +9,17 @@ import copy
 import datetime as dt
 import json
 import math
+import os
 from pathlib import Path
 from collections import Counter
 import engine as e
 
 ROOT=Path(__file__).resolve().parent
 START_HISTORY=dt.date(2014,1,1)
-FIRST_DATE=dt.date(2016,1,4)
+FIRST_DATE=dt.date.fromisoformat(os.environ.get('ATLAS_BACKTEST_FIRST_DATE','2016-01-04'))
 END_DATE=dt.date(2026,11,11)
-OUT=ROOT/'backtests'/'replay_2016_2026.json'
+USE_GOLD_PROXY=os.environ.get('ATLAS_BACKTEST_GOLD_PROXY','1')=='1'
+OUT=ROOT/'backtests'/('replay_2016_2026.json' if USE_GOLD_PROXY else 'replay_2022_2026_actual4.json')
 
 def xirr(flows):
     origin=flows[0][0]
@@ -78,22 +80,27 @@ def main():
     # Anchor the earlier proxy to PPFB's first shared CLOSE; use proxy
     # RETURNS, not raw unrelated unit prices. From switch day forward
     # all GOLD prices use the actual PPFB instrument.
-    proxy_sym='8PSG.DE'
-    proxy=e.yahoo(proxy_sym,START_HISTORY,END_DATE)
-    gold=data[cfg['tickers']['GOLD']]
-    overlap=sorted(set(proxy['bars']) & set(gold['bars']))
-    if not overlap:raise RuntimeError('GOLD proxy overlap missing')
-    switch=overlap[0]
-    factor=(gold['bars'][switch]['close'] / proxy['bars'][switch]['close'])
-    for day,b in proxy['bars'].items():
-        if day<switch and day not in gold['bars']:
-            gold['bars'][day]={'open':b['open']*factor,'close':b['close']*factor}
-    print('GOLD pre-PPFB proxy',proxy_sym,'bars',len(proxy['bars']),
-          'splice',switch,'factor',round(factor,8),flush=True)
+    proxy_sym=None
+    proxy=None
+    switch=None
+    factor=None
+    if USE_GOLD_PROXY:
+        proxy_sym='8PSG.DE'
+        proxy=e.yahoo(proxy_sym,START_HISTORY,END_DATE)
+        gold=data[cfg['tickers']['GOLD']]
+        overlap=sorted(set(proxy['bars']) & set(gold['bars']))
+        if not overlap:raise RuntimeError('GOLD proxy overlap missing')
+        switch=overlap[0]
+        factor=(gold['bars'][switch]['close'] / proxy['bars'][switch]['close'])
+        for day,b in proxy['bars'].items():
+            if day<switch and day not in gold['bars']:
+                gold['bars'][day]={'open':b['open']*factor,'close':b['close']*factor}
+        print('GOLD pre-PPFB proxy',proxy_sym,'bars',len(proxy['bars']),
+              'splice',switch,'factor',round(factor,8),flush=True)
     intersection=set.intersection(*(set(d['bars']) for d in data.values()))
     sessions=sorted(day for day in intersection if FIRST_DATE.isoformat()<=day<=END_DATE.isoformat())
     if not sessions:raise RuntimeError('No common Xetra sessions')
-    if len(sessions)<1800:raise RuntimeError('Insufficient common EUR session coverage')
+    if len(sessions)<(1800 if USE_GOLD_PROXY else 850):raise RuntimeError('Insufficient common EUR session coverage')
     if (END_DATE-dt.date.fromisoformat(sessions[-1])).days>5:
         raise RuntimeError('Last common ETF session stale')
     pre=[d for d in intersection if d<sessions[0]]
@@ -101,7 +108,9 @@ def main():
     seed=sorted(pre)[-1]
     cfg=copy.deepcopy(cfg)
     cfg['first_possible_decision_session']=sessions[0]
-    cfg['monthly_contribution_first_month']='2016-02'
+    first=dt.date.fromisoformat(sessions[0])
+    following=dt.date(first.year+1,1,1) if first.month==12 else dt.date(first.year,first.month+1,1)
+    cfg['monthly_contribution_first_month']=following.isoformat()[:7]
     st={'schema':1,'model':cfg['model'],'mode':cfg['mode'],'started_at':seed,
         'last_processed_session':seed,'last_risk_on':None,
         'last_deposit_month':sessions[0][:7],
@@ -153,15 +162,17 @@ def main():
     all_day=dt.date.fromisoformat(sessions[-1])
     out={
         'strategy':'ATLAS_ETF_PAC_4SLEEVE_RESTART_V1',
-        'period':'2016-01 to 2026-11 (observed common exchange sessions)',
+        'period':str(FIRST_DATE)[:7]+' to 2026-11 (observed common exchange sessions)',
         'model_method':'historical reconstructed next-session Xetra open replay',
         'data_feed':'Yahoo daily OHLC, unofficial, as retrieved in a 2026 snapshot',
-        'gold_history_extension':{'historical_proxy':proxy_sym,
+        'gold_history_extension':({'historical_proxy':proxy_sym,
             'proxy_until_exclusive':switch,'original_gold_ticker':cfg['tickers']['GOLD'],
             'splice_factor':factor,'raw_proxy_sha256':proxy['sha256'],
-            'warning':'Pre-switch backtest proxy ETC has different fees, issuer and possible tracking difference'},
+            'warning':'Pre-switch backtest proxy ETC has different fees, issuer and possible tracking difference'}
+            if USE_GOLD_PROXY else None),
         'bias_note':'Backtest uses currently accessible OHLC histories and is not point-in-time validation of original vintage provider data',
-        'param_mutations':['First decision date set to Jan 2016 for research', 'Monthly contribution begins Feb 2016'],
+        'param_mutations':['First decision session set to '+str(FIRST_DATE)+' for research',
+                           'Monthly contribution begins '+cfg['monthly_contribution_first_month']],
         'costs_note':'Engine fees/slippage/taxes/annual stamp estimates; passive baseline also annual stamp but no fees or slippage',
         'active':active,'passive_4etf_pac':passive,
         'sessions':len(sessions),'last_available_session':sessions[-1],
