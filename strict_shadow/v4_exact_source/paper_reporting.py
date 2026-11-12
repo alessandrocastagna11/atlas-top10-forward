@@ -85,6 +85,10 @@ def write_report(out_dir,status,portfolio,orders):
     else:
         recency='CURRENT_VERIFIED_MODEL_VALUATION'
     def money(value):return f"{float(value or 0):,.2f} €"
+    pending=status.get('pending_full_rotation') or {}
+    fx=(status.get('fx_audit') or {})
+    valuation=status.get('valuation_audit') or {}
+    next_review=status.get('next_full_rotation_decision_date') or 'da calendario'
     lines=[
         '# Atlas V4 Confidence70 — paper originale, vincolo 35 giorni',
         '',f"**Stato:** `{status_text}` — **Validità della valutazione:** `{recency}`",
@@ -101,6 +105,21 @@ def write_report(out_dir,status,portfolio,orders):
         f"**Contabilità paper:** {status.get('execution_policy','attesa')} — prezzi degli ordini {'APPROSSIMATI' if status.get('execution_pricing_approximate') else 'non verificati'}; nessun ordine reale.",
         f"**Ultimo aggiornamento portafoglio:** {portfolio.get('valuation_recorded_at_utc','n/d')}; fonte ultimo prezzo {portfolio.get('valuation_session','n/d')}.",
         f"**Recuperi dopo interruzioni:** {status.get('recovered_paper_decision_count',0)} sedute; {status.get('new_orders_mode','in attesa')}",
+         '',
+         '## Segnali, proposte e ordini: tre cose diverse',
+         '',
+         f"**Segnale giornaliero:** {'pubblicato' if status.get('signal_published') else 'non disponibile'} — NON equivale a un ordine.",
+         f"**Proposte sopra soglia (solo indicazioni):** {(status.get('indicative_order_test') or {}).get('possible_buys_meeting_threshold','n/d')}.",
+         f"**Rotazione completa:** ogni 5 settimane; prossimo lunedi teorico: {next_review}; non sono previsti nuovi acquisti quotidiani.",
+         f"**Ordini registrati nell'ultimo aggiornamento:** {int(status.get('new_orders',0) or 0)}.",
+         f"**Rotazione differita a causa dei 35 giorni:** {'NESSUNA' if not pending else str(pending.get('original_decision_session'))+' / '+', '.join(pending.get('blocked_tickers',[]))}.",
+         '',
+         '## Audit delle valutazioni e cambi',
+         '',
+         f"**Numero di chiusure di mercato distinte:** {valuation.get('historical_daily_sessions','n/d')}; **revisioni di valutazione:** {valuation.get('valuation_revision_count',0)}.",
+         f"**Revisione della stessa chiusura durante il run:** {'SI, vedere valuation_revisions.csv' if valuation.get('valuation_revised_in_current_run') else 'NO'}. Una revisione non genera una seconda giornata di rendimento.",
+         f"**Cambio EUR/USD:** {fx.get('fx_rates',{}).get('USD','n/d')} USD per EUR; seduta FX {fx.get('fx_quote_sessions',{}).get('USD','n/d')}. Il fixing giornaliero non e un cambio di broker.",
+         f"**Fingerprint dei dati:** {valuation.get('quote_evidence_sha256','n/d')}.",
         '**Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.',
         '',
         '| Portafoglio virtuale | Importo |', '|---|---:|',
@@ -114,7 +133,7 @@ def write_report(out_dir,status,portfolio,orders):
         f"| Nuovi ordini verificati | {int(status.get('new_orders',0) or 0)} |",
         f"| Sedute paper ricostruite dopo interruzione | {int(status.get('recovered_paper_decision_count',0) or 0)} |",
         '',
-        '*NAV netto liquidabile = valutazione ipotetica dopo costi e imposte di liquidazione; **non è una vendita eseguita** e non supera il blocco dei 35 giorni.',
+        '*NAV netto liquidabile: vendita simultanea IPOTETICA dopo lo sblocco dei lotti, con compensazione delle minusvalenze azionarie ammissibili e costi teorici. Non equivale a una vendita attualmente consentita dal blocco FIFO.',
         '',
         '## Posizioni e lotti',
         '', '| Titolo | Quote | Valore € | Peso | Quote vincolate | Prima data vendibile |',
