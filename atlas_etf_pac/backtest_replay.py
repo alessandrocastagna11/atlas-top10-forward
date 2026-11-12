@@ -72,6 +72,24 @@ def main():
     for asset,symbol in cfg['tickers'].items():
         data[symbol]=e.yahoo(symbol,START_HISTORY,END_DATE)
         print('Source',symbol,len(data[symbol]['bars']),'bars',max(data[symbol]['bars']),flush=True)
+    # PPFB only starts in the current data source in the early 2020s.
+    # Extend the historical GOLD sleeve with a live-traded, EUR-denominated
+    # physical gold ETC: Invesco Physical Gold 8PSG.DE, formed in 2009.
+    # Anchor the earlier proxy to PPFB's first shared CLOSE; use proxy
+    # RETURNS, not raw unrelated unit prices. From switch day forward
+    # all GOLD prices use the actual PPFB instrument.
+    proxy_sym='8PSG.DE'
+    proxy=e.yahoo(proxy_sym,START_HISTORY,END_DATE)
+    gold=data[cfg['tickers']['GOLD']]
+    overlap=sorted(set(proxy['bars']) & set(gold['bars']))
+    if not overlap:raise RuntimeError('GOLD proxy overlap missing')
+    switch=overlap[0]
+    factor=(gold['bars'][switch]['close'] / proxy['bars'][switch]['close'])
+    for day,b in proxy['bars'].items():
+        if day<switch and day not in gold['bars']:
+            gold['bars'][day]={'open':b['open']*factor,'close':b['close']*factor}
+    print('GOLD pre-PPFB proxy',proxy_sym,'bars',len(proxy['bars']),
+          'splice',switch,'factor',round(factor,8),flush=True)
     intersection=set.intersection(*(set(d['bars']) for d in data.values()))
     sessions=sorted(day for day in intersection if FIRST_DATE.isoformat()<=day<=END_DATE.isoformat())
     if not sessions:raise RuntimeError('No common Xetra sessions')
@@ -138,6 +156,10 @@ def main():
         'period':'2016-01 to 2026-11 (observed common exchange sessions)',
         'model_method':'historical reconstructed next-session Xetra open replay',
         'data_feed':'Yahoo daily OHLC, unofficial, as retrieved in a 2026 snapshot',
+        'gold_history_extension':{'historical_proxy':proxy_sym,
+            'proxy_until_exclusive':switch,'original_gold_ticker':cfg['tickers']['GOLD'],
+            'splice_factor':factor,'raw_proxy_sha256':proxy['sha256'],
+            'warning':'Pre-switch backtest proxy ETC has different fees, issuer and possible tracking difference'},
         'bias_note':'Backtest uses currently accessible OHLC histories and is not point-in-time validation of original vintage provider data',
         'param_mutations':['First decision date set to Jan 2016 for research', 'Monthly contribution begins Feb 2016'],
         'costs_note':'Engine fees/slippage/taxes/annual stamp estimates; passive baseline also annual stamp but no fees or slippage',
