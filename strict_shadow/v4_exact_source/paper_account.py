@@ -8,7 +8,7 @@ a deliberate approximation. No order is backdated. Append-only accounting,
 35 calendar days FIFO lock even for defensive sells, idempotent daily updates.
 """
 from __future__ import annotations
-import csv,datetime as dt,json,math
+import csv,datetime as dt,hashlib,json,math
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -190,23 +190,30 @@ def sell(state,ticker,requested_value,reference,decision,now,price_date,price_so
     amount=min(available,p["shares"],req)
     if amount+1e-9<req:state["blocked_sell_requests"]+=1
     if amount<=1e-10:return False
-    oldshares=p["shares"]
-    basis=p["cost_basis_eur"]*amount/oldshares
+    # FIFO COST BASIS, not the weighted average of mature and immature lots.
+    # Otherwise sale tax was inconsistent with the lots actually consumed.
+    balance=amount
+    basis=0.0
+    for lot in p["lots"]:
+        if dt.date.fromisoformat(lot["sale_eligible_date"])>now.date():continue
+        if balance<=1e-9:break
+        prior_shares=float(lot["shares"])
+        take=min(balance,prior_shares)
+        portion=float(lot["cost_basis_eur"])*take/prior_shares
+        basis+=portion
+        lot["shares"]=prior_shares-take
+        lot["cost_basis_eur"]=max(0.,float(lot["cost_basis_eur"])-portion)
+        balance-=take
+    if balance>1e-7:raise ValueError("FIFO sales exceed mature inventory")
+    p["lots"]=[lot for lot in p["lots"] if lot["shares"]>1e-8]
+    p["shares"]-=amount;p["cost_basis_eur"]-=basis
+    # Explicit lot cost-basis audit: no implicit creation of taxable basis.
+    if p["shares"]>1e-8 and abs(p["cost_basis_eur"]-sum(float(l["cost_basis_eur"]) for l in p["lots"]))>1e-5:
+        raise ValueError("FIFO cost basis mismatch after sale")
     exitpx=ref*(1.-SLIPPAGE_BPS/10_000)
     proceeds=amount*exitpx-FEE
     gain=proceeds-basis
     tax=max(0.,gain)*TAX_RATE
-    balance=amount
-    for lot in p["lots"]:
-        if dt.date.fromisoformat(lot["sale_eligible_date"])>now.date():continue
-        take=min(balance,lot["shares"])
-        lot["shares"]-=take
-        lot["cost_basis_eur"]*=max(0.,1.-take/max(take,lot["shares"]+take))
-        balance-=take
-        if balance<=1e-9:break
-    if balance>1e-7:raise ValueError("FIFO sales exceed mature inventory")
-    p["lots"]=[lot for lot in p["lots"] if lot["shares"]>1e-8]
-    p["shares"]-=amount;p["cost_basis_eur"]-=basis
     if p["shares"]<=1e-8:del state["holdings"][ticker]
     state["cash_eur"]+=proceeds-tax
     state["fees_eur_total"]+=FEE
@@ -227,7 +234,7 @@ def sell(state,ticker,requested_value,reference,decision,now,price_date,price_so
 
 
 def generate_portfolio(state,quote_data,proposal,now):
-    records=[];invested=0.;unrealized_tax=0.;stale=[]
+    records=[];invested=0.;stale=[]
     for ticker,pos in sorted(state["holdings"].items()):
         price,asof,source=next_available_price(ticker,quote_data,proposal,state["holdings"],now.date())
         # Never mark a newly bought paper position at an EOD earlier than
@@ -235,7 +242,6 @@ def generate_portfolio(state,quote_data,proposal,now):
         # the preceding completed close as a disclosed approximation.
         pos["last_price_eur"]=price;pos["last_price_date"]=asof
         value=price*pos["shares"];invested+=value
-        unrealized_tax+=max(0.,value-pos["cost_basis_eur"])*TAX_RATE
         eligible=sum(x["shares"] for x in pos["lots"] if
                      dt.date.fromisoformat(x["sale_eligible_date"])<=now.date())
         if source.startswith("STALE"):stale.append(ticker)
@@ -249,8 +255,18 @@ def generate_portfolio(state,quote_data,proposal,now):
            "lots":pos["lots"]})
     cash=state["cash_eur"]
     nav=cash+invested
-    # Informational hypothetical liquidation only: not an actual sell, no 35-day bypass.
-    net=nav-unrealized_tax-max(0.,invested)*SLIPPAGE_BPS/10000-len(records)*FEE
+    # Simultaneous HYPOTHETICAL liquidation once all locks have expired.
+    # Profits and eligible capital losses from these equity disposals net out
+    # within the same taxable category (not dividends or investment income).
+    # Does not claim that tax credits can offset unrelated income or that
+    # the positions are legally sellable today. Realized profits remain taxed
+    # in the order ledger when a sale actually occurs.
+    hypothetical_sale_cost=max(0.,invested)*SLIPPAGE_BPS/10000+len(records)*FEE
+    hypothetical_net_proceeds=invested-hypothetical_sale_cost
+    hypothetical_total_cost_basis=sum(float(p["cost_basis_eur"]) for p in state["holdings"].values())
+    hypothetical_net_gain=hypothetical_net_proceeds-hypothetical_total_cost_basis
+    hypothetical_sale_tax=max(0.,hypothetical_net_gain)*TAX_RATE
+    net=cash+hypothetical_net_proceeds-hypothetical_sale_tax
     for x in records:x["portfolio_weight_pct"]=round(100*x["market_value_eur"]/nav,3)
     buys=sum(o["action"]=="BUY" for o in state["orders"])
     sells=sum(o["action"]=="SELL" for o in state["orders"])
@@ -263,6 +279,12 @@ def generate_portfolio(state,quote_data,proposal,now):
        "invested_eur":round(invested,4),
        "nav_mark_to_market_eur":round(nav,4),
        "nav_net_liquidation_eur":round(net,4),
+       "hypothetical_liquidation_sale_cost_eur":round(hypothetical_sale_cost,4),
+       "hypothetical_liquidation_tax_eur":round(hypothetical_sale_tax,4),
+       "hypothetical_liquidation_net_gain_eur":round(hypothetical_net_gain,4),
+       "hypothetical_liquidation_assumes_all_lots_mature":True,
+       "hypothetical_liquidation_tax_method":"SIMULTANEOUS_COMPENSABLE_EQUITY_GAINS_LOSSES_26PCT",
+
        "pnl_mark_to_market_pct":round((nav/INITIAL-1)*100,5),
        "valuation_session":quote_data.get("decision_session") or proposal["decision_session"],
        "valuation_recorded_at_utc":now.isoformat(),
