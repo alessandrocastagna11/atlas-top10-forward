@@ -27,6 +27,29 @@ class RankingTests(unittest.TestCase):
         self.assertEqual(len(matches),3)
         self.assertEqual({x["symbol"] for x in matches},{"AAPL","2330.TW","GOOG"})
         self.assertIn("CURATED_ISSUER_ALIAS",next(x for x in matches if x["symbol"]=="2330.TW")["capitalization_coverage_status"])
+    def test_checked_cross_domicile_same_issuer_only_and_UMC_alias(self):
+        v=[
+            {"vendor_ticker":"AIR.PA","vendor_rank":1,"market_cap_usd":1.8e11,
+             "vendor_company_name":"AirbusAIR.PA","vendor_country":"🇳🇱 Netherlands"},
+            {"vendor_ticker":"CB","vendor_rank":2,"market_cap_usd":1.4e11,
+             "vendor_company_name":"ChubbCB","vendor_country":"🇨🇭 Switzerland"},
+            {"vendor_ticker":"UMC","vendor_rank":3,"market_cap_usd":4e10,
+             "vendor_company_name":"United MicroelectronicsUMC","vendor_country":"🇹🇼 Taiwan"},
+            {"vendor_ticker":"RANDOM","vendor_rank":4,"market_cap_usd":1e10,
+             "vendor_company_name":"Other CorpRANDOM","vendor_country":"🇬🇧 UK"}]
+        etf=[
+            {"symbol":"AIR.PA","country":"France","company_name":"AIRBUS GROUP"},
+            {"symbol":"CB","country":"United States","company_name":"CHUBB"},
+            {"symbol":"2303.TW","country":"Taiwan","company_name":"UNITED MICRO ELECTRONICS CORP"},
+            {"symbol":"RANDOM","country":"United States","company_name":"OTHER CORP"}]
+        matched=m.crosswalk(v,etf)
+        self.assertEqual({x["symbol"] for x in matched},{"AIR.PA","CB","2303.TW"})
+        self.assertIn("REVIEWED_EXACT_TICKER_NAME_DIFFERENT_DOMICILE",
+                      next(x for x in matched if x["symbol"]=="CB")["capitalization_coverage_status"])
+        self.assertIn("CURATED_ISSUER_ALIAS",
+                      next(x for x in matched if x["symbol"]=="2303.TW")["capitalization_coverage_status"])
+        self.assertNotIn("RANDOM",{x["symbol"] for x in matched})
+
     def test_marketcap_output_cannot_backdate_yesterday(self):
         self.assertIn("OBSERVED_ONLY",m.CAPTURED_TYPE)
         self.assertNotIn("PIT_CERTIFIED",m.RANKING_TYPE)
