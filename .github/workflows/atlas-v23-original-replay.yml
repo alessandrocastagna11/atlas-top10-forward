@@ -1,0 +1,83 @@
+name: Atlas ETF V2.3 ORIGINAL — frozen validation and 1926–2026 proxy replay
+
+on:
+  push:
+    branches: [atlas-etf-v23-original]
+    paths:
+      - 'atlas_etf_pac/v23_original/**'
+      - '.github/workflows/atlas-v23-original-replay.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atlas-v23-original-replay
+  cancel-in-progress: false
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: atlas-etf-v23-original
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Reproduce exact historical frozen 1926–2025 engine
+        run: |
+          python atlas_etf_pac/v23_original/run_extended.py --end 2025-12-31 --no-online --scenario carry --out atlas_etf_pac/v23_original/frozen_audit
+          python - <<'PY'
+          import json,math
+          from pathlib import Path
+          p=Path('atlas_etf_pac/v23_original')
+          report=json.loads((p/'frozen_audit/summary.json').read_text())
+          expected=json.loads((p/'reference/meta/expected_frozen_results.json').read_text())['expected']
+          observed=report['scenarios']['carry']['strategy']
+          for k,want in expected.items():
+              got=observed[k]
+              assert math.isclose(float(got),float(want),rel_tol=1e-10,abs_tol=1e-6),(k,got,want)
+          print('ORIGINAL V2.3 FROZEN ENGINE PARITY VERIFIED: all',len(expected),'metrics')
+          PY
+      - name: Extend official source where available, SPY only where necessary; sensitivity on unavailable 2026 macro
+        run: |
+          python -u atlas_etf_pac/v23_original/run_extended.py --end 2026-11-11 --scenario all --out atlas_etf_pac/v23_original/reports
+      - name: Validate research provenance, cutoff and model identity
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('atlas_etf_pac/v23_original/reports/summary.json')
+          x=json.loads(p.read_text())
+          assert x['requested_end_date']=='2026-11-11'
+          assert x['coverage']['last_session']=='2026-11-11',x['coverage']
+          assert x['historical_frozen_through']=='2025-12-31'
+          assert x['engine_sha256']=='aef2809b8a3bfe01e3b0fa6b3f0d564b8ad0db90340a04a7480d7266d9141c7a'
+          assert x['2026_extension_not_exact_frozen']
+          assert len(x['scenarios'])==3
+          assert not Path('atlas_etf_pac/v23_original/reference').is_symlink()
+          for k,v in x['scenarios'].items():
+              assert v['strategy']['end_date']=='2026-11-11'
+              assert v['passive_same_ff_proxy']['final_liquidated_eur']>0
+          print('FROZEN V2.3 IDENTITY AND 2026 COVERAGE VERIFIED')
+          with open(__import__('os').environ['GITHUB_STEP_SUMMARY'],'a') as f:
+              f.write('## Atlas V2.3 ORIGINAL 1926–2026 (proxy)\n\n')
+              f.write('Frozen state machine SHA-256 confirmed; 2026 uses data extension and macro sensitivity.\n\n')
+              for k,v in x['scenarios'].items():
+                  z=v['strategy'];b=v['passive_same_ff_proxy']
+                  f.write(f"**{k}:** CAGR {z['twr_cagr_net']*100:.4f}%, MaxDD {z['max_drawdown']*100:.4f}%, XIRR {z['xirr']*100:.4f}%; passive CAGR {b['twr_cagr_net']*100:.4f}%.\n\n")
+          PY
+      - name: Persist isolated results, never touch forward paper ledger
+        if: success()
+        run: |
+          git config user.name 'Atlas V2.3 Original Research Bot'
+          git config user.email 'atlas-v23-original@users.noreply.github.com'
+          git add atlas_etf_pac/v23_original/reports/summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Atlas V2.3 original: 1926-2026 proxy replay with macro scenario audit"
+            git pull --rebase origin atlas-etf-v23-original
+            git push origin HEAD:atlas-etf-v23-original
+          fi
