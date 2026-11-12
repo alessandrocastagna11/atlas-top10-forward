@@ -139,7 +139,19 @@ def _issuer_name(s):
 _CURATED_ISSUER_ALIASES={
     "2330.TW":"TSM", "TD.TO":"TD", "BNS.TO":"BNS","CM.TO":"CM",
     "GSK.L":"GSK", "CP.TO":"CP", "ABX.TO":"B", "3711.TW":"ASX",
-    "2318.HK":"601318.SS", "105560.KS":"KB"
+    "2318.HK":"601318.SS", "105560.KS":"KB",
+    "2303.TW":"UMC" # United Microelectronics Taiwan ordinary local share vs vendor ADR ticker
+}
+
+# Exchange-listing country and issuer registration country sometimes differ.
+# EXACT TICKER + EXACT normalized issuer name is mandatory; only these reviewed
+# discrepancies are accepted. Never permit arbitrary cross-country ticker
+# or fuzzy name matching: same company symbol can exist on two exchanges.
+_CURATED_LISTING_VS_DOMICILE={
+    ("AIR.PA","FRANCE","NETHERLANDS"),
+    ("CB","UNITED STATES","SWITZERLAND"),
+    ("LIN","UNITED STATES","UNITED KINGDOM"),
+    ("ACN","UNITED STATES","IRELAND"),
 }
 
 def crosswalk(vendor,etf):
@@ -160,8 +172,23 @@ def crosswalk(vendor,etf):
     for row in etf:
         symbol=row["symbol"].upper()
         v=bysymbol.get(symbol)
-        if v and _country(v["vendor_country"])==_country(row["country"]) and v["vendor_ticker"] not in used_vendor:
-            method="EXACT_TICKER_AND_COUNTRY"
+        if v and v["vendor_ticker"] not in used_vendor:
+            etf_country=_country(row["country"])
+            issuer_country=_country(v["vendor_country"])
+            if etf_country==issuer_country:
+                method="EXACT_TICKER_AND_COUNTRY"
+            else:
+                candidate=(symbol,etf_country,issuer_country)
+                raw_name=v["vendor_company_name"]
+                vendor_symbol=v["vendor_ticker"]
+                if raw_name.upper().endswith(vendor_symbol.upper()):
+                    raw_name=raw_name[:-len(vendor_symbol)]
+                same_name=(_issuer_name(raw_name)==_issuer_name(row["company_name"]))
+                if candidate in _CURATED_LISTING_VS_DOMICILE and same_name:
+                    method="REVIEWED_EXACT_TICKER_NAME_DIFFERENT_DOMICILE"
+                else:
+                    v=None
+                    method=""
         else:
             v=None
             method=""
