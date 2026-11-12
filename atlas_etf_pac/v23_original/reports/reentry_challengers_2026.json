@@ -1,0 +1,734 @@
+{
+  "engine_sha256": "aef2809b8a3bfe01e3b0fa6b3f0d564b8ad0db90340a04a7480d7266d9141c7a",
+  "coverage": {
+    "official": {
+      "source": "Ken French daily CSV ZIP",
+      "url": "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Research_Data_Factors_daily_CSV.zip",
+      "sha256": "96c23b88e651cbfff3740a53f8225e59ee39893371e96385a1d8125ec2cd9c89",
+      "max_session": "2026-09-30",
+      "status": "OK"
+    },
+    "market_proxy": {
+      "ticker": "SPY",
+      "provider": "Yahoo adjusted daily close",
+      "sha256": "a57d2b7b5d3e0bb47c3bba6962cff72ffca310405918fd518d280ac5a7d4f8d6",
+      "max_session": "2026-11-12"
+    },
+    "proxy_start": "2026-10-01",
+    "proxy_last": "2026-11-11",
+    "rf_approximation": "last available Fama French daily RF repeated for SPY extension",
+    "source_counts": {
+      "pinned_frozen_through_2025": 26151,
+      "pinned_2026": 102,
+      "official_new_sessions": 85,
+      "SPY_proxy_sessions": 30
+    },
+    "last_session": "2026-11-11",
+    "total_sessions": 26368,
+    "first_proxy_session": "2026-10-01"
+  },
+  "base_is_original": true,
+  "rules_changed": "first satellite rebound only, config satellite_rebound from 0.03 to 0.025/0.02/0.015",
+  "results": {
+    "2016-01-04": {
+      "0.030": {
+        "start": "2016-01-04",
+        "end": "2026-11-11",
+        "satellite_rebound": 0.03,
+        "cagr_pct": 11.687597030778484,
+        "maxdd_pct": -21.71535965984028,
+        "xirr_pct": 10.7983915440284,
+        "final_liquidated_eur": 62548.94180869804,
+        "orders_total": 142,
+        "orders_strategy": 33,
+        "realized_taxes_eur": 6053.882116362729,
+        "fees_eur": 35.0,
+        "slippage_eur": 227.625001733001,
+        "stamp_eur": 596.4201757985659,
+        "2026_return_pct": 3.871961026409343,
+        "subperiods": {
+          "1926_1969": null,
+          "1970_1999": null,
+          "2000_2025": {
+            "cagr_pct": 12.330465768021792,
+            "maxdd_pct": -21.71535965984028,
+            "first": "2016-01-04",
+            "last": "2025-12-31"
+          },
+          "2016_2025": {
+            "cagr_pct": 12.330465768021792,
+            "maxdd_pct": -21.71535965984028,
+            "first": "2016-01-04",
+            "last": "2025-12-31"
+          },
+          "2026_ytd": {
+            "cagr_pct": 4.503348764604609,
+            "maxdd_pct": -9.047255325751259,
+            "first": "2025-12-31",
+            "last": "2026-11-11"
+          }
+        },
+        "2026_satellite_out_sessions": 26,
+        "2026_sales": [
+          {
+            "date": "2026-03-16",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 30864.22847730799,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 15.43983415573186,
+            "tax_eur": 1274.3054936596036,
+            "note": "satellite exit"
+          },
+          {
+            "date": "2026-11-06",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 32940.727858549,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 16.478603230889945,
+            "tax_eur": 342.99768165315044,
+            "note": "satellite exit"
+          }
+        ],
+        "2026_reentries": [
+          {
+            "date": "2026-04-16",
+            "kind": "STRATEGY_EQ_BUY",
+            "side": "BUY",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 29871.380568755514,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 14.935690284377758,
+            "tax_eur": 0.0,
+            "note": "satellite re-entry"
+          }
+        ],
+        "benchmark": {
+          "twr_cagr_net": 0.14711547004251746,
+          "max_drawdown": -0.3436019712244408,
+          "xirr": 0.12156724667616572,
+          "final_liquidated_eur": 67837.27567117052
+        }
+      },
+      "0.025": {
+        "start": "2016-01-04",
+        "end": "2026-11-11",
+        "satellite_rebound": 0.025,
+        "cagr_pct": 12.01676259004536,
+        "maxdd_pct": -21.644079644780113,
+        "xirr_pct": 11.050881871646483,
+        "final_liquidated_eur": 63497.62702629707,
+        "orders_total": 145,
+        "orders_strategy": 33,
+        "realized_taxes_eur": 6325.302766092018,
+        "fees_eur": 35.0,
+        "slippage_eur": 229.77896157479796,
+        "stamp_eur": 601.7523973987164,
+        "2026_return_pct": 3.8102330230582737,
+        "subperiods": {
+          "1926_1969": null,
+          "1970_1999": null,
+          "2000_2025": {
+            "cagr_pct": 12.6968559322719,
+            "maxdd_pct": -21.644079644780113,
+            "first": "2016-01-04",
+            "last": "2025-12-31"
+          },
+          "2016_2025": {
+            "cagr_pct": 12.6968559322719,
+            "maxdd_pct": -21.644079644780113,
+            "first": "2016-01-04",
+            "last": "2025-12-31"
+          },
+          "2026_ytd": {
+            "cagr_pct": 4.431342018286943,
+            "maxdd_pct": -9.217865650213842,
+            "first": "2025-12-31",
+            "last": "2026-11-11"
+          }
+        },
+        "2026_satellite_out_sessions": 25,
+        "2026_sales": [
+          {
+            "date": "2026-03-16",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 31253.312446225325,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 15.634473459842583,
+            "tax_eur": 1400.7110162868696,
+            "note": "satellite exit"
+          },
+          {
+            "date": "2026-11-06",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 33298.40934532666,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 16.657533439383023,
+            "tax_eur": 368.2011472816149,
+            "note": "satellite exit"
+          }
+        ],
+        "2026_reentries": [
+          {
+            "date": "2026-04-15",
+            "kind": "STRATEGY_EQ_BUY",
+            "side": "BUY",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 30132.12564926985,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 15.066062824634924,
+            "tax_eur": 0.0,
+            "note": "satellite re-entry"
+          }
+        ],
+        "benchmark": {
+          "twr_cagr_net": 0.14711547004251746,
+          "max_drawdown": -0.3436019712244408,
+          "xirr": 0.12156724667616572,
+          "final_liquidated_eur": 67837.27567117052
+        }
+      },
+      "0.020": {
+        "start": "2016-01-04",
+        "end": "2026-11-11",
+        "satellite_rebound": 0.02,
+        "cagr_pct": 12.893993770888045,
+        "maxdd_pct": -21.8267448231695,
+        "xirr_pct": 11.714215583597529,
+        "final_liquidated_eur": 66063.97275748207,
+        "orders_total": 146,
+        "orders_strategy": 33,
+        "realized_taxes_eur": 6996.908475154412,
+        "fees_eur": 35.0,
+        "slippage_eur": 236.5661854070966,
+        "stamp_eur": 623.8292414069176,
+        "2026_return_pct": 4.027966113302717,
+        "subperiods": {
+          "1926_1969": null,
+          "1970_1999": null,
+          "2000_2025": {
+            "cagr_pct": 13.63208942422256,
+            "maxdd_pct": -21.8267448231695,
+            "first": "2016-01-04",
+            "last": "2025-12-31"
+          },
+          "2016_2025": {
+            "cagr_pct": 13.63208942422256,
+            "maxdd_pct": -21.8267448231695,
+            "first": "2016-01-04",
+            "last": "2025-12-31"
+          },
+          "2026_ytd": {
+            "cagr_pct": 4.685361722781822,
+            "maxdd_pct": -9.276111927949515,
+            "first": "2025-12-31",
+            "last": "2026-11-11"
+          }
+        },
+        "2026_satellite_out_sessions": 24,
+        "2026_sales": [
+          {
+            "date": "2026-03-16",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 32591.25651847621,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 16.30378014931276,
+            "tax_eur": 1501.0689407779787,
+            "note": "satellite exit"
+          },
+          {
+            "date": "2026-11-06",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 34867.737002652284,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 17.442589796224254,
+            "tax_eur": 454.7181440704968,
+            "note": "satellite exit"
+          }
+        ],
+        "2026_reentries": [
+          {
+            "date": "2026-04-14",
+            "kind": "STRATEGY_EQ_BUY",
+            "side": "BUY",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 31368.69562663824,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 15.684347813319121,
+            "tax_eur": 0.0,
+            "note": "satellite re-entry"
+          }
+        ],
+        "benchmark": {
+          "twr_cagr_net": 0.14711547004251746,
+          "max_drawdown": -0.3436019712244408,
+          "xirr": 0.12156724667616572,
+          "final_liquidated_eur": 67837.27567117052
+        }
+      },
+      "0.015": {
+        "start": "2016-01-04",
+        "end": "2026-11-11",
+        "satellite_rebound": 0.015,
+        "cagr_pct": 11.300112023765617,
+        "maxdd_pct": -24.684375418800876,
+        "xirr_pct": 10.369448126395731,
+        "final_liquidated_eur": 60971.892161954056,
+        "orders_total": 154,
+        "orders_strategy": 43,
+        "realized_taxes_eur": 6510.770956741679,
+        "fees_eur": 45.0,
+        "slippage_eur": 264.6674224608412,
+        "stamp_eur": 577.6817976441442,
+        "2026_return_pct": 3.961215418028652,
+        "subperiods": {
+          "1926_1969": null,
+          "1970_1999": null,
+          "2000_2025": {
+            "cagr_pct": 11.897551132415774,
+            "maxdd_pct": -24.684375418800876,
+            "first": "2016-01-04",
+            "last": "2025-12-31"
+          },
+          "2016_2025": {
+            "cagr_pct": 11.897551132415774,
+            "maxdd_pct": -24.684375418800876,
+            "first": "2016-01-04",
+            "last": "2025-12-31"
+          },
+          "2026_ytd": {
+            "cagr_pct": 4.6074775730267525,
+            "maxdd_pct": -9.32781335295807,
+            "first": "2025-12-31",
+            "last": "2026-11-11"
+          }
+        },
+        "2026_satellite_out_sessions": 24,
+        "2026_sales": [
+          {
+            "date": "2026-03-16",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 30049.61126692655,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 15.032321794360454,
+            "tax_eur": 1416.0402637984407,
+            "note": "satellite exit"
+          },
+          {
+            "date": "2026-11-06",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 32268.386309352292,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 16.142264286819557,
+            "tax_eur": 418.23357080044326,
+            "note": "satellite exit"
+          }
+        ],
+        "2026_reentries": [
+          {
+            "date": "2026-04-14",
+            "kind": "STRATEGY_EQ_BUY",
+            "side": "BUY",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 28909.67021514614,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 14.45483510757307,
+            "tax_eur": 0.0,
+            "note": "satellite re-entry"
+          }
+        ],
+        "benchmark": {
+          "twr_cagr_net": 0.14711547004251746,
+          "max_drawdown": -0.3436019712244408,
+          "xirr": 0.12156724667616572,
+          "final_liquidated_eur": 67837.27567117052
+        }
+      }
+    },
+    "1926-07-01": {
+      "0.030": {
+        "start": "1926-07-01",
+        "end": "2026-11-11",
+        "satellite_rebound": 0.03,
+        "cagr_pct": 9.380773560141176,
+        "maxdd_pct": -36.536837357895976,
+        "xirr_pct": 9.186636965338277,
+        "final_liquidated_eur": 237058084.03939593,
+        "orders_total": 1167,
+        "orders_strategy": 319,
+        "realized_taxes_eur": 50934388.87741886,
+        "fees_eur": 321.0,
+        "slippage_eur": 760302.5129927394,
+        "stamp_eur": 4954505.146575734,
+        "2026_return_pct": 10.06074302529132,
+        "subperiods": {
+          "1926_1969": {
+            "cagr_pct": 8.578673570415729,
+            "maxdd_pct": -36.536837357895976,
+            "first": "1926-07-01",
+            "last": "1969-12-31"
+          },
+          "1970_1999": {
+            "cagr_pct": 10.764915561134769,
+            "maxdd_pct": -34.54710131237405,
+            "first": "1970-01-02",
+            "last": "1999-12-31"
+          },
+          "2000_2025": {
+            "cagr_pct": 9.097294194907324,
+            "maxdd_pct": -32.8544745836448,
+            "first": "2000-01-03",
+            "last": "2025-12-31"
+          },
+          "2016_2025": {
+            "cagr_pct": 13.141679169861042,
+            "maxdd_pct": -32.85447458364479,
+            "first": "2016-01-04",
+            "last": "2025-12-31"
+          },
+          "2026_ytd": {
+            "cagr_pct": 11.756760900502904,
+            "maxdd_pct": -9.59742716491897,
+            "first": "2025-12-31",
+            "last": "2026-11-11"
+          }
+        },
+        "2026_satellite_out_sessions": 26,
+        "2026_sales": [
+          {
+            "date": "2026-03-16",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 19208993.420153547,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 9609.301360757152,
+            "tax_eur": 826109.0842308274,
+            "note": "satellite exit"
+          },
+          {
+            "date": "2026-11-06",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 19243721.73864371,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 9626.674206425067,
+            "tax_eur": 217903.51276891635,
+            "note": "satellite exit"
+          }
+        ],
+        "2026_reentries": [
+          {
+            "date": "2026-04-16",
+            "kind": "STRATEGY_EQ_BUY",
+            "side": "BUY",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 18403881.179479826,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 9201.940589739914,
+            "tax_eur": 0.0,
+            "note": "satellite re-entry"
+          }
+        ],
+        "benchmark": {
+          "twr_cagr_net": 0.10197248566063011,
+          "max_drawdown": -0.8452467188616626,
+          "xirr": 0.10520141807765984,
+          "final_liquidated_eur": 706818529.2313317
+        }
+      },
+      "0.025": {
+        "start": "1926-07-01",
+        "end": "2026-11-11",
+        "satellite_rebound": 0.025,
+        "cagr_pct": 9.188588533708742,
+        "maxdd_pct": -35.27558817291857,
+        "xirr_pct": 8.99975895206323,
+        "final_liquidated_eur": 203477111.58492082,
+        "orders_total": 1221,
+        "orders_strategy": 337,
+        "realized_taxes_eur": 45514848.014491305,
+        "fees_eur": 339.0,
+        "slippage_eur": 784266.714618123,
+        "stamp_eur": 4304744.700531442,
+        "2026_return_pct": 9.501466360014632,
+        "subperiods": {
+          "1926_1969": {
+            "cagr_pct": 8.367002534808577,
+            "maxdd_pct": -35.27558817291857,
+            "first": "1926-07-01",
+            "last": "1969-12-31"
+          },
+          "1970_1999": {
+            "cagr_pct": 10.630971478051032,
+            "maxdd_pct": -33.1490798350884,
+            "first": "1970-01-02",
+            "last": "1999-12-31"
+          },
+          "2000_2025": {
+            "cagr_pct": 8.886713409602788,
+            "maxdd_pct": -31.976151678781484,
+            "first": "2000-01-03",
+            "last": "2025-12-31"
+          },
+          "2016_2025": {
+            "cagr_pct": 13.109138424817,
+            "maxdd_pct": -31.976151678781484,
+            "first": "2016-01-04",
+            "last": "2025-12-31"
+          },
+          "2026_ytd": {
+            "cagr_pct": 11.09854037021092,
+            "maxdd_pct": -9.604517121362555,
+            "first": "2025-12-31",
+            "last": "2026-11-11"
+          }
+        },
+        "2026_satellite_out_sessions": 25,
+        "2026_sales": [
+          {
+            "date": "2026-03-16",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 24308566.472655453,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 12160.363418036744,
+            "tax_eur": 1127483.4458925766,
+            "note": "satellite exit"
+          },
+          {
+            "date": "2026-11-06",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 24329811.24941176,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 12170.991120266015,
+            "tax_eur": 291793.5146271004,
+            "note": "satellite exit"
+          }
+        ],
+        "2026_reentries": [
+          {
+            "date": "2026-04-15",
+            "kind": "STRATEGY_EQ_BUY",
+            "side": "BUY",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 23205778.375408705,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 11602.889187704353,
+            "tax_eur": 0.0,
+            "note": "satellite re-entry"
+          }
+        ],
+        "benchmark": {
+          "twr_cagr_net": 0.10197248566063011,
+          "max_drawdown": -0.8452467188616626,
+          "xirr": 0.10520141807765984,
+          "final_liquidated_eur": 706818529.2313317
+        }
+      },
+      "0.020": {
+        "start": "1926-07-01",
+        "end": "2026-11-11",
+        "satellite_rebound": 0.02,
+        "cagr_pct": 8.809326815538277,
+        "maxdd_pct": -42.195875549942464,
+        "xirr_pct": 8.686873216007712,
+        "final_liquidated_eur": 157606490.81988707,
+        "orders_total": 1248,
+        "orders_strategy": 361,
+        "realized_taxes_eur": 36546151.148412615,
+        "fees_eur": 363.0,
+        "slippage_eur": 693906.728342791,
+        "stamp_eur": 3348615.0787852895,
+        "2026_return_pct": 8.86730342163986,
+        "subperiods": {
+          "1926_1969": {
+            "cagr_pct": 7.634329342779922,
+            "maxdd_pct": -42.195875549942464,
+            "first": "1926-07-01",
+            "last": "1969-12-31"
+          },
+          "1970_1999": {
+            "cagr_pct": 10.544956025099328,
+            "maxdd_pct": -32.33777963116602,
+            "first": "1970-01-02",
+            "last": "1999-12-31"
+          },
+          "2000_2025": {
+            "cagr_pct": 8.782187471015712,
+            "maxdd_pct": -31.039132526856562,
+            "first": "2000-01-03",
+            "last": "2025-12-31"
+          },
+          "2016_2025": {
+            "cagr_pct": 13.308756404946042,
+            "maxdd_pct": -31.039132526856584,
+            "first": "2016-01-04",
+            "last": "2025-12-31"
+          },
+          "2026_ytd": {
+            "cagr_pct": 10.352833816661011,
+            "maxdd_pct": -9.600783556328862,
+            "first": "2025-12-31",
+            "last": "2026-11-11"
+          }
+        },
+        "2026_satellite_out_sessions": 24,
+        "2026_sales": [
+          {
+            "date": "2026-03-16",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 26628475.008756727,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 13320.897953355041,
+            "tax_eur": 1272404.7514677146,
+            "note": "satellite exit"
+          },
+          {
+            "date": "2026-11-06",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 26831277.556687985,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 13422.349953320652,
+            "tax_eur": 376570.0226163251,
+            "note": "satellite exit"
+          }
+        ],
+        "2026_reentries": [
+          {
+            "date": "2026-04-14",
+            "kind": "STRATEGY_EQ_BUY",
+            "side": "BUY",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 25381181.19041868,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 12690.59059520934,
+            "tax_eur": 0.0,
+            "note": "satellite re-entry"
+          }
+        ],
+        "benchmark": {
+          "twr_cagr_net": 0.10197248566063011,
+          "max_drawdown": -0.8452467188616626,
+          "xirr": 0.10520141807765984,
+          "final_liquidated_eur": 706818529.2313317
+        }
+      },
+      "0.015": {
+        "start": "1926-07-01",
+        "end": "2026-11-11",
+        "satellite_rebound": 0.015,
+        "cagr_pct": 8.422182266618993,
+        "maxdd_pct": -41.289996135355786,
+        "xirr_pct": 8.373957945235311,
+        "final_liquidated_eur": 122127495.30671312,
+        "orders_total": 1296,
+        "orders_strategy": 383,
+        "realized_taxes_eur": 33169333.17271555,
+        "fees_eur": 385.0,
+        "slippage_eur": 930475.6440441132,
+        "stamp_eur": 2838673.13810149,
+        "2026_return_pct": 7.5384779441942,
+        "subperiods": {
+          "1926_1969": {
+            "cagr_pct": 7.171354094507709,
+            "maxdd_pct": -41.289996135355786,
+            "first": "1926-07-01",
+            "last": "1969-12-31"
+          },
+          "1970_1999": {
+            "cagr_pct": 10.725739065522166,
+            "maxdd_pct": -30.544879959963644,
+            "first": "1970-01-02",
+            "last": "1999-12-31"
+          },
+          "2000_2025": {
+            "cagr_pct": 7.919558952070993,
+            "maxdd_pct": -30.224665449423238,
+            "first": "2000-01-03",
+            "last": "2025-12-31"
+          },
+          "2016_2025": {
+            "cagr_pct": 11.265310898228176,
+            "maxdd_pct": -30.224665449423238,
+            "first": "2016-01-04",
+            "last": "2025-12-31"
+          },
+          "2026_ytd": {
+            "cagr_pct": 8.792530020888645,
+            "maxdd_pct": -9.610904051661862,
+            "first": "2025-12-31",
+            "last": "2026-11-11"
+          }
+        },
+        "2026_satellite_out_sessions": 24,
+        "2026_sales": [
+          {
+            "date": "2026-03-16",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 32215101.675297476,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 16115.608641969724,
+            "tax_eur": 1580146.876763411,
+            "note": "satellite exit"
+          },
+          {
+            "date": "2026-11-06",
+            "kind": "STRATEGY_EQ_SELL",
+            "side": "SELL",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 32416875.380205493,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 16216.545963084289,
+            "tax_eur": 454969.6604852913,
+            "note": "satellite exit"
+          }
+        ],
+        "2026_reentries": [
+          {
+            "date": "2026-04-14",
+            "kind": "STRATEGY_EQ_BUY",
+            "side": "BUY",
+            "asset": "EQUITY_PROXY",
+            "gross_eur": 30665241.945209395,
+            "fixed_fee_eur": 1.0,
+            "slippage_eur": 15332.620972604698,
+            "tax_eur": 0.0,
+            "note": "satellite re-entry"
+          }
+        ],
+        "benchmark": {
+          "twr_cagr_net": 0.10197248566063011,
+          "max_drawdown": -0.8452467188616626,
+          "xirr": 0.10520141807765984,
+          "final_liquidated_eur": 706818529.2313317
+        }
+      }
+    }
+  }
+}
