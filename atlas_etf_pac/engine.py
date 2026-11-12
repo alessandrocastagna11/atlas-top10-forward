@@ -220,13 +220,20 @@ def process(cfg,st,session,data,now):
     if pending is not None and pending['decision_session']<session:
         recorded=dt.datetime.fromisoformat(pending['created_at_utc'])
         if recorded.tzinfo is None:raise ValueError('Undated prior decision')
-        earliest_open=dt.datetime.combine(date(session),dt.time(8,30),
+        earliest_open=dt.datetime.combine(date(session),dt.time(9,0),
                                           tzinfo=BERLIN).astimezone(dt.timezone.utc)
+        # A delayed data feed can report a session that predates the recorded
+        # signal. Never use that session's opening price to fill the signal.
+        # Advance the valuation, expire the old instruction, and create a fresh
+        # decision from the latest verified close instead of permanently
+        # crashing the daily workflow.
         if recorded.astimezone(dt.timezone.utc)>=earliest_open:
-            raise ValueError('NO_PREOPEN_SIGNAL_PROVENANCE')
-        # Only same calendar session's observed OPEN; a missed older session
-        # is not retrospectively filled at a favorable stale quotation.
-        if (now.astimezone(ROME).date()-date(session)).days>1:
+            x['blocked_actions'].append({'session':session,
+                                         'reason':'DEFERRED_NO_PREOPEN_SIGNAL_PROVENANCE',
+                                         'decision_session':pending['decision_session']})
+        # Only an observed session close and a verifiably pre-open decision
+        # authorize a paper open fill. Do not backfill old sessions.
+        elif (now.astimezone(ROME).date()-date(session)).days>1:
             x['blocked_actions'].append({'session':session,'reason':'EXPIRED_SIGNAL_NO_BACKFILL'})
         else:
             opens={k:num(data[symbol]['bars'][session]['open'])
