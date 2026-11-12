@@ -22,3 +22,18 @@ I report sono in `atlas_etf_pac/v23_original/reports/`. Questo ramo rimane **PAP
 ## Punto critico per il passaggio in forward
 
 La V2.3 originale è una strategia proxy azionaria globale con core/satellite 50/50 e difesa Treasury/cash, **non** una strategia 4-ETF. Per migrarne l'uso giornaliero serve un nuovo ledger virtuale prospettico che applichi la macchina a stati sul proxy negoziabile con dati EOD e regole sugli ordini; non si può riutilizzare in silenzio il ledger 4-sleeve né definire "originale" il monitor 4-ETF.
+
+## Risultati verificati — 1926-07-01 / 2026-11-11
+
+| Metrica | Atlas V2.3 originale (macchina a stati invariata) | PAC passivo sullo stesso proxy FF |
+|---|---:|---:|
+| CAGR TWR | 9,3808% | 10,1972% |
+| Max drawdown | -36,5368% | -84,5247% |
+| XIRR | 9,1866% | 10,5201% |
+| Valore netto liquidabile finale | EUR 237.058.084,04 | EUR 706.818.529,23 |
+| Capitale versato | EUR 300.500 | EUR 300.500 |
+| Ordini Atlas | 1.167 | — |
+
+Copertura: dati FF congelati fino al 31 dicembre 2025, FF aggiornati fino al 30 settembre 2026 (85 sedute aggiunte oltre maggio), SPY con prezzi aggiustati per 30 sedute dal 1° ottobre all'11 novembre. Le tre ipotesi macro 2026 (`neutral`, `carry`, `stressed`) restituiscono gli stessi valori perché nel 2026 non ci sono trigger di stress nella macchina a stati. Gli 11 mesi macro successivi a novembre 2025 non sono dati originali osservati; non utilizzare questa estensione come test esatto PIT.
+
+Audit GitHub Actions: [ultimo workflow di ricerca](https://github.com/alessandrocastagna11/atlas-top10-forward/actions/workflows/atlas-v23-original-replay.yml). Risultati: [summary.json](reports/summary.json), originale leggibile: [atlas_v23_pac_stress.py](atlas_v23_pac_stress.py).
