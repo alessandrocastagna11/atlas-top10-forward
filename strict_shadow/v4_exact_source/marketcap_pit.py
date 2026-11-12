@@ -6,6 +6,7 @@ Source is a third-party contemporaneous public ranking, not filing-grade shares.
 """
 from __future__ import annotations
 import csv,datetime as dt,hashlib,html,io,json,re,urllib.request,unicodedata
+from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -200,9 +201,27 @@ def run(now=None,fetch=None):
     matches=crosswalk(vendor,etf)
     usa=sum(x["country"]=="United States" for x in matches)
     row=sum(x["country"]!="United States" for x in matches)
+    methods=Counter(x["capitalization_coverage_status"].replace("_NOT_FULL_PIT_CERTIFIED","")
+                    for x in matches)
+    unmatched_by_country=Counter(x["country"] for x in etf
+                                 if x["symbol"] not in {m["symbol"] for m in matches})
+    row_buffer=max(0,row-200)
+    # Source selection is still the original 100/200 and no invented issuer
+    # matches are permitted. A barely adequate RoW feed is NOT robust.
+    quality=("QUALIFIED_BUT_FRAGILE_NONUSA_BUFFER"
+             if row>=200 and row_buffer<10
+             else "INSUFFICIENT_NONUSA_COVERAGE" if row<200
+             else "QUALIFIED_WITH_NONUSA_REPLACEMENT_BUFFER")
     coverage={"observed_at_utc":seen.isoformat(),"capture_day":day,
               "vendor":URL,"type":CAPTURED_TYPE,
-              "vendor_rankings_fetched":len(vendor),"crosswalk_exact_ticker":len(matches),
+              "vendor_rankings_fetched":len(vendor),
+              "crosswalk_exact_ticker":len(matches), # legacy field; includes all match methods
+              "crosswalk_total_verified":len(matches),
+              "crosswalk_match_methods":dict(sorted(methods.items())),
+              "nonusa_ranked_replacement_buffer":row_buffer,
+              "nonusa_roster_quality":quality,
+              "nonusa_roster_fragile":row>=200 and row_buffer<10,
+              "unmatched_acwi_by_country":dict(unmatched_by_country.most_common(15)),
               "crosswalk_usa":usa,"crosswalk_non_usa":row,
               "sufficient_for_100_usa_200_nonusa":usa>=100 and row>=200,
               "vendor_page_sha256":page_hashes,
