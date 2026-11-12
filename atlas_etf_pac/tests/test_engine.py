@@ -1,145 +1,92 @@
-"""ATLAS ETF PAC reconstructed forward — synthetic tests ONLY."""
-import copy,datetime as dt,json,math,sys,tempfile,unittest
+import datetime as dt, hashlib, json, sys, unittest
 from pathlib import Path
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-import engine as e
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
+import engine as pac
 
-HERE=Path(__file__).resolve().parents[1]
-CFG=json.loads((HERE/'config.json').read_text())
-SEED=json.loads((HERE/'state.json').read_text())
-D=dt.date.fromisoformat
+CFG=json.loads((ROOT/'config.json').read_text())
+T1=dt.datetime(2026,11,12,20,0,tzinfo=dt.timezone.utc)
+T2=dt.datetime(2026,11,13,20,0,tzinfo=dt.timezone.utc)
 
-def synthetic():
-    start=D('2025-01-01');end=D('2026-12-31')
-    data={}
-    for k,sym in CFG['tickers'].items():
-        bars={}
-        d=start;p=100.
-        while d<=end:
-            if d.weekday()<5:
-                p*=1.00025
-                bars[str(d)]={'open':p*.999,'close':p}
-            d+=dt.timedelta(days=1)
-        data[sym]={'bars':bars,'currency':'EUR','feed':'SYNTHETIC'}
-    return data
 
-def time_for(day):return dt.datetime.fromisoformat(day+'T20:10:00+00:00')
+def feed(session):
+    start=dt.date(2025,1,1)
+    end=dt.date.fromisoformat(session)
+    dates=[];d=start
+    while d<=end:
+        if d.weekday()<5:dates.append(d.isoformat())
+        d+=dt.timedelta(days=1)
+    eq=[{'date':d,'close':100+0.09*i} for i,d in enumerate(dates)]
+    bond=[{'date':d,'close':100+0.02*i} for i,d in enumerate(dates)]
+    return {'equity':eq,'bond':bond,'bond_usable':True,'bond_problem':None,'macro':pac.v23.synthetic_macro(),
+            'macro_problem':None,'cutoff':session,'session':session,'quote_lag_days':0}
 
-def pristine_state():
-    """Deterministic fixture, independent of the live mutable paper ledger."""
-    st=copy.deepcopy(SEED)
-    st.update({'last_processed_session':'2026-11-07',
-               'last_deposit_month':'2026-11','last_risk_on':None,
-               'cash_eur':1000.,'positions':{},'orders':[],
-               'contributions':[],'signal_history':[],'blocked_actions':[],
-               'pending':None,'stamp_accrued_eur':0.,'off_trough':None,
-               'nav':[{'date':'2026-11-07','nav_eur':1000.,
-                       'cash_eur':1000.,'holdings_eur':0.,
-                       'twr_index':1.,'market_session':False,
-                       'source_status':'SYNTHETIC_SEED_NO_ORDERS'}]})
-    return st
+def sig(session):return pac.signal(feed(session),CFG)
 
-class PACLiveTests(unittest.TestCase):
-    def test_original_approved_weights_and_no_real_broker(self):
-        self.assertEqual(CFG['weights'],{'WORLD':.65,'NASDAQ':.15,'EM':.10,'GOLD':.10})
+class TestOriginalV23(unittest.TestCase):
+    def test_original_source_exact_hash(self):
+        st=pac.seed(CFG);pac.validate(CFG,st)
+        p=ROOT/'v23_original/atlas_v23_live.py'
+        self.assertEqual(hashlib.sha256(p.read_bytes()).hexdigest(),pac.ORIGINAL_LIVE_SHA)
+    def test_original_replay_observed_signal(self):
+        v=sig('2026-11-12')
+        self.assertEqual(v['method'],'ATLAS_V23_OCT_01_2026_ORIGINAL_LIVE_UNMODIFIED')
+        self.assertEqual(v['stress']['month'],'2026-10')
+        self.assertEqual(v['stress']['source'],'OBSERVED_COMPLETED_MONTH')
+        self.assertEqual(v['decision_session'],'2026-11-12')
+    def test_fresh_forward_initial_2_paper_orders_and_idempotence(self):
+        st=pac.seed(CFG)
+        s1=sig('2026-11-12')
+        st,n=pac.ledger_process(CFG,st,'2026-11-12',feed('2026-11-12'),s1,T1)
+        self.assertEqual(n,0);self.assertEqual(len(st['orders']),0)
+        self.assertEqual(len(st['pending']['proposed_orders']),2)
+        s2=sig('2026-11-13')
+        st,n=pac.ledger_process(CFG,st,'2026-11-13',feed('2026-11-13'),s2,T2)
+        self.assertEqual(n,2);self.assertEqual(len(st['orders']),2)
+        self.assertTrue(all(x['execution_session']>x['decision_session'] for x in st['orders']))
+        self.assertTrue(all(x['mode']=='VIRTUAL_ONLY' for x in st['orders']))
+        self.assertLess(st['cash_eur'],1)
+        snap=json.dumps(st,sort_keys=True)
+        again,n=pac.ledger_process(CFG,st,'2026-11-13',feed('2026-11-13'),s2,T2)
+        self.assertEqual(n,0);self.assertEqual(json.dumps(again,sort_keys=True),snap)
+    def test_no_precommit_but_never_creates_backdated_trade(self):
+        st=pac.seed(CFG)
+        st,n=pac.ledger_process(CFG,st,'2026-11-12',feed('2026-11-12'),sig('2026-11-12'),T1)
+        st['pending']['created_at_utc']='2026-11-13T18:00:00+00:00' # later than close
+        out,n=pac.ledger_process(CFG,st,'2026-11-13',feed('2026-11-13'),sig('2026-11-13'),T2)
+        self.assertEqual(n,0);self.assertEqual(out['orders'],[])
+        self.assertIn('ORDER_NOT_PRECOMMITTED_BEFORE_SESSION_CLOSE',str(out['blocked_actions']))
+    def test_monthly_deposit_exactly_once(self):
+        st=pac.seed(CFG)
+        st['last_deposit_month']='2026-11'
+        d=pac.accrue_deposit(st,CFG,'2026-12-01')
+        self.assertEqual(d,250);self.assertEqual(len(st['contributions']),1)
+        self.assertEqual(pac.accrue_deposit(st,CFG,'2026-12-02'),0)
+        self.assertEqual(len(st['contributions']),1)
+        self.assertAlmostEqual(st['balances']['CORE']['cash_eur'],625)
+    def test_realized_tax_and_basis_on_satellite_sale(self):
+        st=pac.seed(CFG)
+        t=pac.trade(st,CFG,'SATELLITE','BUY','INITIAL',100,'2026-11-13','2026-11-12','INITIAL')
+        self.assertEqual(t['mode'],'VIRTUAL_ONLY')
+        r=pac.trade(st,CFG,'SATELLITE','SELL','STRATEGIC',125,'2026-11-16','2026-11-13','TEST')
+        self.assertGreater(r['tax_proxy_eur'],0)
+        self.assertEqual(st['balances']['SATELLITE']['units'],0)
+    def test_macro_missing_never_silently_marks_as_observed(self):
+        s=pac.CausalStress(CFG,None).regime('2026-11-12')
+        self.assertTrue(s['source'].startswith('CARRIED_FROZEN_'))
+        self.assertEqual(s['month'],'2026-10')
+    def test_2026_macro_missing_prefers_latest_observed_month(self):
+        m=pac.v23.synthetic_macro()
+        m['rf_annualized'].pop('2026-10')
+        m['six'].pop('2026-10')
+        s=pac.CausalStress(CFG,m).regime('2026-11-12')
+        self.assertEqual(s['source'],'CARRIED_OBSERVED_2026-09')
+        self.assertEqual(s['observed_macro_month'],'2026-09')
+        self.assertIn('FF_BREADTH_3M',s['missing_inputs'])
+
+    def test_paper_rules_no_35days_no_monthly_cap(self):
+        self.assertEqual(CFG['min_hold_days_before_sell'],0)
+        self.assertIsNone(CFG['max_total_orders_per_month'])
         self.assertTrue(CFG['no_broker_execution'])
-        self.assertEqual(CFG['max_total_orders_per_month'],3)
-    def test_missing_quotes_fail_closed(self):
-        d=synthetic();del d['IS3N.DE']['bars']['2026-11-09']
-        self.assertEqual(e.common_day(d,D('2026-11-09')),'2026-11-06')
-    def test_precommit_next_open_not_same_day(self):
-        d=synthetic();st=pristine_state()
-        st,done=e.process(CFG,st,'2026-11-09',d,time_for('2026-11-09'))
-        self.assertEqual(done,0)
-        self.assertEqual(len(st['orders']),0)
-        self.assertEqual(st['pending']['decision_session'],'2026-11-09')
-        self.assertEqual(st['cash_eur'],1000)
-        st,done=e.process(CFG,st,'2026-11-10',d,time_for('2026-11-10'))
-        self.assertEqual(done,3)
-        self.assertEqual(len(st['orders']),3)
-        self.assertGreater(st['nav'][-1]['holdings_eur'],0)
-        self.assertEqual(st['nav'][-1]['contribution_eur'],0)
-        for order in st['orders']:
-            self.assertEqual(order['decision_session'],'2026-11-09')
-            self.assertEqual(order['execution_session'],'2026-11-10')
-            self.assertEqual(order['mode'],'VIRTUAL_ONLY')
-    def test_retry_cannot_duplicate_orders_or_contributions(self):
-        d=synthetic();st=pristine_state()
-        st,_=e.process(CFG,st,'2026-11-09',d,time_for('2026-11-09'))
-        st,_=e.process(CFG,st,'2026-11-10',d,time_for('2026-11-10'))
-        a=copy.deepcopy(st)
-        again,done=e.process(CFG,st,'2026-11-10',d,time_for('2026-11-10'))
-        self.assertEqual(done,0)
-        self.assertEqual(again,a)
-    def test_monthly_pac_is_cashflow_not_fake_return(self):
-        d=synthetic();st=pristine_state()
-        st['last_processed_session']='2026-11-30'
-        st['nav'][-1]['date']='2026-11-30'
-        st,done=e.process(CFG,st,'2026-12-01',d,time_for('2026-12-01'))
-        self.assertEqual(done,0)
-        self.assertEqual(st['cash_eur'],1250)
-        self.assertEqual(st['nav'][-1]['nav_eur'],1250)
-        self.assertEqual(st['nav'][-1]['twr_day_pct'],0)
-        self.assertEqual(len(st['contributions']),1)
-        st,_=e.process(CFG,st,'2026-12-02',d,time_for('2026-12-02'))
-        self.assertEqual(len(st['contributions']),1)
-    def test_35_days_protects_recently_bought_units(self):
-        s=pristine_state()
-        s['positions']={'WORLD':{'shares':100,'cost_basis_eur':10000,
-                                'last_buy_session':'2026-11-01'}}
-        signal={'signal_session':'2026-11-09','target_weights':
-                {'WORLD':0.,'NASDAQ':0.,'EM':0.,'GOLD':0.}}
-        orders,blocked=e.plan(CFG,s,signal,{'WORLD':100.,'NASDAQ':100.,'EM':100.,'GOLD':100.},'2026-11')
-        self.assertFalse(any(x['side']=='SELL' for x in orders))
-        self.assertTrue(any(x.startswith('MIN_35_DAY_HOLD_WORLD') for x in blocked))
-    def test_no_fabricated_entries_before_first_future_session(self):
-        seed=pristine_state()
-        self.assertEqual(seed['orders'],[])
-        self.assertEqual(seed['last_processed_session'],'2026-11-07')
-        self.assertEqual(seed['cash_eur'],1000)
-        # Persisted live state is allowed to advance independently of tests.
-        self.assertGreaterEqual(SEED['last_processed_session'],seed['last_processed_session'])
-    def test_future_produced_signal_rejected_before_fill(self):
-        st=pristine_state()
-        st['pending']={'decision_session':'2026-11-09',
-                       'created_at_utc':'2026-11-10T12:00:00+00:00',
-                       'proposed_orders':[{'asset':'WORLD','side':'BUY',
-                         'budget_eur':600,'date':'2026-11-09','reason':'synthetic'}]}
-        st['last_processed_session']='2026-11-09'
-        st,done=e.process(CFG,st,'2026-11-10',synthetic(),time_for('2026-11-10'))
-        self.assertEqual(done,0)
-        self.assertEqual(st['orders'],[])
-        self.assertTrue(any(x['reason']=='DEFERRED_NO_PREOPEN_SIGNAL_PROVENANCE'
-                            for x in st['blocked_actions']))
-        self.assertEqual(st['pending']['decision_session'],'2026-11-09')
-        self.assertEqual(st['pending']['created_at_utc'],'2026-11-10T12:00:00+00:00')
-        st,done=e.process(CFG,st,'2026-11-11',synthetic(),time_for('2026-11-11'))
-        self.assertEqual(done,1)
-        self.assertEqual(st['orders'][0]['execution_session'],'2026-11-11')
-
-    def test_delayed_quotes_retain_original_preopen_timestamp(self):
-        d=synthetic();st=pristine_state()
-        st['last_processed_session']='2026-11-09'
-        st['nav'][-1]['date']='2026-11-09'
-        st['pending']={'decision_session':'2026-11-09',
-                       'created_at_utc':'2026-11-12T09:35:00+00:00',
-                       'proposed_orders':[{'asset':'WORLD','side':'BUY',
-                         'budget_eur':650,'date':'2026-11-09','reason':'synthetic'}]}
-        for session in ('2026-11-10','2026-11-11','2026-11-12'):
-            st,done=e.process(CFG,st,session,d,time_for('2026-11-12'))
-            self.assertEqual(done,0)
-            self.assertEqual(st['pending']['created_at_utc'],'2026-11-12T09:35:00+00:00')
-            self.assertEqual(len(st['orders']),0)
-        st,done=e.process(CFG,st,'2026-11-13',d,
-                          dt.datetime.fromisoformat('2026-11-14T00:20:00+00:00'))
-        self.assertEqual(done,1)
-        self.assertEqual(st['orders'][0]['execution_session'],'2026-11-13')
-        # With two unused monthly slots, a NEW instruction may be generated
-        # for underweight sleeves; the old instruction must be consumed.
-        self.assertTrue(st['pending'] is None or
-                        st['pending']['decision_session']=='2026-11-13')
-        self.assertTrue(all(x['asset']!='WORLD'
-                            for x in (st['pending'] or {}).get('proposed_orders',[])))
-
 
 if __name__=='__main__':unittest.main()

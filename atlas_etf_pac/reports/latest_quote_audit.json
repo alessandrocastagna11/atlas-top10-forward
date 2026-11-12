@@ -1,21 +1,23 @@
 {
-  "session": "2026-11-10",
-  "symbols": {
-    "EUNL.DE": {
-      "latest_bar": "2026-11-10",
-      "source_sha256": "cd60362056bc29e01462f06572539ee576afaa660d85e23ba36ec213f99cd752"
-    },
-    "IS3N.DE": {
-      "latest_bar": "2026-11-10",
-      "source_sha256": "6c0cbd6ffbefa9b7160ab9c601e3814d0ebee10ede03189e31e27be398931460"
-    },
-    "PPFB.DE": {
-      "latest_bar": "2026-11-10",
-      "source_sha256": "c81195adf6955d220e5cb4aacc0e8189b1abddc3cabbfcea289677de49c2aeb4"
-    },
-    "SXRV.DE": {
-      "latest_bar": "2026-11-10",
-      "source_sha256": "cb467b42bdc3229642775f5fe416c7d6acd5cd7417c4ae1ba017535883889291"
-    }
+  "checked_at_utc": "2026-11-12T22:42:19.459097+00:00",
+  "first_quote_date": "2010-01-04",
+  "market_session": "2026-11-12",
+  "original_live_sha256": "703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e",
+  "provider": "Yahoo adjusted close EUR; FRED and Kenneth French monthly",
+  "quote_samples": 4284,
+  "source_quality": {
+    "bond_last": "2026-11-12",
+    "bond_quality": "OK",
+    "defensive_source": "OBSERVED_BOND_ADJUSTED_CLOSE",
+    "equity_last": "2026-11-12",
+    "macro_previous_month": "2026-10",
+    "macro_quality": "ONLINE_OR_PERSISTED_CACHE",
+    "missing_macro_inputs": [
+      "FF_RF",
+      "FF_BREADTH_3M"
+    ],
+    "observed_macro_month": "2026-09",
+    "quote_lag_days": 0,
+    "stress_source": "CARRIED_OBSERVED_2026-09"
   }
 }

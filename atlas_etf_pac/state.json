@@ -1,121 +1,111 @@
 {
-  "blocked_actions": [
-    {
-      "decision_session": "2026-11-09",
-      "reason": "DEFERRED_NO_PREOPEN_SIGNAL_PROVENANCE",
-      "session": "2026-11-10"
+  "activation_date": "2026-11-12",
+  "balances": {
+    "BOND": {
+      "basis_eur": 0.0,
+      "cash_eur": 0.0,
+      "units": 0.0
+    },
+    "CORE": {
+      "basis_eur": 0.0,
+      "cash_eur": 500.0,
+      "units": 0.0
+    },
+    "SATELLITE": {
+      "basis_eur": 0.0,
+      "cash_eur": 500.0,
+      "units": 0.0
     }
-  ],
-  "cash_eur": 1000,
+  },
+  "blocked_actions": [],
+  "cash_eur": 1000.0,
   "contributions": [],
+  "data_digest": null,
   "last_deposit_month": "2026-11",
-  "last_processed_session": "2026-11-10",
-  "last_risk_on": true,
-  "mode": "PAPER_ONLY_RESEARCH_RECONSTRUCTION",
-  "model": "ATLAS_ETF_PAC_4SLEEVE_RESTART_V1",
+  "last_price_session": "2026-11-12",
+  "last_processed_session": "2026-11-12",
+  "last_quotes": {
+    "BOND": 116.48999786376953,
+    "EQUITY": 131.6300048828125
+  },
+  "last_status": "AWAITING_FIRST_COMPLETED_CLOSE",
+  "mode": "PAPER_ONLY_ORIGINAL_V23",
+  "model": "ATLAS_ETF_PAC_V23_ORIGINAL_LIVE_V1",
   "nav": [
     {
-      "cash_eur": 1000,
-      "date": "2026-11-07",
-      "holdings_eur": 0,
-      "market_session": false,
-      "nav_eur": 1000,
-      "source_status": "SEED_NO_ORDERS"
-    },
-    {
-      "cash_eur": 1000,
-      "contribution_eur": 0,
-      "date": "2026-11-09",
-      "drawdown_pct": 0,
-      "holdings_eur": 0,
-      "market_session": true,
-      "nav_eur": 1000,
-      "positions": 0,
-      "source_status": "VERIFIED_COMMON_EXCHANGE_SESSION",
-      "twr_day_pct": 0,
-      "twr_index": 1
-    },
-    {
-      "cash_eur": 1000,
-      "contribution_eur": 0,
-      "date": "2026-11-10",
-      "drawdown_pct": 0,
-      "holdings_eur": 0,
-      "market_session": true,
-      "nav_eur": 1000,
-      "positions": 0,
-      "source_status": "VERIFIED_COMMON_EXCHANGE_SESSION",
-      "twr_day_pct": 0,
-      "twr_index": 1
+      "bond_eur": 0.0,
+      "cash_eur": 1000.0,
+      "contribution_eur": 0.0,
+      "date": "2026-11-12",
+      "drawdown_pct": 0.0,
+      "equity_eur": 0.0,
+      "holdings_eur": 0.0,
+      "nav_eur": 1000.0,
+      "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
+      "twr_day_pct": 0.0,
+      "twr_index": 1.0
     }
   ],
-  "off_trough": null,
   "orders": [],
   "pending": {
-    "created_at_utc": "2026-11-11T00:15:13.853406+00:00",
-    "decision_session": "2026-11-09",
-    "input_quote_digest": "0d6e76943f8f138712515d64bd5703c5a702c97cec09d4ac916e0a892117dffc",
-    "policy": "NEXT_VERIFIED_COMMON_SESSION_OPEN_PAPER",
+    "created_at_utc": "2026-11-12T22:38:56.621901+00:00",
+    "decision_session": "2026-11-12",
+    "input_session": "2026-11-12",
+    "policy": "NEXT_COMPLETED_SESSION_CLOSE_PRECOMMITTED_PAPER",
     "proposed_orders": [
       {
-        "asset": "WORLD",
-        "budget_eur": 650,
-        "date": "2026-11-09",
-        "reason": "PAC_UNDERWEIGHT_DEFICIT_FIRST",
-        "side": "BUY"
+        "kind": "INITIAL",
+        "reason": "V23_CORE_IN",
+        "side": "BUY",
+        "sleeve": "CORE"
       },
       {
-        "asset": "NASDAQ",
-        "budget_eur": 150,
-        "date": "2026-11-09",
-        "reason": "PAC_UNDERWEIGHT_DEFICIT_FIRST",
-        "side": "BUY"
-      },
-      {
-        "asset": "GOLD",
-        "budget_eur": 100,
-        "date": "2026-11-09",
-        "reason": "PAC_UNDERWEIGHT_DEFICIT_FIRST",
-        "side": "BUY"
+        "kind": "INITIAL",
+        "reason": "V23_SATELLITE_IN",
+        "side": "BUY",
+        "sleeve": "SATELLITE"
       }
-    ]
+    ],
+    "signal_method": "ATLAS_V23_OCT_01_2026_ORIGINAL_LIVE_UNMODIFIED"
   },
-  "positions": {},
-  "schema": 1,
+  "schema": 2,
   "signal_history": [
     {
-      "fast10_pct": -1.5521,
-      "method": "RESEARCH_RECONSTRUCTION_MONTHLY_MA10_FAST10_NOT_FROZEN_V23_STRESS",
-      "monthly_regime": true,
-      "risk_level": "RISK_ON",
-      "signal_month": "2026-10",
-      "signal_session": "2026-11-09",
-      "target_weights": {
-        "EM": 0.1,
-        "GOLD": 0.1,
-        "NASDAQ": 0.15,
-        "WORLD": 0.65
+      "bull": true,
+      "core_in": true,
+      "data_mode": "OBSERVED_EQUITY_ETF_EOD",
+      "decision_session": "2026-11-12",
+      "defensive": {
+        "momentum_126": 0.00448389,
+        "recommendation": "BOND",
+        "source": "OBSERVED_BOND_ADJUSTED_CLOSE",
+        "ticker": "CSBGE3.MI"
       },
-      "world_ma10": 120.9235,
-      "world_monthly_close": 129.684998
-    },
-    {
-      "fast10_pct": -2.2454,
-      "method": "RESEARCH_RECONSTRUCTION_MONTHLY_MA10_FAST10_NOT_FROZEN_V23_STRESS",
-      "monthly_regime": true,
-      "risk_level": "RISK_ON",
-      "signal_month": "2026-10",
-      "signal_session": "2026-11-10",
-      "target_weights": {
-        "EM": 0.1,
-        "GOLD": 0.1,
-        "NASDAQ": 0.15,
-        "WORLD": 0.65
+      "equity_eod": 131.6300048828125,
+      "fast10_pct": 0.1293,
+      "market_drawdown_pct": -0.4688,
+      "method": "ATLAS_V23_OCT_01_2026_ORIGINAL_LIVE_UNMODIFIED",
+      "original_live_sha256": "703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e",
+      "pending_original_actions": [],
+      "satellite_in": true,
+      "signal_ticker": "EUNL.DE",
+      "state_label": "CORE+SATELLITE",
+      "stress": {
+        "breadth": null,
+        "breadth_healthy": null,
+        "credit": null,
+        "credit_change_3m": null,
+        "credit_p80": null,
+        "credit_spread": null,
+        "month": "2026-10",
+        "rates": null,
+        "score": 0,
+        "source": "CARRIED_FROZEN_2025-11",
+        "term_p20": null,
+        "term_spread": null
       },
-      "world_ma10": 120.9235,
-      "world_monthly_close": 129.684998
+      "target_equity_fraction": 1.0
     }
   ],
-  "stamp_accrued_eur": 0,
-  "started_at": "2026-11-07"
+  "stamp_accrued_eur": 0.0
 }
