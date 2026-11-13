@@ -1,0 +1,140 @@
+{
+  "any_market_preopen_eligible": true,
+  "candidate_count": 300,
+  "cutoff_utc": "2026-11-13T14:00:00+00:00",
+  "decision_model_sha256": "4457fa92183b24d279c4e10f49e4fdb18ef38794f073c45a45c1c19e0a0c5b46",
+  "decision_session": "2026-11-12",
+  "earliest_open_utc": "2026-11-13T14:30:00+00:00",
+  "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
+  "exchange_execution_policy": "PER_SYMBOL_NEXT_UNOBSERVED_OPEN",
+  "execution_session": "2026-11-13",
+  "market_data_first_observed_before_open": true,
+  "model_source_sha256": "8cdf6ca36847da3038700f9ef62df8bb483ee2e040d4ca38b89964d25983b25a",
+  "per_symbol_exchange_plan": {
+    "CB": {
+      "attested_before_first_candidate_open": true,
+      "exchange_holiday_calendar_verified": false,
+      "execution_quote_required": true,
+      "first_candidate_cutoff_utc": "2026-11-13T14:00:00+00:00",
+      "first_candidate_open_utc": "2026-11-13T14:30:00+00:00",
+      "first_candidate_session": "2026-11-13",
+      "next_eligible_local_session": "2026-11-13",
+      "next_eligible_open_utc": "2026-11-13T14:30:00+00:00",
+      "status": "PENDING_FIRST_LOCAL_OPEN"
+    },
+    "DE": {
+      "attested_before_first_candidate_open": true,
+      "exchange_holiday_calendar_verified": false,
+      "execution_quote_required": true,
+      "first_candidate_cutoff_utc": "2026-11-13T14:00:00+00:00",
+      "first_candidate_open_utc": "2026-11-13T14:30:00+00:00",
+      "first_candidate_session": "2026-11-13",
+      "next_eligible_local_session": "2026-11-13",
+      "next_eligible_open_utc": "2026-11-13T14:30:00+00:00",
+      "status": "PENDING_FIRST_LOCAL_OPEN"
+    },
+    "DELL": {
+      "attested_before_first_candidate_open": true,
+      "exchange_holiday_calendar_verified": false,
+      "execution_quote_required": true,
+      "first_candidate_cutoff_utc": "2026-11-13T14:00:00+00:00",
+      "first_candidate_open_utc": "2026-11-13T14:30:00+00:00",
+      "first_candidate_session": "2026-11-13",
+      "next_eligible_local_session": "2026-11-13",
+      "next_eligible_open_utc": "2026-11-13T14:30:00+00:00",
+      "status": "PENDING_FIRST_LOCAL_OPEN"
+    },
+    "JNJ": {
+      "attested_before_first_candidate_open": true,
+      "exchange_holiday_calendar_verified": false,
+      "execution_quote_required": true,
+      "first_candidate_cutoff_utc": "2026-11-13T14:00:00+00:00",
+      "first_candidate_open_utc": "2026-11-13T14:30:00+00:00",
+      "first_candidate_session": "2026-11-13",
+      "next_eligible_local_session": "2026-11-13",
+      "next_eligible_open_utc": "2026-11-13T14:30:00+00:00",
+      "status": "PENDING_FIRST_LOCAL_OPEN"
+    },
+    "KO": {
+      "attested_before_first_candidate_open": true,
+      "exchange_holiday_calendar_verified": false,
+      "execution_quote_required": true,
+      "first_candidate_cutoff_utc": "2026-11-13T14:00:00+00:00",
+      "first_candidate_open_utc": "2026-11-13T14:30:00+00:00",
+      "first_candidate_session": "2026-11-13",
+      "next_eligible_local_session": "2026-11-13",
+      "next_eligible_open_utc": "2026-11-13T14:30:00+00:00",
+      "status": "PENDING_FIRST_LOCAL_OPEN"
+    },
+    "MRK": {
+      "attested_before_first_candidate_open": true,
+      "exchange_holiday_calendar_verified": false,
+      "execution_quote_required": true,
+      "first_candidate_cutoff_utc": "2026-11-13T14:00:00+00:00",
+      "first_candidate_open_utc": "2026-11-13T14:30:00+00:00",
+      "first_candidate_session": "2026-11-13",
+      "next_eligible_local_session": "2026-11-13",
+      "next_eligible_open_utc": "2026-11-13T14:30:00+00:00",
+      "status": "PENDING_FIRST_LOCAL_OPEN"
+    },
+    "MU": {
+      "attested_before_first_candidate_open": true,
+      "exchange_holiday_calendar_verified": false,
+      "execution_quote_required": true,
+      "first_candidate_cutoff_utc": "2026-11-13T14:00:00+00:00",
+      "first_candidate_open_utc": "2026-11-13T14:30:00+00:00",
+      "first_candidate_session": "2026-11-13",
+      "next_eligible_local_session": "2026-11-13",
+      "next_eligible_open_utc": "2026-11-13T14:30:00+00:00",
+      "status": "PENDING_FIRST_LOCAL_OPEN"
+    },
+    "PANW": {
+      "attested_before_first_candidate_open": true,
+      "exchange_holiday_calendar_verified": false,
+      "execution_quote_required": true,
+      "first_candidate_cutoff_utc": "2026-11-13T14:00:00+00:00",
+      "first_candidate_open_utc": "2026-11-13T14:30:00+00:00",
+      "first_candidate_session": "2026-11-13",
+      "next_eligible_local_session": "2026-11-13",
+      "next_eligible_open_utc": "2026-11-13T14:30:00+00:00",
+      "status": "PENDING_FIRST_LOCAL_OPEN"
+    },
+    "UNP": {
+      "attested_before_first_candidate_open": true,
+      "exchange_holiday_calendar_verified": false,
+      "execution_quote_required": true,
+      "first_candidate_cutoff_utc": "2026-11-13T14:00:00+00:00",
+      "first_candidate_open_utc": "2026-11-13T14:30:00+00:00",
+      "first_candidate_session": "2026-11-13",
+      "next_eligible_local_session": "2026-11-13",
+      "next_eligible_open_utc": "2026-11-13T14:30:00+00:00",
+      "status": "PENDING_FIRST_LOCAL_OPEN"
+    },
+    "WELL": {
+      "attested_before_first_candidate_open": true,
+      "exchange_holiday_calendar_verified": false,
+      "execution_quote_required": true,
+      "first_candidate_cutoff_utc": "2026-11-13T14:00:00+00:00",
+      "first_candidate_open_utc": "2026-11-13T14:30:00+00:00",
+      "first_candidate_session": "2026-11-13",
+      "next_eligible_local_session": "2026-11-13",
+      "next_eligible_open_utc": "2026-11-13T14:30:00+00:00",
+      "status": "PENDING_FIRST_LOCAL_OPEN"
+    }
+  },
+  "preopen_selected_symbols": [
+    "KO",
+    "JNJ",
+    "CB",
+    "MRK",
+    "DELL",
+    "MU",
+    "PANW",
+    "DE",
+    "WELL",
+    "UNP"
+  ],
+  "produced_at_utc": "2026-11-13T02:55:27.257492+00:00",
+  "risk_state": 0.6496614979642333,
+  "roster_sha256": "c05d2505389532a020613caa99dbff74a50ac947b60898eb3bb92d3f2ae5179c"
+}

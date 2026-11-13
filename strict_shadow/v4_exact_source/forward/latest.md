@@ -13,10 +13,10 @@
 **Dati mercato / universo:** MARKET_CAP_USD_AS_RECORDED_WITHIN_ACWI_NOT_HISTORICAL_PIT; fotografia utilizzata al 2026-11-12
 **Universo dinamico:** 7 fotografie cronologiche, ultima disponibile 2026-11-12; nuove società eleggibili SOLO dalla data registrata
 **Primo segnale / apertura successiva:** 2026-11-12 / 2026-11-13
-**Candidati segnalati (NON ORDINI):** KO, JNJ, CB, MRK, DELL, MU, PANW, DE, WELL, UNP; verifica: SIGNAL_PUBLISHED_PER_EXCHANGE
-**Segnale originale pubblicato:** SÌ; esito: SIGNAL_PUBLISHED_PER_EXCHANGE
+**Candidati segnalati (NON ORDINI):** KO, JNJ, CB, MRK, DELL, MU, PANW, DE, WELL, UNP; verifica: ATTESTED_CORRECTION_BEFORE_OPEN
+**Segnale originale pubblicato:** SÌ; esito: ATTESTED_CORRECTION_BEFORE_OPEN
 **Contabilità paper:** FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY — prezzi degli ordini APPROSSIMATI; nessun ordine reale.
-**Ultimo aggiornamento portafoglio:** 2026-11-13T02:55:51.661384+00:00; fonte ultimo prezzo 2026-11-12.
+**Ultimo aggiornamento portafoglio:** 2026-11-13T03:24:25.103514+00:00; fonte ultimo prezzo 2026-11-12.
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
 
 ## Segnali, proposte e ordini: tre cose diverse
