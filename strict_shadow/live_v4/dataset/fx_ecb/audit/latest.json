@@ -1,97 +1,97 @@
 {
   "caveat": "Retroactive ECB history is not evidence of a historical timestamped PIT archive",
-  "checked_at_utc": "2026-11-13T03:23:55.068525+00:00",
+  "checked_at_utc": "2026-11-14T02:41:20.485904+00:00",
   "currencies_with_history": 16,
   "currency_coverage": {
     "AUD": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     },
     "BRL": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     },
     "CAD": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     },
     "CHF": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     },
     "DKK": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     },
     "GBP": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     },
     "HKD": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     },
     "INR": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     },
     "JPY": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     },
     "KRW": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     },
     "NOK": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     },
     "SEK": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     },
     "SGD": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     },
     "TWD": {
@@ -102,17 +102,17 @@
       "revisions": 0
     },
     "USD": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     },
     "ZAR": {
-      "count": 3804,
+      "count": 3805,
       "first": "2012-01-02",
-      "last": "2026-11-12",
-      "new": 0,
+      "last": "2026-11-13",
+      "new": 1,
       "revisions": 0
     }
   },
@@ -120,10 +120,10 @@
   "historical_revisions_time_versioned": false,
   "no_annual_interpolation": true,
   "original_confidence70_pit_certified": false,
-  "raw_sha256": "24135a878206eae020c45d10163b3ee3cc894254f1dc691b9439d4c4004e9c96",
+  "raw_sha256": "1aecbfa09f0896a474e67bd5df26405acdaf583cab8ec0a061a1eaeb0f256c01",
   "reference_only": true,
-  "request_end": "2026-11-13",
-  "request_start": "2026-09-29",
+  "request_end": "2026-11-14",
+  "request_start": "2026-09-30",
   "source": "ECB EXR daily reference, fetched retrospectively",
   "status": "ECB_REFERENCE_UPDATED"
 }
