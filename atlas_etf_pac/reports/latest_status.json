@@ -1,29 +1,35 @@
 {
-  "blocked_actions": [],
+  "blocked_actions": [
+    {
+      "decision_session": "2026-11-12",
+      "reason": "STALE_SESSION_NO_RETROACTIVE_FILLS",
+      "session": "2026-11-13"
+    }
+  ],
   "cash_eur": 1000.0,
-  "checked_at_utc": "2026-11-12T22:43:51.220370+00:00",
+  "checked_at_utc": "2026-11-16T11:26:48.629141+00:00",
   "contributed_eur": 1000.0,
-  "cumulative_twr_pct": 0.0,
+  "cumulative_twr_pct": -0.00055,
   "historical_frozen_v23_parity": "ORIGINAL_LIVE_SHA256_VERIFIED; TRADABLE_ETF_PROXY_DIFFERS_FROM_1926_FF",
   "invested_eur": 0.0,
-  "last_nav_session": "2026-11-12",
+  "last_nav_session": "2026-11-13",
   "last_orders": [],
-  "last_signal_session": "2026-11-12",
-  "latest_day_pct": 0.0,
+  "last_signal_session": "2026-11-13",
+  "latest_day_pct": -0.000548,
   "latest_signal": {
     "bull": true,
     "core_in": true,
     "data_mode": "OBSERVED_EQUITY_ETF_EOD",
-    "decision_session": "2026-11-12",
+    "decision_session": "2026-11-13",
     "defensive": {
-      "momentum_126": 0.00448389,
+      "momentum_126": 0.00482971,
       "recommendation": "BOND",
       "source": "OBSERVED_BOND_ADJUSTED_CLOSE",
       "ticker": "CSBGE3.MI"
     },
-    "equity_eod": 131.6300048828125,
-    "fast10_pct": 0.1293,
-    "market_drawdown_pct": -0.4688,
+    "equity_eod": 130.44000244140625,
+    "fast10_pct": 0.5822,
+    "market_drawdown_pct": -1.3686,
     "method": "ATLAS_V23_OCT_01_2026_ORIGINAL_LIVE_UNMODIFIED",
     "original_live_sha256": "703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e",
     "pending_original_actions": [],
@@ -31,33 +37,38 @@
     "signal_ticker": "EUNL.DE",
     "state_label": "CORE+SATELLITE",
     "stress": {
-      "breadth": null,
-      "breadth_healthy": null,
-      "credit": null,
-      "credit_change_3m": null,
-      "credit_p80": null,
-      "credit_spread": null,
+      "breadth": true,
+      "breadth_healthy": 1,
+      "credit": false,
+      "credit_change_3m": -0.040000000000000924,
+      "credit_p80": 1.042,
+      "credit_spread": 0.4399999999999995,
+      "missing_inputs": [
+        "FF_RF",
+        "FF_BREADTH_3M"
+      ],
       "month": "2026-10",
-      "rates": null,
-      "score": 0,
-      "source": "CARRIED_FROZEN_2025-11",
-      "term_p20": null,
-      "term_spread": null
+      "observed_macro_month": "2026-09",
+      "rates": false,
+      "score": 1,
+      "source": "CARRIED_OBSERVED_2026-09",
+      "term_p20": -0.89022352948323,
+      "term_spread": 2.438108801230893
     },
     "target_equity_fraction": 1.0
   },
-  "max_drawdown_pct": 0,
+  "max_drawdown_pct": -0.00055,
   "mode": "PAPER_ONLY_ORIGINAL_V23",
   "model": "ATLAS_ETF_PAC_V23_ORIGINAL_LIVE_V1",
   "monthly_cash_contributions": 0,
-  "nav_eur": 1000.0,
+  "nav_eur": 999.99452,
   "no_real_orders": true,
   "notes": "Original V2.3 LIVE replay EUNL.DE + CSBGE3.MI; planned next completed-session CLOSE paper fills. Macro may be carried with explicit warning; no real trades.",
   "orders_total": 0,
   "pending_orders": {
-    "created_at_utc": "2026-11-12T22:38:56.621901+00:00",
-    "decision_session": "2026-11-12",
-    "input_session": "2026-11-12",
+    "created_at_utc": "2026-11-16T11:26:48.629141+00:00",
+    "decision_session": "2026-11-13",
+    "input_session": "2026-11-13",
     "policy": "NEXT_COMPLETED_SESSION_CLOSE_PRECOMMITTED_PAPER",
     "proposed_orders": [
       {
@@ -94,10 +105,10 @@
   },
   "real_broker_orders": 0,
   "source_quality": {
-    "bond_last": "2026-11-12",
+    "bond_last": "2026-11-13",
     "bond_quality": "OK",
     "defensive_source": "OBSERVED_BOND_ADJUSTED_CLOSE",
-    "equity_last": "2026-11-12",
+    "equity_last": "2026-11-13",
     "macro_previous_month": "2026-10",
     "macro_quality": "ONLINE_OR_PERSISTED_CACHE",
     "missing_macro_inputs": [
@@ -105,8 +116,8 @@
       "FF_BREADTH_3M"
     ],
     "observed_macro_month": "2026-09",
-    "quote_lag_days": 0,
+    "quote_lag_days": 2,
     "stress_source": "CARRIED_OBSERVED_2026-09"
   },
-  "status": "WAITING_NEW_EQUITY_ETF_CLOSE__MACRO_PROXY_STALE"
+  "status": "V23_SIGNAL_PENDING_NEXT_COMPLETED_CLOSE__MACRO_PROXY_STALE"
 }
