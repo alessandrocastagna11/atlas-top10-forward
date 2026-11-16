@@ -59,6 +59,6 @@ jobs:
           git add -A atlas_etf_pac/state.json atlas_etf_pac/reports atlas_etf_pac/live_cache
           if ! git diff --cached --quiet; then
             git commit -m "Atlas ETF V2.3 daily PAPER $(date -u +%F)"
-            git pull --rebase origin atlas-etf-pac-paper
+            git pull --rebase --autostash origin atlas-etf-pac-paper
             git push origin HEAD:atlas-etf-pac-paper
           fi
