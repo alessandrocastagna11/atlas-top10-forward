@@ -57,14 +57,19 @@ jobs:
                   f.write('- '+k+': '+str(r.get(k,'UNKNOWN'))+'\n')
               f.write('\nNo real money orders. Exact original V2.3 LIVE adapter; 2026 macro may use explicitly marked carry from the latest observed completed month.\n')
           PY
-      - name: Commit isolated PAC ledger and quote audit
+      - name: Commit complete PAC ledger, quote audit and source caches
         if: success()
         run: |
           git config user.name 'Atlas ETF PAC Paper Bot'
           git config user.email 'atlas-etf-pac-paper-bot@users.noreply.github.com'
-          git add -A atlas_etf_pac/state.json atlas_etf_pac/reports
+          git add -A atlas_etf_pac/state.json atlas_etf_pac/reports atlas_etf_pac/live_cache
           if ! git diff --cached --quiet; then
             git commit -m "Atlas ETF PAC automated paper $(date -u +%F)"
+            if ! git diff --quiet; then
+              echo "ERROR: Unstaged changes detected after staging PAC state, reports, and caches"
+              git status --short
+              exit 1
+            fi
             git pull --rebase origin atlas-etf-pac-paper
             git push origin HEAD:atlas-etf-pac-paper
           fi
