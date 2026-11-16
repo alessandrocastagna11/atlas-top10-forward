@@ -98,6 +98,28 @@ class TestOriginalV23(unittest.TestCase):
         self.assertEqual(st['pending']['created_at_utc'],monday.isoformat())
         self.assertIn('STALE_SESSION_NO_RETROACTIVE_FILLS',str(st['blocked_actions']))
 
+    def test_monday_close_executes_precommitted_friday_based_orders(self):
+        monday_before=dt.datetime(2026,11,16,11,0,tzinfo=dt.timezone.utc)
+        monday_after=dt.datetime(2026,11,16,20,0,tzinfo=dt.timezone.utc)
+        st=pac.seed(CFG)
+        st,_=pac.ledger_process(CFG,st,'2026-11-12',feed('2026-11-12'),sig('2026-11-12'),T1)
+        st,n=pac.ledger_process(CFG,st,'2026-11-13',feed('2026-11-13'),sig('2026-11-13'),monday_before)
+        self.assertEqual(n,0)
+        pending=st['pending']
+        self.assertEqual(pending['created_at_utc'],monday_before.isoformat())
+        st,n=pac.ledger_process(CFG,st,'2026-11-16',feed('2026-11-16'),sig('2026-11-16'),monday_after)
+        self.assertEqual(n,2)
+        self.assertEqual(len(st['orders']),2)
+        self.assertTrue(all(q['execution_session']=='2026-11-16' for q in st['orders']))
+        self.assertTrue(all(q['decision_session']=='2026-11-13' for q in st['orders']))
+        self.assertTrue(all(q['mode']=='VIRTUAL_ONLY' for q in st['orders']))
+        self.assertLess(st['cash_eur'],1)
+        self.assertIsNone(st['pending'])
+        snap=json.dumps(st,sort_keys=True)
+        again,n=pac.ledger_process(CFG,st,'2026-11-16',feed('2026-11-16'),sig('2026-11-16'),monday_after)
+        self.assertEqual(n,0)
+        self.assertEqual(json.dumps(again,sort_keys=True),snap)
+
     def test_stale_weekday_sessions_fail_closed(self):
         tuesday=dt.datetime(2026,11,17,20,0,tzinfo=dt.timezone.utc)
         self.assertGreater(pac.elapsed_weekday_sessions('2026-11-13',pac.completed_cutoff(tuesday).isoformat()),1)
