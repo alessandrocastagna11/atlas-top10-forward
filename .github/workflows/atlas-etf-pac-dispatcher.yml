@@ -65,11 +65,13 @@ jobs:
           git add -A atlas_etf_pac/state.json atlas_etf_pac/reports atlas_etf_pac/live_cache
           if ! git diff --cached --quiet; then
             git commit -m "Atlas ETF PAC automated paper $(date -u +%F)"
-            if ! git diff --quiet; then
-              echo "ERROR: Unstaged changes detected after staging PAC state, reports, and caches"
+            # Only generated PAC state and caches are allowed to change.
+            # Check tracked paths; prevent an unstaged source edit from blocking rebase.
+            if ! git diff --quiet -- atlas_etf_pac/engine.py atlas_etf_pac/config.json atlas_etf_pac/v23_original; then
+              echo "ERROR: Unstaged strategy source changes"
               git status --short
               exit 1
             fi
-            git pull --rebase origin atlas-etf-pac-paper
+            git pull --rebase --autostash origin atlas-etf-pac-paper
             git push origin HEAD:atlas-etf-pac-paper
           fi
