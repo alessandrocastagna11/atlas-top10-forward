@@ -84,6 +84,27 @@ class TestOriginalV23(unittest.TestCase):
         self.assertEqual(s['observed_macro_month'],'2026-09')
         self.assertIn('FF_BREADTH_3M',s['missing_inputs'])
 
+
+    def test_weekend_friday_close_is_usable_for_monday_preclose_signal(self):
+        """Friday close is the last completed session Monday morning."""
+        monday=dt.datetime(2026,11,16,11,0,tzinfo=dt.timezone.utc)
+        self.assertEqual(pac.elapsed_weekday_sessions('2026-11-13','2026-11-15'),0)
+        st=pac.seed(CFG)
+        st,_=pac.ledger_process(CFG,st,'2026-11-12',feed('2026-11-12'),sig('2026-11-12'),T1)
+        st,executed=pac.ledger_process(CFG,st,'2026-11-13',feed('2026-11-13'),sig('2026-11-13'),monday)
+        self.assertEqual(executed,0)  # Never back-fill Friday's missed close.
+        self.assertEqual(st['last_processed_session'],'2026-11-13')
+        self.assertEqual(st['pending']['decision_session'],'2026-11-13')
+        self.assertEqual(st['pending']['created_at_utc'],monday.isoformat())
+        self.assertIn('STALE_SESSION_NO_RETROACTIVE_FILLS',str(st['blocked_actions']))
+
+    def test_stale_weekday_sessions_fail_closed(self):
+        tuesday=dt.datetime(2026,11,17,20,0,tzinfo=dt.timezone.utc)
+        self.assertGreater(pac.elapsed_weekday_sessions('2026-11-13',pac.completed_cutoff(tuesday).isoformat()),1)
+        st=pac.seed(CFG)
+        with self.assertRaisesRegex(pac.InsufficientData,'MISSING_WEEKDAYS'):
+            pac.ledger_process(CFG,st,'2026-11-13',feed('2026-11-13'),sig('2026-11-13'),tuesday)
+
     def test_paper_rules_no_35days_no_monthly_cap(self):
         self.assertEqual(CFG['min_hold_days_before_sell'],0)
         self.assertIsNone(CFG['max_total_orders_per_month'])

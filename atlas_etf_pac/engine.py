@@ -39,6 +39,20 @@ def stamp_today(now):return now.astimezone(ROME).date()
 def completed_cutoff(now):
     local=now.astimezone(ROME)
     return local.date() if local.time()>=dt.time(19,0) else local.date()-dt.timedelta(days=1)
+
+def elapsed_weekday_sessions(last_observed, through):
+    """Weekday-only freshness bound; weekends are NOT missing market closes.
+
+    Exchange holidays can only make the real lag shorter. Never authorize
+    a fill from this approximation: fill_pending independently requires
+    a contemporaneous precommitted signal and an actually observed close.
+    """
+    start=day(last_observed)
+    stop=day(through)
+    if stop<=start:return 0
+    return sum((start+dt.timedelta(days=k)).weekday()<5
+               for k in range(1,(stop-start).days+1))
+
 def num(x):
     q=float(x)
     if not math.isfinite(q) or q<=0:raise InsufficientData('INVALID_PRICE')
@@ -346,8 +360,10 @@ def ledger_process(cfg,state,session,feeds,sig,now):
         raise ValueError('PRE_ACTIVATION_SESSION')
     # Do not fill a missed session based on future information. On first run,
     # value the latest verified close and plan initial orders for a later close.
-    if (stamp_today(now)-day(session)).days>1:
-        raise InsufficientData('OLD_DATA_NO_PROSPECTIVE_DECISION_'+session)
+    missing_sessions=elapsed_weekday_sessions(session,completed_cutoff(now).isoformat())
+    if missing_sessions>1:
+        raise InsufficientData('OLD_DATA_NO_PROSPECTIVE_DECISION_'+session+
+                               '_MISSING_WEEKDAYS_'+str(missing_sessions))
     price=prices_for_session(feeds,session,st['balances']['BOND']['units']>0)
     prior=st['nav'][-1] if st['nav'] else None
     previous_session=st['last_processed_session']
