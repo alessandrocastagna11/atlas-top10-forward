@@ -324,7 +324,9 @@ def simulate_tax_aware(
             }
         )
 
-    for date in sim_index:
+    for step,date in enumerate(sim_index):
+        if step % 252 == 0:
+            print(f'HEARTBEAT {strategy_name} {date.date()} {step}/{len(sim_index)} positions={len(positions)} orders={len(order_rows)} settlements={len(settlement_rows)}',flush=True)
         if previous_date is not None:
             day_count = max(0, (date - previous_date).days)
             rate = float(cash_rate.at[previous_date])
