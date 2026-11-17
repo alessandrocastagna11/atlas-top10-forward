@@ -36,6 +36,7 @@ def simulate_tax_aware(
     target_weight_builder: Optional[Callable] = None,
     liquidate_on_final_session: bool = False,
     weekly_core_entries: bool = False,
+    crisis_exit_enabled: bool = False,
 ) -> TaxAwareResult:
     if not 0.0 <= cash_reserve_fraction < 1.0:
         raise ValueError("cash_reserve_fraction must be in [0, 1)")
@@ -82,6 +83,8 @@ def simulate_tax_aware(
     capital_tax = foreign_dividend_tax = italian_dividend_tax = 0.0
     interest_tax = stamp_duty = gross_dividends = gross_interest = 0.0
     decision_count = 0
+    last_crisis_off = None
+    crisis_decisions = []
     policy = execution_policy or ExecutionPolicy()
     last_weekly_execution_month: Optional[pd.Period] = None
     loss_ledger = LossLedger(tax_config.loss_carry_years)
@@ -489,7 +492,15 @@ def simulate_tax_aware(
             sleeve_needed = bear_floor is not None and (
                 float(floor_series.loc[decision_date]) > 0.0 or v1.BENCHMARK in positions
             )
-            if scheduled:
+            crisis_off = crisis_exit_enabled and preview_regime <= 1e-12
+            crisis_reentry = crisis_exit_enabled and last_crisis_off is True and not crisis_off
+            if crisis_exit_enabled:
+                last_crisis_off = crisis_off
+                crisis_decisions.append({"decision_date":decision_date,"execution_date":date,"risk_off":crisis_off,"reentry":crisis_reentry,"pre_trade_core_exposure":core_exposure_preview})
+            if crisis_off:
+                # Retry all exits every week; the existing FIFO lot gate remains absolute.
+                decision_type = "core_risk_only"
+            elif crisis_reentry or scheduled:
                 decision_type = "full"
             elif weekly_core_entries and preview_regime > 0.0:
                 # Challenger: allow NEW purchases between five-week rotations
@@ -504,6 +515,8 @@ def simulate_tax_aware(
                 decision_date = None
 
         if decision_date is not None and decision_type is not None:
+            if crisis_exit_enabled and float(regime.loc[decision_date]) <= 1e-12:
+                assert decision_type == "core_risk_only"
             nav_open = nav_at(date, open_values)
             core_positions = {ticker: position for ticker, position in positions.items() if ticker != v1.BENCHMARK}
             eligible_row = (eligible.loc[decision_date] & membership.loc[decision_date]).fillna(False)
@@ -753,6 +766,7 @@ def simulate_tax_aware(
                 for lot in lot_inventory.get(ticker,[]) if lot['shares']>1e-9]}
         for ticker,p in positions.items()}
     result.research_settlements = pd.DataFrame(settlement_rows)
+    result.crisis_decisions = pd.DataFrame(crisis_decisions)
     return result
 
 
