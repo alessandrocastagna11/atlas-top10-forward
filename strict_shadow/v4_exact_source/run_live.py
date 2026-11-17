@@ -16,6 +16,7 @@ from live_model import v1,v2,t9,inc,frozen,LIVE
 if str(LIVE) not in sys.path:sys.path.insert(0,str(LIVE))
 from paper import earliest_open_utc
 from paper_reporting import to_portfolio,initial_portfolio,write_report
+from shared_inputs import publish as publish_shared_inputs
 
 UTC=dt.timezone.utc
 NY=ZoneInfo('America/New_York')
@@ -376,6 +377,15 @@ def main(now=None):
         status['historical_universe_vintages']=len(vintages)
         m,meta=build_model(vintages,asof,frames)
         status.update({'decision_session':str(asof),'source':meta})
+        # Export only actual model inputs; publication failure must not
+        # alter original model decisions. The challenger blocks without it.
+        try:
+            status['shared_input']=publish_shared_inputs(
+                FORWARD,asof,vintages,frames,m.cash_rate,meta,now.isoformat())
+            status['shared_input_status']='PUBLISHED_LOSSLESS'
+        except Exception as shared_error:
+            status['shared_input_status']='FAILED'
+            status['shared_input_error']=str(shared_error)[:1000]
         # Daily EUR mark-to-market quotes for the *persisted* PAPER ledger.
         # As-of equals the latest complete US benchmark session; for local
         # exchange holidays a prior close may be carried explicitly.
