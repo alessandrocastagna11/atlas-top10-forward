@@ -1,0 +1,36 @@
+{
+  "dataset": "Johnbrick123/sp500-data release data + Kenneth French daily US market research factors",
+  "method_version": "CLOSE_ONLY_1972_TOP5_SMA200_HYSTERESIS_V1",
+  "sha256": {
+    "ff_daily.zip": "96c23b88e651cbfff3740a53f8225e59ee39893371e96385a1d8125ec2cd9c89",
+    "membership_intervals.parquet": "83141f0c7d9eb69793db60694432426ea94eaa8c92e7e50c741bb5f605c48d54",
+    "prices.parquet": "42c80e69b854c85d7133d32d9cd43836a64aa8de7c8b4738d62986220527040f",
+    "recycled_tickers.csv": "58cf35bc54c5c7d93c5ea60039965bc4293cf8fdfb29bedef0b8aac369c16375"
+  },
+  "calendar_start": "1970-01-02",
+  "calendar_end": "2026-09-30",
+  "calendar_sessions": 14308,
+  "first_adequate_date": "1970-01-02",
+  "recycled_excluded": 0,
+  "limitations": [
+    "USA only; dated S&P500 membership instead of global market-cap universe; all contemporaneous members rather than Top100",
+    "No historical liquidity or sector constraints; retain price/trend/momentum screens",
+    "Market-only OLS residual with independent Fama-French broad-US total return",
+    "USD nominal account, zero cash yield; no historical EUR",
+    "Adjusted total-return units, no separate dividend withholding, historical engine tax schedule extrapolated before 2012",
+    "Execution at observed next weekly session close across entire sample; no carried-patch trading",
+    "Research-only observed exits after membership removal and 60-day stale off-index settlement at last known quote; cash recovery assumed, not verified; marks carried up to 60 sessions; 35-day lot lock preserved",
+    "Passive ETF proxy is Fama-French cap-weighted US market, synthetic 0.07% TER, 10bps each side, 1 currency-unit each side and same stamp/tax schedule; no fund-level withholding",
+    "Algos original risk sizing and tax simulator reused; not exact global Atlas replay; no tuning"
+  ],
+  "crisis_rule": {
+    "indicator": "Fama-French US cap-weighted total return SMA200",
+    "exit": "index < SMA200",
+    "reentry": "index > 1.02*SMA200",
+    "observed": "daily close, acted on weekly decisions only",
+    "exit_execution": "next weekly execution close, retry matured lots weekly",
+    "minimum_holding_calendar_days": 35,
+    "cash_yield": 0,
+    "parameter_sweep": false
+  }
+}

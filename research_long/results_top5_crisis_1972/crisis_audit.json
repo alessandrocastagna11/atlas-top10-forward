@@ -1,0 +1,8 @@
+{
+  "weekly_risk_off_signals": 804,
+  "weekly_observations": 2815,
+  "weekly_reentries": 69,
+  "blocked_sale_attempts_total": 365,
+  "minimum_realized_hold_days": 35,
+  "assumed_settlements": 34
+}
