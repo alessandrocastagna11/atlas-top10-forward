@@ -1,6 +1,6 @@
 {
   "cash_eur": 10000,
-  "checked_at_utc": "2026-11-17T09:43:25.184476+00:00",
+  "checked_at_utc": "2026-11-17T09:44:58.626619+00:00",
   "decision_session": "2026-11-16",
   "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
   "execution_model": "completed actual local-session bar open with indicative previous-day EUR FX; simulated, not broker fills",
