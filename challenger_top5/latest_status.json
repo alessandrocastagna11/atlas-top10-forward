@@ -1,6 +1,45 @@
 {
+  "archived_signal_input_sha256": null,
+  "archived_signal_matches_current_input": false,
   "cash_eur": 10000,
-  "checked_at_utc": "2026-11-17T09:44:58.626619+00:00",
+  "checked_at_utc": "2026-11-17T15:35:52.381464+00:00",
+  "current_indicative_targets": [
+    {
+      "rank": 13.0,
+      "score": 1.12649909,
+      "sector": "XLP",
+      "target_weight": 0.2,
+      "ticker": "KO"
+    },
+    {
+      "rank": 16.0,
+      "score": 1.07014075,
+      "sector": "XLK",
+      "target_weight": 0.19493954,
+      "ticker": "PANW"
+    },
+    {
+      "rank": 20.0,
+      "score": 0.96680161,
+      "sector": "XLV",
+      "target_weight": 0.2,
+      "ticker": "MRK"
+    },
+    {
+      "rank": 22.0,
+      "score": 0.93129591,
+      "sector": "XLI",
+      "target_weight": 0.19506046,
+      "ticker": "DE"
+    },
+    {
+      "rank": 23.0,
+      "score": 0.91430387,
+      "sector": "XLF",
+      "target_weight": 0.2,
+      "ticker": "CB"
+    }
+  ],
   "decision_session": "2026-11-16",
   "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
   "execution_model": "completed actual local-session bar open with indicative previous-day EUR FX; simulated, not broker fills",
@@ -16,6 +55,9 @@
   "paper_orders_new": [],
   "positions_count": 0,
   "real_money_orders": 0,
+  "same_price_dates_and_fx": true,
+  "shared_input_sha256": "8e736166d34072c16b727617bd7664f7632e381df64e55db03637f707cdbccb0",
+  "shared_input_verified": true,
   "signal": {
     "candidate_exchange_opens": {
       "CB": {
@@ -122,11 +164,24 @@
       "TWD": 35.2430000305,
       "USD": 1.1024872065
     },
+    "input_mode": "SAME_LOSSLESS_SNAPSHOT_NO_REFETCH",
     "known_historical_symbols": 322,
     "last_benchmark_date": "2026-11-16",
     "roster_recorded_date": "2026-11-16",
     "roster_sha256": "56f647a6d681388cc9dc2d5b4832138842fc3716ac7a0dd68607ef6b6427eb55",
     "roster_source_asof": "2026-11-16",
+    "shared_input": {
+      "bytes": 9658213,
+      "decision_session": "2026-11-16",
+      "frame_count": 347,
+      "lossless_roundtrip_verified": true,
+      "path": "shared_inputs/latest.zip",
+      "recorded_at_utc": "2026-11-17T15:34:29.679077+00:00",
+      "roster_recorded_date": "2026-11-16",
+      "roster_sha256": "56f647a6d681388cc9dc2d5b4832138842fc3716ac7a0dd68607ef6b6427eb55",
+      "schema": 1,
+      "sha256": "8e736166d34072c16b727617bd7664f7632e381df64e55db03637f707cdbccb0"
+    },
     "ticker_price_dates": {
       "AAPL": "2026-11-16",
       "ABBV": "2026-11-16",
