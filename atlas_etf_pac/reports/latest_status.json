@@ -7,7 +7,7 @@
     }
   ],
   "cash_eur": 1000.0,
-  "checked_at_utc": "2026-11-16T12:33:45.355800+00:00",
+  "checked_at_utc": "2026-11-17T02:38:03.683349+00:00",
   "contributed_eur": 1000.0,
   "cumulative_twr_pct": -0.00055,
   "historical_frozen_v23_parity": "ORIGINAL_LIVE_SHA256_VERIFIED; TRADABLE_ETF_PROXY_DIFFERS_FROM_1926_FF",
@@ -116,7 +116,7 @@
       "FF_BREADTH_3M"
     ],
     "observed_macro_month": "2026-09",
-    "quote_lag_days": 2,
+    "quote_lag_days": 3,
     "stress_source": "CARRIED_OBSERVED_2026-09"
   },
   "status": "WAITING_NEW_EQUITY_ETF_CLOSE__MACRO_PROXY_STALE"
