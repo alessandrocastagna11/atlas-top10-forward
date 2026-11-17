@@ -23,7 +23,7 @@ import equity_long_v4_research as v4
 import incumbent_engine as inc
 import frozen_region as frozen
 import live_simulator as sim
-OUT=ROOT/'research_long'/'results';OUT.mkdir(parents=True,exist_ok=True)
+OUT=ROOT/'research_long'/'results_daily_v2';OUT.mkdir(parents=True,exist_ok=True)
 DATA=Path(sys.argv[1])
 def dump(p,x):p.write_text(json.dumps(x,indent=2,default=str,allow_nan=False)+'\n')
 def hashfile(p):
@@ -33,54 +33,90 @@ def hashfile(p):
     return h.hexdigest()
 def finite(x):return float(x) if np.isfinite(x) else None
 prices=pd.read_parquet(DATA/'prices.parquet',columns=['date','ticker','open','close','adj_close','volume','source'])
-members=pd.read_parquet(DATA/'members.parquet')
-print('SCHEMA',members.columns.tolist(),prices.shape,flush=True)
-assert {'date','ticker'}<=set(members)
+intervals=pd.read_parquet(DATA/'membership_intervals.parquet')
+print('SCHEMA',intervals.columns.tolist(),prices.shape,flush=True)
+assert {'ticker','start','end'}<=set(intervals)
 prices['date']=pd.to_datetime(prices.date).dt.normalize()
-members['date']=pd.to_datetime(members.date).dt.normalize()
 prices['ticker']=prices.ticker.astype(str)
-members['ticker']=members.ticker.astype(str)
+intervals['ticker']=intervals.ticker.astype(str)
+intervals['start']=pd.to_datetime(intervals.start).dt.normalize()
+intervals['end']=pd.to_datetime(intervals['end']).dt.normalize()
 assert not prices.duplicated(['date','ticker']).any(), 'Duplicate ticker/date prices'
-members=members[['date','ticker']].drop_duplicates()
 recycled=pd.read_csv(DATA/'recycled_tickers.csv')
 assert 'ticker' in recycled
 excluded=set(recycled.ticker.astype(str))
-members=members[~members.ticker.isin(excluded)]
-prices=prices[prices.ticker.isin(set(members.ticker))].copy()
-# No fabricated trade bars. Source identifies carried patches as nontradeable.
-actual=(~prices.source.astype(str).str.contains('carried|placeholder',case=False,regex=True))&(prices.close>0)&(prices.adj_close>0)&(prices.open>0)&(prices.volume>0)
+intervals=intervals[~intervals.ticker.isin(excluded)].dropna(subset=['start'])
+names_all=sorted(intervals.ticker.unique())
+prices=prices[prices.ticker.isin(names_all)&(prices.date>=pd.Timestamp('1970-01-01'))].copy()
+fresh=~prices.source.astype(str).str.contains('carried|placeholder',case=False,regex=True)
+hasclose=fresh&(prices.close>0)&(prices.adj_close>0)
+hasopen=hasclose&(prices.open>0)
+actual=hasclose&(prices.volume>0)
 prices['valid']=actual
-prices['adj_open']=np.where(actual,prices.open*prices.adj_close/prices.close,np.nan)
-prices['tradable_close']=prices.adj_close.where(actual)
+prices['open_verified']=hasopen
+# A real next-session close is an explicitly approximate execution reference
+# when the source has no actual opening price, never a backdated prior close.
+prices['adj_open']=np.where(hasopen,prices.open*prices.adj_close/prices.close,prices.adj_close).where(hasclose)
+prices['tradable_close']=prices.adj_close.where(hasclose)
 prices['dollar_volume']=(prices.close*prices.volume).where(actual)
-prices['raw_trade_close']=prices.close.where(actual)
-# Coverage is computed before defining the test interval.
-pkeys=prices.loc[actual,['date','ticker']].assign(valid=1)
-cov=members.merge(pkeys,on=['date','ticker'],how='left')
-coverage=cov.groupby('date').valid.agg(['count','size'])
+prices['raw_trade_close']=prices.close.where(hasclose)
+# Build actual session calendar from dated price observations, NOT sparse
+# membership change events. Require at least 100 observed prices to define a
+# market session (no empty weekends/holidays/artificial dates).
+calendar=pd.DatetimeIndex(prices.loc[hasclose].groupby('date').size().loc[lambda x:x>=100].index).sort_values()
+if calendar.empty:raise RuntimeError('No trading calendar')
+events=np.zeros((len(calendar)+1,len(names_all)),dtype=np.int16)
+name_ix={t:i for i,t in enumerate(names_all)}
+for row in intervals.itertuples(index=False):
+    lo=calendar.searchsorted(row.start,side='left')
+    hi=calendar.searchsorted(row.end,side='left') if pd.notna(row.end) else len(calendar)
+    if lo<hi:
+        col=name_ix[row.ticker]
+        events[lo,col]+=1;events[hi,col]-=1
+member_arr=np.cumsum(events[:-1],axis=0,dtype=np.int16)>0
+del events
+daily_mem=pd.DataFrame(member_arr,index=calendar,columns=names_all)
+# Coverage of price/volume and opening observations among actual members.
+pday=calendar.get_indexer(prices.date)
+pname=pd.Index(names_all).get_indexer(prices.ticker)
+mask=(pday>=0)&(pname>=0)
+ix=np.flatnonzero(mask)
+ix=ix[member_arr[pday[ix],pname[ix]]]
+def observed_count(m):
+    return np.bincount(pday[ix[m.to_numpy()[ix]]],minlength=len(calendar))
+coverage=pd.DataFrame({'count':observed_count(actual),'size':member_arr.sum(axis=1),
+                       'close_count':observed_count(hasclose),'open_count':observed_count(hasopen)},index=calendar)
+coverage.index.name='date'
 coverage['fraction']=coverage['count']/coverage['size']
+coverage['close_fraction']=coverage['close_count']/coverage['size']
+coverage['open_fraction']=coverage['open_count']/coverage['size']
 coverage.to_csv(OUT/'coverage_daily.csv')
-annual_cov=coverage.groupby(coverage.index.year).fraction.agg(['mean','min','count'])
+annual_cov=coverage.groupby(coverage.index.year).agg(sessions=('size','size'),mean=('fraction','mean'),min=('fraction','min'),close_mean=('close_fraction','mean'),open_mean=('open_fraction','mean'),members_mean=('size','mean'))
 annual_cov.to_csv(OUT/'coverage_annual.csv')
+# 95% primary coverage threshold; 40% exploratory threshold deliberately
+# acknowledged as incomplete, never considered an unbiased PIT validation.
 good=coverage.index[(coverage.fraction>=.95)&(coverage['size']>=450)]
-if len(good)==0:raise RuntimeError('No adequately covered membership dates')
-first=good.min()
-print('first adequate date',first,'last',good.max(),flush=True)
-manifest={'dataset':'Johnbrick123/sp500-data release data','sha256':{p.name:hashfile(p) for p in DATA.glob('*') if p.is_file()},'first_adequate_date':str(first.date()),'last_adequate_date':str(good.max().date()),'recycled_excluded':len(excluded),'limitations':['USA only, historical S&P500 membership not world market-cap universe','Top100 by lagged trailing dollar volume, not issuer market cap','Market-only residual; dated sector classifications unavailable, no genuine sector weight caps','USD nominal account, no historical EUR conversion; zero cash yield','Adjusted total return units, tax on simulated gains with historical engine tax proxy, no separate dividend withholding','Nominal $50m daily liquidity filter preserved; weak coverage/exposure before the modern era','No unobserved fills; after 5 missing bars original engine marks missing holdings at zero and may retain locked slots; delisting proceeds not separately modeled','Not exact Atlas replay; no parameter tuning']}
+exploratory=coverage.index[(coverage.fraction>=.40)&(coverage['size']>=450)]
+if len(good)==0 or len(exploratory)==0:raise RuntimeError('No adequately covered membership dates')
+first=good.min();early=exploratory.min()
+print('calendar',calendar.min(),calendar.max(),'sessions',len(calendar),'first >=95%',first,'first >=40%',early,flush=True)
+manifest={'dataset':'Johnbrick123/sp500-data release data','method_version':'DAILY_INTERVALS_V2_SUPERSEDES_INVALID_SPARSE_CALENDAR_RUN','sha256':{p.name:hashfile(p) for p in DATA.glob('*') if p.is_file()},'calendar_start':str(calendar.min().date()),'calendar_end':str(calendar.max().date()),'calendar_sessions':len(calendar),'first_adequate_date':str(first.date()),'first_exploratory_date':str(early.date()),'last_adequate_date':str(good.max().date()),'recycled_excluded':len(excluded),'limitations':['USA only, historical S&P500 intervals not world market-cap universe','Top100 by lagged trailing dollar volume, not issuer market cap','Market-only residual; dated sector classifications unavailable, no genuine sector weight caps','USD nominal account, no historical EUR conversion; zero cash yield','Adjusted total return units, tax on simulated gains with historical engine tax proxy, no separate dividend withholding','Nominal $50m daily liquidity filter preserved; weak coverage/exposure before the modern era','Execution at observed next-session opening or next-session closing when actual open unavailable','No unobserved fills; original simulator can mark missing holdings at zero after 5 bars and may retain locked slots; delisting proceeds not separately modeled','Exploratory 40% coverage is incomplete and can have severe selection bias','Not exact Atlas replay; no parameter tuning']}
 dump(OUT/'manifest.json',manifest)
+del member_arr,ix,pday,pname,mask
+gc.collect()
 summary=[]
-def test_window(label,begin,end):
+def test_window(label,begin,end,first_coverage):
     begin=pd.Timestamp(begin);end=pd.Timestamp(end)
-    start=max(begin,first+pd.DateOffset(years=2))
+    start=max(begin,first_coverage+pd.DateOffset(years=2))
     if start>=end:return
-    st=max(first,start-pd.DateOffset(years=3))
+    st=max(first_coverage,start-pd.DateOffset(years=3))
     dates=coverage.index[(coverage.index>=st)&(coverage.index<=end)].sort_values()
-    mm=members[(members.date>=st)&(members.date<=end)]
-    names=sorted(mm.ticker.unique())
+    full_mem=daily_mem.loc[dates]
+    names=full_mem.columns[full_mem.any(axis=0)].tolist()
     if len(names)<100:raise RuntimeError('Insufficient symbols')
     pp=prices[(prices.date>=st)&(prices.date<=end)&prices.ticker.isin(names)]
     def panel(key):return pp.pivot(index='date',columns='ticker',values=key).reindex(index=dates,columns=names).astype('float32')
-    mem=mm.assign(in_index=True).pivot(index='date',columns='ticker',values='in_index').reindex(index=dates,columns=names).fillna(False).astype(bool)
+    mem=full_mem[names].copy()
     close=panel('tradable_close');op=panel('adj_open');rawprice=panel('raw_trade_close');dvol=panel('dollar_volume')
     adv=dvol.rolling(20,min_periods=15).median();del dvol
     # At each month's first trading day use the previous session's observed
@@ -125,6 +161,8 @@ def test_window(label,begin,end):
     del absret,denom,eff,jump,quality,mom,path,logp,logret
     counts=pd.DataFrame({'roster':roster.sum(axis=1),'eligible':eligible.sum(axis=1)})
     counts.to_csv(OUT/f'{label}_counts.csv')
+    eligible_counts=counts.loc[start:,'eligible']
+    bench=(1+close.pct_change(fill_method=None).where(roster.shift(1,fill_value=False)).mean(axis=1).fillna(0)).loc[start:].cumprod()*10000
     active=eligible.loc[start:].any(axis=0)
     active_names=active[active].index.tolist()
     print(label,'start',start,'end',end,'eligible names',len(active_names),'first eligible',counts.index[counts.eligible>0].min(),flush=True)
@@ -150,7 +188,7 @@ def test_window(label,begin,end):
     def corr(self,date,chosen,candidates):
         ix=dates.get_loc(date);r=self._returns.iloc[max(0,ix-125):ix+1]
         if not chosen:return dict.fromkeys(candidates,0.)
-        values=pd.concat([r[candidates].corrwith(r[t]) for t in chosen],axis=1).max(axis=1).fillna(0).clip(lower=0)
+        values=pd.concat([r[candidates].corrwith(r[t]).where(r[candidates].notna().mul(r[t].notna(),axis=0).sum(axis=0)>=63) for t in chosen],axis=1).max(axis=1).fillna(0).clip(lower=0)
         return values.to_dict()
     model.correlations=MethodType(corr,model)
     def slots(self,date,n):return 0,0.,0.
@@ -158,7 +196,6 @@ def test_window(label,begin,end):
     rate=pd.Series(0.,index=dates);tax=t9.TaxConfig('italian_tax',True)
     policy=t9.ExecutionPolicy(name='coreband0.05',core_risk_band_weight=.05)
     # Matched equal-weight market proxy, gross as a reference (not after-tax).
-    bench=(1+close.pct_change(fill_method=None).where(roster.shift(1,fill_value=False)).mean(axis=1).fillna(0)).loc[start:].cumprod()*10000
     # Broader S&P500 equal-weight log-return reference constructed above.
     broad=np.exp(market.loc[start:].fillna(0).cumsum())*10000
     pd.DataFrame({'market_equal_weight_log_proxy_gross':broad,'liquidity_basket_gross':bench}).to_csv(OUT/f'{label}_benchmark.csv')
@@ -184,7 +221,7 @@ def test_window(label,begin,end):
         exposed=result.exposure[result.exposure>0]
         first_trade=str(exposed.index[0].date()) if len(exposed) else None
         active_cagr=((equity.iloc[-1]/10000)**(365.25/max(1,(equity.index[-1]-exposed.index[0]).days))-1)*100 if len(exposed) else None
-        row={'window':label,'n':n,'start':str(equity.index[0].date()),'end':str(equity.index[-1].date()),'net_cagr_pct':finite(((equity.iloc[-1]/10000)**(1/years)-1)*100),'max_drawdown_pct':finite(dd.min()*100),'sharpe_zero_cash':finite(r.mean()/r.std()*math.sqrt(252)),'final_nav_usd_proxy':finite(equity.iloc[-1]),'orders':len(trades),'average_exposure_pct':finite(result.exposure.mean()*100),'first_exposure':first_trade,'active_period_cagr_pct':finite(active_cagr) if active_cagr is not None else None,'total_tax_usd_proxy':finite(result.total_tax_eur)}
+        row={'window':label,'n':n,'start':str(equity.index[0].date()),'end':str(equity.index[-1].date()),'net_cagr_pct':finite(((equity.iloc[-1]/10000)**(1/years)-1)*100),'max_drawdown_pct':finite(dd.min()*100),'sharpe_zero_cash':finite(r.mean()/r.std()*math.sqrt(252)),'final_nav_usd_proxy':finite(equity.iloc[-1]),'orders':len(trades),'average_exposure_pct':finite(result.exposure.mean()*100),'first_exposure':first_trade,'active_period_cagr_pct':finite(active_cagr) if active_cagr is not None else None,'total_tax_usd_proxy':finite(result.total_tax_eur),'mean_coverage_pct':finite(100*coverage.loc[equity.index,'fraction'].mean()),'mean_eligible_names':finite(eligible_counts.mean()),'trading_sessions':len(equity)}
         summary.append(row)
         pd.DataFrame(summary).to_csv(OUT/'comparison.csv',index=False)
         dump(OUT/'comparison.json',summary)
@@ -193,7 +230,8 @@ def test_window(label,begin,end):
         gc.collect()
     del model,features,close,op,raw,base
     gc.collect()
-test_window('pre2012','1972-01-01','2011-12-31')
-test_window('modern','2012-01-01','2025-12-10')
+test_window('pre2012_primary95','1972-01-01','2011-12-31',first)
+if early<first: test_window('pre2012_exploratory40','1972-01-01','2011-12-31',early)
+test_window('modern','2012-01-01','2025-12-10',first)
 if not summary:raise RuntimeError('No backtest results')
 print('COMPLETED',len(summary),'configurations',flush=True)
