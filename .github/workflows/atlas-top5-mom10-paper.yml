@@ -1,0 +1,66 @@
+name: Atlas Top5 MOM10 challenger
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/atlas-top5-mom10-paper.yml']
+  workflow_run:
+    workflows: ['Atlas V4 ORIGINAL Confidence70 — forward PAPER']
+    types: [completed]
+  schedule:
+    - cron: '50 23 * * *'
+    - cron: '15 6 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: atlas-top5-mom10-live-paper
+  cancel-in-progress: false
+jobs:
+  challenger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: atlas-top5-mom10-live-paper
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          ref: atlas-v4-confidence70-live-paper
+          path: confidence_source
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install original model dependencies
+        run: pip install -r confidence_source/strict_shadow/v4_exact_source/requirements-live.txt
+      - uses: actions/cache@v4
+        with:
+          path: confidence_source/strict_shadow/v4_exact_source/cache_adjusted
+          key: atlas-top5-mom10-adjusted-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            atlas-top5-mom10-adjusted-${{ runner.os }}-
+      - name: Verify syntax and challenger tests
+        run: |
+          python -m py_compile challenger_top5/run.py
+          python -m unittest discover -s challenger_top5 -p 'test_*.py' -v
+      - name: Compute shared-universe signals and advance PAPER ledger
+        id: run
+        run: python challenger_top5/run.py
+      - name: Publish only challenger state and diagnostics
+        if: always()
+        run: |
+          git config user.name "Atlas Top5 MOM10 Paper Bot"
+          git config user.email "atlas-top5-mom10-paper@users.noreply.github.com"
+          git add -- challenger_top5/state.json challenger_top5/latest_status.json
+          if [ -d challenger_top5/signals ]; then git add -- challenger_top5/signals; fi
+          if ! git diff --cached --quiet; then
+            git commit -m "Atlas Top5 MOM10 PAPER $(date -u +%FT%TZ)"
+            git push origin HEAD:atlas-top5-mom10-live-paper
+          fi
+      - name: Summarize
+        if: always()
+        run: |
+          echo '## Atlas Top5 MOM10 — PAPER ONLY' >> "$GITHUB_STEP_SUMMARY"
+          echo 'No real money orders. Original Confidence70 branch is not written.' >> "$GITHUB_STEP_SUMMARY"
+          cat challenger_top5/latest_status.json >> "$GITHUB_STEP_SUMMARY"
