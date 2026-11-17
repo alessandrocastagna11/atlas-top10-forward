@@ -251,7 +251,7 @@ def asof_membership(index,snapshots,symbols_us,row_assets):
     return out
 
 
-def build_model(snapshot,asof,frames):
+def build_model(snapshot,asof,frames,*,shared_cash_rate=None):
     """Construct the exact replay's H4 features/regime/RegionSlotAtlas callbacks.
     The 2026 membership datasource is explicitly NOT the historical PIT market-cap roster.
     """
@@ -434,9 +434,14 @@ def build_model(snapshot,asof,frames):
     m.base_t8=overlays.t8_volatility_overlay(d,index)[0]
     bear=t9.bear_exposure_signals(d,usf,m.base_t8)
     m.bear_floor=bear['t9a_exposure_floor']
-    m.cash_rate,ecb_source=v2.fetch_ecb_cash_rate(index,CACHE,refresh=False,haircut_bps=50)
-    if ecb_source.startswith('cash yield disabled'):
-        raise ValueError('Cannot replicate frozen EUR cash model without ECB: '+ecb_source)
+    if shared_cash_rate is None:
+        m.cash_rate,ecb_source=v2.fetch_ecb_cash_rate(index,CACHE,refresh=False,haircut_bps=50)
+        if ecb_source.startswith('cash yield disabled'):
+            raise ValueError('Cannot replicate frozen EUR cash model without ECB: '+ecb_source)
+    else:
+        if not shared_cash_rate.index.equals(index):
+            raise ValueError('Shared cash rate does not align with model sessions')
+        m.cash_rate=shared_cash_rate.copy()
     m.tax=t9.TaxConfig('italian_tax',True)
     m.net_cash=t9.net_cash_rate(m.cash_rate,m.tax)
     m._build_path_score();m._build_panic_rebound()
