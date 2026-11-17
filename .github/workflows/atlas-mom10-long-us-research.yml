@@ -20,7 +20,10 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install frozen engine dependencies
-        run: pip install -r strict_shadow/v4_exact_source/requirements-live.txt pyarrow
+        run: |
+          python -m pip install -r strict_shadow/v4_exact_source/requirements-live.txt
+          python -m pip install 'pyarrow==18.1.0'
+          python -c "import pyarrow, pyarrow.parquet, pandas; print('PARQUET READY', pyarrow.__version__, pandas.__version__)"
       - name: Acquire dated historical membership and actual daily prices
         run: |
           mkdir -p /tmp/atlas-historical
