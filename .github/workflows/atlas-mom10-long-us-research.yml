@@ -27,7 +27,7 @@ jobs:
       - name: Acquire dated historical membership and actual daily prices
         run: |
           mkdir -p /tmp/atlas-historical
-          for f in members.parquet prices.parquet recycled_tickers.csv; do
+          for f in members.parquet membership_intervals.parquet prices.parquet recycled_tickers.csv; do
             curl --fail --location --retry 3 --max-time 300 "https://github.com/Johnbrick123/sp500-data/releases/download/data/$f" -o "/tmp/atlas-historical/$f"
           done
           sha256sum /tmp/atlas-historical/*
@@ -37,10 +37,10 @@ jobs:
       - name: Preserve research output only
         if: always()
         run: |
-          if [ -d research_long/results ]; then
+          if [ -d research_long/results_daily_v2 ]; then
             git config user.name "Atlas research bot"
             git config user.email "atlas-research@users.noreply.github.com"
-            git add research_long/results
+            git add research_long/results_daily_v2
             if ! git diff --cached --quiet; then
               git commit -m "Historical MOM10 research outputs"
               git push origin HEAD:research/atlas-mom10-sp500-long
@@ -50,4 +50,4 @@ jobs:
         if: always()
         with:
           name: atlas-mom10-long-research
-          path: research_long/results
+          path: research_long/results_daily_v2
