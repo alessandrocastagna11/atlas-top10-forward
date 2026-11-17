@@ -33,6 +33,14 @@
       "positions": 10,
       "quote_audit_sha256": "aa72919354432c64b44231e6c9628a4c1f503346658b8d927e579f5a34126daa",
       "session": "2026-11-11"
+    },
+    {
+      "cash_eur": 2480.77,
+      "first_reported_utc": "2026-11-17T09:46:55.079870+00:00",
+      "nav_eur": 10050.27,
+      "positions": 10,
+      "quote_audit_sha256": "0c8b3838f42223f40dbafbdb11c2bc544b6437c6c02c2eb63384f84f3b6f145d",
+      "session": "2026-11-16"
     }
   ],
   "schema_version": 1

@@ -1,5 +1,5 @@
 {
-  "cash_eur": 3387.995841981953,
+  "cash_eur": 2480.770642629903,
   "decisions": [
     {
       "decision_session": "2026-11-05",
@@ -18,6 +18,12 @@
       "execution_session": "2026-11-11",
       "orders": 6,
       "signal_sha256": "f825f8a0edc22c32451bad98f7a4cec23662507d6613382135913b6bda8da462"
+    },
+    {
+      "decision_session": "2026-11-11",
+      "execution_session": "2026-11-12",
+      "orders": 1,
+      "signal_sha256": "c111a0e552af76094b021332b8f71c8fc774138ed15faca15328316432d75dbc"
     }
   ],
   "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
@@ -133,19 +139,24 @@
       "shares": 0.31842415958700826
     },
     "MPC": {
-      "cost_basis_eur_per_share": 335.41428021612523,
+      "cost_basis_eur_per_share": 351.7301120688201,
       "first_entry_date": "2026-11-06",
       "lots": [
         {
           "cost_basis_eur_per_share": 335.41428021612523,
           "entry_date": "2026-11-06",
           "shares": 1.715508950988119
+        },
+        {
+          "cost_basis_eur_per_share": 362.92724080644655,
+          "entry_date": "2026-11-12",
+          "shares": 2.4997440184873985
         }
       ],
       "market_symbol": "MPC",
       "region": "USA",
       "sector": "Energy",
-      "shares": 1.715508950988119
+      "shares": 4.215252969475517
     },
     "MRK": {
       "cost_basis_eur_per_share": 131.43475632386367,
@@ -204,7 +215,7 @@
     }
   },
   "initial_cash_eur": 10000.0,
-  "last_execution_session": "2026-11-11",
+  "last_execution_session": "2026-11-12",
   "mode": "PAPER",
   "orders": [
     {
@@ -438,6 +449,20 @@
       "signal_sha256": "f825f8a0edc22c32451bad98f7a4cec23662507d6613382135913b6bda8da462",
       "tax_estimate_eur": 0.0,
       "ticker": "PANW"
+    },
+    {
+      "action": "BUY",
+      "cash_change_eur": -907.225199,
+      "execution_price_eur": 362.5271998452,
+      "fee_eur": 1.0,
+      "market_symbol": "MPC",
+      "mode": "PAPER",
+      "reference_open_eur": 362.1650348104,
+      "session": "2026-11-12",
+      "shares": 2.4997440185,
+      "signal_sha256": "c111a0e552af76094b021332b8f71c8fc774138ed15faca15328316432d75dbc",
+      "tax_estimate_eur": 0.0,
+      "ticker": "MPC"
     }
   ],
   "real_money_authorized": false,

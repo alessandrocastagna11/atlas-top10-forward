@@ -9,7 +9,7 @@
     "ecb_retroactive_archive_not_original_vintage": true,
     "yahoo_execution_fx_separately_sourced": true
   },
-  "checked_at_utc": "2026-11-11T23:08:24.034235+00:00",
+  "checked_at_utc": "2026-11-17T09:46:58.485800+00:00",
   "historical_pit_issues_remaining": [
     "POINT_IN_TIME_USA100_MARKET_CAP_RANKING",
     "POINT_IN_TIME_ROW_MARKET_CAP_AND_ISSUER_SCORING",
@@ -24,8 +24,8 @@
   "real_money_authorized": false,
   "research_proxy_execution_status": "PROXY_PAPER_EXECUTED",
   "research_proxy_model_ready": true,
-  "research_proxy_nav_eur": 10183.57,
-  "research_proxy_orders": 16,
+  "research_proxy_nav_eur": 10050.27,
+  "research_proxy_orders": 17,
   "universe_ranking_type": "ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP",
   "workflow": "PAPER_ONLY"
 }
