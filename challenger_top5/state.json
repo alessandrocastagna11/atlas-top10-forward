@@ -1,16 +1,16 @@
 {
-  "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
+  "capital_gains_tax_eur": 0,
   "capital_initial_eur": 10000,
-  "orders": [],
-  "positions": {},
   "cash_eur": 10000,
+  "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
+  "equity_history": {},
+  "exposure": 0,
+  "fees_eur": 0,
   "nav_eur": 10000,
   "nav_net_liquidation_eur": 10000,
-  "exposure": 0,
-  "valuation_session": null,
-  "fees_eur": 0,
+  "orders": [],
+  "positions": {},
   "slippage_eur": 0,
-  "capital_gains_tax_eur": 0,
   "tax_eur": 0,
-  "equity_history": {}
+  "valuation_session": null
 }

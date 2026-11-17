@@ -1,0 +1,68 @@
+{
+  "candidate_exchange_opens": {
+    "CB": {
+      "date": "2026-11-17",
+      "utc": "2026-11-17T14:30:00+00:00"
+    },
+    "DE": {
+      "date": "2026-11-17",
+      "utc": "2026-11-17T14:30:00+00:00"
+    },
+    "KO": {
+      "date": "2026-11-17",
+      "utc": "2026-11-17T14:30:00+00:00"
+    },
+    "MRK": {
+      "date": "2026-11-17",
+      "utc": "2026-11-17T14:30:00+00:00"
+    },
+    "PANW": {
+      "date": "2026-11-17",
+      "utc": "2026-11-17T14:30:00+00:00"
+    }
+  },
+  "decision_session": "2026-11-16",
+  "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
+  "execution_session": "2026-11-17",
+  "first_recorded_at_utc": "2026-11-17T09:43:25.184476+00:00",
+  "preopen_eligible": true,
+  "roster_sha256": "56f647a6d681388cc9dc2d5b4832138842fc3716ac7a0dd68607ef6b6427eb55",
+  "source_commit": "8fc5b9e288407b6e9e970dde533a3259394dd1f0",
+  "targets": [
+    {
+      "rank": 13.0,
+      "score": 1.12649963,
+      "sector": "XLP",
+      "target_weight": 0.2,
+      "ticker": "KO"
+    },
+    {
+      "rank": 16.0,
+      "score": 1.0701393,
+      "sector": "XLK",
+      "target_weight": 0.19493954,
+      "ticker": "PANW"
+    },
+    {
+      "rank": 20.0,
+      "score": 0.96680155,
+      "sector": "XLV",
+      "target_weight": 0.2,
+      "ticker": "MRK"
+    },
+    {
+      "rank": 22.0,
+      "score": 0.93129458,
+      "sector": "XLI",
+      "target_weight": 0.19506046,
+      "ticker": "DE"
+    },
+    {
+      "rank": 23.0,
+      "score": 0.91430358,
+      "sector": "XLF",
+      "target_weight": 0.2,
+      "ticker": "CB"
+    }
+  ]
+}
