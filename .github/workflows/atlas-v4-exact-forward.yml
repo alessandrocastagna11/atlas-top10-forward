@@ -1,6 +1,9 @@
 name: Atlas V4 ORIGINAL Confidence70 — forward PAPER
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/atlas-v4-exact-forward.yml']
   # Avoid a flood of temporary CI failures from intermediate code pushes.
   # Scheduled original-PAPER updates and explicit manual runs remain enabled.
   schedule:
@@ -120,6 +123,10 @@ jobs:
               print('::error::V4 model/plan failed; paper account alone does not prove success. '
                     +str(status.get('signal_engine_error') or plan.get('reason') or engine))
               raise SystemExit(1)
+          if status.get('shared_input_status')!='PUBLISHED_LOSSLESS' or not status.get('shared_input',{}).get('sha256'):
+              print('::error::Common snapshot unavailable: '+str(status.get('shared_input_error')))
+              raise SystemExit(1)
+          print('COMMON INPUT SHA256',status['shared_input']['sha256'])
           print('V4 ORIGINAL SIGNAL HEALTHY',status.get('decision_session'),
                 status.get('data_universe'),
                 status.get('short_history_excluded_from_daily_universe',[]))
