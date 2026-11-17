@@ -104,7 +104,9 @@ def universe_snapshot(today):
         raise DataUnavailable('iShares holdings schema changed')
     ranked={}
     for row in reader:
-        if row['Asset Class'].strip().lower()!='equity':continue
+        # iShares CSV may append blank/footer rows with missing DictReader values.
+        if str(row.get('Asset Class') or '').strip().lower()!='equity':continue
+        if not all(str(row.get(k) or '').strip() for k in ('Name','Ticker','Location','Exchange','Market Currency')):continue
         value=parse_num(row['Market Value'])
         if value<=0:continue
         key=re.sub('[^A-Z0-9]+',' ',row['Name'].upper()).strip()
@@ -288,11 +290,15 @@ def main():
     provider=YahooChart()
     metrics=[];errors=[]
     for fx in required_fx:
-        try:metrics.append(update_history(provider,fx,'fx',today,base))
+        try:
+            local_today=dt.datetime.now(dt.timezone.utc).astimezone(ZoneInfo(venue(fx)[1].zone)).date()
+            metrics.append(update_history(provider,fx,'fx',local_today,base))
         except (DataUnavailable,OSError,ValueError) as e:errors.append({'kind':'fx','symbol':fx,'error':str(e)[:220]})
         time.sleep(0.15)
     for i,symbol in enumerate(symbols,1):
-        try:metrics.append(update_history(provider,symbol,'prices',today,base))
+        try:
+            local_today=dt.datetime.now(dt.timezone.utc).astimezone(ZoneInfo(venue(symbol)[1].zone)).date()
+            metrics.append(update_history(provider,symbol,'prices',local_today,base))
         except (DataUnavailable,OSError,ValueError) as e:errors.append({'kind':'prices','symbol':symbol,'error':str(e)[:220]})
         if i%30==0:print(f'progress: {i}/{len(symbols)} symbols',flush=True)
         time.sleep(0.15)
