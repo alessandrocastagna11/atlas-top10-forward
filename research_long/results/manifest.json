@@ -1,0 +1,21 @@
+{
+  "dataset": "Johnbrick123/sp500-data release data",
+  "sha256": {
+    "members.parquet": "bf1442381cdb03cef926c86767861bf44e5633bd092bf92de735f4a088f8a8af",
+    "prices.parquet": "42c80e69b854c85d7133d32d9cd43836a64aa8de7c8b4738d62986220527040f",
+    "recycled_tickers.csv": "58cf35bc54c5c7d93c5ea60039965bc4293cf8fdfb29bedef0b8aac369c16375"
+  },
+  "first_adequate_date": "2010-03-01",
+  "last_adequate_date": "2026-11-04",
+  "recycled_excluded": 0,
+  "limitations": [
+    "USA only, historical S&P500 membership not world market-cap universe",
+    "Top100 by lagged trailing dollar volume, not issuer market cap",
+    "Market-only residual; dated sector classifications unavailable, no genuine sector weight caps",
+    "USD nominal account, no historical EUR conversion; zero cash yield",
+    "Adjusted total return units, tax on simulated gains with historical engine tax proxy, no separate dividend withholding",
+    "Nominal $50m daily liquidity filter preserved; weak coverage/exposure before the modern era",
+    "No unobserved fills; after 5 missing bars original engine marks missing holdings at zero and may retain locked slots; delisting proceeds not separately modeled",
+    "Not exact Atlas replay; no parameter tuning"
+  ]
+}
