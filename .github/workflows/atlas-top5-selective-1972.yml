@@ -1,0 +1,55 @@
+name: Atlas Top5 selective crisis research
+on:
+  push:
+    branches: ['research/atlas-1972-top5-selective']
+    paths: ['research_long/run_top5_selective_1972.py','.github/workflows/atlas-top5-selective-1972.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: atlas-top5-selective-1972
+  cancel-in-progress: false
+jobs:
+  research:
+    if: github.ref == 'refs/heads/research/atlas-1972-top5-selective'
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install research dependencies
+        run: |
+          python -m pip install -r strict_shadow/v4_exact_source/requirements-live.txt
+          python -m pip install 'pyarrow==18.1.0'
+          python -c "import pyarrow, pyarrow.parquet, pandas; print(pyarrow.__version__)"
+      - name: Acquire historical constituents, close prices and independent benchmark
+        run: |
+          mkdir -p /tmp/atlas-long
+          for f in membership_intervals.parquet prices.parquet recycled_tickers.csv; do
+            curl --fail --location --retry 3 --max-time 300 "https://github.com/Johnbrick123/sp500-data/releases/download/data/$f" -o "/tmp/atlas-long/$f"
+          done
+          curl --fail --location --retry 3 --max-time 120 'https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Research_Data_Factors_daily_CSV.zip' -o /tmp/atlas-long/ff_daily.zip
+          sha256sum /tmp/atlas-long/*
+      - name: Execute matched research comparison
+        run: |
+          python -m py_compile research_long/research_simulator.py research_long/run_top5_selective_1972.py research_long/fast_risk.py
+          OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -u research_long/run_top5_selective_1972.py /tmp/atlas-long
+      - name: Preserve only research output
+        if: always()
+        run: |
+          if [ -d research_long/results_top5_selective_1972 ]; then
+            git config user.name "Atlas research bot"
+            git config user.email "atlas-research@users.noreply.github.com"
+            git add research_long/results_top5_selective_1972
+            if ! git diff --cached --quiet; then
+              git commit -m "Top5 selective crisis filter research comparison"
+              git push origin HEAD:research/atlas-1972-top5-selective
+            fi
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: atlas-top5-selective-1972
+          path: research_long/results_top5_selective_1972
