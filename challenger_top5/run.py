@@ -16,6 +16,7 @@ SOURCE=ROOT.parent/'confidence_source'/'strict_shadow'/'v4_exact_source'
 sys.path.insert(0,str(SOURCE))
 import live_model as lm
 import run_live as rl
+from shared_inputs import load as load_shared_inputs
 
 START=pd.Timestamp('2026-11-18')
 INITIAL=10000.
@@ -76,20 +77,13 @@ def load_model():
     asof=dt.date.fromisoformat(source_status['decision_session'])
     if (dt.datetime.now(UTC).date()-asof).days>4:
         raise ValueError('Confidence70 source too stale')
-    excluded=set(source_status.get('short_history_excluded_from_daily_universe',[]))|set(source_status.get('wrong_currency_excluded_from_daily_universe',[]))
-    vintages=lm.latest_vintages(asof,excluded_symbols=excluded)
-    roster=[r for v in vintages for r in v[3]+v[4]]
-    required={str(r['symbol']).upper() for r in roster}|set(lm.SECTOR.values())|{'SPY','EURUSD=X'}
-    required|={'EUR'+str(r['currency']).upper()+'=X' for r in roster if str(r['currency']).upper()!='EUR'}
-    frames,failed=lm.get_adjusted(required,asof,max_workers=8)
-    if failed:raise ValueError('Shared universe data unavailable: '+str(failed)[:500])
-    for row in roster:
-        symbol=str(row['symbol']).upper()
-        q=frames[symbol].get('quote_currency')
-        if q is not None and not q.dropna().empty and str(q.dropna().iloc[-1]).upper()!=str(row['currency']).upper():
-            raise ValueError('Shared universe quote currency mismatch '+symbol)
+    source_meta=source_status.get('source',{})
+    if source_status.get('shared_input_status')!='PUBLISHED_LOSSLESS':
+        raise ValueError('No verified common input snapshot from Confidence70')
+    descriptor=source_status.get('shared_input')
+    vintages,frames,cash_rate=load_shared_inputs(SOURCE/'forward',descriptor,asof,source_meta.get('roster_sha256'))
     lm.START_PAPER=START
-    model,meta=lm.build_model(vintages,asof,frames)
+    model,meta=lm.build_model(vintages,asof,frames,shared_cash_rate=cash_rate)
     source_meta=source_status.get('source',{})
     if not source_meta.get('roster_sha256') or meta['roster_sha256']!=source_meta['roster_sha256'] or meta['roster_recorded_date']!=source_meta.get('roster_recorded_date'):
         raise ValueError('Roster hash/date differs from original; fail closed')
@@ -97,6 +91,11 @@ def load_model():
         raise ValueError('Historical universe symbol set differs from original')
     if meta['active_roster_names']!=300 or int(model.membership.loc[pd.Timestamp(asof)].sum())!=300:
         raise ValueError('Expected exactly 300 active names')
+    for key in ('ticker_price_dates','fx_currency_source_sessions','fx_units_per_eur_asof','dated_vintages_applied'):
+        if meta.get(key)!=source_meta.get(key):
+            raise ValueError('Shared model input provenance mismatch: '+key)
+    meta['shared_input']=descriptor
+    meta['input_mode']='SAME_LOSSLESS_SNAPSHOT_NO_REFETCH'
     cfg=setup(model,vintages)
     return model,meta,cfg,pd.Timestamp(asof),source_status
 
@@ -181,7 +180,7 @@ def main():
     status={'engine':ENGINE,'checked_at_utc':now.isoformat(),'paper_only':True,'real_money_orders':0,'status':'PENDING','historical_pit_certified':False,'forward_parity_certified':False,'execution_model':'completed actual local-session bar open with indicative previous-day EUR FX; simulated, not broker fills'}
     try:
         m,meta,cfg,asof,original=load_model()
-        status.update({'decision_session':str(asof.date()),'source':meta,'universe_same_hash':True,'universe_kind':meta['universe_kind'],'original_nav_eur':original.get('nav_eur')})
+        status.update({'decision_session':str(asof.date()),'source':meta,'universe_same_hash':True,'shared_input_sha256':meta['shared_input']['sha256'],'shared_input_verified':True,'same_price_dates_and_fx':True,'universe_kind':meta['universe_kind'],'original_nav_eur':original.get('nav_eur')})
         signals={p.stem:read(p) for p in SIGNALS.glob('*.json')}
         result,orders,missed=replay(m,cfg,asof,old,signals)
         if result is None:
@@ -213,10 +212,12 @@ def main():
         preopen=bool(targets) and all(x['date']==str(execution) and now<dt.datetime.fromisoformat(x['utc']) for x in opens.values())
         signal={'engine':ENGINE,'decision_session':str(asof.date()),'first_recorded_at_utc':now.isoformat(),
                 'execution_session':str(execution),'preopen_eligible':preopen,'targets':targets,'candidate_exchange_opens':opens,
-                'roster_sha256':meta['roster_sha256'],'source_commit':subprocess.check_output(['git','-C',str(SOURCE),'rev-parse','HEAD'],text=True).strip()}
+                'roster_sha256':meta['roster_sha256'],'shared_input_sha256':meta['shared_input']['sha256'],'source_commit':subprocess.check_output(['git','-C',str(SOURCE),'rev-parse','HEAD'],text=True).strip()}
         path=SIGNALS/(str(asof.date())+'.json')
         if not path.exists():write(path,signal)
         else:signal=read(path)
+        status['archived_signal_input_sha256']=signal.get('shared_input_sha256')
+        status['archived_signal_matches_current_input']=signal.get('shared_input_sha256')==meta['shared_input']['sha256']
         newly=state['orders'][len(old.get('orders',[])):]
         status.update({'status':'PAPER_MODEL_READY' if signal['preopen_eligible'] else 'SIGNAL_READY_NOT_PREOPEN_ELIGIBLE',
                        'signal':signal,'new_orders':len(newly),'paper_orders_new':newly,'missed_decisions':missed,
