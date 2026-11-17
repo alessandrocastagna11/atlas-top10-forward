@@ -1,0 +1,62 @@
+name: Atlas shared asynchronous market data monitor (READ ONLY)
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '7 * * * *'
+    - cron: '37 * * * *'
+permissions:
+  contents: write
+concurrency:
+  group: atlas-market-data-monitor-only
+  cancel-in-progress: true
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout monitor code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: monitor
+          persist-credentials: false
+      - name: Read original account and source roster without write credentials
+        uses: actions/checkout@v4
+        with:
+          ref: atlas-v4-confidence70-live-paper
+          path: original
+          persist-credentials: false
+      - name: Read independent Top5 account without write credentials
+        uses: actions/checkout@v4
+        with:
+          ref: atlas-top5-mom10-live-paper
+          path: challenger
+          persist-credentials: false
+      - name: Checkout isolated monitor output branch
+        uses: actions/checkout@v4
+        with:
+          ref: atlas-market-data-live
+          path: output
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate monitor Python syntax
+        run: python -m py_compile monitor/atlas_data_monitor/monitor.py
+      - name: Refresh observed capitalizations on the hourly pass, in read-only source copy
+        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '7 * * * *'
+        continue-on-error: true
+        timeout-minutes: 5
+        run: python original/strict_shadow/v4_exact_source/marketcap_pit.py
+      - name: Capture latest reported quotes and completed local daily bars; never call either model
+        run: |
+          python monitor/atlas_data_monitor/monitor.py --source original --challenger challenger --out output/atlas_market_data
+      - name: Publish monitor snapshots only; no account branch pushes
+        working-directory: output
+        run: |
+          git config user.name "Atlas Market Monitor Bot"
+          git config user.email "atlas-market-monitor@users.noreply.github.com"
+          git add -A atlas_market_data
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Market observation $(date -u +%FT%TZ)"
+          git pull --rebase origin atlas-market-data-live
+          git push origin HEAD:atlas-market-data-live
