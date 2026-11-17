@@ -120,9 +120,17 @@ def indicative_nav(portfolio, quotes, symbol_map=None):
     missing=[]
     records=[]
     def usable(row):
-        return (row and positive(row.get("quote_price")) and
-                row.get("quote_status") in ("INDICATIVE_INTRADAY","LAST_REPORTED_QUOTE_OUTSIDE_VENDOR_SESSION")
-                and (row.get("vendor_session_open") or row.get("daily_status")=="LATEST_EXPECTED_NORMAL_CLOSE_PRESENT"))
+        if not row:
+            return False
+        if row.get("vendor_session_open"):
+            return row.get("quote_status")=="INDICATIVE_INTRADAY" and positive(row.get("quote_price"))
+        return (row.get("daily_status")=="LATEST_EXPECTED_NORMAL_CLOSE_PRESENT" and
+                positive((row.get("last_confirmed_daily_bar") or {}).get("price")))
+    def mark(row):
+        if row.get("vendor_session_open"):
+            return row["quote_price"], row["quote_at_utc"]
+        bar=row["last_confirmed_daily_bar"]
+        return bar["price"], "DAILY_SESSION:"+bar["session"]
     for h in holdings:
         ticker=h.get("ticker")
         symbol=h.get("market_symbol") or (symbol_map or {}).get(ticker,ticker)
@@ -135,16 +143,17 @@ def indicative_nav(portfolio, quotes, symbol_map=None):
         if ccy=="EUR": rate=1.
         elif ccy=="SAR":
             rates=[quotes.get("EURUSD=X"),quotes.get("USDSAR=X")]
-            rate=rates[0]["quote_price"]*rates[1]["quote_price"] if all(usable(x) for x in rates) else None
+            rate=mark(rates[0])[0]*mark(rates[1])[0] if all(usable(x) for x in rates) else None
         else:
             rates=[quotes.get("EUR"+ccy+"=X")]
-            rate=rates[0]["quote_price"] if usable(rates[0]) else None
+            rate=mark(rates[0])[0] if usable(rates[0]) else None
         if not positive(rate):
             missing.append(symbol+" FX");continue
-        value=qty*q["quote_price"]/rate
+        px,quote_at=mark(q)
+        value=qty*px/rate
         records.append({"symbol":symbol,"shares":qty,"value_eur":round(value,4),
-                        "quote_at_utc":q["quote_at_utc"],
-                        "fx_quote_at_utc":[x["quote_at_utc"] for x in rates]})
+                        "quote_source_time":quote_at,
+                        "fx_quote_source_times":[mark(x)[1] for x in rates]})
         total+=value
     return {"status":"PENDING_INCOMPLETE_QUOTES" if missing else "INDICATIVE_MIXED_TIMESTAMP_NOT_LEDGER",
             "nav_eur":None if missing else round(total,4),"cash_eur":cash,"missing":missing,"holdings":records}
@@ -192,8 +201,15 @@ def main():
         tmp.write_text(json.dumps(obj,indent=2,sort_keys=True,allow_nan=False)+"\n",encoding="utf-8")
         os.replace(tmp,out/name)
     save("quotes.json",quotes)
-    if cap:
-        # Export only the named observation after containment validation.
+    # The half-hour pass must never overwrite a newer hourly capture with
+    # an older copy from the original branch. Preserve the last valid timestamp.
+    previous=load(out/"latest_status.json") or {}
+    previous_cap=previous.get("capitalization")
+    cap_attempt=cap
+    cap_stamp=(cap or {}).get("observed_at_utc") or ""
+    old_stamp=(previous_cap or {}).get("observed_at_utc") or ""
+    published=False
+    if cap_stamp and cap_stamp>=old_stamp:
         location=cap.get("latest_observation_path")
         if location:
             d=(live/"dataset"/location).resolve()
@@ -201,6 +217,9 @@ def main():
                 tmp=out/"capitalization_latest.csv.tmp"
                 tmp.write_bytes((d/"ranking.csv").read_bytes())
                 os.replace(tmp,out/"capitalization_latest.csv")
+                published=True
+    if not published:
+        cap=previous_cap if old_stamp and (out/"capitalization_latest.csv").is_file() else None
     counts={}
     for r in quotes:
         key=r["quote_status"];counts[key]=counts.get(key,0)+1
@@ -210,7 +229,7 @@ def main():
         "started_at_utc":before.isoformat(),"finished_at_utc":dt.datetime.now(UTC).isoformat(),
         "symbols_requested":len(symbols),"quote_counts":counts,"expected_close_pending":expected_pending,
         "normal_session_calendar_only":True,"acwi_roster_sha256":hashlib.sha256(roster.read_bytes()).hexdigest(),
-        "acwi_members":len(members),"capitalization":cap,
+        "acwi_members":len(members),"capitalization":cap,"capitalization_source_attempt":cap_attempt,
         "official_original":indicative_nav(portfolio,by_symbol,symbol_map),
         "challenger_top5":indicative_nav(challenger,by_symbol,symbol_map)})
     print("ATLAS MONITOR",counts,"expected close pending",len(expected_pending))
