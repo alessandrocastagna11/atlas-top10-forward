@@ -56,7 +56,13 @@ jobs:
           if [ -d challenger_top5/signals ]; then git add -- challenger_top5/signals; fi
           if ! git diff --cached --quiet; then
             git commit -m "Atlas Top5 MOM10 PAPER $(date -u +%FT%TZ)"
-            git push origin HEAD:atlas-top5-mom10-live-paper
+            for attempt in 1 2 3; do
+              git fetch origin atlas-top5-mom10-live-paper
+              git rebase origin/atlas-top5-mom10-live-paper || { git rebase --abort; exit 1; }
+              if git push origin HEAD:atlas-top5-mom10-live-paper; then exit 0; fi
+              sleep 5
+            done
+            exit 1
           fi
       - name: Summarize
         if: always()
