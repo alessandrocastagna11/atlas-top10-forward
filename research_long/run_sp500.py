@@ -56,7 +56,7 @@ prices['valid']=actual
 prices['open_verified']=hasopen
 # A real next-session close is an explicitly approximate execution reference
 # when the source has no actual opening price, never a backdated prior close.
-prices['adj_open']=np.where(hasopen,prices.open*prices.adj_close/prices.close,prices.adj_close).where(hasclose)
+prices['adj_open']=prices.adj_close.where(~hasopen,prices.open*prices.adj_close/prices.close).where(hasclose)
 prices['tradable_close']=prices.adj_close.where(hasclose)
 prices['dollar_volume']=(prices.close*prices.volume).where(actual)
 prices['raw_trade_close']=prices.close.where(hasclose)
