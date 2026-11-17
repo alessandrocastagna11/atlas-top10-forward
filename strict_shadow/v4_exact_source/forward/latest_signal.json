@@ -1,126 +1,126 @@
 {
-  "any_market_preopen_eligible": true,
+  "any_market_preopen_eligible": false,
   "candidate_count": 300,
   "cutoff_utc": "2026-11-17T14:00:00+00:00",
-  "decision_model_sha256": "d02bfaf1576dfa47f9428b2f365b30e1a83d00383c7375b0fcd9017059acbbda",
+  "decision_model_sha256": "df0b8b855dc1880e4a428138392cd955201297ff5a9eebe7c49f6acbff0a469f",
   "decision_session": "2026-11-16",
   "earliest_open_utc": "2026-11-17T14:30:00+00:00",
   "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
   "exchange_execution_policy": "PER_SYMBOL_NEXT_UNOBSERVED_OPEN",
   "execution_session": "2026-11-17",
-  "market_data_first_observed_before_open": true,
-  "model_source_sha256": "fb5c30ec3a0907b727ad8b1f628f97d52fed37e65ab4701ee442932cecf5f1ad",
-  "original_proof_archived": true,
+  "market_data_first_observed_before_open": false,
+  "model_source_sha256": "25a12a49968fcb3ed304006abc3c6b5e09167a431d6ac9458110661a91591281",
+  "not_authorized_for_original_past_open": true,
   "per_symbol_exchange_plan": {
     "CB": {
-      "attested_before_first_candidate_open": true,
+      "attested_before_first_candidate_open": false,
       "exchange_holiday_calendar_verified": false,
       "execution_quote_required": true,
       "first_candidate_cutoff_utc": "2026-11-17T14:00:00+00:00",
       "first_candidate_open_utc": "2026-11-17T14:30:00+00:00",
       "first_candidate_session": "2026-11-17",
-      "next_eligible_local_session": "2026-11-17",
-      "next_eligible_open_utc": "2026-11-17T14:30:00+00:00",
-      "status": "PENDING_FIRST_LOCAL_OPEN"
+      "next_eligible_local_session": "2026-11-18",
+      "next_eligible_open_utc": "2026-11-18T14:30:00+00:00",
+      "status": "DEFERRED_PAST_FIRST_LOCAL_OPEN"
     },
     "DE": {
-      "attested_before_first_candidate_open": true,
+      "attested_before_first_candidate_open": false,
       "exchange_holiday_calendar_verified": false,
       "execution_quote_required": true,
       "first_candidate_cutoff_utc": "2026-11-17T14:00:00+00:00",
       "first_candidate_open_utc": "2026-11-17T14:30:00+00:00",
       "first_candidate_session": "2026-11-17",
-      "next_eligible_local_session": "2026-11-17",
-      "next_eligible_open_utc": "2026-11-17T14:30:00+00:00",
-      "status": "PENDING_FIRST_LOCAL_OPEN"
+      "next_eligible_local_session": "2026-11-18",
+      "next_eligible_open_utc": "2026-11-18T14:30:00+00:00",
+      "status": "DEFERRED_PAST_FIRST_LOCAL_OPEN"
     },
     "JNJ": {
-      "attested_before_first_candidate_open": true,
+      "attested_before_first_candidate_open": false,
       "exchange_holiday_calendar_verified": false,
       "execution_quote_required": true,
       "first_candidate_cutoff_utc": "2026-11-17T14:00:00+00:00",
       "first_candidate_open_utc": "2026-11-17T14:30:00+00:00",
       "first_candidate_session": "2026-11-17",
-      "next_eligible_local_session": "2026-11-17",
-      "next_eligible_open_utc": "2026-11-17T14:30:00+00:00",
-      "status": "PENDING_FIRST_LOCAL_OPEN"
+      "next_eligible_local_session": "2026-11-18",
+      "next_eligible_open_utc": "2026-11-18T14:30:00+00:00",
+      "status": "DEFERRED_PAST_FIRST_LOCAL_OPEN"
     },
     "KO": {
-      "attested_before_first_candidate_open": true,
+      "attested_before_first_candidate_open": false,
       "exchange_holiday_calendar_verified": false,
       "execution_quote_required": true,
       "first_candidate_cutoff_utc": "2026-11-17T14:00:00+00:00",
       "first_candidate_open_utc": "2026-11-17T14:30:00+00:00",
       "first_candidate_session": "2026-11-17",
-      "next_eligible_local_session": "2026-11-17",
-      "next_eligible_open_utc": "2026-11-17T14:30:00+00:00",
-      "status": "PENDING_FIRST_LOCAL_OPEN"
+      "next_eligible_local_session": "2026-11-18",
+      "next_eligible_open_utc": "2026-11-18T14:30:00+00:00",
+      "status": "DEFERRED_PAST_FIRST_LOCAL_OPEN"
     },
     "MO": {
-      "attested_before_first_candidate_open": true,
+      "attested_before_first_candidate_open": false,
       "exchange_holiday_calendar_verified": false,
       "execution_quote_required": true,
       "first_candidate_cutoff_utc": "2026-11-17T14:00:00+00:00",
       "first_candidate_open_utc": "2026-11-17T14:30:00+00:00",
       "first_candidate_session": "2026-11-17",
-      "next_eligible_local_session": "2026-11-17",
-      "next_eligible_open_utc": "2026-11-17T14:30:00+00:00",
-      "status": "PENDING_FIRST_LOCAL_OPEN"
+      "next_eligible_local_session": "2026-11-18",
+      "next_eligible_open_utc": "2026-11-18T14:30:00+00:00",
+      "status": "DEFERRED_PAST_FIRST_LOCAL_OPEN"
     },
     "MRK": {
-      "attested_before_first_candidate_open": true,
+      "attested_before_first_candidate_open": false,
       "exchange_holiday_calendar_verified": false,
       "execution_quote_required": true,
       "first_candidate_cutoff_utc": "2026-11-17T14:00:00+00:00",
       "first_candidate_open_utc": "2026-11-17T14:30:00+00:00",
       "first_candidate_session": "2026-11-17",
-      "next_eligible_local_session": "2026-11-17",
-      "next_eligible_open_utc": "2026-11-17T14:30:00+00:00",
-      "status": "PENDING_FIRST_LOCAL_OPEN"
+      "next_eligible_local_session": "2026-11-18",
+      "next_eligible_open_utc": "2026-11-18T14:30:00+00:00",
+      "status": "DEFERRED_PAST_FIRST_LOCAL_OPEN"
     },
     "PANW": {
-      "attested_before_first_candidate_open": true,
+      "attested_before_first_candidate_open": false,
       "exchange_holiday_calendar_verified": false,
       "execution_quote_required": true,
       "first_candidate_cutoff_utc": "2026-11-17T14:00:00+00:00",
       "first_candidate_open_utc": "2026-11-17T14:30:00+00:00",
       "first_candidate_session": "2026-11-17",
-      "next_eligible_local_session": "2026-11-17",
-      "next_eligible_open_utc": "2026-11-17T14:30:00+00:00",
-      "status": "PENDING_FIRST_LOCAL_OPEN"
+      "next_eligible_local_session": "2026-11-18",
+      "next_eligible_open_utc": "2026-11-18T14:30:00+00:00",
+      "status": "DEFERRED_PAST_FIRST_LOCAL_OPEN"
     },
     "TXN": {
-      "attested_before_first_candidate_open": true,
+      "attested_before_first_candidate_open": false,
       "exchange_holiday_calendar_verified": false,
       "execution_quote_required": true,
       "first_candidate_cutoff_utc": "2026-11-17T14:00:00+00:00",
       "first_candidate_open_utc": "2026-11-17T14:30:00+00:00",
       "first_candidate_session": "2026-11-17",
-      "next_eligible_local_session": "2026-11-17",
-      "next_eligible_open_utc": "2026-11-17T14:30:00+00:00",
-      "status": "PENDING_FIRST_LOCAL_OPEN"
+      "next_eligible_local_session": "2026-11-18",
+      "next_eligible_open_utc": "2026-11-18T14:30:00+00:00",
+      "status": "DEFERRED_PAST_FIRST_LOCAL_OPEN"
     },
     "UNP": {
-      "attested_before_first_candidate_open": true,
+      "attested_before_first_candidate_open": false,
       "exchange_holiday_calendar_verified": false,
       "execution_quote_required": true,
       "first_candidate_cutoff_utc": "2026-11-17T14:00:00+00:00",
       "first_candidate_open_utc": "2026-11-17T14:30:00+00:00",
       "first_candidate_session": "2026-11-17",
-      "next_eligible_local_session": "2026-11-17",
-      "next_eligible_open_utc": "2026-11-17T14:30:00+00:00",
-      "status": "PENDING_FIRST_LOCAL_OPEN"
+      "next_eligible_local_session": "2026-11-18",
+      "next_eligible_open_utc": "2026-11-18T14:30:00+00:00",
+      "status": "DEFERRED_PAST_FIRST_LOCAL_OPEN"
     },
     "WELL": {
-      "attested_before_first_candidate_open": true,
+      "attested_before_first_candidate_open": false,
       "exchange_holiday_calendar_verified": false,
       "execution_quote_required": true,
       "first_candidate_cutoff_utc": "2026-11-17T14:00:00+00:00",
       "first_candidate_open_utc": "2026-11-17T14:30:00+00:00",
       "first_candidate_session": "2026-11-17",
-      "next_eligible_local_session": "2026-11-17",
-      "next_eligible_open_utc": "2026-11-17T14:30:00+00:00",
-      "status": "PENDING_FIRST_LOCAL_OPEN"
+      "next_eligible_local_session": "2026-11-18",
+      "next_eligible_open_utc": "2026-11-18T14:30:00+00:00",
+      "status": "DEFERRED_PAST_FIRST_LOCAL_OPEN"
     }
   },
   "preopen_selected_symbols": [
@@ -135,12 +135,11 @@
     "MO",
     "UNP"
   ],
-  "produced_at_utc": "2026-11-17T05:03:43.238347+00:00",
-  "revision_reason": "CORRECTED_CAUSAL_ROSTER_AND_INITIAL_ALPHA",
-  "risk_state": 0.5519827229481771,
+  "prior_sha256": "d02bfaf1576dfa47f9428b2f365b30e1a83d00383c7375b0fcd9017059acbbda",
+  "produced_at_utc": "2026-11-17T15:34:29.679077+00:00",
+  "recomputed_sha256": "df0b8b855dc1880e4a428138392cd955201297ff5a9eebe7c49f6acbff0a469f",
+  "risk_state": 0.5519827250175335,
   "roster_sha256": "56f647a6d681388cc9dc2d5b4832138842fc3716ac7a0dd68607ef6b6427eb55",
   "signal_published": true,
-  "status": "ATTESTED_CORRECTION_BEFORE_OPEN",
-  "superseded_archive": "superseded/2026-11-16_9633a8e356440ca6.json",
-  "supersedes_sha256": "9633a8e356440ca6394289889a81ffe9433578eb3526943674446b5af6934333"
+  "status": "SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF"
 }

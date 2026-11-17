@@ -5,7 +5,7 @@
 **Stato:** `PAPER_APPROX_LEDGER_ACTIVE` — **Validità della valutazione:** `PAPER_LAST_EOD_CLOSE_APPROXIMATE_FILLS_NOT_REAL_BROKER_ORDERS`
 
 **Motore segnali:** SIGNAL_READY; errore: nessuno
-**Capitalizzazione osservata:** 2026-11-17; copertura USA/RoW: 279/203; NON PIT storico
+**Capitalizzazione osservata:** 2026-11-17; copertura USA/RoW: 281/202; NON PIT storico
 **Titoli sostituiti per storico insufficiente:** SPCX
 
 **Ultima sessione decisionale:** 2026-11-16
@@ -13,10 +13,10 @@
 **Dati mercato / universo:** MARKET_CAP_USD_AS_RECORDED_WITHIN_ACWI_NOT_HISTORICAL_PIT; fotografia utilizzata al 2026-11-16
 **Universo dinamico:** 11 fotografie cronologiche, ultima disponibile 2026-11-16; nuove società eleggibili SOLO dalla data registrata
 **Primo segnale / apertura successiva:** 2026-11-16 / 2026-11-17
-**Candidati segnalati (NON ORDINI):** KO, CB, MRK, JNJ, PANW, TXN, DE, WELL, MO, UNP; verifica: ATTESTED_CORRECTION_BEFORE_OPEN
-**Segnale originale pubblicato:** SÌ; esito: ATTESTED_CORRECTION_BEFORE_OPEN
+**Candidati segnalati (NON ORDINI):** KO, CB, MRK, JNJ, PANW, TXN, DE, WELL, MO, UNP; verifica: SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF
+**Segnale originale pubblicato:** SÌ; esito: SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF
 **Contabilità paper:** FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY — prezzi degli ordini APPROSSIMATI; nessun ordine reale.
-**Ultimo aggiornamento portafoglio:** 2026-11-17T05:04:00.831804+00:00; fonte ultimo prezzo 2026-11-16.
+**Ultimo aggiornamento portafoglio:** 2026-11-17T15:34:56.340403+00:00; fonte ultimo prezzo 2026-11-16.
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
 
 ## Segnali, proposte e ordini: tre cose diverse
@@ -62,16 +62,16 @@
 
 | Titolo | Primo mercato utile | Stato del segnale | Prossima apertura locale prevista (UTC)* |
 |---|---|---|---|
-| CB | 2026-11-17 | PENDING_FIRST_LOCAL_OPEN | 2026-11-17T14:30:00+00:00 |
-| DE | 2026-11-17 | PENDING_FIRST_LOCAL_OPEN | 2026-11-17T14:30:00+00:00 |
-| JNJ | 2026-11-17 | PENDING_FIRST_LOCAL_OPEN | 2026-11-17T14:30:00+00:00 |
-| KO | 2026-11-17 | PENDING_FIRST_LOCAL_OPEN | 2026-11-17T14:30:00+00:00 |
-| MO | 2026-11-17 | PENDING_FIRST_LOCAL_OPEN | 2026-11-17T14:30:00+00:00 |
-| MRK | 2026-11-17 | PENDING_FIRST_LOCAL_OPEN | 2026-11-17T14:30:00+00:00 |
-| PANW | 2026-11-17 | PENDING_FIRST_LOCAL_OPEN | 2026-11-17T14:30:00+00:00 |
-| TXN | 2026-11-17 | PENDING_FIRST_LOCAL_OPEN | 2026-11-17T14:30:00+00:00 |
-| UNP | 2026-11-17 | PENDING_FIRST_LOCAL_OPEN | 2026-11-17T14:30:00+00:00 |
-| WELL | 2026-11-17 | PENDING_FIRST_LOCAL_OPEN | 2026-11-17T14:30:00+00:00 |
+| CB | 2026-11-17 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-18T14:30:00+00:00 |
+| DE | 2026-11-17 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-18T14:30:00+00:00 |
+| JNJ | 2026-11-17 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-18T14:30:00+00:00 |
+| KO | 2026-11-17 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-18T14:30:00+00:00 |
+| MO | 2026-11-17 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-18T14:30:00+00:00 |
+| MRK | 2026-11-17 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-18T14:30:00+00:00 |
+| PANW | 2026-11-17 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-18T14:30:00+00:00 |
+| TXN | 2026-11-17 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-18T14:30:00+00:00 |
+| UNP | 2026-11-17 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-18T14:30:00+00:00 |
+| WELL | 2026-11-17 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-18T14:30:00+00:00 |
 
 *Orari indicativi: festività, sospensioni e quotazioni reali devono essere verificate dal provider. Il segnale non equivale a un acquisto; un mercato già aperto non autorizza esecuzioni retroattive.*
 

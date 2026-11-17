@@ -1,97 +1,97 @@
 {
   "caveat": "Retroactive ECB history is not evidence of a historical timestamped PIT archive",
-  "checked_at_utc": "2026-11-17T09:46:48.994714+00:00",
+  "checked_at_utc": "2026-11-17T15:34:10.070178+00:00",
   "currencies_with_history": 16,
   "currency_coverage": {
     "AUD": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     },
     "BRL": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     },
     "CAD": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     },
     "CHF": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     },
     "DKK": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     },
     "GBP": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     },
     "HKD": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     },
     "INR": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     },
     "JPY": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     },
     "KRW": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     },
     "NOK": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     },
     "SEK": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     },
     "SGD": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     },
     "TWD": {
@@ -102,17 +102,17 @@
       "revisions": 0
     },
     "USD": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     },
     "ZAR": {
-      "count": 3806,
+      "count": 3807,
       "first": "2012-01-02",
-      "last": "2026-11-16",
-      "new": 0,
+      "last": "2026-11-17",
+      "new": 1,
       "revisions": 0
     }
   },
@@ -120,7 +120,7 @@
   "historical_revisions_time_versioned": false,
   "no_annual_interpolation": true,
   "original_confidence70_pit_certified": false,
-  "raw_sha256": "1628ec2d2a343f95dbd0ea54e14f843eb068cad97ae05755a0670161011e61d4",
+  "raw_sha256": "92d633cc85891f554a0a51e7139653d4de971d17faebbba06435c7fd0d031654",
   "reference_only": true,
   "request_end": "2026-11-17",
   "request_start": "2026-10-03",
