@@ -41,7 +41,7 @@ jobs:
           restore-keys: |
             atlas-v4-adjusted-${{ runner.os }}-
       - name: Refresh as-recorded roster and daily unadjusted quote/FX feed
-        run: python strict_shadow/live_v4/dataset_daily.py --limit 300 --start 2024-01-01
+        run: python strict_shadow/live_v4/dataset_daily.py --limit 650 --start 2024-01-01
       - name: Capture daily as-observed issuer market caps (shadow, no retroactive PIT substitution)
         run: python strict_shadow/v4_exact_source/marketcap_pit.py
       - name: Update independent ECB FX audit
