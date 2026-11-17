@@ -1,0 +1,17 @@
+{
+  "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
+  "status": "INITIALIZED_AWAITING_FIRST_WORKFLOW",
+  "decision_session": null,
+  "capital_initial_eur": 10000,
+  "cash_eur": 10000,
+  "nav_eur": 10000,
+  "nav_net_liquidation_eur": 10000,
+  "positions_count": 0,
+  "new_orders": 0,
+  "paper_only": true,
+  "real_money_orders": 0,
+  "historical_pit_certified": false,
+  "forward_parity_certified": false,
+  "universe_same_hash": null,
+  "reason": "No signals or orders until a successful shared-universe forward run"
+}
