@@ -128,8 +128,8 @@ def replay(m,cfg,asof,old,signals):
     # five-week cadence counts only prospectively attested opportunities.
     for execution,decision in original_map(m.features.close_eur.index,START).items():
         key=str(decision.date()); proof=signals.get(key)
-        if not proof or not proof.get('preopen_eligible'):
-            missed.append({'decision':key,'execution':str(execution.date()),'reason':'NO_PREOPEN_PROOF'})
+        if not proof or not proof.get('preopen_eligible') or not proof.get('shared_input_sha256'):
+            missed.append({'decision':key,'execution':str(execution.date()),'reason':'NO_VERIFIED_SHARED_PREOPEN_PROOF'})
             continue
         if str(execution.date())!=proof['execution_session']:
             missed.append({'decision':key,'execution':str(execution.date()),'reason':'EXCHANGE_SESSION_MISMATCH'})
@@ -216,6 +216,7 @@ def main():
         path=SIGNALS/(str(asof.date())+'.json')
         if not path.exists():write(path,signal)
         else:signal=read(path)
+        status['current_indicative_targets']=targets
         status['archived_signal_input_sha256']=signal.get('shared_input_sha256')
         status['archived_signal_matches_current_input']=signal.get('shared_input_sha256')==meta['shared_input']['sha256']
         newly=state['orders'][len(old.get('orders',[])):]
