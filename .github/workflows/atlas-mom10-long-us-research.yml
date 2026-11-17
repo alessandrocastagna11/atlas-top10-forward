@@ -1,0 +1,50 @@
+name: Atlas MOM10 long US historical research
+on:
+  push:
+    branches: ['research/atlas-mom10-sp500-long']
+    paths: ['research_long/run_sp500.py','.github/workflows/atlas-mom10-long-us-research.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: atlas-mom10-long-research-only
+  cancel-in-progress: false
+jobs:
+  research:
+    if: github.ref == 'refs/heads/research/atlas-mom10-sp500-long'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install frozen engine dependencies
+        run: pip install -r strict_shadow/v4_exact_source/requirements-live.txt pyarrow
+      - name: Acquire dated historical membership and actual daily prices
+        run: |
+          mkdir -p /tmp/atlas-historical
+          for f in members.parquet prices.parquet recycled_tickers.csv; do
+            curl --fail --location --retry 3 --max-time 300 "https://github.com/Johnbrick123/sp500-data/releases/download/data/$f" -o "/tmp/atlas-historical/$f"
+          done
+          sha256sum /tmp/atlas-historical/*
+      - name: Backtest frozen MOM10 rules on US-only historical adapter
+        run: |
+          OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -u research_long/run_sp500.py /tmp/atlas-historical
+      - name: Preserve research output only
+        if: always()
+        run: |
+          if [ -d research_long/results ]; then
+            git config user.name "Atlas research bot"
+            git config user.email "atlas-research@users.noreply.github.com"
+            git add research_long/results
+            if ! git diff --cached --quiet; then
+              git commit -m "Historical MOM10 research outputs"
+              git push origin HEAD:research/atlas-mom10-sp500-long
+            fi
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: atlas-mom10-long-research
+          path: research_long/results
