@@ -1,6 +1,11 @@
 name: Atlas shared asynchronous market data monitor (READ ONLY)
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'atlas_data_monitor/**'
+      - '.github/workflows/atlas-market-data-monitor.yml'
   schedule:
     - cron: '7 * * * *'
     - cron: '37 * * * *'
@@ -40,10 +45,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Validate monitor Python syntax
-        run: python -m py_compile monitor/atlas_data_monitor/monitor.py
+      - name: Verify monitor syntax and read-only regression tests
+        env:
+          PYTHONPATH: original/strict_shadow/live_v4
+        run: |
+          python -m py_compile monitor/atlas_data_monitor/monitor.py original/strict_shadow/live_v4/dataset_daily.py
+          python -m unittest discover -s monitor/atlas_data_monitor -p 'test_*.py' -v
       - name: Refresh observed capitalizations on the hourly pass, in read-only source copy
-        if: github.event_name == 'workflow_dispatch' || github.event.schedule == '7 * * * *'
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event.schedule == '7 * * * *'
         continue-on-error: true
         timeout-minutes: 5
         run: python original/strict_shadow/v4_exact_source/marketcap_pit.py
