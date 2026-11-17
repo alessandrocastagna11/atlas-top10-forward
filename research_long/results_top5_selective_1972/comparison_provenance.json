@@ -1,0 +1,13 @@
+{
+  "newly_simulated": [
+    "TOP05_SELECTIVE",
+    "PASSIVE_US_ETF_PROXY"
+  ],
+  "reused_verified_same_input": [
+    "TOP05",
+    "TOP05_CRISIS",
+    "CONFIDENCE70"
+  ],
+  "baseline": "results_top5_crisis_1972/comparison.json",
+  "passive_parity": true
+}
