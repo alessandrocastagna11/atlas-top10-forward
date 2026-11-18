@@ -7,15 +7,20 @@ on:
       - 'atlas_data_monitor/**'
       - '.github/workflows/atlas-market-data-monitor.yml'
   schedule:
-    - cron: '7 * * * *'
-    - cron: '37 * * * *'
+    # Best-effort GitHub schedule, not a real-time SLA. Four attempts/hour.
+    - cron: '11,26,41,56 * * * 0-5'
+    - cron: '17 */2 * * 6'
+  workflow_run:
+    workflows: ['Atlas V4 ORIGINAL Confidence70 — forward PAPER']
+    types: [completed]
 permissions:
   contents: write
 concurrency:
   group: atlas-market-data-monitor-only
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   monitor:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -51,8 +56,22 @@ jobs:
         run: |
           python -m py_compile monitor/atlas_data_monitor/monitor.py original/strict_shadow/live_v4/dataset_daily.py
           python -m unittest discover -s monitor/atlas_data_monitor -p 'test_*.py' -v
-      - name: Refresh observed capitalizations on the hourly pass, in read-only source copy
-        if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event.schedule == '7 * * * *'
+      - name: Determine whether capitalization refresh is due
+        id: cap
+        run: |
+          python - <<'PY'
+          import datetime as dt,json,os
+          from pathlib import Path
+          path=Path('output/atlas_market_data/latest_status.json')
+          now=dt.datetime.now(dt.timezone.utc)
+          old=json.loads(path.read_text()) if path.is_file() else {}
+          cap=old.get('capitalization') or {}
+          seen=cap.get('observed_at_utc')
+          due=not seen or (now-dt.datetime.fromisoformat(seen)).total_seconds()>=3600
+          with open(os.environ['GITHUB_OUTPUT'],'a') as f:f.write('due='+str(due).lower()+'\n')
+          PY
+      - name: Refresh observed capitalizations when actually due, in read-only source copy
+        if: steps.cap.outputs.due == 'true' || github.event_name == 'workflow_dispatch'
         continue-on-error: true
         timeout-minutes: 5
         run: python original/strict_shadow/v4_exact_source/marketcap_pit.py
