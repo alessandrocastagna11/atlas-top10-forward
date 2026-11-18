@@ -1,7 +1,6 @@
 import datetime as dt
 import unittest
 import json
-from unittest.mock import patch
 from monitor import decode_quote, indicative_nav, fetch, preserve_confirmed
 import market_sessions
 
@@ -71,10 +70,7 @@ class MonitorTests(unittest.TestCase):
         def request_get(url):
             calls.append(url)
             return json.dumps({"chart":{"result":[old if len(calls)==1 else complete]}}).encode()
-        with patch("monitor.dt.datetime", wraps=dt.datetime) as mock:
-            mock.now.return_value=observed
-            # stamp() calls fromtimestamp; delegate to the real datetime type.
-            row=fetch("KO",market_sessions,request_get)
+        row=fetch("KO",market_sessions,request_get,clock=lambda:observed)
         self.assertEqual(len(calls),2)
         self.assertIn("period1=",calls[0])
         self.assertEqual(row["last_confirmed_daily_bar"]["session"],"2026-11-17")
