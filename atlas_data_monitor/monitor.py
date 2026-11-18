@@ -51,13 +51,16 @@ def decode_quote(symbol, raw, observed, sessions):
     q = (raw.get("indicators", {}).get("quote") or [{}])[0]
     a = (raw.get("indicators", {}).get("adjclose") or [{}])[0].get("adjclose") or []
     final = None
-    for i, ts in enumerate(dates):
+    for i, ts in sorted(enumerate(dates),key=lambda item:item[1]):
         day = stamp(ts).astimezone(zone).date()
-        cl = (q.get("close") or [])[i]
+        closes=q.get("close") or []
+        cl=closes[i] if i<len(closes) else None
         if not positive(cl) or not sessions.is_final_bar(symbol, day, observed):
             continue
-        op = (q.get("open") or [None]*len(dates))[i]
-        v = (q.get("volume") or [None]*len(dates))[i]
+        opens=q.get("open") or []
+        volumes=q.get("volume") or []
+        op=opens[i] if i<len(opens) else None
+        v=volumes[i] if i<len(volumes) else None
         final = {"session": str(day), "price": cl*scale,
                  "open": op*scale if positive(op) else None,
                  "adjusted_close": a[i]*scale if i<len(a) and positive(a[i]) else None,
@@ -75,6 +78,12 @@ def decode_quote(symbol, raw, observed, sessions):
     due = str(expected)
     eod_status = ("LATEST_EXPECTED_NORMAL_CLOSE_PRESENT" if final and final["session"]>=due
                   else "PENDING_CLOSE_OR_HOLIDAY_VERIFY_CALENDAR")
+    # A timestamped post-close regular quote is useful for indicative NAV,
+    # but it is never a completed daily bar or an execution price.
+    if (valid and not during and eod_status!="LATEST_EXPECTED_NORMAL_CLOSE_PRESENT"
+            and stamp(clock).astimezone(zone).date().isoformat()==due
+            and age<=36*3600):
+        status="INDICATIVE_POST_CLOSE_PENDING_EOD"
     return {"symbol":symbol,"currency":ccy,"exchange_timezone":str(zone),
             "quote_price":price*scale if valid else None,
             "quote_at_utc":stamp(clock).isoformat() if valid else None,
@@ -83,27 +92,69 @@ def decode_quote(symbol, raw, observed, sessions):
             "expected_normal_session":due,"daily_status":eod_status,
             "observed_at_utc":observed.isoformat()}
 
-def fetch(symbol, sessions):
-    params = urllib.parse.urlencode({"range":"5d","interval":"1d","includeAdjustedClose":"true"})
-    last = None
-    for host in ("query1.finance.yahoo.com","query2.finance.yahoo.com"):
-        try:
-            url = "https://"+host+"/v8/finance/chart/"+urllib.parse.quote(symbol,safe="")+"?"+params
-            request = urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0","Accept":"application/json"})
+def fetch(symbol, sessions, request_get=None):
+    # Explicit periods avoid the rolling-range cache omitting yesterday's
+    # candle around midnight. Fallback independently to the other host.
+    now=dt.datetime.now(UTC)
+    params=urllib.parse.urlencode({"period1":int((now-dt.timedelta(days=12)).timestamp()),
+        "period2":int((now+dt.timedelta(days=2)).timestamp()),"interval":"1d",
+        "includeAdjustedClose":"true","events":"div,splits"})
+    fallback=urllib.parse.urlencode({"range":"1mo","interval":"1d","includeAdjustedClose":"true"})
+    last=None
+    best=None
+    if request_get is None:
+        def request_get(url):
+            request=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0","Accept":"application/json","Cache-Control":"no-cache"})
             with urllib.request.urlopen(request,timeout=8) as response:
-                data=response.read(2_000_000)
+                return response.read(2_000_000)
+    for host,query in (("query1.finance.yahoo.com",params),("query2.finance.yahoo.com",params),
+                       ("query2.finance.yahoo.com",fallback)):
+        try:
+            url="https://"+host+"/v8/finance/chart/"+urllib.parse.quote(symbol,safe="")+"?"+query
+            data=request_get(url)
             observed=dt.datetime.now(UTC)
             raw=json.loads(data)["chart"]["result"][0]
             row=decode_quote(symbol,raw,observed,sessions)
             row["source_sha256"]=hashlib.sha256(data).hexdigest()
-            return row
+            row["source_host"]=host
+            row["query_type"]="EXPLICIT_PERIOD" if query==params else "MONTH_RANGE_RETRY"
+            # Keep independently sourced evidence; no fabricated daily bars.
+            # Prefer latest confirmed EOD; for equal session prefer latest quote.
+            def quality(r):
+                return ((r.get("last_confirmed_daily_bar") or {}).get("session",""),
+                        r.get("quote_at_utc") or "")
+            if best is None or quality(row)>quality(best):
+                best=row
+            if (row["daily_status"]=="LATEST_EXPECTED_NORMAL_CLOSE_PRESENT"
+                and row["quote_status"] not in ("PENDING_MISSING_QUOTE","STALE_DURING_REPORTED_SESSION")):
+                return row
         except Exception as exc:
             last=exc
             if isinstance(exc,urllib.error.HTTPError) and exc.code==429:
                 break
+    if best is not None:
+        best["retry_exhausted"]=True
+        return best
     return {"symbol":symbol,"quote_status":"PENDING_PROVIDER_ERROR","daily_status":"PENDING_PROVIDER_ERROR",
             "error":str(last)[:180],"observed_at_utc":dt.datetime.now(UTC).isoformat(),
             "quote_price":None,"last_confirmed_daily_bar":None}
+
+def preserve_confirmed(row, previous):
+    # A transient response regression must not erase a genuinely observed EOD.
+    previous=previous or {}
+    old=previous.get("last_confirmed_daily_bar") or {}
+    new=row.get("last_confirmed_daily_bar") or {}
+    if (row.get("currency") and row.get("currency")==previous.get("currency")
+        and old.get("session","")>new.get("session","")
+        and positive(old.get("price"))):
+        row=dict(row)
+        row["last_confirmed_daily_bar"]=old
+        row["daily_bar_carried_from_prior_observation"]=True
+        row["daily_bar_original_source_sha256"]=previous.get("daily_bar_original_source_sha256",previous.get("source_sha256"))
+        row["daily_bar_original_observed_at_utc"]=previous.get("daily_bar_original_observed_at_utc",previous.get("observed_at_utc"))
+        if row.get("expected_normal_session") and old["session"]>=row["expected_normal_session"]:
+            row["daily_status"]="LATEST_EXPECTED_NORMAL_CLOSE_PRESENT"
+    return row
 
 def indicative_nav(portfolio, quotes, symbol_map=None):
     if not portfolio:
@@ -124,11 +175,15 @@ def indicative_nav(portfolio, quotes, symbol_map=None):
             return False
         if row.get("vendor_session_open"):
             return row.get("quote_status")=="INDICATIVE_INTRADAY" and positive(row.get("quote_price"))
+        if row.get("quote_status")=="INDICATIVE_POST_CLOSE_PENDING_EOD" and positive(row.get("quote_price")):
+            return True
         return (row.get("daily_status")=="LATEST_EXPECTED_NORMAL_CLOSE_PRESENT" and
                 positive((row.get("last_confirmed_daily_bar") or {}).get("price")))
     def mark(row):
         if row.get("vendor_session_open"):
             return row["quote_price"], row["quote_at_utc"]
+        if row.get("daily_status")!="LATEST_EXPECTED_NORMAL_CLOSE_PRESENT" and row.get("quote_status")=="INDICATIVE_POST_CLOSE_PENDING_EOD":
+            return row["quote_price"],"INDICATIVE_POST_CLOSE:"+row["quote_at_utc"]
         bar=row["last_confirmed_daily_bar"]
         return bar["price"], "DAILY_SESSION:"+bar["session"]
     for h in holdings:
@@ -189,8 +244,10 @@ def main():
         for ticker,h in challenger["positions"].items():
             symbols.add(h.get("market_symbol") or symbol_map.get(ticker,ticker))
     before=dt.datetime.now(UTC)
+    previous_quotes={r["symbol"]:r for r in (load(args.out/"quotes.json") or [])}
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as pool:
         quotes=list(pool.map(lambda s:fetch(s,sessions),sorted(symbols)))
+    quotes=[preserve_confirmed(r,previous_quotes.get(r["symbol"])) for r in quotes]
     by_symbol={r["symbol"]:r for r in quotes}
     caproot=live/"dataset/marketcap_observed"
     cap=load(caproot/"latest_status.json")
@@ -224,10 +281,15 @@ def main():
     for r in quotes:
         key=r["quote_status"];counts[key]=counts.get(key,0)+1
     expected_pending=[r["symbol"] for r in quotes if r["daily_status"]!="LATEST_EXPECTED_NORMAL_CLOSE_PRESENT"]
+    previous_finished=previous.get("finished_at_utc")
+    gap=(before-dt.datetime.fromisoformat(previous_finished)).total_seconds() if previous_finished else None
     save("latest_status.json",{"monitor_only":True,"not_decision_input":True,
         "provider":"Yahoo Chart public unofficial; delay not guaranteed",
         "started_at_utc":before.isoformat(),"finished_at_utc":dt.datetime.now(UTC).isoformat(),
         "symbols_requested":len(symbols),"quote_counts":counts,"expected_close_pending":expected_pending,
+        "previous_finished_at_utc":previous_finished,"seconds_since_previous_snapshot":gap,
+        "schedule_target_seconds":900,"prior_gap_over_30_minutes":gap is not None and gap>1800,
+        "daily_bars_preserved_from_prior_observation":sum(bool(r.get("daily_bar_carried_from_prior_observation")) for r in quotes),
         "normal_session_calendar_only":True,"acwi_roster_sha256":hashlib.sha256(roster.read_bytes()).hexdigest(),
         "acwi_members":len(members),"capitalization":cap,"capitalization_source_attempt":cap_attempt,
         "official_original":indicative_nav(portfolio,by_symbol,symbol_map),
