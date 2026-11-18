@@ -1,15 +1,15 @@
 {
-  "checked_at_utc": "2026-11-17T07:59:45.692764+00:00",
+  "checked_at_utc": "2026-11-18T01:52:44.935553+00:00",
   "first_quote_date": "2010-01-04",
-  "market_session": "2026-11-13",
+  "market_session": "2026-11-16",
   "original_live_sha256": "703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e",
   "provider": "Yahoo adjusted close EUR; FRED and Kenneth French monthly",
-  "quote_samples": 4285,
+  "quote_samples": 4286,
   "source_quality": {
-    "bond_last": "2026-11-13",
+    "bond_last": "2026-11-16",
     "bond_quality": "OK",
     "defensive_source": "OBSERVED_BOND_ADJUSTED_CLOSE",
-    "equity_last": "2026-11-13",
+    "equity_last": "2026-11-16",
     "macro_previous_month": "2026-10",
     "macro_quality": "ONLINE_OR_PERSISTED_CACHE",
     "missing_macro_inputs": [
@@ -17,7 +17,7 @@
       "FF_BREADTH_3M"
     ],
     "observed_macro_month": "2026-09",
-    "quote_lag_days": 3,
+    "quote_lag_days": 1,
     "stress_source": "CARRIED_OBSERVED_2026-09"
   }
 }
