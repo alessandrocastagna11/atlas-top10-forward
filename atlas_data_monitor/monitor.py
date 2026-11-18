@@ -92,10 +92,11 @@ def decode_quote(symbol, raw, observed, sessions):
             "expected_normal_session":due,"daily_status":eod_status,
             "observed_at_utc":observed.isoformat()}
 
-def fetch(symbol, sessions, request_get=None):
+def fetch(symbol, sessions, request_get=None, clock=None):
     # Explicit periods avoid the rolling-range cache omitting yesterday's
     # candle around midnight. Fallback independently to the other host.
-    now=dt.datetime.now(UTC)
+    clock=clock or (lambda:dt.datetime.now(UTC))
+    now=clock()
     params=urllib.parse.urlencode({"period1":int((now-dt.timedelta(days=12)).timestamp()),
         "period2":int((now+dt.timedelta(days=2)).timestamp()),"interval":"1d",
         "includeAdjustedClose":"true","events":"div,splits"})
@@ -112,7 +113,7 @@ def fetch(symbol, sessions, request_get=None):
         try:
             url="https://"+host+"/v8/finance/chart/"+urllib.parse.quote(symbol,safe="")+"?"+query
             data=request_get(url)
-            observed=dt.datetime.now(UTC)
+            observed=clock()
             raw=json.loads(data)["chart"]["result"][0]
             row=decode_quote(symbol,raw,observed,sessions)
             row["source_sha256"]=hashlib.sha256(data).hexdigest()
