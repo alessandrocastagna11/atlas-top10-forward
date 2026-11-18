@@ -1,6 +1,8 @@
 import datetime as dt
 import unittest
-from monitor import decode_quote, indicative_nav
+import json
+from unittest.mock import patch
+from monitor import decode_quote, indicative_nav, fetch, preserve_confirmed
 import market_sessions
 
 UTC=dt.timezone.utc
@@ -58,3 +60,41 @@ class MonitorTests(unittest.TestCase):
         nav=indicative_nav({"cash_eur":500,"holdings":[{"ticker":"KO","shares":1}]},{"KO":row})
         self.assertIsNone(nav["nav_eur"])
         self.assertEqual(nav["missing"],["KO FX"])
+
+    def test_midnight_missing_bar_retries_other_host(self):
+        observed=utc(18,1,50)
+        old=fixture("America/New_York","USD",utc(18,14,30),utc(18,21),utc(17,21),
+                    [utc(16,14,30)])
+        complete=fixture("America/New_York","USD",utc(18,14,30),utc(18,21),utc(17,21),
+                         [utc(16,14,30),utc(17,14,30)])
+        calls=[]
+        def request_get(url):
+            calls.append(url)
+            return json.dumps({"chart":{"result":[old if len(calls)==1 else complete]}}).encode()
+        with patch("monitor.dt.datetime", wraps=dt.datetime) as mock:
+            mock.now.return_value=observed
+            # stamp() calls fromtimestamp; delegate to the real datetime type.
+            row=fetch("KO",market_sessions,request_get)
+        self.assertEqual(len(calls),2)
+        self.assertIn("period1=",calls[0])
+        self.assertEqual(row["last_confirmed_daily_bar"]["session"],"2026-11-17")
+        self.assertEqual(row["daily_status"],"LATEST_EXPECTED_NORMAL_CLOSE_PRESENT")
+    def test_post_close_quote_not_certified_as_daily_bar(self):
+        raw=fixture("America/New_York","USD",utc(18,14,30),utc(18,21),utc(17,21),
+                    [utc(16,14,30)])
+        row=decode_quote("KO",raw,utc(18,1,50),market_sessions)
+        self.assertEqual(row["quote_status"],"INDICATIVE_POST_CLOSE_PENDING_EOD")
+        self.assertEqual(row["daily_status"],"PENDING_CLOSE_OR_HOLIDAY_VERIFY_CALENDAR")
+        self.assertEqual(row["last_confirmed_daily_bar"]["session"],"2026-11-16")
+    def test_preserve_confirmed_close_not_relabelled(self):
+        old={"currency":"USD","last_confirmed_daily_bar":{"session":"2026-11-17","price":100},
+             "source_sha256":"older-audit","observed_at_utc":"2026-11-18T01:00:00+00:00"}
+        row={"currency":"USD","last_confirmed_daily_bar":{"session":"2026-11-16","price":90},
+             "expected_normal_session":"2026-11-18","daily_status":"PENDING_CLOSE_OR_HOLIDAY_VERIFY_CALENDAR"}
+        result=preserve_confirmed(row,old)
+        self.assertEqual(result["last_confirmed_daily_bar"]["session"],"2026-11-17")
+        self.assertEqual(result["daily_bar_original_source_sha256"],"older-audit")
+        self.assertEqual(result["daily_status"],"PENDING_CLOSE_OR_HOLIDAY_VERIFY_CALENDAR")
+    def test_no_previous_observation(self):
+        row={"currency":"USD","last_confirmed_daily_bar":None}
+        self.assertEqual(preserve_confirmed(row,None),row)
