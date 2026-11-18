@@ -324,7 +324,7 @@
   },
   "daily_bars_preserved_from_prior_observation": 0,
   "expected_close_pending": [],
-  "finished_at_utc": "2026-11-18T13:14:54.979725+00:00",
+  "finished_at_utc": "2026-11-18T13:15:20.120205+00:00",
   "monitor_only": true,
   "normal_session_calendar_only": true,
   "not_decision_input": true,
@@ -372,7 +372,7 @@
     "nav_eur": 10075.1875,
     "status": "INDICATIVE_MIXED_TIMESTAMP_NOT_LEDGER"
   },
-  "previous_finished_at_utc": "2026-11-18T13:13:48.640961+00:00",
+  "previous_finished_at_utc": "2026-11-18T13:14:54.979725+00:00",
   "prior_gap_over_30_minutes": false,
   "provider": "Yahoo Chart public unofficial; delay not guaranteed",
   "quote_counts": {
@@ -380,7 +380,7 @@
     "LAST_REPORTED_QUOTE_OUTSIDE_VENDOR_SESSION": 415
   },
   "schedule_target_seconds": 900,
-  "seconds_since_previous_snapshot": 58.977243,
-  "started_at_utc": "2026-11-18T13:14:47.618204+00:00",
+  "seconds_since_previous_snapshot": 17.804224,
+  "started_at_utc": "2026-11-18T13:15:12.783949+00:00",
   "symbols_requested": 528
 }
