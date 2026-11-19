@@ -1,15 +1,15 @@
 {
   "base_date": "2024-01-01",
   "cached_required_quotes_complete": true,
-  "checked_at_utc": "2026-11-18T04:13:08.990138+00:00",
+  "checked_at_utc": "2026-11-19T03:50:48.997037+00:00",
   "data_ready_for_confidence70_model": false,
   "dataset_use": "FORWARD_RESEARCH_NOT_PIT_CERTIFIED",
   "forward_universe": {
     "count": 500,
     "mapped_symbols": 500,
-    "raw_sha256": "e6da07ec1f6df1295f137522707ba2a608acfd9f8a981e2bb4f6290525575426",
-    "recorded_on": "2026-11-17",
-    "source_as_of": "Nov 16, 2026",
+    "raw_sha256": "13666135148f6273aa31810be2a7744716ee84fda324c1c35d39c17f714585d6",
+    "recorded_on": "2026-11-18",
+    "source_as_of": "Nov 17, 2026",
     "type": "ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP"
   },
   "fx_observation_provenance": "first_seen_at_utc on newly inserted rows; legacy blanks not retroactively certified",
@@ -20,7 +20,7 @@
   "fx_validation": "EXCHANGE_LOCAL_CLOSE_PLUS_BUFFER_AND_NY_FX_ROLLOVER_NO_ANNUAL_INTERPOLATION_NOT_HISTORICAL_PIT",
   "historic_inventory_count": 288,
   "historical_originals_accounted_for_including_verified_delistings": 288,
-  "legacy_price_rows_normalized_to_currency_units": 0,
+  "legacy_price_rows_normalized_to_currency_units": 715,
   "local_exchange_eod_gate_enabled": true,
   "older_provisional_bars_removed": 0,
   "original_288_symbols_cached": 287,
