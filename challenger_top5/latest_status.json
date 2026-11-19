@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-11-19T04:10:28.384257+00:00",
+  "checked_at_utc": "2026-11-19T04:35:48.155498+00:00",
   "decision_session": "2026-11-18",
   "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
   "execution_model": "completed actual local-session bar open with indicative previous-day EUR FX; simulated, not broker fills",
