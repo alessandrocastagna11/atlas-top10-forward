@@ -11,7 +11,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 import pandas as pd
 from scipy import optimize
-from live_model import HERE,CACHE,LIVE,START_PAPER,ENGINE,INITIAL,SECTOR,latest_vintages,get_adjusted,build_model,evaluate_model
+from live_model import HERE,CACHE,LIVE,START_PAPER,ENGINE,INITIAL,SECTOR,latest_vintages,get_adjusted,build_model,evaluate_model,check_required_us_closes,requires_same_us_close
 from live_model import v1,v2,t9,inc,frozen,LIVE
 if str(LIVE) not in sys.path:sys.path.insert(0,str(LIVE))
 from paper import earliest_open_utc
@@ -324,8 +324,26 @@ def main(now=None):
             required=set(symbols)|set(SECTOR.values())|{'SPY','EURUSD=X'}
             required|={'EUR'+str(x['currency']).upper()+'=X' for x in all_constituents
                        if str(x['currency']).upper()!='EUR'}
-            fetched,failed=get_adjusted(required-set(frames),asof,max_workers=8)
+            # The benchmark SPY confirms the last US session. All current
+            # US roster constituents, sector ETFs and held US positions must
+            # have an actual close for that exact session.
+            active_us={str(row['symbol']).upper() for row in vintages[-1][3]}
+            active_us.update(SECTOR.values())
+            active_us.update(str(row['ticker']).upper().removeprefix('G::')
+                             for row in portfolio.get('holdings',[])
+                             if isinstance(row,dict) and row.get('ticker'))
+            strict_us={ticker for ticker in active_us
+                       if requires_same_us_close(ticker)}
+            fetched,failed=get_adjusted(required-set(frames),asof,max_workers=8,
+                                        require_current_us=strict_us)
             frames.update(fetched)
+            status['us_eod_quote_audit']={
+                'expected_session':str(asof),
+                'required_us_count':len(strict_us),
+                'missing_or_stale':{ticker:failed[ticker] for ticker in sorted(strict_us)
+                                    if ticker in failed},
+                'status':'BLOCKED' if any(ticker in failed for ticker in strict_us)
+                         else 'CHECKING'}
             # ACWI reports the listing denomination, but Yahoo may return a
             # different one (e.g., London pence vs pounds, dual listings).
             # A wrong denomination silently multiplies EUR prices by 100 or
@@ -366,6 +384,8 @@ def main(now=None):
         status['short_history_excluded_from_daily_universe']=sorted(excluded_short_history)
         status['wrong_currency_excluded_from_daily_universe']=sorted(excluded_quote_currency)
         status['daily_universe_replacement_rounds']=attempt
+        # The feed must be complete before we publish a snapshot or signal.
+        status['us_eod_quote_audit']=check_required_us_closes(frames,strict_us,asof)
         # Each immutable recorded vintage becomes active only from its own
         # capture date. Replaying after downtime uses that same dated history.
         # A newly captured 2026 roster never changes yesterday's membership.
@@ -550,4 +570,7 @@ def main(now=None):
     print(json.dumps({k:status.get(k) for k in ('status','reason','orders_cumulative','new_orders','decision_session','nav_eur')},ensure_ascii=False))
     return status
 
-if __name__=='__main__':main()
+if __name__=='__main__':
+    report=main()
+    if report.get('signal_engine_status')!='SIGNAL_READY':
+        raise SystemExit(1)
