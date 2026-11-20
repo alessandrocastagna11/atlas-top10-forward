@@ -82,8 +82,10 @@ jobs:
                  '- Broker orders: **ZERO**']
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:f.write('\n'.join(lines))
           PY
-      - name: Persist only original-paper audit and deterministic ledgers
-        if: success()
+      - name: Persist original-paper audit, including failed-data diagnostics
+        # Preserve failure evidence even when no new signal or PAPER trade is valid.
+        # Never publish a fabricated new trade; source run fails closed.
+        if: always()
         run: |
           git config user.name "Atlas V4 Original Paper Bot"
           git config user.email "atlas-v4-original-paper@users.noreply.github.com"
