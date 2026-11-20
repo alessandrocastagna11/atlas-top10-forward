@@ -19,7 +19,7 @@ LIVE=HERE.parent/'live_v4'
 # Use a single exchange-session/quote-unit policy for research downloader and
 # original-engine market adapter; no strategy weights or decision rules change.
 if str(LIVE) not in sys.path:sys.path.insert(0,str(LIVE))
-from market_sessions import is_final_bar,normalize_currency
+from market_sessions import is_final_bar,normalize_currency,venue
 CODE=HERE/'code';E=CODE/'engine'
 for directory in (str(E),str(CODE),str(HERE)):
     if directory not in sys.path:sys.path.insert(0,directory)
@@ -125,6 +125,38 @@ def _cache_filename(symbol):
     return hashlib.sha1(symbol.encode()).hexdigest()[:12]+'.csv.gz'
 
 
+def requires_same_us_close(symbol):
+    """SPY establishes the session; every other US stock/ETF must match it.
+
+    Unlike international listings, US constituents share the benchmark's
+    session date. A missing bar is NOT evidence of an exchange holiday.
+    """
+    return symbol.upper() != 'SPY' and venue(symbol)[0] == 'USA'
+
+
+def check_required_us_closes(frames, symbols, asof):
+    """Reject stale US charts before any common snapshot or signal is released."""
+    asof = pd.Timestamp(asof)
+    stale = {}
+    for symbol in sorted(set(symbols)):
+        if not requires_same_us_close(symbol):
+            continue
+        frame = frames.get(symbol)
+        if frame is None or frame.empty or 'raw_close' not in frame:
+            stale[symbol] = 'MISSING'
+            continue
+        close = pd.to_numeric(frame['raw_close'].loc[:asof], errors='coerce').dropna()
+        actual = str(close.index.max().date()) if len(close) else 'MISSING'
+        if actual != str(asof.date()):
+            stale[symbol] = actual
+    if stale:
+        raise ValueError('STALE_REQUIRED_US_EOD expected='+str(asof.date())+
+                         ' observed='+str(stale))
+    return {'expected_session':str(asof.date()),
+            'us_symbols_verified':sum(requires_same_us_close(s) for s in set(symbols)),
+            'stale_or_missing_us':{},'status':'COMPLETE'}
+
+
 def _chart(symbol,end_day,refresh=True):
     import gzip
     CACHE.mkdir(parents=True,exist_ok=True)
@@ -144,11 +176,11 @@ def _chart(symbol,end_day,refresh=True):
     end=int((dt.datetime.combine(end_day,dt.time(0),dt.timezone.utc)+dt.timedelta(days=3)).timestamp())
     params=urllib.parse.urlencode({'period1':beg,'period2':end,'interval':'1d','events':'div,splits','includeAdjustedClose':'true'})
     last=None
-    for attempt in range(3):
+    for attempt in range(4):
         host='query1.finance.yahoo.com' if attempt%2==0 else 'query2.finance.yahoo.com'
         url=f'https://{host}/v8/finance/chart/{urllib.parse.quote(symbol,safe="")}?{params}'
         try:
-            req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 (compatible; AtlasV4ExactPaper/1.0)','Accept':'application/json'})
+            req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 (compatible; AtlasV4ExactPaper/1.0)','Accept':'application/json','Cache-Control':'no-cache','Pragma':'no-cache'})
             with urllib.request.urlopen(req,timeout=22) as f: payload=json.load(f)
             raw=payload['chart']['result'][0]
             if not raw:raise RuntimeError('empty result')
@@ -194,6 +226,12 @@ def _chart(symbol,end_day,refresh=True):
             frame=frame.loc[:pd.Timestamp(end_day)].dropna(subset=['adj_open','adj_close'])
             frame=frame[(frame.adj_open>0)&(frame.adj_close>0)]
             if len(frame)<300:raise RuntimeError('few clean adjusted closes')
+            if requires_same_us_close(symbol):
+                latest = str(frame.index[-1].date()) if len(frame) else 'MISSING'
+                if latest != str(end_day):
+                    raise RuntimeError('STALE_REQUIRED_US_EOD '+symbol+
+                                       ' expected='+str(end_day)+' observed='+latest+
+                                       ' provider='+host)
             frame.to_csv(path,compression='gzip',float_format='%.10g')
             return frame
         except Exception as exc:
@@ -203,7 +241,12 @@ def _chart(symbol,end_day,refresh=True):
         old=existing.loc[:str(end_day)].sort_index()
         now_utc=dt.datetime.now(dt.timezone.utc)
         old=old.loc[[is_final_bar(symbol,day.date(),now_utc) for day in old.index]]
-        if not old.empty and (end_day-old.index[-1].date()).days<=4:return old
+        # Cached charts are acceptable only when they contain the required
+        # closed US session. Never quietly substitute yesterday's US quote.
+        if (not old.empty and (end_day-old.index[-1].date()).days<=4
+                and (not requires_same_us_close(symbol)
+                     or old.index[-1].date()==end_day)):
+            return old
     raise RuntimeError(f'Yahoo adjusted chart unavailable: {symbol}: {last}')
 
 
