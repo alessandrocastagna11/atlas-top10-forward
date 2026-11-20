@@ -233,6 +233,20 @@ def main():
     try:
         m,meta,cfg,asof,original=load_model()
         status.update({'decision_session':str(asof.date()),'source':meta,'universe_same_hash':True,'shared_input_sha256':meta['shared_input']['sha256'],'shared_input_verified':True,'same_price_dates_and_fx':True,'universe_kind':meta['universe_kind'],'original_nav_eur':original.get('nav_eur')})
+        # Do not revalue a live US holding with yesterday's carried close.
+        # A successful source run or common SHA alone is not a freshness proof.
+        # Non-US holdings use their exchange-specific session policy.
+        observed=meta.get('ticker_price_dates',{})
+        stale_held_us={t:observed.get(t) for t in old.get('positions',{})
+                       if not t.startswith('G::') and observed.get(t)!=str(asof.date())}
+        if stale_held_us:
+            status['quote_freshness']={'status':'BLOCKED_STALE_HELD_US_EOD',
+                 'expected_session':str(asof.date()),'stale_held_us':stale_held_us}
+            raise ValueError('STALE_HELD_US_EOD expected='+str(asof.date())
+                             +' observed='+str(stale_held_us))
+        status['quote_freshness']={'status':'US_HOLDINGS_CURRENT',
+            'expected_session':str(asof.date()),'checked_us_holdings':
+            len([t for t in old.get('positions',{}) if not t.startswith('G::')])}
         signals={p.stem:read(p) for p in SIGNALS.glob('*.json')}
         result,orders,missed=replay(m,cfg,asof,old,signals)
         if result is None:
