@@ -17,7 +17,7 @@ import live_model
 
 
 def frame(last):
-    dates=pd.date_range('2026-11-17',last,freq='B')
+    dates=pd.date_range('2026-11-17',last,freq='B',name='Date')
     return pd.DataFrame({'adj_open':100.,'adj_close':101.,
                          'raw_close':101.,'volume':1000.},index=dates)
 
