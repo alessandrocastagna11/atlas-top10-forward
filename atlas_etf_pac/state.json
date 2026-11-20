@@ -32,17 +32,22 @@
       "decision_session": "2026-11-16",
       "reason": "ORDER_NOT_PRECOMMITTED_BEFORE_SESSION_CLOSE",
       "session": "2026-11-17"
+    },
+    {
+      "decision_session": "2026-11-17",
+      "reason": "ORDER_NOT_PRECOMMITTED_BEFORE_SESSION_CLOSE",
+      "session": "2026-11-18"
     }
   ],
   "cash_eur": 1000.0,
   "contributions": [],
   "data_digest": null,
   "last_deposit_month": "2026-11",
-  "last_price_session": "2026-11-17",
-  "last_processed_session": "2026-11-17",
+  "last_price_session": "2026-11-18",
+  "last_processed_session": "2026-11-18",
   "last_quotes": {
-    "BOND": 116.51000213623047,
-    "EQUITY": 127.08000183105469
+    "BOND": 116.55999755859375,
+    "EQUITY": 127.1050033569336
   },
   "last_status": "AWAITING_FIRST_COMPLETED_CLOSE",
   "mode": "PAPER_ONLY_ORIGINAL_V23",
@@ -99,13 +104,26 @@
       "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
       "twr_day_pct": -0.000548,
       "twr_index": 0.9999726233
+    },
+    {
+      "bond_eur": 0.0,
+      "cash_eur": 1000.0,
+      "contribution_eur": 0.0,
+      "date": "2026-11-18",
+      "drawdown_pct": -0.003285,
+      "equity_eur": 0.0,
+      "holdings_eur": 0.0,
+      "nav_eur": 999.96715,
+      "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
+      "twr_day_pct": -0.000547,
+      "twr_index": 0.9999671495
     }
   ],
   "orders": [],
   "pending": {
-    "created_at_utc": "2026-11-19T01:31:47.113841+00:00",
-    "decision_session": "2026-11-17",
-    "input_session": "2026-11-17",
+    "created_at_utc": "2026-11-20T01:27:06.332730+00:00",
+    "decision_session": "2026-11-18",
+    "input_session": "2026-11-18",
     "policy": "NEXT_COMPLETED_SESSION_CLOSE_PRECOMMITTED_PAPER",
     "proposed_orders": [
       {
@@ -283,7 +301,48 @@
         "term_spread": 2.438108801230893
       },
       "target_equity_fraction": 1.0
+    },
+    {
+      "bull": true,
+      "core_in": true,
+      "data_mode": "OBSERVED_EQUITY_ETF_EOD",
+      "decision_session": "2026-11-18",
+      "defensive": {
+        "momentum_126": 0.00378914,
+        "recommendation": "BOND",
+        "source": "OBSERVED_BOND_ADJUSTED_CLOSE",
+        "ticker": "CSBGE3.MI"
+      },
+      "equity_eod": 127.1050033569336,
+      "fast10_pct": -2.5866,
+      "market_drawdown_pct": -3.8904,
+      "method": "ATLAS_V23_OCT_01_2026_ORIGINAL_LIVE_UNMODIFIED",
+      "original_live_sha256": "703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e",
+      "pending_original_actions": [],
+      "satellite_in": true,
+      "signal_ticker": "EUNL.DE",
+      "state_label": "CORE+SATELLITE",
+      "stress": {
+        "breadth": true,
+        "breadth_healthy": 1,
+        "credit": false,
+        "credit_change_3m": -0.040000000000000924,
+        "credit_p80": 1.042,
+        "credit_spread": 0.4399999999999995,
+        "missing_inputs": [
+          "FF_RF",
+          "FF_BREADTH_3M"
+        ],
+        "month": "2026-10",
+        "observed_macro_month": "2026-09",
+        "rates": false,
+        "score": 1,
+        "source": "CARRIED_OBSERVED_2026-09",
+        "term_p20": -0.89022352948323,
+        "term_spread": 2.438108801230893
+      },
+      "target_equity_fraction": 1.0
     }
   ],
-  "stamp_accrued_eur": 0.027378297932922655
+  "stamp_accrued_eur": 0.03285384958247775
 }
