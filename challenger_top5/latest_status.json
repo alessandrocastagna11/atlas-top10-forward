@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-11-20T03:46:37.478476+00:00",
+  "checked_at_utc": "2026-11-20T04:00:39.787319+00:00",
   "decision_session": "2026-11-19",
   "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
   "execution_model": "completed actual local-session bar open with indicative previous-day EUR FX; simulated, not broker fills",
@@ -11,7 +11,7 @@
   "real_money_orders": 0,
   "reason": "Prior paper order revised: ticker",
   "same_price_dates_and_fx": true,
-  "shared_input_sha256": "cfa353e2daf3d29cb87708e4dd479a2ee4ef34b5fad8fc252de7fdcb5d553fe4",
+  "shared_input_sha256": "71c869daae0cd25268cd4c479af4f41609857037d5d37ac40853ad5f84f6b7ae",
   "shared_input_verified": true,
   "source": {
     "active_roster_names": 300,
@@ -58,16 +58,16 @@
     "roster_sha256": "3adb5b2ffe17d3d58c5f4f16796bf0d5acb7b9af902be5bcf010393f22a5dfd0",
     "roster_source_asof": "2026-11-19",
     "shared_input": {
-      "bytes": 9770494,
+      "bytes": 9774209,
       "decision_session": "2026-11-19",
       "frame_count": 349,
       "lossless_roundtrip_verified": true,
       "path": "shared_inputs/latest.zip",
-      "recorded_at_utc": "2026-11-20T03:45:20.457965+00:00",
+      "recorded_at_utc": "2026-11-20T03:59:18.917015+00:00",
       "roster_recorded_date": "2026-11-19",
       "roster_sha256": "3adb5b2ffe17d3d58c5f4f16796bf0d5acb7b9af902be5bcf010393f22a5dfd0",
       "schema": 1,
-      "sha256": "cfa353e2daf3d29cb87708e4dd479a2ee4ef34b5fad8fc252de7fdcb5d553fe4"
+      "sha256": "71c869daae0cd25268cd4c479af4f41609857037d5d37ac40853ad5f84f6b7ae"
     },
     "ticker_price_dates": {
       "AAPL": "2026-11-19",
