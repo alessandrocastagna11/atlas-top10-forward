@@ -157,7 +157,7 @@ def check_required_us_closes(frames, symbols, asof):
             'stale_or_missing_us':{},'status':'COMPLETE'}
 
 
-def _chart(symbol,end_day,refresh=True):
+def _chart(symbol,end_day,refresh=True,require_current_us=False):
     import gzip
     CACHE.mkdir(parents=True,exist_ok=True)
     path=CACHE/_cache_filename(symbol)
@@ -226,7 +226,7 @@ def _chart(symbol,end_day,refresh=True):
             frame=frame.loc[:pd.Timestamp(end_day)].dropna(subset=['adj_open','adj_close'])
             frame=frame[(frame.adj_open>0)&(frame.adj_close>0)]
             if len(frame)<300:raise RuntimeError('few clean adjusted closes')
-            if requires_same_us_close(symbol):
+            if require_current_us and requires_same_us_close(symbol):
                 latest = str(frame.index[-1].date()) if len(frame) else 'MISSING'
                 if latest != str(end_day):
                     raise RuntimeError('STALE_REQUIRED_US_EOD '+symbol+
@@ -244,16 +244,17 @@ def _chart(symbol,end_day,refresh=True):
         # Cached charts are acceptable only when they contain the required
         # closed US session. Never quietly substitute yesterday's US quote.
         if (not old.empty and (end_day-old.index[-1].date()).days<=4
-                and (not requires_same_us_close(symbol)
+                and (not require_current_us or not requires_same_us_close(symbol)
                      or old.index[-1].date()==end_day)):
             return old
     raise RuntimeError(f'Yahoo adjusted chart unavailable: {symbol}: {last}')
 
 
-def get_adjusted(symbols,asof,max_workers=8):
+def get_adjusted(symbols,asof,max_workers=8,require_current_us=None):
     unique=sorted(set(symbols));d={};failed={}
+    strict=set(require_current_us or ())
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as pool:
-        jobs={pool.submit(_chart,s,asof):s for s in unique}
+        jobs={pool.submit(_chart,s,asof,True,s in strict):s for s in unique}
         for future in concurrent.futures.as_completed(jobs):
             symbol=jobs[future]
             try:d[symbol]=future.result()
