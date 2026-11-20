@@ -165,14 +165,66 @@ def replay(m,cfg,asof,old,signals):
     finally:lm.v1._weekly_execution_map=original_map
     rows=rl.serialize(result)
     previous=old.get('orders',[])
-    if len(rows)<len(previous):raise ValueError('Replay removed committed orders')
-    for a,b in zip(rows,previous):
-        if set(a)!=set(b):raise ValueError('Order schema revised')
-        for k in a:
-            if isinstance(a[k],(int,float)) and isinstance(b[k],(int,float)):
-                if not math.isclose(a[k],b[k],rel_tol=1e-8,abs_tol=1e-5):raise ValueError('Prior paper order revised: '+k)
-            elif a[k]!=b[k]:raise ValueError('Prior paper order revised: '+k)
-    return result,previous+rows[len(previous):],missed
+    return result,reconcile_orders(rows,previous),missed
+
+def reconcile_orders(replayed, committed):
+    """Preserve committed fills exactly; tolerate only changes in row ordering.
+
+    Simulator buy order can change under equal target weights. Match each
+    committed order to an otherwise identical replayed order by stable trade
+    identity; reject genuine changes in quantities, prices, dates, taxes or
+    commissions. New fills must be later than every committed execution date.
+    """
+    from collections import defaultdict
+
+    identity_fields=('scenario','strategy','decision_date','date','action','ticker','reason')
+    def identity(row):
+        return tuple(row.get(field) for field in identity_fields)
+
+    def same_fill(a,b):
+        if set(a)!=set(b):
+            return False
+        for key in a:
+            x,y=a[key],b[key]
+            if isinstance(x,(int,float)) and isinstance(y,(int,float)):
+                if not math.isclose(x,y,rel_tol=1e-8,abs_tol=1e-5):
+                    return False
+            elif x!=y:
+                return False
+        return True
+
+    if len(replayed)<len(committed):
+        raise ValueError('Replay removed committed orders')
+    by_identity=defaultdict(list)
+    for i,order in enumerate(replayed):
+        by_identity[identity(order)].append((i,order))
+
+    matched=set()
+    for previous in committed:
+        candidates=by_identity.get(identity(previous),[])
+        for j,(i,order) in enumerate(candidates):
+            if same_fill(order,previous):
+                matched.add(i)
+                candidates.pop(j)
+                break
+        else:
+            if not candidates:
+                raise ValueError('Prior paper order removed or identity revised: '
+                                 +str(previous.get('date'))+' '+str(previous.get('ticker')))
+            example=candidates[0][1]
+            if set(example)!=set(previous):
+                raise ValueError('Prior paper order schema revised: '+str(previous.get('ticker')))
+            changed=next((k for k in previous if not same_fill({k:example[k]},{k:previous[k]})),None)
+            raise ValueError('Prior paper order revised: '+str(changed)
+                             +' '+str(previous.get('date'))+' '+str(previous.get('ticker')))
+
+    new=[order for i,order in enumerate(replayed) if i not in matched]
+    if committed and new:
+        last_committed=max(pd.Timestamp(o['date']) for o in committed)
+        if any(pd.Timestamp(o['date'])<=last_committed for o in new):
+            raise ValueError('Replay introduced a backdated/uncommitted paper fill')
+    return committed+new
+
 
 def main():
     now=dt.datetime.now(UTC)
@@ -224,6 +276,11 @@ def main():
                        'signal':signal,'new_orders':len(newly),'paper_orders_new':newly,'missed_decisions':missed,
                        'nav_eur':state.get('nav_eur',INITIAL),'nav_net_liquidation_eur':state.get('nav_net_liquidation_eur',INITIAL),
                        'cash_eur':state['cash_eur'],'positions_count':len(state['positions']),
+             'nav_valuation_session':state.get('valuation_session'),
+             'stale_holding_quotes':{t:meta.get('ticker_price_dates',{}).get(t)
+                  for t in state['positions'] if meta.get('ticker_price_dates',{}).get(t)!=str(asof.date())},
+             'nav_all_holdings_fresh':all(meta.get('ticker_price_dates',{}).get(t)==str(asof.date())
+                  for t in state['positions']),
                        'limitation':'Prospective replay with shared as-recorded ACWI cap proxy, preopen proof and conservative all-exchange gate; first-cohort calibration proxy, no certified 2012-2025 parity.'})
         write(STATE,state)
     except Exception as e:
