@@ -1,18 +1,134 @@
 {
-  "checked_at_utc": "2026-11-20T04:25:23.321767+00:00",
+  "archived_signal_input_sha256": "71c869daae0cd25268cd4c479af4f41609857037d5d37ac40853ad5f84f6b7ae",
+  "archived_signal_matches_current_input": true,
+  "cash_eur": 99.82958149451291,
+  "checked_at_utc": "2026-11-20T15:24:00.101079+00:00",
+  "current_indicative_targets": [
+    {
+      "rank": null,
+      "score": null,
+      "sector": "XLK",
+      "target_weight": 0.198,
+      "ticker": "PANW"
+    },
+    {
+      "rank": 26.0,
+      "score": 0.77815309,
+      "sector": "XLF",
+      "target_weight": 0.198,
+      "ticker": "CB"
+    },
+    {
+      "rank": null,
+      "score": null,
+      "sector": "XLV",
+      "target_weight": 0.198,
+      "ticker": "MRK"
+    },
+    {
+      "rank": 10.0,
+      "score": 1.07233857,
+      "sector": "XLP",
+      "target_weight": 0.198,
+      "ticker": "KO"
+    },
+    {
+      "rank": 16.0,
+      "score": 0.93078297,
+      "sector": "XLK",
+      "target_weight": 0.198,
+      "ticker": "TXN"
+    }
+  ],
   "decision_session": "2026-11-19",
   "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
   "execution_model": "completed actual local-session bar open with indicative previous-day EUR FX; simulated, not broker fills",
   "forward_parity_certified": false,
   "historical_pit_certified": false,
+  "limitation": "Prospective replay with shared as-recorded ACWI cap proxy, preopen proof and conservative all-exchange gate; first-cohort calibration proxy, no certified 2012-2025 parity.",
+  "missed_decisions": [],
+  "nav_all_holdings_fresh": false,
+  "nav_eur": 9921.507158024451,
+  "nav_net_liquidation_eur": 9863.615847181321,
+  "nav_valuation_session": "2026-11-19",
   "new_orders": 0,
   "original_nav_eur": 9943.0381,
   "paper_only": true,
+  "paper_orders_new": [],
+  "positions_count": 5,
   "real_money_orders": 0,
-  "reason": "Prior paper order revised: ticker",
   "same_price_dates_and_fx": true,
   "shared_input_sha256": "71c869daae0cd25268cd4c479af4f41609857037d5d37ac40853ad5f84f6b7ae",
   "shared_input_verified": true,
+  "signal": {
+    "candidate_exchange_opens": {
+      "CB": {
+        "date": "2026-11-20",
+        "utc": "2026-11-20T14:30:00+00:00"
+      },
+      "KO": {
+        "date": "2026-11-20",
+        "utc": "2026-11-20T14:30:00+00:00"
+      },
+      "MRK": {
+        "date": "2026-11-20",
+        "utc": "2026-11-20T14:30:00+00:00"
+      },
+      "PANW": {
+        "date": "2026-11-20",
+        "utc": "2026-11-20T14:30:00+00:00"
+      },
+      "TXN": {
+        "date": "2026-11-20",
+        "utc": "2026-11-20T14:30:00+00:00"
+      }
+    },
+    "decision_session": "2026-11-19",
+    "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
+    "execution_session": "2026-11-20",
+    "first_recorded_at_utc": "2026-11-20T15:24:00.101079+00:00",
+    "preopen_eligible": false,
+    "roster_sha256": "3adb5b2ffe17d3d58c5f4f16796bf0d5acb7b9af902be5bcf010393f22a5dfd0",
+    "shared_input_sha256": "71c869daae0cd25268cd4c479af4f41609857037d5d37ac40853ad5f84f6b7ae",
+    "source_commit": "d99df1152a9ba434e2d712c50cbb01be5a93012c",
+    "targets": [
+      {
+        "rank": null,
+        "score": null,
+        "sector": "XLK",
+        "target_weight": 0.198,
+        "ticker": "PANW"
+      },
+      {
+        "rank": 26.0,
+        "score": 0.77815309,
+        "sector": "XLF",
+        "target_weight": 0.198,
+        "ticker": "CB"
+      },
+      {
+        "rank": null,
+        "score": null,
+        "sector": "XLV",
+        "target_weight": 0.198,
+        "ticker": "MRK"
+      },
+      {
+        "rank": 10.0,
+        "score": 1.07233857,
+        "sector": "XLP",
+        "target_weight": 0.198,
+        "ticker": "KO"
+      },
+      {
+        "rank": 16.0,
+        "score": 0.93078297,
+        "sector": "XLK",
+        "target_weight": 0.198,
+        "ticker": "TXN"
+      }
+    ]
+  },
   "source": {
     "active_roster_names": 300,
     "dated_vintages_applied": 14,
@@ -723,7 +839,10 @@
     },
     "universe_kind": "MARKET_CAP_USD_AS_RECORDED_WITHIN_ACWI_NOT_HISTORICAL_PIT"
   },
-  "status": "BLOCKED_NO_NEW_FILL",
+  "stale_holding_quotes": {
+    "PANW": "2026-11-18"
+  },
+  "status": "SIGNAL_READY_NOT_PREOPEN_ELIGIBLE",
   "universe_kind": "MARKET_CAP_USD_AS_RECORDED_WITHIN_ACWI_NOT_HISTORICAL_PIT",
   "universe_same_hash": true
 }
