@@ -13,10 +13,10 @@
 **Dati mercato / universo:** MARKET_CAP_USD_AS_RECORDED_WITHIN_ACWI_NOT_HISTORICAL_PIT; fotografia utilizzata al 2026-11-19
 **Universo dinamico:** 14 fotografie cronologiche, ultima disponibile 2026-11-19; nuove società eleggibili SOLO dalla data registrata
 **Primo segnale / apertura successiva:** 2026-11-19 / 2026-11-20
-**Candidati segnalati (NON ORDINI):** KO, CB, JNJ, MRK, ADI, UNP, V, AMD, WELL, ADP; verifica: ATTESTED_CORRECTION_BEFORE_OPEN
-**Segnale originale pubblicato:** SÌ; esito: ATTESTED_CORRECTION_BEFORE_OPEN
+**Candidati segnalati (NON ORDINI):** KO, CB, JNJ, MRK, CRWD, ADI, PANW, UNP, V, WELL; verifica: SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF
+**Segnale originale pubblicato:** SÌ; esito: SIGNAL_REVISION_AFTER_FIRST_OPEN_REQUIRES_FRESH_PROOF
 **Contabilità paper:** FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY — prezzi degli ordini APPROSSIMATI; nessun ordine reale.
-**Ultimo aggiornamento portafoglio:** 2026-11-20T03:59:39.595439+00:00; fonte ultimo prezzo 2026-11-19.
+**Ultimo aggiornamento portafoglio:** 2026-11-20T16:19:15.443983+00:00; fonte ultimo prezzo 2026-11-19.
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
 
 ## Segnali, proposte e ordini: tre cose diverse
@@ -62,16 +62,16 @@
 
 | Titolo | Primo mercato utile | Stato del segnale | Prossima apertura locale prevista (UTC)* |
 |---|---|---|---|
-| ADI | 2026-11-20 | PENDING_FIRST_LOCAL_OPEN | 2026-11-20T14:30:00+00:00 |
-| ADP | 2026-11-20 | PENDING_FIRST_LOCAL_OPEN | 2026-11-20T14:30:00+00:00 |
-| AMD | 2026-11-20 | PENDING_FIRST_LOCAL_OPEN | 2026-11-20T14:30:00+00:00 |
-| CB | 2026-11-20 | PENDING_FIRST_LOCAL_OPEN | 2026-11-20T14:30:00+00:00 |
-| JNJ | 2026-11-20 | PENDING_FIRST_LOCAL_OPEN | 2026-11-20T14:30:00+00:00 |
-| KO | 2026-11-20 | PENDING_FIRST_LOCAL_OPEN | 2026-11-20T14:30:00+00:00 |
-| MRK | 2026-11-20 | PENDING_FIRST_LOCAL_OPEN | 2026-11-20T14:30:00+00:00 |
-| UNP | 2026-11-20 | PENDING_FIRST_LOCAL_OPEN | 2026-11-20T14:30:00+00:00 |
-| V | 2026-11-20 | PENDING_FIRST_LOCAL_OPEN | 2026-11-20T14:30:00+00:00 |
-| WELL | 2026-11-20 | PENDING_FIRST_LOCAL_OPEN | 2026-11-20T14:30:00+00:00 |
+| ADI | 2026-11-20 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-23T14:30:00+00:00 |
+| CB | 2026-11-20 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-23T14:30:00+00:00 |
+| CRWD | 2026-11-20 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-23T14:30:00+00:00 |
+| JNJ | 2026-11-20 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-23T14:30:00+00:00 |
+| KO | 2026-11-20 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-23T14:30:00+00:00 |
+| MRK | 2026-11-20 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-23T14:30:00+00:00 |
+| PANW | 2026-11-20 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-23T14:30:00+00:00 |
+| UNP | 2026-11-20 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-23T14:30:00+00:00 |
+| V | 2026-11-20 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-23T14:30:00+00:00 |
+| WELL | 2026-11-20 | DEFERRED_PAST_FIRST_LOCAL_OPEN | 2026-11-23T14:30:00+00:00 |
 
 *Orari indicativi: festività, sospensioni e quotazioni reali devono essere verificate dal provider. Il segnale non equivale a un acquisto; un mercato già aperto non autorizza esecuzioni retroattive.*
 
