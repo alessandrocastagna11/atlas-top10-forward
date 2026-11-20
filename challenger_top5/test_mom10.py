@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import pandas as pd
-from run import score_mom10, same_targets
+from run import score_mom10, same_targets, reconcile_orders
 
 class TestRankMom10(unittest.TestCase):
     def setUp(self):
@@ -35,6 +35,70 @@ class TestRankMom10(unittest.TestCase):
         self.assertTrue(same_targets(p,p))
         self.assertFalse(same_targets(p,[{'ticker':'B','target_weight':.20},{'ticker':'A','target_weight':.18}]))
         self.assertFalse(same_targets(p,[{'ticker':'A','target_weight':.19},{'ticker':'B','target_weight':.18}]))
+
+
+class TestImmutablePaperLedger(unittest.TestCase):
+    @staticmethod
+    def order(ticker,shares=1.,date='2026-11-18T00:00:00'):
+        return {
+            'scenario':'italian_tax','strategy':'ATLAS_TOP5_ALWAYS_RANK_MOM10_V1',
+            'decision_date':'2026-11-17T00:00:00','date':date,
+            'action':'BUY','ticker':ticker,'shares':shares,
+            'reference_price_eur':100.,'execution_price_eur':100.1,
+            'reference_value_eur':100.,'fee_eur':1.,
+            'slippage_bps_per_side':10,'capital_gains_tax_eur':0.,
+            'reason':'target_rebalance'
+        }
+
+    def test_permutation_of_committed_equal_weight_fills_is_harmless(self):
+        saved=[self.order(t) for t in ('PANW','CB','MRK','KO','TXN')]
+        replay=[saved[i].copy() for i in (0,3,2,1,4)]
+        self.assertEqual(reconcile_orders(replay,saved),saved)
+
+    def test_revised_shares_must_still_block(self):
+        saved=[self.order('PANW'),self.order('KO')]
+        replay=[x.copy() for x in reversed(saved)]
+        replay[0]['shares']=1.1
+        with self.assertRaisesRegex(ValueError,'Prior paper order revised: shares'):
+            reconcile_orders(replay,saved)
+
+    def test_revised_execution_price_must_still_block(self):
+        saved=[self.order('KO')]
+        replay=[self.order('KO')]
+        replay[0]['execution_price_eur']=102.
+        with self.assertRaisesRegex(ValueError,'Prior paper order revised: execution_price_eur'):
+            reconcile_orders(replay,saved)
+
+    def test_missing_committed_fill_must_block(self):
+        saved=[self.order('PANW'),self.order('KO')]
+        with self.assertRaisesRegex(ValueError,'Replay removed committed orders'):
+            reconcile_orders([self.order('PANW')],saved)
+
+    def test_extra_backdated_fill_must_block(self):
+        saved=[self.order('PANW')]
+        replay=saved+[self.order('KO')]
+        with self.assertRaisesRegex(ValueError,'backdated'):
+            reconcile_orders(replay,saved)
+
+    def test_extra_forward_fill_appends_without_reordering_history(self):
+        saved=[self.order('PANW'),self.order('KO')]
+        next_fill=self.order('MRK',date='2026-12-23T00:00:00')
+        replay=[saved[1].copy(),next_fill,saved[0].copy()]
+        self.assertEqual(reconcile_orders(replay,saved),saved+[next_fill])
+
+    def test_missing_identity_same_count_must_block(self):
+        saved=[self.order('KO')]
+        with self.assertRaisesRegex(ValueError,'identity revised'):
+            reconcile_orders([self.order('MRK')],saved)
+
+    def test_duplicate_matching_fills_are_consumed_one_to_one(self):
+        one=self.order('KO')
+        self.assertEqual(reconcile_orders([one.copy(),one.copy()],[one,one]),[one,one])
+        changed=one.copy()
+        changed['fee_eur']=2.
+        with self.assertRaisesRegex(ValueError,'fee_eur'):
+            reconcile_orders([one.copy(),changed],[one,one])
+
 
 if __name__=='__main__':
     unittest.main()
