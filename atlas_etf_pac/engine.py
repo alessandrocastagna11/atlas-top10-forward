@@ -10,7 +10,7 @@ No broker access, no retroactive positions, no forced 35-day hold or monthly
 order cap (those restrictions are not in original V2.3).
 """
 from __future__ import annotations
-import copy,datetime as dt,hashlib,json,math,os,sys,zipfile
+import copy,csv,datetime as dt,hashlib,json,math,os,sys,urllib.parse,zipfile
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -93,19 +93,69 @@ def seed(cfg):
       'last_price_session':None}
 
 
+
+def yahoo_daily_with_secondary_endpoint(cfg,ticker,now):
+    """Retry another Yahoo chart host using observed EUR adjusted closes only."""
+    rows=v23.yahoo_daily(ticker,cfg['history_start'],cfg)
+    rows=sorted([dict(r) for r in rows],key=lambda x:x['date'])
+    cutoff=completed_cutoff(now).isoformat()
+    if not rows or elapsed_weekday_sessions(rows[-1]['date'],cutoff)==0:
+        return rows,'YAHOO_QUERY1'
+    last=rows[-1]['date']
+    start=dt.datetime.combine(day(last)-dt.timedelta(days=10),dt.time.min,tzinfo=dt.timezone.utc)
+    end=now.astimezone(dt.timezone.utc)+dt.timedelta(days=2)
+    url=('https://query2.finance.yahoo.com/v8/finance/chart/'
+         +urllib.parse.quote(ticker,safe='')
+         +'?period1='+str(int(start.timestamp()))+'&period2='+str(int(end.timestamp()))
+         +'&interval=1d&events=div%2Csplits&includeAdjustedClose=true')
+    try:
+        data=json.loads(v23.fetch_bytes(url,timeout=30).decode('utf-8'))['chart']['result'][0]
+        if data.get('meta',{}).get('currency')!='EUR':
+            raise ValueError('Unexpected Yahoo currency')
+        indicator=data['indicators']
+        adj=((indicator.get('adjclose') or [{}])[0].get('adjclose') or [])
+        close=indicator['quote'][0].get('close') or []
+        incoming={}
+        for i,t in enumerate(data.get('timestamp') or []):
+            x=adj[i] if i<len(adj) and adj[i] is not None else (close[i] if i<len(close) else None)
+            if x is None or not math.isfinite(float(x)) or float(x)<=0:continue
+            session=dt.datetime.fromtimestamp(t,tz=dt.timezone.utc).date().isoformat()
+            if session<=cutoff:incoming[session]=float(x)
+        original={r['date']:float(r['close']) for r in rows}
+        overlap=sorted(set(incoming)&set(original))
+        if overlap:
+            d=overlap[-1]
+            if abs(incoming[d]/original[d]-1)>0.005:
+                raise ValueError('Inconsistent adjusted close between Yahoo endpoints')
+        added={k:v for k,v in incoming.items() if k>last}
+        if not added:
+            return rows,'YAHOO_BOTH_ENDPOINTS_NO_NEW_COMPLETED_CLOSE'
+        merged=[{'date':k,'close':v} for k,v in sorted({**original,**added}.items())]
+        cache=v23.CACHE/('yahoo_'+v23.safe_ticker_name(ticker)+'.csv')
+        tmp=cache.with_name(cache.name+'.tmp')
+        with tmp.open('w',encoding='utf-8',newline='') as stream:
+            writer=csv.DictWriter(stream,fieldnames=['date','close'])
+            writer.writeheader();writer.writerows(merged)
+        tmp.replace(cache)
+        return merged,'YAHOO_QUERY2_OBSERVED_CLOSE'
+    except (OSError,ValueError,KeyError,IndexError,TypeError,RuntimeError) as exc:
+        print('WARNING: Secondary Yahoo unavailable for',ticker,str(exc)[:180])
+        return rows,'YAHOO_QUERY1_SECONDARY_UNAVAILABLE'
+
+
 def historical_feeds(cfg,now):
     """Original Yahoo/FRED/French source functions. Cached copies persist.
     Never treat a cached close for a prior day as today's quote.
     """
     cutoff=completed_cutoff(now).isoformat()
-    eq=v23.yahoo_daily(cfg['signal_ticker'],cfg['history_start'],cfg)
+    eq,equity_source=yahoo_daily_with_secondary_endpoint(cfg,cfg['signal_ticker'],now)
     eq=sorted([dict(r) for r in eq if r['date']<=cutoff],key=lambda x:x['date'])
     if len(eq)<160:raise InsufficientData('EQUITY_HISTORY_UNDER_160_SESSIONS')
     last=eq[-1]['date'];gap=(day(cutoff)-day(last)).days
     if gap>4:raise InsufficientData('STALE_EQUITY_CLOSE_'+last)
-    bond=[];bond_problem=None
+    bond=[];bond_problem=None;bond_source=None
     try:
-        bond=v23.yahoo_daily(cfg['defensive_ticker'],cfg['history_start'],cfg)
+        bond,bond_source=yahoo_daily_with_secondary_endpoint(cfg,cfg['defensive_ticker'],now)
         bond=sorted([dict(r) for r in bond if r['date']<=last],key=lambda x:x['date'])
     except Exception as exc:bond_problem=str(exc)[:160]
     if bond:
@@ -119,7 +169,9 @@ def historical_feeds(cfg,now):
         macro=None;macro_problem=str(exc)[:160]
     return {'equity':eq,'bond':bond,'bond_usable':recent_bond,
             'bond_problem':bond_problem,'macro':macro,'macro_problem':macro_problem,
-            'cutoff':cutoff,'session':last,'quote_lag_days':gap}
+            'cutoff':cutoff,'session':last,'quote_lag_days':gap,
+            'quote_lag_sessions':elapsed_weekday_sessions(last,cutoff),
+            'equity_quote_source':equity_source,'bond_quote_source':bond_source}
 
 
 class CausalStress:
@@ -222,10 +274,8 @@ def signal(feeds,cfg):
 def prices_for_session(feeds,session,has_bond_position=False):
     e=next((r['close'] for r in feeds['equity'] if r['date']==session),None)
     if e is None:raise InsufficientData('MISSING_EQUITY_SESSION_CLOSE_'+session)
-    if feeds['bond_usable']:
-        bonds=[r['close'] for r in feeds['bond'] if r['date']<=session]
-        b=bonds[-1] if bonds else None
-    else:b=None
+    # Never execute or mark a bond holding against a previous session's quote.
+    b=next((r['close'] for r in feeds['bond'] if r['date']==session),None) if feeds['bond_usable'] else None
     if has_bond_position and b is None:
         raise InsufficientData('MISSING_HELD_BOND_VALUATION')
     return {'EQUITY':num(e),'BOND':num(b) if b is not None else None}
@@ -323,14 +373,15 @@ def fill_pending(st,cfg,pending,price,session,now):
     acts=list(pending['proposed_orders'])
     for task in [a for a in acts if a['side']=='SELL']+[a for a in acts if a['side']=='BUY']:
         sleeve=task['sleeve']
-        if task['side']=='BUY' and sleeve=='CORE' and st['balances']['BOND']['cash_eur']>0:
-            st['balances']['CORE']['cash_eur']+=st['balances']['BOND']['cash_eur'];st['balances']['BOND']['cash_eur']=0.
-        if task['side']=='BUY' and sleeve=='BOND':
-            st['balances']['BOND']['cash_eur']+=st['balances']['CORE']['cash_eur'];st['balances']['CORE']['cash_eur']=0.
         px=price['BOND' if sleeve=='BOND' else 'EQUITY']
         if px is None:
             st['blocked_actions'].append({'session':session,'reason':'MISSING_PRICE_FOR_'+sleeve})
             continue
+        # No cash transfers if the intended asset has no observed same-day close.
+        if task['side']=='BUY' and sleeve=='CORE' and st['balances']['BOND']['cash_eur']>0:
+            st['balances']['CORE']['cash_eur']+=st['balances']['BOND']['cash_eur'];st['balances']['BOND']['cash_eur']=0.
+        if task['side']=='BUY' and sleeve=='BOND':
+            st['balances']['BOND']['cash_eur']+=st['balances']['CORE']['cash_eur'];st['balances']['CORE']['cash_eur']=0.
         # Initial and strategy switching use 1 EUR fee; subsequent regular
         # PAC purchases may be fee-free only when no exit/reentry is occurring.
         prior_kind='INITIAL' if len(st['orders'])==0 and task['side']=='BUY' else task['kind']
@@ -389,6 +440,7 @@ def ledger_process(cfg,state,session,feeds,sig,now):
     st['last_processed_session']=session
     st['last_price_session']=session
     st['last_quotes']=price
+    st['last_status']='PAPER_ORDERS_EXECUTED' if executed else 'SIGNAL_PRECOMMITTED_FOR_FUTURE_CLOSE'
     st['cash_eur']=round(x['cash_eur'],5)
     st['signal_history'].append(sig)
     st['signal_history']=st['signal_history'][-300:]
@@ -440,6 +492,9 @@ def main(now=None):
     try:
         feeds=historical_feeds(cfg,now)
         quality={'equity_last':feeds['session'],'quote_lag_days':feeds['quote_lag_days'],
+                 'quote_lag_sessions_weekday_approx':feeds['quote_lag_sessions'],
+                 'equity_quote_source':feeds['equity_quote_source'],
+                 'bond_quote_source':feeds['bond_quote_source'],
                  'bond_last':feeds['bond'][-1]['date'] if feeds['bond'] else None,
                  'bond_quality':feeds['bond_problem'] or 'OK',
                  'macro_quality':feeds['macro_problem'] or 'ONLINE_OR_PERSISTED_CACHE'}
@@ -455,6 +510,9 @@ def main(now=None):
             save(STATE,st)
             status='PAPER_ORDERS_EXECUTED' if executed else 'V23_SIGNAL_PENDING_NEXT_COMPLETED_CLOSE'
         else:status='WAITING_NEW_EQUITY_ETF_CLOSE'
+        if feeds['quote_lag_sessions']>=2:
+            status='PENDING_DATA: EQUITY_CLOSE_MISSING_'+str(feeds['quote_lag_sessions'])+'_WEEKDAY_SESSIONS'
+            quality['blocker']='EQUITY_PROVIDER_STALE_BUT_LEDGER_PRESERVED'
         if sig['stress'].get('source','').startswith(('CARRIED_FROZEN_','CARRIED_OBSERVED_')):
             status+='__MACRO_PROXY_STALE'
         save(AUDIT,{'checked_at_utc':now.astimezone(dt.timezone.utc).isoformat(),
@@ -471,6 +529,7 @@ def main(now=None):
     print(json.dumps({'status':status,'model':report['model'],'nav_eur':report['nav_eur'],
                       'orders_total':report['orders_total'], 'last_nav_session':report['last_nav_session'],
                       'pending':bool(report['pending_orders']),'quality':report['source_quality']},ensure_ascii=False))
-    return 0
+    # A green workflow must not certify a multi-session-old paper account.
+    return 2 if quality.get('quote_lag_sessions_weekday_approx',0)>=2 else 0
 
 if __name__=='__main__':raise SystemExit(main())
