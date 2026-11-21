@@ -282,11 +282,11 @@ class TestOriginalV23(unittest.TestCase):
                       return_value=synthetic['rf_annualized']), \
                  mock.patch.object(pac.v23,'french_six_monthly',
                       return_value=synthetic['six']):
-                    new,status=pac.refresh_macro_independently(now)
-                self.assertEqual(new['source_audit']['requested_completed_month'],'2026-10')
-                for key in ('aaa','baa','gs10','rf_annualized','six'):
-                    self.assertNotIn('2026-11',new[key])
-                    self.assertEqual(max(new[key]),'2026-10')
+                new,status=pac.refresh_macro_independently(now)
+            self.assertEqual(new['source_audit']['requested_completed_month'],'2026-10')
+            for key in ('aaa','baa','gs10','rf_annualized','six'):
+                self.assertNotIn('2026-11',new[key])
+                self.assertEqual(max(new[key]),'2026-10')
 
     def test_paper_rules_no_35days_no_monthly_cap(self):
         self.assertEqual(CFG['min_hold_days_before_sell'],0)
