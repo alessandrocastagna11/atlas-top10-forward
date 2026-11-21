@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-11-21T16:02:25.197372+00:00",
+  "checked_at_utc": "2026-11-21T16:35:21.380510+00:00",
   "first_quote_date": "2010-01-04",
   "market_session": "2026-11-20",
   "original_live_sha256": "703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e",
@@ -14,7 +14,39 @@
     "equity_last": "2026-11-20",
     "equity_quote_source": "YAHOO_QUERY1",
     "macro_previous_month": "2026-10",
-    "macro_quality": "ONLINE_OR_PERSISTED_CACHE",
+    "macro_quality": "SOURCE_BY_SOURCE_VERIFIED",
+    "macro_sources": {
+      "aaa": {
+        "error": null,
+        "last_month": "2026-10",
+        "online_checked": true,
+        "status": "ONLINE_LATEST_MONTH_AVAILABLE"
+      },
+      "baa": {
+        "error": null,
+        "last_month": "2026-10",
+        "online_checked": true,
+        "status": "ONLINE_LATEST_MONTH_AVAILABLE"
+      },
+      "gs10": {
+        "error": null,
+        "last_month": "2026-10",
+        "online_checked": true,
+        "status": "ONLINE_LATEST_MONTH_AVAILABLE"
+      },
+      "rf_annualized": {
+        "error": null,
+        "last_month": "2026-09",
+        "online_checked": true,
+        "status": "ONLINE_UPSTREAM_BEHIND_REQUESTED_MONTH"
+      },
+      "six": {
+        "error": null,
+        "last_month": "2026-09",
+        "online_checked": true,
+        "status": "ONLINE_UPSTREAM_BEHIND_REQUESTED_MONTH"
+      }
+    },
     "missing_macro_inputs": [
       "FF_RF",
       "FF_BREADTH_3M"
