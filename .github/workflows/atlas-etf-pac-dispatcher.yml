@@ -6,6 +6,14 @@ on:
     # Times are UTC: 20:50/01:20 CET during winter, 21:50/02:20 CEST.
     - cron: '50 19 * * 1-5'
     - cron: '20 0 * * 2-6'
+    # Yahoo may publish Xetra's completed close hours after the main EOD run.
+    # Retry next morning and before the FOLLOWING Xetra market close: precommit
+    # the last observed session before an eligible, genuinely observed future fill.
+    - cron: '35 6 * * 2-6'
+    - cron: '25 11 * * 2-6'
+    - cron: '15 14 * * 1-5'
+    # Friday adjusted closes sometimes become available on Sunday.
+    - cron: '25 10 * * 0'
 permissions:
   contents: write
 concurrency:
@@ -58,7 +66,8 @@ jobs:
               f.write('\nNo real money orders. Exact original V2.3 LIVE adapter; 2026 macro may use explicitly marked carry from the latest observed completed month.\n')
           PY
       - name: Commit complete PAC ledger, quote audit and source caches
-        if: success()
+        # Persist real data-quality failures too; never leave a stale green report.
+        if: always()
         run: |
           git config user.name 'Atlas ETF PAC Paper Bot'
           git config user.email 'atlas-etf-pac-paper-bot@users.noreply.github.com'
