@@ -403,6 +403,35 @@ def accrue_deposit(st,cfg,session):
     return deposit
 
 
+
+def correct_cash_only_stamp(st,now):
+    """One-off audit correction: security stamp applies to assets, not idle cash.
+
+    Reprice historic cash-only NAV without modifying orders, dates or signals.
+    """
+    if st.get('orders') or not st.get('nav'):
+        return False
+    if any(float(x.get('units',0))!=0 for x in st['balances'].values()):
+        return False
+    if any(float(r.get('holdings_eur',0))!=0 for r in st['nav']):
+        return False
+    amount=float(st.get('stamp_accrued_eur',0))
+    if amount<=1e-10:
+        return False
+    for row in st['nav']:
+        row['nav_eur']=round(float(row['cash_eur']),5)
+        row['twr_index']=1.
+        row['twr_day_pct']=0.
+        row['drawdown_pct']=0.
+    st['stamp_accrued_eur']=0.
+    st['accounting_adjustments']=st.get('accounting_adjustments',[])+[{
+        'changed_at_utc':now.astimezone(dt.timezone.utc).isoformat(),
+        'reason':'CORRECT_CASH_ONLY_SECURITY_STAMP_PROXY',
+        'removed_incorrect_cash_stamp_eur':round(amount,6),
+        'paper_orders_changed':0}]
+    return True
+
+
 def ledger_process(cfg,state,session,feeds,sig,now):
     st=copy.deepcopy(state)
     if st['last_processed_session'] is not None and session<=st['last_processed_session']:
@@ -420,8 +449,8 @@ def ledger_process(cfg,state,session,feeds,sig,now):
     previous_session=st['last_processed_session']
     if previous_session is not None:
         days=(day(session)-day(previous_session)).days
-        previous_value=prior['nav_eur'] if prior else cfg['initial_cash_eur']
-        st['stamp_accrued_eur']+=max(previous_value,0)*cfg['annual_stamp_proxy']*days/365.25
+        taxable_securities=(float(prior.get('equity_eur',0))+float(prior.get('bond_eur',0))) if prior else 0.
+        st['stamp_accrued_eur']+=max(taxable_securities,0)*cfg['annual_stamp_proxy']*days/365.25
     executed=fill_pending(st,cfg,st.get('pending'),price,session,now)
     st['pending']=None
     deposit=accrue_deposit(st,cfg,session)
@@ -468,6 +497,8 @@ def build_report(cfg,st,status,now,quality=None):
        'last_signal_session':st['signal_history'][-1]['decision_session'] if st['signal_history'] else None,
        'nav_eur':last['nav_eur'] if last else cfg['initial_cash_eur'],
        'cash_eur':round(cash,4),
+       'stamp_proxy_eur':round(float(st.get('stamp_accrued_eur',0)),6),
+       'accounting_adjustments':st.get('accounting_adjustments',[])[-3:],
        'invested_eur':last['holdings_eur'] if last else 0,
        'positions':{k:{'units':round(v['units'],8),'cash_eur':round(v['cash_eur'],4),
                        'cost_basis_eur':round(v['basis_eur'],4)} for k,v in st['balances'].items()},
@@ -488,10 +519,13 @@ def build_report(cfg,st,status,now,quality=None):
 def main(now=None):
     now=now or dt.datetime.now(dt.timezone.utc)
     cfg=read(CONFIG);st=read(STATE);validate(cfg,st)
+    stamp_corrected=correct_cash_only_stamp(st,now)
+    if stamp_corrected:save(STATE,st)
     quality={};status='WAITING_COMPLETED_EOD_SESSION'
     try:
         feeds=historical_feeds(cfg,now)
-        quality={'equity_last':feeds['session'],'quote_lag_days':feeds['quote_lag_days'],
+        quality={'accounting_adjustment':'CORRECT_CASH_ONLY_SECURITY_STAMP_PROXY' if stamp_corrected else None,
+                 'equity_last':feeds['session'],'quote_lag_days':feeds['quote_lag_days'],
                  'quote_lag_sessions_weekday_approx':feeds['quote_lag_sessions'],
                  'equity_quote_source':feeds['equity_quote_source'],
                  'bond_quote_source':feeds['bond_quote_source'],
