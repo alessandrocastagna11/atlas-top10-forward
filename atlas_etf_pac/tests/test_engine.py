@@ -171,6 +171,34 @@ class TestOriginalV23(unittest.TestCase):
         self.assertEqual(st['orders'],[])
         self.assertIn('MISSING_PRICE_FOR_BOND',str(st['blocked_actions']))
 
+
+    def test_cash_only_stamp_correction_is_audited_and_idempotent(self):
+        st=pac.seed(CFG)
+        st['stamp_accrued_eur']=0.03833
+        st['nav']=[
+            {'date':'2026-11-12','cash_eur':1000,'holdings_eur':0,'equity_eur':0,
+             'bond_eur':0,'nav_eur':1000,'twr_index':1,'twr_day_pct':0,'drawdown_pct':0},
+            {'date':'2026-11-19','cash_eur':1000,'holdings_eur':0,'equity_eur':0,
+             'bond_eur':0,'nav_eur':999.96167,'twr_index':0.99996167,
+             'twr_day_pct':-0.000548,'drawdown_pct':-0.003833}]
+        self.assertTrue(pac.correct_cash_only_stamp(st,T2))
+        self.assertEqual(st['nav'][-1]['nav_eur'],1000)
+        self.assertEqual(st['nav'][-1]['twr_index'],1)
+        self.assertEqual(st['stamp_accrued_eur'],0)
+        self.assertEqual(len(st['orders']),0)
+        self.assertEqual(st['accounting_adjustments'][0]['paper_orders_changed'],0)
+        self.assertFalse(pac.correct_cash_only_stamp(st,T2))
+        self.assertEqual(len(st['accounting_adjustments']),1)
+
+    def test_cash_only_forward_no_security_stamp(self):
+        st=pac.seed(CFG)
+        st,_=pac.ledger_process(CFG,st,'2026-11-12',feed('2026-11-12'),sig('2026-11-12'),T1)
+        # A future date after the first close without any security position:
+        st['pending']=None
+        st,_=pac.ledger_process(CFG,st,'2026-11-13',feed('2026-11-13'),sig('2026-11-13'),T2)
+        self.assertEqual(st['stamp_accrued_eur'],0)
+        self.assertEqual(st['nav'][-1]['nav_eur'],1000)
+
     def test_paper_rules_no_35days_no_monthly_cap(self):
         self.assertEqual(CFG['min_hold_days_before_sell'],0)
         self.assertIsNone(CFG['max_total_orders_per_month'])
