@@ -40,7 +40,7 @@
     }
   ],
   "cash_eur": 1000.0,
-  "checked_at_utc": "2026-11-21T16:01:50.359273+00:00",
+  "checked_at_utc": "2026-11-21T16:02:09.040602+00:00",
   "contributed_eur": 1000.0,
   "cumulative_twr_pct": 0.0,
   "historical_frozen_v23_parity": "ORIGINAL_LIVE_SHA256_VERIFIED; TRADABLE_ETF_PROXY_DIFFERS_FROM_1926_FF",
@@ -134,7 +134,7 @@
   },
   "real_broker_orders": 0,
   "source_quality": {
-    "accounting_adjustment": "CORRECT_CASH_ONLY_SECURITY_STAMP_PROXY",
+    "accounting_adjustment": null,
     "bond_last": "2026-11-20",
     "bond_quality": "OK",
     "bond_quote_source": "YAHOO_QUERY1",
