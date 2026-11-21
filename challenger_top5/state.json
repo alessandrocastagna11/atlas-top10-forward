@@ -5,7 +5,7 @@
   "cash_eur": 99.77908381401888,
   "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
   "equity_history": {
-    "2026-11-18": 10004.32656578073,
+    "2026-11-18": 10004.326565780731,
     "2026-11-19": 9966.535959035959,
     "2026-11-20": 9781.657260318872
   },
@@ -97,30 +97,30 @@
   ],
   "positions": {
     "CB": {
-      "cost_basis_eur": 2001.0,
+      "cost_basis_eur": 2000.9999999999998,
       "first_entry_date": "2026-11-18",
       "lots": [
         {
           "purchase_date": "2026-11-18",
           "sale_eligible_date": "2026-12-23",
-          "shares": 5.902183376499873
+          "shares": 5.902183376499872
         }
       ],
-      "market_value_eur": 1999.5293814055292,
-      "shares": 5.902183376499873
+      "market_value_eur": 1999.5293814055287,
+      "shares": 5.902183376499872
     },
     "KO": {
-      "cost_basis_eur": 2000.9999999999993,
+      "cost_basis_eur": 2000.9999999999995,
       "first_entry_date": "2026-11-18",
       "lots": [
         {
           "purchase_date": "2026-11-18",
           "sale_eligible_date": "2026-12-23",
-          "shares": 22.4297422794221
+          "shares": 22.429742279422104
         }
       ],
-      "market_value_eur": 1983.1499518580479,
-      "shares": 22.4297422794221
+      "market_value_eur": 1983.149951858048,
+      "shares": 22.429742279422104
     },
     "MRK": {
       "cost_basis_eur": 2001.0,
@@ -149,20 +149,20 @@
       "shares": 7.003798815920447
     },
     "TXN": {
-      "cost_basis_eur": 1896.1199200799208,
+      "cost_basis_eur": 1896.1199200799206,
       "first_entry_date": "2026-11-18",
       "lots": [
         {
           "purchase_date": "2026-11-18",
           "sale_eligible_date": "2026-12-23",
-          "shares": 6.95506682015034
+          "shares": 6.955066820150339
         }
       ],
       "market_value_eur": 1672.2380285994948,
-      "shares": 6.95506682015034
+      "shares": 6.955066820150339
     }
   },
-  "slippage_eur": 9.885234685394527,
-  "tax_eur": 0.11193191053830258,
+  "slippage_eur": 9.885234685394526,
+  "tax_eur": 0.11193191053830259,
   "valuation_session": "2026-11-20"
 }
