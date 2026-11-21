@@ -1,4 +1,12 @@
 {
+  "accounting_adjustments": [
+    {
+      "changed_at_utc": "2026-11-21T16:01:50.359273+00:00",
+      "paper_orders_changed": 0,
+      "reason": "CORRECT_CASH_ONLY_SECURITY_STAMP_PROXY",
+      "removed_incorrect_cash_stamp_eur": 0.043805
+    }
+  ],
   "blocked_actions": [
     {
       "decision_session": "2026-11-12",
@@ -32,15 +40,15 @@
     }
   ],
   "cash_eur": 1000.0,
-  "checked_at_utc": "2026-11-21T15:59:47.828672+00:00",
+  "checked_at_utc": "2026-11-21T16:01:50.359273+00:00",
   "contributed_eur": 1000.0,
-  "cumulative_twr_pct": -0.00438,
+  "cumulative_twr_pct": 0.0,
   "historical_frozen_v23_parity": "ORIGINAL_LIVE_SHA256_VERIFIED; TRADABLE_ETF_PROXY_DIFFERS_FROM_1926_FF",
   "invested_eur": 0.0,
   "last_nav_session": "2026-11-20",
   "last_orders": [],
   "last_signal_session": "2026-11-20",
-  "latest_day_pct": -0.000548,
+  "latest_day_pct": 0.0,
   "latest_signal": {
     "bull": false,
     "core_in": true,
@@ -84,11 +92,11 @@
     },
     "target_equity_fraction": 1.0
   },
-  "max_drawdown_pct": -0.00438,
+  "max_drawdown_pct": 0,
   "mode": "PAPER_ONLY_ORIGINAL_V23",
   "model": "ATLAS_ETF_PAC_V23_ORIGINAL_LIVE_V1",
   "monthly_cash_contributions": 0,
-  "nav_eur": 999.9562,
+  "nav_eur": 1000.0,
   "no_real_orders": true,
   "notes": "Original V2.3 LIVE replay EUNL.DE + CSBGE3.MI; planned next completed-session CLOSE paper fills. Macro may be carried with explicit warning; no real trades.",
   "orders_total": 0,
@@ -126,6 +134,7 @@
   },
   "real_broker_orders": 0,
   "source_quality": {
+    "accounting_adjustment": "CORRECT_CASH_ONLY_SECURITY_STAMP_PROXY",
     "bond_last": "2026-11-20",
     "bond_quality": "OK",
     "bond_quote_source": "YAHOO_QUERY1",
@@ -143,5 +152,6 @@
     "quote_lag_sessions_weekday_approx": 0,
     "stress_source": "CARRIED_OBSERVED_2026-09"
   },
+  "stamp_proxy_eur": 0.0,
   "status": "WAITING_NEW_EQUITY_ETF_CLOSE__MACRO_PROXY_STALE"
 }

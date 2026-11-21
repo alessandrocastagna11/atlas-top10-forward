@@ -1,4 +1,12 @@
 {
+  "accounting_adjustments": [
+    {
+      "changed_at_utc": "2026-11-21T16:01:50.359273+00:00",
+      "paper_orders_changed": 0,
+      "reason": "CORRECT_CASH_ONLY_SECURITY_STAMP_PROXY",
+      "removed_incorrect_cash_stamp_eur": 0.043805
+    }
+  ],
   "activation_date": "2026-11-12",
   "balances": {
     "BOND": {
@@ -81,78 +89,78 @@
       "cash_eur": 1000.0,
       "contribution_eur": 0.0,
       "date": "2026-11-13",
-      "drawdown_pct": -0.000548,
+      "drawdown_pct": 0.0,
       "equity_eur": 0.0,
       "holdings_eur": 0.0,
-      "nav_eur": 999.99452,
+      "nav_eur": 1000.0,
       "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
-      "twr_day_pct": -0.000548,
-      "twr_index": 0.9999945243
+      "twr_day_pct": 0.0,
+      "twr_index": 1.0
     },
     {
       "bond_eur": 0.0,
       "cash_eur": 1000.0,
       "contribution_eur": 0.0,
       "date": "2026-11-16",
-      "drawdown_pct": -0.00219,
+      "drawdown_pct": 0.0,
       "equity_eur": 0.0,
       "holdings_eur": 0.0,
-      "nav_eur": 999.9781,
+      "nav_eur": 1000.0,
       "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
-      "twr_day_pct": -0.001642,
-      "twr_index": 0.9999781016
+      "twr_day_pct": 0.0,
+      "twr_index": 1.0
     },
     {
       "bond_eur": 0.0,
       "cash_eur": 1000.0,
       "contribution_eur": 0.0,
       "date": "2026-11-17",
-      "drawdown_pct": -0.002738,
+      "drawdown_pct": 0.0,
       "equity_eur": 0.0,
       "holdings_eur": 0.0,
-      "nav_eur": 999.97262,
+      "nav_eur": 1000.0,
       "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
-      "twr_day_pct": -0.000548,
-      "twr_index": 0.9999726233
+      "twr_day_pct": 0.0,
+      "twr_index": 1.0
     },
     {
       "bond_eur": 0.0,
       "cash_eur": 1000.0,
       "contribution_eur": 0.0,
       "date": "2026-11-18",
-      "drawdown_pct": -0.003285,
+      "drawdown_pct": 0.0,
       "equity_eur": 0.0,
       "holdings_eur": 0.0,
-      "nav_eur": 999.96715,
+      "nav_eur": 1000.0,
       "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
-      "twr_day_pct": -0.000547,
-      "twr_index": 0.9999671495
+      "twr_day_pct": 0.0,
+      "twr_index": 1.0
     },
     {
       "bond_eur": 0.0,
       "cash_eur": 1000.0,
       "contribution_eur": 0.0,
       "date": "2026-11-19",
-      "drawdown_pct": -0.003833,
+      "drawdown_pct": 0.0,
       "equity_eur": 0.0,
       "holdings_eur": 0.0,
-      "nav_eur": 999.96167,
+      "nav_eur": 1000.0,
       "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
-      "twr_day_pct": -0.000548,
-      "twr_index": 0.9999616701
+      "twr_day_pct": 0.0,
+      "twr_index": 1.0
     },
     {
       "bond_eur": 0.0,
       "cash_eur": 1000.0,
       "contribution_eur": 0.0,
       "date": "2026-11-20",
-      "drawdown_pct": -0.00438,
+      "drawdown_pct": 0.0,
       "equity_eur": 0.0,
       "holdings_eur": 0.0,
-      "nav_eur": 999.9562,
+      "nav_eur": 1000.0,
       "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
-      "twr_day_pct": -0.000548,
-      "twr_index": 0.9999561952
+      "twr_day_pct": 0.0,
+      "twr_index": 1.0
     }
   ],
   "orders": [],
@@ -458,5 +466,5 @@
       "target_equity_fraction": 1.0
     }
   ],
-  "stamp_accrued_eur": 0.043804862970568105
+  "stamp_accrued_eur": 0.0
 }
