@@ -143,6 +143,89 @@ def yahoo_daily_with_secondary_endpoint(cfg,ticker,now):
         return rows,'YAHOO_QUERY1_SECONDARY_UNAVAILABLE'
 
 
+
+def refresh_macro_independently(now):
+    """Refresh each *official* source separately without losing other fresh inputs.
+
+    Unlike the frozen adapter's all-or-nothing download, one provider outage does
+    not roll back the entire monthly bundle. Missing months remain missing; never
+    interpolate RF or six portfolios or assign a publication date retroactively.
+    The frozen V2.3 StressModel and its parameters are untouched.
+    """
+    cache_path=v23.CACHE/'macro_v23.json'
+    cached=read(cache_path) if cache_path.exists() else {}
+    refresh={}
+    result={}
+    allowed=v23.previous_month_key(now.astimezone(ROME).date().isoformat())
+    provider_methods={
+        'aaa':lambda:v23.fred_monthly('AAA'),
+        'baa':lambda:v23.fred_monthly('BAA'),
+        'gs10':lambda:v23.fred_monthly('GS10'),
+        'rf_annualized':v23.french_daily_rf_monthly,
+        'six':v23.french_six_monthly,
+    }
+    for name,fetcher in provider_methods.items():
+        previous=cached.get(name,{})
+        if not isinstance(previous,dict):previous={}
+        usable={k:v for k,v in previous.items() if isinstance(k,str) and
+                len(k)==7 and k[4]=='-' and k<=allowed}
+        online=False;error=None
+        try:
+            payload=fetcher()
+            if not isinstance(payload,dict) or not payload:
+                raise ValueError('Provider returned empty series')
+            clean={}
+            for key,value in payload.items():
+                if not (isinstance(key,str) and len(key)==7 and key[4]=='-' and
+                        key<=allowed):
+                    continue
+                try:
+                    if name=='six':
+                        if len(value)!=6:continue
+                        converted=[float(x) for x in value]
+                        if not all(math.isfinite(x) for x in converted):continue
+                    else:
+                        converted=float(value)
+                        if not math.isfinite(converted):continue
+                except (ValueError,TypeError):continue
+                clean[key]=converted
+            if not clean:raise ValueError('Provider produced no completed-month observations')
+            # Reject truncated downloads that would silently roll back history.
+            if usable and max(clean)<max(usable):
+                raise ValueError('Provider history is older than cached data')
+            usable.update(clean)
+            online=True
+        except Exception as exc:
+            error=(type(exc).__name__+': '+str(exc))[:180]
+            print('WARNING: macro provider',name,'unavailable:',error)
+        result[name]=usable
+        last=max(usable) if usable else None
+        refresh[name]={'last_month':last,'online_checked':online,
+                       'status':('ONLINE_LATEST_MONTH_AVAILABLE' if last==allowed else
+                                 'ONLINE_UPSTREAM_BEHIND_REQUESTED_MONTH') if online else
+                                 ('CACHED_PROVIDER_ERROR' if last else 'UNAVAILABLE'),
+                       'error':error}
+    if any(not result[key] for key in provider_methods):
+        raise InsufficientData('MISSING_REQUIRED_MACRO_SERIES_'+','.join(
+            key for key in provider_methods if not result[key]))
+    previous_meta=cached.get('source_audit',{})
+    result['source_audit']={
+        'checked_at_utc':now.astimezone(dt.timezone.utc).isoformat(),
+        'requested_completed_month':allowed,
+        'providers':refresh,
+        'last_full_download_utc':cached.get('downloaded_utc'),
+        'source_urls':{
+            'rf_annualized':'Kenneth French F-F_Research_Data_Factors_daily_CSV.zip',
+            'six':'Kenneth French 6_Portfolios_2x3_CSV.zip',
+            'aaa':'FRED AAA','baa':'FRED BAA','gs10':'FRED GS10'},
+    }
+    # Keep the original cache shape for v23.StressModel and the existing reports.
+    result['downloaded_utc']=result['source_audit']['checked_at_utc'] if all(
+        x['online_checked'] for x in refresh.values()) else cached.get('downloaded_utc')
+    save(cache_path,result)
+    return result,refresh
+
+
 def historical_feeds(cfg,now):
     """Original Yahoo/FRED/French source functions. Cached copies persist.
     Never treat a cached close for a prior day as today's quote.
@@ -162,13 +245,14 @@ def historical_feeds(cfg,now):
         recent_bond=(day(last)-day(bond[-1]['date'])).days<=4
     else:recent_bond=False
     if not recent_bond:bond_problem='STALE_OR_MISSING_BOND_'+(bond[-1]['date'] if bond else 'NONE')
-    macro_problem=None
+    macro_problem=None;macro_refresh={}
     try:
-        macro=v23.load_macro(cfg)
+        macro,macro_refresh=refresh_macro_independently(now)
     except Exception as exc:
         macro=None;macro_problem=str(exc)[:160]
     return {'equity':eq,'bond':bond,'bond_usable':recent_bond,
             'bond_problem':bond_problem,'macro':macro,'macro_problem':macro_problem,
+            'macro_refresh':macro_refresh,
             'cutoff':cutoff,'session':last,'quote_lag_days':gap,
             'quote_lag_sessions':elapsed_weekday_sessions(last,cutoff),
             'equity_quote_source':equity_source,'bond_quote_source':bond_source}
@@ -531,7 +615,8 @@ def main(now=None):
                  'bond_quote_source':feeds['bond_quote_source'],
                  'bond_last':feeds['bond'][-1]['date'] if feeds['bond'] else None,
                  'bond_quality':feeds['bond_problem'] or 'OK',
-                 'macro_quality':feeds['macro_problem'] or 'ONLINE_OR_PERSISTED_CACHE'}
+                 'macro_quality':feeds['macro_problem'] or 'SOURCE_BY_SOURCE_VERIFIED',
+                 'macro_sources':feeds['macro_refresh']}
         sig=signal(feeds,cfg)
         quality['stress_source']=sig['stress'].get('source')
         quality['missing_macro_inputs']=sig['stress'].get('missing_inputs',[])
