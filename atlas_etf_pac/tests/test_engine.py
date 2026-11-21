@@ -216,6 +216,78 @@ class TestOriginalV23(unittest.TestCase):
         self.assertEqual(st['stamp_accrued_eur'],0)
         self.assertEqual(st['nav'][-1]['nav_eur'],1000)
 
+
+    def test_monthly_macro_lag_is_reported_not_filled_with_estimates(self):
+        now=dt.datetime(2026,11,21,15,0,tzinfo=dt.timezone.utc)
+        synthetic=pac.v23.synthetic_macro()
+        prior={k:{m:v for m,v in synthetic[k].items() if m<='2026-09'}
+               for k in ('aaa','baa','gs10','rf_annualized','six')}
+        october={k:{**prior[k],'2026-10':synthetic[k]['2026-10']}
+                 for k in ('aaa','baa','gs10')}
+        with tempfile.TemporaryDirectory() as temp:
+            with mock.patch.object(pac.v23,'CACHE',Path(temp)):
+                (Path(temp)/'macro_v23.json').write_text(json.dumps(prior))
+                with mock.patch.object(pac.v23,'fred_monthly',
+                        side_effect=lambda ticker: october[ticker.lower()]), \
+                     mock.patch.object(pac.v23,'french_daily_rf_monthly',
+                                       return_value=prior['rf_annualized']), \
+                     mock.patch.object(pac.v23,'french_six_monthly',
+                                       return_value=prior['six']):
+                    new,status=pac.refresh_macro_independently(now)
+                self.assertEqual(max(new['aaa']),'2026-10')
+                self.assertEqual(max(new['rf_annualized']),'2026-09')
+                self.assertEqual(max(new['six']),'2026-09')
+                self.assertEqual(status['rf_annualized']['status'],
+                                 'ONLINE_UPSTREAM_BEHIND_REQUESTED_MONTH')
+                self.assertEqual(status['six']['last_month'],'2026-09')
+                self.assertNotIn('2026-10',new['six'])
+                stress=pac.CausalStress(CFG,new).regime('2026-11-20')
+                self.assertEqual(stress['source'],'CARRIED_OBSERVED_2026-09')
+                self.assertIn('FF_RF',stress['missing_inputs'])
+                self.assertIn('FF_BREADTH_3M',stress['missing_inputs'])
+
+    def test_macro_partial_provider_failure_retains_other_updated_series(self):
+        now=dt.datetime(2026,11,21,15,0,tzinfo=dt.timezone.utc)
+        synthetic=pac.v23.synthetic_macro()
+        past={k:{month:v for month,v in synthetic[k].items() if month<='2026-09'}
+              for k in ('aaa','baa','gs10','rf_annualized','six')}
+        with tempfile.TemporaryDirectory() as temp:
+            with mock.patch.object(pac.v23,'CACHE',Path(temp)):
+                (Path(temp)/'macro_v23.json').write_text(json.dumps(past))
+                def fred(which):
+                    if which=='AAA':raise TimeoutError('test offline FRED AAA')
+                    return {**past[which.lower()],
+                            '2026-10':synthetic[which.lower()]['2026-10']}
+                with mock.patch.object(pac.v23,'fred_monthly',side_effect=fred), \
+                     mock.patch.object(pac.v23,'french_daily_rf_monthly',
+                                       return_value=past['rf_annualized']), \
+                     mock.patch.object(pac.v23,'french_six_monthly',
+                                       return_value=past['six']):
+                    new,status=pac.refresh_macro_independently(now)
+                self.assertEqual(max(new['aaa']),'2026-09')
+                self.assertEqual(max(new['baa']),'2026-10')
+                self.assertEqual(status['aaa']['status'],'CACHED_PROVIDER_ERROR')
+                self.assertEqual(status['baa']['status'],'ONLINE_LATEST_MONTH_AVAILABLE')
+                self.assertEqual(status['aaa']['error'],'TimeoutError: test offline FRED AAA')
+                self.assertTrue((Path(temp)/'macro_v23.json').exists())
+
+    def test_macro_rejects_future_months_even_when_provider_sends_them(self):
+        now=dt.datetime(2026,11,21,15,0,tzinfo=dt.timezone.utc)
+        synthetic=pac.v23.synthetic_macro()
+        with tempfile.TemporaryDirectory() as temp:
+            with mock.patch.object(pac.v23,'CACHE',Path(temp)), \
+                 mock.patch.object(pac.v23,'fred_monthly',
+                      side_effect=lambda k:synthetic[k.lower()]), \
+                 mock.patch.object(pac.v23,'french_daily_rf_monthly',
+                      return_value=synthetic['rf_annualized']), \
+                 mock.patch.object(pac.v23,'french_six_monthly',
+                      return_value=synthetic['six']):
+                    new,status=pac.refresh_macro_independently(now)
+                self.assertEqual(new['source_audit']['requested_completed_month'],'2026-10')
+                for key in ('aaa','baa','gs10','rf_annualized','six'):
+                    self.assertNotIn('2026-11',new[key])
+                    self.assertEqual(max(new[key]),'2026-10')
+
     def test_paper_rules_no_35days_no_monthly_cap(self):
         self.assertEqual(CFG['min_hold_days_before_sell'],0)
         self.assertIsNone(CFG['max_total_orders_per_month'])
