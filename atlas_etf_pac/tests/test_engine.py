@@ -1,4 +1,5 @@
-import datetime as dt, hashlib, json, sys, unittest
+import datetime as dt, hashlib, json, sys, tempfile, unittest
+from unittest import mock
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
@@ -126,6 +127,49 @@ class TestOriginalV23(unittest.TestCase):
         st=pac.seed(CFG)
         with self.assertRaisesRegex(pac.InsufficientData,'MISSING_WEEKDAYS'):
             pac.ledger_process(CFG,st,'2026-11-13',feed('2026-11-13'),sig('2026-11-13'),tuesday)
+
+
+    def test_secondary_yahoo_observed_close_never_fabricated(self):
+        now=dt.datetime(2026,11,21,10,0,tzinfo=dt.timezone.utc)
+        rows=[{'date':'2026-11-18','close':127.105},
+              {'date':'2026-11-19','close':126.79}]
+        bars={'chart':{'result':[{
+            'meta':{'currency':'EUR'},
+            'timestamp':[int(dt.datetime(2026,11,d,9,tzinfo=dt.timezone.utc).timestamp())
+                         for d in (19,20,21)],
+            'indicators':{'adjclose':[{'adjclose':[126.79,126.55,126.0]}],
+                          'quote':[{'close':[126.79,126.55,126.0]}]}
+        }]}}
+        with tempfile.TemporaryDirectory() as temp:
+            with mock.patch.object(pac.v23,'CACHE',Path(temp)), \
+                 mock.patch.object(pac.v23,'yahoo_daily',return_value=rows), \
+                 mock.patch.object(pac.v23,'fetch_bytes',return_value=json.dumps(bars).encode('utf-8')):
+                output,source=pac.yahoo_daily_with_secondary_endpoint(CFG,'EUNL.DE',now)
+                self.assertEqual(source,'YAHOO_QUERY2_OBSERVED_CLOSE')
+                self.assertEqual(output[-1]['date'],'2026-11-20')
+                self.assertEqual(output[-1]['close'],126.55)
+                self.assertNotIn('2026-11-21',[r['date'] for r in output])
+                self.assertTrue((Path(temp)/'yahoo_EUNL_DE.csv').exists())
+
+    def test_bond_quote_must_match_fill_session(self):
+        feeds=feed('2026-11-13')
+        feeds['bond']=feeds['bond'][:-1]
+        self.assertIsNone(pac.prices_for_session(feeds,'2026-11-13')['BOND'])
+        with self.assertRaisesRegex(pac.InsufficientData,'MISSING_HELD_BOND_VALUATION'):
+            pac.prices_for_session(feeds,'2026-11-13',True)
+
+    def test_missing_bond_fill_keeps_core_cash_untouched(self):
+        st=pac.seed(CFG)
+        pending={'decision_session':'2026-11-12','created_at_utc':T1.isoformat(),
+                 'proposed_orders':[{'sleeve':'BOND','side':'BUY','kind':'STRATEGIC',
+                                     'reason':'TEST_BOND_ENTRY'}]}
+        fills=pac.fill_pending(st,CFG,pending,{'EQUITY':100,'BOND':None},
+                               '2026-11-13',T2)
+        self.assertEqual(fills,[])
+        self.assertEqual(st['balances']['CORE']['cash_eur'],500)
+        self.assertEqual(st['balances']['BOND']['cash_eur'],0)
+        self.assertEqual(st['orders'],[])
+        self.assertIn('MISSING_PRICE_FOR_BOND',str(st['blocked_actions']))
 
     def test_paper_rules_no_35days_no_monthly_cap(self):
         self.assertEqual(CFG['min_hold_days_before_sell'],0)
