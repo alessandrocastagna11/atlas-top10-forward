@@ -190,6 +190,23 @@ class TestOriginalV23(unittest.TestCase):
         self.assertFalse(pac.correct_cash_only_stamp(st,T2))
         self.assertEqual(len(st['accounting_adjustments']),1)
 
+
+    def test_friday_signal_precommitted_on_saturday_fills_monday_only_if_observed(self):
+        saturday=dt.datetime(2026,11,21,15,59,tzinfo=dt.timezone.utc)
+        tuesday=dt.datetime(2026,11,24,8,30,tzinfo=dt.timezone.utc)
+        st=pac.seed(CFG)
+        st,_=pac.ledger_process(CFG,st,'2026-11-20',feed('2026-11-20'),
+                                sig('2026-11-20'),saturday)
+        st['pending']['proposed_orders']=[{'kind':'INITIAL','side':'BUY',
+                                           'sleeve':'CORE','reason':'V23_CORE_IN'}]
+        st,n=pac.ledger_process(CFG,st,'2026-11-23',feed('2026-11-23'),
+                                sig('2026-11-23'),tuesday)
+        self.assertEqual(n,1)
+        self.assertEqual(st['orders'][0]['execution_session'],'2026-11-23')
+        self.assertEqual(st['orders'][0]['decision_session'],'2026-11-20')
+        self.assertEqual(st['orders'][0]['sleeve'],'CORE')
+        self.assertEqual(st['orders'][0]['mode'],'VIRTUAL_ONLY')
+
     def test_cash_only_forward_no_security_stamp(self):
         st=pac.seed(CFG)
         st,_=pac.ledger_process(CFG,st,'2026-11-12',feed('2026-11-12'),sig('2026-11-12'),T1)
