@@ -5,7 +5,7 @@
 **Stato:** `PAPER_APPROX_LEDGER_ACTIVE` — **Validità della valutazione:** `PAPER_LAST_EOD_CLOSE_APPROXIMATE_FILLS_NOT_REAL_BROKER_ORDERS`
 
 **Motore segnali:** SIGNAL_READY; errore: nessuno
-**Capitalizzazione osservata:** 2026-11-21; copertura USA/RoW: 280/202; NON PIT storico
+**Capitalizzazione osservata:** 2026-11-22; copertura USA/RoW: 280/202; NON PIT storico
 **Titoli sostituiti per storico insufficiente:** SPCX
 
 **Ultima sessione decisionale:** 2026-11-20
@@ -16,7 +16,7 @@
 **Candidati segnalati (NON ORDINI):** KO, CB, JNJ, MRK, PANW, UNP, ADP, CRWD, V, WELL; verifica: ATTESTED_CORRECTION_BEFORE_OPEN
 **Segnale originale pubblicato:** SÌ; esito: ATTESTED_CORRECTION_BEFORE_OPEN
 **Contabilità paper:** FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY — prezzi degli ordini APPROSSIMATI; nessun ordine reale.
-**Ultimo aggiornamento portafoglio:** 2026-11-21T03:57:16.422618+00:00; fonte ultimo prezzo 2026-11-20.
+**Ultimo aggiornamento portafoglio:** 2026-11-22T02:40:22.399547+00:00; fonte ultimo prezzo 2026-11-20.
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
 
 ## Segnali, proposte e ordini: tre cose diverse
