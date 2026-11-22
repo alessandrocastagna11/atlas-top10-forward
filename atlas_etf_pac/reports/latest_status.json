@@ -40,7 +40,7 @@
     }
   ],
   "cash_eur": 1000.0,
-  "checked_at_utc": "2026-11-21T16:36:19.469665+00:00",
+  "checked_at_utc": "2026-11-22T17:54:30.406568+00:00",
   "contributed_eur": 1000.0,
   "cumulative_twr_pct": 0.0,
   "historical_frozen_v23_parity": "ORIGINAL_LIVE_SHA256_VERIFIED; TRADABLE_ETF_PROXY_DIFFERS_FROM_1926_FF",
@@ -180,7 +180,7 @@
       "FF_BREADTH_3M"
     ],
     "observed_macro_month": "2026-09",
-    "quote_lag_days": 0,
+    "quote_lag_days": 1,
     "quote_lag_sessions_weekday_approx": 0,
     "stress_source": "CARRIED_OBSERVED_2026-09"
   },
