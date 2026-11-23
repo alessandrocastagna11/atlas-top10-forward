@@ -5,14 +5,14 @@
   "cash_eur": 99.77908381401888,
   "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
   "equity_history": {
-    "2026-11-18": 10004.326565780731,
-    "2026-11-19": 9966.53595903596,
-    "2026-11-20": 9781.657260318872
+    "2026-11-18": 10018.487032435874,
+    "2026-11-19": 10007.68762427912,
+    "2026-11-20": 9814.464710156724
   },
   "exposure": 0.9898652340848356,
   "fees_eur": 5.0,
   "nav_eur": 9845.228261732478,
-  "nav_net_liquidation_eur": 9781.657260318872,
+  "nav_net_liquidation_eur": 9814.464710156724,
   "orders": [
     {
       "action": "BUY",
@@ -97,17 +97,17 @@
   ],
   "positions": {
     "CB": {
-      "cost_basis_eur": 2001.0,
+      "cost_basis_eur": 2000.9999999999995,
       "first_entry_date": "2026-11-18",
       "lots": [
         {
           "purchase_date": "2026-11-18",
           "sale_eligible_date": "2026-12-23",
-          "shares": 5.902183376499873
+          "shares": 5.902183376499871
         }
       ],
-      "market_value_eur": 1999.5293814055292,
-      "shares": 5.902183376499873
+      "market_value_eur": 1999.5293814055285,
+      "shares": 5.902183376499871
     },
     "KO": {
       "cost_basis_eur": 2001.0,
@@ -136,33 +136,33 @@
       "shares": 15.57475324637813
     },
     "PANW": {
-      "cost_basis_eur": 2001.0,
+      "cost_basis_eur": 2000.9999999999995,
       "first_entry_date": "2026-11-18",
       "lots": [
         {
           "purchase_date": "2026-11-18",
           "sale_eligible_date": "2026-12-23",
-          "shares": 7.003798815920447
+          "shares": 7.003798815920446
         }
       ],
-      "market_value_eur": 2191.9825680899626,
-      "shares": 7.003798815920447
+      "market_value_eur": 2191.982568089962,
+      "shares": 7.003798815920446
     },
     "TXN": {
-      "cost_basis_eur": 1896.1199200799201,
+      "cost_basis_eur": 1896.119920079921,
       "first_entry_date": "2026-11-18",
       "lots": [
         {
           "purchase_date": "2026-11-18",
           "sale_eligible_date": "2026-12-23",
-          "shares": 6.955066820150337
+          "shares": 6.955066820150341
         }
       ],
-      "market_value_eur": 1672.2380285994943,
-      "shares": 6.955066820150337
+      "market_value_eur": 1672.238028599495,
+      "shares": 6.955066820150341
     }
   },
   "slippage_eur": 9.885234685394527,
-  "tax_eur": 0.11193191053830259,
+  "tax_eur": 0.11193191053830258,
   "valuation_session": "2026-11-20"
 }
