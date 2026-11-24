@@ -1,40 +1,40 @@
 {
   "archived_signal_input_sha256": "0562f838df21d7dcff7026d15115d4fef2cb0a4addb7c8fb5f962bdbee09ecac",
-  "archived_signal_matches_current_input": true,
+  "archived_signal_matches_current_input": false,
   "cash_eur": 99.63112449889182,
-  "checked_at_utc": "2026-11-24T06:25:43.700270+00:00",
+  "checked_at_utc": "2026-11-24T06:58:58.133831+00:00",
   "current_indicative_targets": [
     {
       "rank": 2.0,
-      "score": 2.04889705,
+      "score": 2.04889707,
       "sector": "XLK",
       "target_weight": 0.2,
       "ticker": "PANW"
     },
     {
       "rank": 18.0,
-      "score": 1.01853001,
+      "score": 1.01853028,
       "sector": "XLP",
       "target_weight": 0.2,
       "ticker": "KO"
     },
     {
       "rank": 22.0,
-      "score": 0.92290912,
+      "score": 0.92290958,
       "sector": "XLK",
       "target_weight": 0.19,
       "ticker": "TXN"
     },
     {
       "rank": 35.0,
-      "score": 0.78627458,
+      "score": 0.78627591,
       "sector": "XLV",
       "target_weight": 0.2,
       "ticker": "MRK"
     },
     {
       "rank": 37.0,
-      "score": 0.76323002,
+      "score": 0.76323024,
       "sector": "XLF",
       "target_weight": 0.2,
       "ticker": "CB"
@@ -63,7 +63,7 @@
   },
   "real_money_orders": 0,
   "same_price_dates_and_fx": true,
-  "shared_input_sha256": "0562f838df21d7dcff7026d15115d4fef2cb0a4addb7c8fb5f962bdbee09ecac",
+  "shared_input_sha256": "023f4d7d0c0e25cc561bcdba64f4689b88ef3abb182a60232a51f0345b6e35d2",
   "shared_input_verified": true,
   "signal": {
     "candidate_exchange_opens": {
@@ -179,16 +179,16 @@
     "roster_sha256": "572c8344926a923ddccd54af25a2f03346f49a0702c2e13c13674b151cd7f3ba",
     "roster_source_asof": "2026-11-23",
     "shared_input": {
-      "bytes": 9886895,
+      "bytes": 9887268,
       "decision_session": "2026-11-23",
       "frame_count": 351,
       "lossless_roundtrip_verified": true,
       "path": "shared_inputs/latest.zip",
-      "recorded_at_utc": "2026-11-24T06:24:11.144851+00:00",
+      "recorded_at_utc": "2026-11-24T06:57:44.361847+00:00",
       "roster_recorded_date": "2026-11-23",
       "roster_sha256": "572c8344926a923ddccd54af25a2f03346f49a0702c2e13c13674b151cd7f3ba",
       "schema": 1,
-      "sha256": "0562f838df21d7dcff7026d15115d4fef2cb0a4addb7c8fb5f962bdbee09ecac"
+      "sha256": "023f4d7d0c0e25cc561bcdba64f4689b88ef3abb182a60232a51f0345b6e35d2"
     },
     "ticker_price_dates": {
       "AAPL": "2026-11-23",

@@ -111,17 +111,17 @@
       "shares": 5.902183376499873
     },
     "KO": {
-      "cost_basis_eur": 2000.999999999998,
+      "cost_basis_eur": 2000.9999999999984,
       "first_entry_date": "2026-11-18",
       "lots": [
         {
           "purchase_date": "2026-11-18",
           "sale_eligible_date": "2026-12-23",
-          "shares": 22.429742279422086
+          "shares": 22.42974227942209
         }
       ],
-      "market_value_eur": 1960.1313244320997,
-      "shares": 22.429742279422086
+      "market_value_eur": 1960.1313244321,
+      "shares": 22.42974227942209
     },
     "MRK": {
       "cost_basis_eur": 2001.0,
@@ -150,17 +150,17 @@
       "shares": 7.003798815920447
     },
     "TXN": {
-      "cost_basis_eur": 1896.1199200799222,
+      "cost_basis_eur": 1896.1199200799217,
       "first_entry_date": "2026-11-18",
       "lots": [
         {
           "purchase_date": "2026-11-18",
           "sale_eligible_date": "2026-12-23",
-          "shares": 6.9550668201503445
+          "shares": 6.955066820150344
         }
       ],
-      "market_value_eur": 1845.9104971468826,
-      "shares": 6.9550668201503445
+      "market_value_eur": 1845.9104971468823,
+      "shares": 6.955066820150344
     }
   },
   "slippage_eur": 9.885234685394527,
