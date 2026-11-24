@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-11-22T17:54:30.406568+00:00",
+  "checked_at_utc": "2026-11-24T01:38:40.381603+00:00",
   "first_quote_date": "2010-01-04",
   "market_session": "2026-11-20",
   "original_live_sha256": "703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e",
@@ -9,10 +9,10 @@
     "accounting_adjustment": null,
     "bond_last": "2026-11-20",
     "bond_quality": "OK",
-    "bond_quote_source": "YAHOO_QUERY1",
+    "bond_quote_source": "YAHOO_BOTH_ENDPOINTS_NO_NEW_COMPLETED_CLOSE",
     "defensive_source": "OBSERVED_BOND_ADJUSTED_CLOSE",
     "equity_last": "2026-11-20",
-    "equity_quote_source": "YAHOO_QUERY1",
+    "equity_quote_source": "YAHOO_BOTH_ENDPOINTS_NO_NEW_COMPLETED_CLOSE",
     "macro_previous_month": "2026-10",
     "macro_quality": "SOURCE_BY_SOURCE_VERIFIED",
     "macro_sources": {
@@ -52,8 +52,8 @@
       "FF_BREADTH_3M"
     ],
     "observed_macro_month": "2026-09",
-    "quote_lag_days": 1,
-    "quote_lag_sessions_weekday_approx": 0,
+    "quote_lag_days": 3,
+    "quote_lag_sessions_weekday_approx": 1,
     "stress_source": "CARRIED_OBSERVED_2026-09"
   }
 }
