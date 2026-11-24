@@ -543,7 +543,7 @@
           "price_eur": 123.47413926
         }
       },
-      "last_observed_at_utc": "2026-11-24T06:24:44.707957+00:00",
+      "last_observed_at_utc": "2026-11-24T06:58:12.331768+00:00",
       "mark_to_market_nav_eur": 9959.1693,
       "net_liquidation_nav_eur": 9951.6217,
       "quote_evidence_sha256": "30ad16dbec2ea8a0acfc5d96a70ca161538129535eb46e13eaa29954425f9ee6",
