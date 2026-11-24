@@ -15,9 +15,9 @@
       "units": 0.0
     },
     "CORE": {
-      "basis_eur": 0.0,
-      "cash_eur": 500.0,
-      "units": 0.0
+      "basis_eur": 498.7506246876562,
+      "cash_eur": 0,
+      "units": 3.9381786719401517
     },
     "SATELLITE": {
       "basis_eur": 0.0,
@@ -57,17 +57,17 @@
       "session": "2026-11-20"
     }
   ],
-  "cash_eur": 1000.0,
+  "cash_eur": 500.0,
   "contributions": [],
   "data_digest": null,
   "last_deposit_month": "2026-11",
-  "last_price_session": "2026-11-20",
-  "last_processed_session": "2026-11-20",
+  "last_price_session": "2026-11-23",
+  "last_processed_session": "2026-11-23",
   "last_quotes": {
-    "BOND": 116.68000030517578,
-    "EQUITY": 122.71499633789062
+    "BOND": 116.69000244140625,
+    "EQUITY": 126.6449966430664
   },
-  "last_status": "SIGNAL_PRECOMMITTED_FOR_FUTURE_CLOSE",
+  "last_status": "PAPER_ORDERS_EXECUTED",
   "mode": "PAPER_ONLY_ORIGINAL_V23",
   "model": "ATLAS_ETF_PAC_V23_ORIGINAL_LIVE_V1",
   "nav": [
@@ -161,24 +161,40 @@
       "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
       "twr_day_pct": 0.0,
       "twr_index": 1.0
+    },
+    {
+      "bond_eur": 0.0,
+      "cash_eur": 500.0,
+      "contribution_eur": 0.0,
+      "date": "2026-11-23",
+      "drawdown_pct": -0.124938,
+      "equity_eur": 498.75062,
+      "holdings_eur": 498.75062,
+      "nav_eur": 998.75062,
+      "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
+      "twr_day_pct": -0.124938,
+      "twr_index": 0.9987506247
     }
   ],
-  "orders": [],
-  "pending": {
-    "created_at_utc": "2026-11-21T15:59:13.697875+00:00",
-    "decision_session": "2026-11-20",
-    "input_session": "2026-11-20",
-    "policy": "NEXT_COMPLETED_SESSION_CLOSE_PRECOMMITTED_PAPER",
-    "proposed_orders": [
-      {
-        "kind": "INITIAL",
-        "reason": "V23_CORE_IN",
-        "side": "BUY",
-        "sleeve": "CORE"
-      }
-    ],
-    "signal_method": "ATLAS_V23_OCT_01_2026_ORIGINAL_LIVE_UNMODIFIED"
-  },
+  "orders": [
+    {
+      "asset": "EUNL.DE",
+      "decision_session": "2026-11-20",
+      "execution_close_eur": 126.6449966430664,
+      "execution_session": "2026-11-23",
+      "fee_eur": 1.0,
+      "gross_eur": 498.750625,
+      "kind": "INITIAL",
+      "mode": "VIRTUAL_ONLY",
+      "reason": "V23_CORE_IN",
+      "side": "BUY",
+      "sleeve": "CORE",
+      "slippage_eur": 0.249375,
+      "tax_proxy_eur": 0,
+      "units": 3.9381786719
+    }
+  ],
+  "pending": null,
   "schema": 2,
   "signal_history": [
     {
@@ -464,6 +480,47 @@
         "term_spread": 2.438108801230893
       },
       "target_equity_fraction": 1.0
+    },
+    {
+      "bull": true,
+      "core_in": true,
+      "data_mode": "OBSERVED_EQUITY_ETF_EOD",
+      "decision_session": "2026-11-23",
+      "defensive": {
+        "momentum_126": 0.00309465,
+        "recommendation": "BOND",
+        "source": "OBSERVED_BOND_ADJUSTED_CLOSE",
+        "ticker": "CSBGE3.MI"
+      },
+      "equity_eod": 126.6449966430664,
+      "fast10_pct": -1.4014,
+      "market_drawdown_pct": -4.2382,
+      "method": "ATLAS_V23_OCT_01_2026_ORIGINAL_LIVE_UNMODIFIED",
+      "original_live_sha256": "703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e",
+      "pending_original_actions": [],
+      "satellite_in": false,
+      "signal_ticker": "EUNL.DE",
+      "state_label": "CORE_ONLY",
+      "stress": {
+        "breadth": true,
+        "breadth_healthy": 1,
+        "credit": false,
+        "credit_change_3m": -0.040000000000000924,
+        "credit_p80": 1.042,
+        "credit_spread": 0.4399999999999995,
+        "missing_inputs": [
+          "FF_RF",
+          "FF_BREADTH_3M"
+        ],
+        "month": "2026-10",
+        "observed_macro_month": "2026-09",
+        "rates": false,
+        "score": 1,
+        "source": "CARRIED_OBSERVED_2026-09",
+        "term_p20": -0.89022352948323,
+        "term_spread": 2.438108801230893
+      },
+      "target_equity_fraction": 0.5
     }
   ],
   "stamp_accrued_eur": 0.0
