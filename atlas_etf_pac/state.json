@@ -61,13 +61,13 @@
   "contributions": [],
   "data_digest": null,
   "last_deposit_month": "2026-11",
-  "last_price_session": "2026-11-23",
-  "last_processed_session": "2026-11-23",
+  "last_price_session": "2026-11-24",
+  "last_processed_session": "2026-11-24",
   "last_quotes": {
-    "BOND": 116.69000244140625,
-    "EQUITY": 126.6449966430664
+    "BOND": 116.70999908447266,
+    "EQUITY": 124.56500244140625
   },
-  "last_status": "PAPER_ORDERS_EXECUTED",
+  "last_status": "SIGNAL_PRECOMMITTED_FOR_FUTURE_CLOSE",
   "mode": "PAPER_ONLY_ORIGINAL_V23",
   "model": "ATLAS_ETF_PAC_V23_ORIGINAL_LIVE_V1",
   "nav": [
@@ -174,6 +174,19 @@
       "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
       "twr_day_pct": -0.124938,
       "twr_index": 0.9987506247
+    },
+    {
+      "bond_eur": 0.0,
+      "cash_eur": 500.0,
+      "contribution_eur": 0.0,
+      "date": "2026-11-24",
+      "drawdown_pct": -0.944349,
+      "equity_eur": 490.55924,
+      "holdings_eur": 490.55924,
+      "nav_eur": 990.5565,
+      "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
+      "twr_day_pct": -0.820437,
+      "twr_index": 0.9905565095
     }
   ],
   "orders": [
@@ -521,7 +534,48 @@
         "term_spread": 2.438108801230893
       },
       "target_equity_fraction": 0.5
+    },
+    {
+      "bull": false,
+      "core_in": true,
+      "data_mode": "OBSERVED_EQUITY_ETF_EOD",
+      "decision_session": "2026-11-24",
+      "defensive": {
+        "momentum_126": 0.00499442,
+        "recommendation": "BOND",
+        "source": "OBSERVED_BOND_ADJUSTED_CLOSE",
+        "ticker": "CSBGE3.MI"
+      },
+      "equity_eod": 124.56500244140625,
+      "fast10_pct": -3.1753,
+      "market_drawdown_pct": -5.811,
+      "method": "ATLAS_V23_OCT_01_2026_ORIGINAL_LIVE_UNMODIFIED",
+      "original_live_sha256": "703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e",
+      "pending_original_actions": [],
+      "satellite_in": false,
+      "signal_ticker": "EUNL.DE",
+      "state_label": "CORE_ONLY",
+      "stress": {
+        "breadth": true,
+        "breadth_healthy": 1,
+        "credit": false,
+        "credit_change_3m": -0.040000000000000924,
+        "credit_p80": 1.042,
+        "credit_spread": 0.4399999999999995,
+        "missing_inputs": [
+          "FF_RF",
+          "FF_BREADTH_3M"
+        ],
+        "month": "2026-10",
+        "observed_macro_month": "2026-09",
+        "rates": false,
+        "score": 1,
+        "source": "CARRIED_OBSERVED_2026-09",
+        "term_p20": -0.89022352948323,
+        "term_spread": 2.438108801230893
+      },
+      "target_equity_fraction": 0.5
     }
   ],
-  "stamp_accrued_eur": 0.0
+  "stamp_accrued_eur": 0.0027310095550992473
 }
