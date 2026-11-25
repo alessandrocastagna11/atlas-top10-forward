@@ -22,12 +22,12 @@
           "shares": 2.740541601704473
         }
       ],
-      "market_close_eur": 336.02430183,
+      "market_close_eur": 344.12043832,
       "market_symbol": "CB",
-      "market_value_eur": 920.8886,
-      "portfolio_weight_pct": 9.247,
+      "market_value_eur": 943.0764,
+      "portfolio_weight_pct": 9.368,
       "price_quality": "LAST_VERIFIED_LOCAL_EXCHANGE_EOD",
-      "price_source_date": "2026-11-23",
+      "price_source_date": "2026-11-24",
       "sell_eligible_shares": 0,
       "shares": 2.740541601704473,
       "ticker": "CB"
@@ -45,12 +45,12 @@
           "shares": 3.556649446901012
         }
       ],
-      "market_close_eur": 246.13707463,
+      "market_close_eur": 253.4446937,
       "market_symbol": "JNJ",
-      "market_value_eur": 875.4233,
-      "portfolio_weight_pct": 8.79,
+      "market_value_eur": 901.4139,
+      "portfolio_weight_pct": 8.954,
       "price_quality": "LAST_VERIFIED_LOCAL_EXCHANGE_EOD",
-      "price_source_date": "2026-11-23",
+      "price_source_date": "2026-11-24",
       "sell_eligible_shares": 0,
       "shares": 3.556649446901012,
       "ticker": "JNJ"
@@ -68,12 +68,12 @@
           "shares": 12.712920633110294
         }
       ],
-      "market_close_eur": 87.3898282,
+      "market_close_eur": 89.49313629,
       "market_symbol": "KO",
-      "market_value_eur": 1110.98,
-      "portfolio_weight_pct": 11.155,
+      "market_value_eur": 1137.7191,
+      "portfolio_weight_pct": 11.302,
       "price_quality": "LAST_VERIFIED_LOCAL_EXCHANGE_EOD",
-      "price_source_date": "2026-11-23",
+      "price_source_date": "2026-11-24",
       "sell_eligible_shares": 0,
       "shares": 12.712920633110294,
       "ticker": "KO"
@@ -91,28 +91,28 @@
           "shares": 5.1857618904338985
         }
       ],
-      "market_close_eur": 123.47413926,
+      "market_close_eur": 129.78430244,
       "market_symbol": "MRK",
-      "market_value_eur": 640.3075,
-      "portfolio_weight_pct": 6.429,
+      "market_value_eur": 673.0305,
+      "portfolio_weight_pct": 6.686,
       "price_quality": "LAST_VERIFIED_LOCAL_EXCHANGE_EOD",
-      "price_source_date": "2026-11-23",
+      "price_source_date": "2026-11-24",
       "sell_eligible_shares": 0,
       "shares": 5.1857618904338985,
       "ticker": "MRK"
     }
   ],
   "hypothetical_liquidation_assumes_all_lots_mature": true,
-  "hypothetical_liquidation_net_gain_eur": -48.3783,
-  "hypothetical_liquidation_sale_cost_eur": 7.5476,
-  "hypothetical_liquidation_tax_eur": 0.0,
+  "hypothetical_liquidation_net_gain_eur": 59.1547,
+  "hypothetical_liquidation_sale_cost_eur": 7.6552,
+  "hypothetical_liquidation_tax_eur": 15.3802,
   "hypothetical_liquidation_tax_method": "SIMULTANEOUS_COMPENSABLE_EQUITY_GAINS_LOSSES_26PCT",
   "initial_capital_eur": 10000.0,
-  "invested_eur": 3547.5993,
-  "nav_mark_to_market_eur": 9959.1693,
-  "nav_net_liquidation_eur": 9951.6217,
+  "invested_eur": 3655.2399,
+  "nav_mark_to_market_eur": 10066.8099,
+  "nav_net_liquidation_eur": 10043.7745,
   "orders_total": 4,
-  "pnl_mark_to_market_pct": -0.40831,
+  "pnl_mark_to_market_pct": 0.6681,
   "positions_count": 4,
   "real_money_orders": 0,
   "real_orders": 0,
@@ -124,7 +124,7 @@
   "type": "PAPER_ONLY",
   "universe_market_cap_pit_certified": false,
   "valuation_method": "LAST_CONFIRMED_DAILY_CLOSE_WITH_STALE_FLAG",
-  "valuation_recorded_at_utc": "2026-11-24T06:58:12.331768+00:00",
-  "valuation_session": "2026-11-23",
+  "valuation_recorded_at_utc": "2026-11-25T05:03:21.732400+00:00",
+  "valuation_session": "2026-11-24",
   "variant": "CONFIDENCE70_ORIGINAL_H4_STRICT_35_CALENDAR_DAYS_EVERY_LOT"
 }
