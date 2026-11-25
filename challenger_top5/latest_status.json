@@ -1,33 +1,33 @@
 {
   "archived_signal_input_sha256": "7dac833b0f0d38568dc78fbe67016679a1f32f9deb1692076021c4716b8b29a6",
-  "archived_signal_matches_current_input": true,
+  "archived_signal_matches_current_input": false,
   "cash_eur": 99.58057683110037,
-  "checked_at_utc": "2026-11-25T05:04:13.236380+00:00",
+  "checked_at_utc": "2026-11-25T05:27:46.835337+00:00",
   "current_indicative_targets": [
     {
       "rank": 2.0,
-      "score": 2.22026227,
+      "score": 2.22025941,
       "sector": "XLK",
       "target_weight": 0.198,
       "ticker": "PANW"
     },
     {
       "rank": 19.0,
-      "score": 0.96053506,
+      "score": 0.96053371,
       "sector": "XLP",
       "target_weight": 0.198,
       "ticker": "KO"
     },
     {
       "rank": 29.0,
-      "score": 0.82357934,
+      "score": 0.82357843,
       "sector": "XLF",
       "target_weight": 0.198,
       "ticker": "CB"
     },
     {
       "rank": 45.0,
-      "score": 0.63102025,
+      "score": 0.63101968,
       "sector": "XLV",
       "target_weight": 0.198,
       "ticker": "MRK"
@@ -63,7 +63,7 @@
   },
   "real_money_orders": 0,
   "same_price_dates_and_fx": true,
-  "shared_input_sha256": "7dac833b0f0d38568dc78fbe67016679a1f32f9deb1692076021c4716b8b29a6",
+  "shared_input_sha256": "2b17e5482d427431260b1da3355937aab89d6cf91372553c756254c9c0ff359d",
   "shared_input_verified": true,
   "signal": {
     "candidate_exchange_opens": {
@@ -179,16 +179,16 @@
     "roster_sha256": "5da5ac6d74212c6a2711901b6f21720ee42c25599d1a871ef5c157c934e5ce16",
     "roster_source_asof": "2026-11-24",
     "shared_input": {
-      "bytes": 9903953,
+      "bytes": 9904519,
       "decision_session": "2026-11-24",
       "frame_count": 351,
       "lossless_roundtrip_verified": true,
       "path": "shared_inputs/latest.zip",
-      "recorded_at_utc": "2026-11-25T05:02:52.845494+00:00",
+      "recorded_at_utc": "2026-11-25T05:26:15.925155+00:00",
       "roster_recorded_date": "2026-11-24",
       "roster_sha256": "5da5ac6d74212c6a2711901b6f21720ee42c25599d1a871ef5c157c934e5ce16",
       "schema": 1,
-      "sha256": "7dac833b0f0d38568dc78fbe67016679a1f32f9deb1692076021c4716b8b29a6"
+      "sha256": "2b17e5482d427431260b1da3355937aab89d6cf91372553c756254c9c0ff359d"
     },
     "ticker_price_dates": {
       "AAPL": "2026-11-24",
