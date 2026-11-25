@@ -1,125 +1,73 @@
-name: Atlas Top 10 daily paper engine
+name: Atlas V6.6 Hybrid Multifactor — PAPER vs Confidence70
 on:
+  workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - '.github/workflows/atlas-daily.yml'
-      - 'daily_runner.py'
-      - 'reports/launch_intent.json'
-      - 'verified_quotes.py'
-      - 'market_data/verified_quotes.json'
-      - 'engine.py'
-      - 'test_*.py'
-      - 'backtests/launch_replay_2026_11_05.py'
-      - 'v08/shadow_engine.py'
-      - 'v08/run_shadow.py'
-      - 'v08/tests/**'
-  workflow_dispatch:
+    paths: ['.github/workflows/atlas-daily.yml']
   schedule:
-    # Three independent attempts: Yahoo can publish Xetra/Saudi closes late.
-    # GitHub schedules are best effort and may execute several hours late.
-    # NY morning retries always target the previous COMPLETE US session.
-    - cron: '35 22 * * 1-5' # 18:35 NY in EDT; 17:35 in EST (early retry)
-    - cron: '35 23 * * 1-5' # 18:35 NY in EST; same-day initialization window
-    - cron: '55 23 * * 1-5' # 18:55 NY in EST; late-provider retry
-    - cron: '43 0 * * *'
-    - cron: '47 3 * * *'
-    - cron: '11 6 * * *'
+    - cron: '15 1 * * *'
+    - cron: '35 5 * * *'
 permissions:
   contents: write
 concurrency:
-  group: atlas-top10-paper
+  group: atlas-v66-hybrid-live-paper
   cancel-in-progress: false
 jobs:
-  daily:
+  hybrid:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: true
+          ref: atlas-v66-hybrid-live-paper
+          path: hybrid
           fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          ref: atlas-v4-confidence70-live-paper
+          path: confidence
+          fetch-depth: 1
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
-      - run: python -m pip install -r requirements.txt
-      - name: Regression tests for original v0.7 and prospective launch guards
-        run: python -m unittest test_engine test_daily_runner -q
-      - name: Synthetic v0.8 tests (29 checks)
-        run: python -m unittest discover -s v08/tests -p 'test_*.py' -q
-      - name: Offline Nov 5 launch-only diagnostic replay (no official paper writes)
-        run: python backtests/launch_replay_2026_11_05.py
-      - name: Check official v0.7 saved state
-        run: python daily_runner.py --check
-      - name: Update official v0.7 EOD (NO changed strategy rules)
-        run: python daily_runner.py
-      - name: Update independent v0.8 shadow EOD (Nov 5 first eligible)
-        run: python v08/run_shadow.py
-      - name: Verify original official ledger again
-        run: python daily_runner.py --check
-      - name: Check actionable initialization and pending order age
+          cache: pip
+          cache-dependency-path: confidence/strict_shadow/v4_exact_source/requirements-live.txt
+      - name: Install same pinned dependencies as Confidence70
+        run: pip install -r confidence/strict_shadow/v4_exact_source/requirements-live.txt
+      - name: Check source and execute independent paper challenger
+        run: |
+          python -m py_compile hybrid/hybrid_v66/run.py
+          python hybrid/hybrid_v66/run.py --source confidence/strict_shadow/v4_exact_source
+      - name: Persist only Hybrid ledger or failure diagnostics
         if: always()
+        working-directory: hybrid
         run: |
-          python - <<'PY'
-          import datetime as dt,json,os
-          from pathlib import Path
-          official=Path('reports/latest_status.json')
-          shadow=Path('v08/reports/latest_status.json')
-          now=dt.datetime.now(dt.timezone.utc)
-          lines=['## Atlas forward execution readiness','']
-          if official.exists():
-              r=json.loads(official.read_text())
-              for k,v in r.get('results',{}).items():
-                  ready=bool(v.get('initialized'))
-                  lines.append(f'- Official {k}: initialized={ready}; status={v.get("report_status")}; asof={r.get("asof")}; missing={len(v.get("missing_exact_closes",[]))}')
-                  if not ready:print(f'::warning title=Atlas official awaiting first entry::{k}: {v.get("report_status")}; last={v.get("last_verified_valuation")}')
-          if shadow.exists():
-              r=json.loads(shadow.read_text())
-              for k,v in r.get('results',{}).items():
-                  tasks=v.get('pending_tasks',[])
-                  age=max(((dt.date.fromisoformat(r['asof'])-dt.date.fromisoformat(t['created'])).days for t in tasks),default=0)
-                  lines.append(f'- Shadow {k}: orders={v.get("orders",0)}; pending={len(tasks)}; oldest_task_age_days={age}; status={v.get("status")}')
-                  if age>3:print(f'::warning title=Atlas shadow old pending orders::{k}: oldest task {age} days; no backdated fills')
-          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as h:h.write('\n'.join(lines)+'\n')
-          PY
-      - name: Audit EOD completeness (workflow success is not a trade)
-        if: always()
-        run: |
-          python - <<'PY'
-          import json,os
-          from pathlib import Path
-          lines=['## Atlas daily data audit', '']
-          for path in (Path('reports/latest_status.json'),Path('v08/reports/latest_status.json')):
-              if not path.exists():
-                  lines.append(f'- **{path}**: unavailable')
-                  print(f'::warning title=Atlas missing report::{path}')
-                  continue
-              data=json.loads(path.read_text(encoding='utf-8'))
-              date=data.get('asof',data.get('date','unknown'))
-              lines.append(f'### {path} — {date}')
-              for name,r in data.get('results',{}).items():
-                  status=r.get('report_status',r.get('status','UNKNOWN'))
-                  missing=r.get('missing_exact_closes',[])
-                  issues=', '.join(x['symbol'] for x in missing)
-                  nav=r.get('portfolio_eur',r.get('nav_eur'))
-                  cnt=r.get('order_count',r.get('orders',0))
-                  pending=len(r.get('pending_tasks',[]))
-                  last_date=r.get('last_verified_valuation',r.get('last_nav_date','unknown'))
-                  lines.append(f'- {name}: **{status}**; last NAV={last_date}; capital={nav}; orders={cnt}; pending opens={pending}; missing close={issues or "none"}')
-                  if status in ('PENDING_DATA','PENDING_FIRST_REAL_CLOSE','PENDING_ORDERS','PENDING_FIRST_OPEN','WAITING_NEXT_LIVE_SESSION','WAITING_PRECOMMITTED_COMMON_SESSION'):
-                      print(f'::warning title=Atlas not yet tradable::{name} date={date}; state={status}; last NAV={last_date}; pending={pending}; missing exact={issues or "none"}')
-              lines.append('')
-          with open(os.environ['GITHUB_STEP_SUMMARY'],'a',encoding='utf-8') as fh:
-              fh.write('\n'.join(lines)+'\n')
-          PY
-      - name: Save dated ledgers and reports to GitHub
-        run: |
-          git config user.name "Atlas Paper Bot"
-          git config user.email "atlas-paper-bot@users.noreply.github.com"
-          git add -A strategies reports market_data v08/state v08/reports v08/market_data backtests/launch_replay_2026_11_05
-          if ! git diff --cached --quiet; then
-            git commit -m "Atlas EOD paper ledgers $(date -u +%F)"
-            git pull --rebase origin main
-            git push origin HEAD:main
+          git config user.name "Atlas Hybrid Paper Bot"
+          git config user.email "atlas-hybrid-paper@users.noreply.github.com"
+          if [ -d hybrid_v66/ledger ]; then
+            git add -A hybrid_v66/ledger
+            if ! git diff --cached --quiet; then
+              git commit -m "Atlas V6.6 Hybrid paper audit $(date -u +%F)"
+              git fetch origin atlas-v66-hybrid-live-paper
+              git rebase origin/atlas-v66-hybrid-live-paper
+              git push origin HEAD:atlas-v66-hybrid-live-paper
+            fi
           fi
+      - name: Print comparison and audit
+        if: always()
+        run: |
+          if [ -f hybrid/hybrid_v66/ledger/failure.json ]; then
+            cat hybrid/hybrid_v66/ledger/failure.json
+            exit 1
+          fi
+          test -f hybrid/hybrid_v66/ledger/latest.json
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          r=json.loads(Path('hybrid/hybrid_v66/ledger/latest.json').read_text())
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
+              f.write('## V6.6 Hybrid — PAPER only\n')
+              f.write(str(r.get('comparison_latest'))+'\n')
+              f.write('Retrospective bootstrap is not a historical live record.\n')
+          PY
