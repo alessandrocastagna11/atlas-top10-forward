@@ -27,11 +27,16 @@ def review_slot(day,anchor=ANCHOR):
         return None  # No tradable session in this week.
     return {"week":week,"nominal":nominal,"actual":actual,"full":week>0 and week%5==0}
 
+def processed_review_weeks(processed,anchor=ANCHOR):
+    """A late but genuinely observed review consumes the same anchored slot."""
+    anchor=_date(anchor)
+    return {(_date(x)-anchor).days//7 for x in processed if _date(x)>=anchor}
+
 def next_full_review(day,processed,anchor=ANCHOR):
     """Earliest not-yet-consumed full review (may be overdue)."""
-    anchor=_date(anchor);processed={_date(x) for x in processed}
+    anchor=_date(anchor);weeks=processed_review_weeks(processed,anchor)
     for week in range(5,5200,5):
         slot=review_slot(anchor+dt.timedelta(days=7*week),anchor)
-        if slot is not None and slot["actual"] not in processed:
+        if slot is not None and week not in weeks:
             return slot
     raise ValueError("No future full review available")
