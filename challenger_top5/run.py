@@ -119,6 +119,39 @@ def same_targets(left,right):
     if [x['ticker'] for x in left]!=[x['ticker'] for x in right]:return False
     return all(abs(x['target_weight']-y['target_weight'])<=1e-5 for x,y in zip(left,right))
 
+def exchange_plan(decision, tickers, market_symbols, recorded):
+    execution,_=rl.symbol_next_open('SPY',decision+dt.timedelta(days=1))
+    opens={}
+    for t in sorted(tickers):
+        market=market_symbols.get(t,t.removeprefix('G::'))
+        day,opening=rl.symbol_next_open(market,execution)
+        cal,verified=rl.listing_calendar(market)
+        opens[t]={'date':str(day),'utc':opening.isoformat(),
+                  'calendar':cal.name,'calendar_verified':verified}
+    eligible=bool(opens) and all(x['calendar_verified'] and x['date']==str(execution)
+                 and recorded<dt.datetime.fromisoformat(x['utc']) for x in opens.values())
+    return execution,opens,eligible
+
+def holiday_correction(prior, now):
+    """Correct only an impossible US session, without changing frozen targets."""
+    old_day=dt.date.fromisoformat(prior['execution_session'])
+    cal,_=rl.listing_calendar('SPY')
+    if cal.is_session(pd.Timestamp(old_day)):
+        return None
+    recorded=dt.datetime.fromisoformat(prior['first_recorded_at_utc'])
+    if recorded.tzinfo is None or recorded>now:return None
+    tickers=set(prior.get('candidate_exchange_opens',{}))
+    if not tickers or not {x['ticker'] for x in prior['targets']}<=tickers:return None
+    execution,opens,eligible=exchange_plan(dt.date.fromisoformat(prior['decision_session']),
+                                          tickers,{},recorded)
+    # Corrections are prospective: no newly certified past open.
+    if not eligible or not all(now<dt.datetime.fromisoformat(x['utc']) for x in opens.values()):
+        return None
+    return {**prior,'execution_session':str(execution),'candidate_exchange_opens':opens,
+            'preopen_eligible':bool(prior.get('targets')),
+            'calendar_correction_recorded_at_utc':now.isoformat(),
+            'superseded_invalid_execution_session':str(old_day)}
+
 def replay(m,cfg,asof,old,signals):
     if asof<START:return None,[],[]
     original_map=lm.v1._weekly_execution_map
@@ -248,6 +281,17 @@ def main():
             'expected_session':str(asof.date()),'checked_us_holdings':
             len([t for t in old.get('positions',{}) if not t.startswith('G::')])}
         signals={p.stem:read(p) for p in SIGNALS.glob('*.json')}
+        for key,prior in list(signals.items()):
+            correction_path=SIGNALS/'calendar_corrections'/(key+'.json')
+            corrected=read(correction_path)
+            if corrected is None:
+                # A committed fill must never be rescheduled.
+                if any(str(o.get('decision_date',''))[:10]==key for o in old.get('orders',[])):
+                    continue
+                corrected=holiday_correction(prior,now)
+                if corrected is not None:write(correction_path,corrected)
+            if corrected is not None:
+                signals[key]=corrected
         result,orders,missed=replay(m,cfg,asof,old,signals)
         if result is None:
             state=old.copy()
@@ -266,22 +310,17 @@ def main():
                    'equity_history':{str(d.date()):float(x) for d,x in result.equity.items()}}
         positions=rl.positions_asof(state['orders'],asof.date())
         targets=choose_targets(m,cfg,asof,positions)
-        # Publish only for the next US weekday. Every selected/owned exchange
-        # must have an opening on the execution day and not yet have opened.
-        execution=asof.date()+dt.timedelta(days=1)
-        while execution.weekday()>=5:execution+=dt.timedelta(days=1)
-        opens={}
-        for t in set(positions)|{x['ticker'] for x in targets}:
-            market=meta['ticker_to_market_symbol'].get(t,t)
-            day,opening=rl.symbol_next_open(market,execution)
-            opens[t]={'date':str(day),'utc':opening.isoformat()}
-        preopen=bool(targets) and all(x['date']==str(execution) and now<dt.datetime.fromisoformat(x['utc']) for x in opens.values())
+        # Common model index follows actual US sessions; every selected/held
+        # venue must independently have an eligible opening on that date.
+        execution,opens,preopen=exchange_plan(asof.date(),
+            set(positions)|{x['ticker'] for x in targets},meta['ticker_to_market_symbol'],now)
+        preopen=bool(targets) and preopen
         signal={'engine':ENGINE,'decision_session':str(asof.date()),'first_recorded_at_utc':now.isoformat(),
                 'execution_session':str(execution),'preopen_eligible':preopen,'targets':targets,'candidate_exchange_opens':opens,
                 'roster_sha256':meta['roster_sha256'],'shared_input_sha256':meta['shared_input']['sha256'],'source_commit':subprocess.check_output(['git','-C',str(SOURCE),'rev-parse','HEAD'],text=True).strip()}
         path=SIGNALS/(str(asof.date())+'.json')
         if not path.exists():write(path,signal)
-        else:signal=read(path)
+        else:signal=signals.get(str(asof.date()),read(path))
         status['current_indicative_targets']=targets
         status['archived_signal_input_sha256']=signal.get('shared_input_sha256')
         status['archived_signal_matches_current_input']=signal.get('shared_input_sha256')==meta['shared_input']['sha256']
