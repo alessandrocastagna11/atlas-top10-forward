@@ -113,12 +113,13 @@ def validate_execution_quotes(tickers,quote,decision,recorded,now,calendar_for):
         if not cal.is_session(runner) or now<cal.session_open(runner).to_pydatetime():
             blocked[ticker]="LOCAL_MARKET_NOT_OPENED_ON_ORDER_DATE"
             continue
-        # Reject carried prices when a more recent local session has finished.
-        expected=cal.date_to_session(runner,direction='previous')
-        if cal.session_close(expected).to_pydatetime()>now:
-            expected=cal.previous_session(expected)
-        if day<expected:
-            blocked[ticker]="STALE_COMPLETED_LOCAL_CLOSE"
+        # The shared snapshot has a common benchmark date. Use the actual
+        # latest local session at or before that date, not today's unrelated
+        # Asian close; otherwise mixed-zone rotations could never complete.
+        snapshot=pd.Timestamp(quote["decision_session"])
+        expected=cal.date_to_session(snapshot,direction='previous')
+        if day!=expected:
+            blocked[ticker]="STALE_OR_FUTURE_LOCAL_CLOSE_IN_SHARED_SNAPSHOT"
     return blocked
 
 def execute(state,p,quote,now,pa,kind):
