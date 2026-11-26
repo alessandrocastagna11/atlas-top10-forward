@@ -13,6 +13,8 @@ from __future__ import annotations
 import copy,csv,datetime as dt,hashlib,json,math,os,sys,urllib.parse,zipfile
 from pathlib import Path
 from zoneinfo import ZoneInfo
+import exchange_calendars as xcals
+import pandas as pd
 
 ROOT=Path(__file__).resolve().parent
 CONFIG=ROOT/'config.json'
@@ -36,22 +38,31 @@ def save(path,obj):
     temp.replace(path)
 def day(s):return dt.date.fromisoformat(s)
 def stamp_today(now):return now.astimezone(ROME).date()
-def completed_cutoff(now):
-    local=now.astimezone(ROME)
-    return local.date() if local.time()>=dt.time(19,0) else local.date()-dt.timedelta(days=1)
+def listing_calendar(ticker):
+    suffix=str(ticker).upper().rsplit('.',1)[-1]
+    mapping={'DE':'XETR','MI':'XMIL'}
+    if suffix not in mapping:raise ValueError('UNSUPPORTED_ETF_LISTING_CALENDAR_'+str(ticker))
+    return xcals.get_calendar(mapping[suffix])
 
-def elapsed_weekday_sessions(last_observed, through):
-    """Weekday-only freshness bound; weekends are NOT missing market closes.
+def completed_cutoff(now,ticker='EUNL.DE'):
+    """Last scheduled local session after conservative 90-minute EOD buffer."""
+    if now.tzinfo is None:raise ValueError('Timezone-aware timestamp required')
+    cal=listing_calendar(ticker)
+    local=now.astimezone(ROME).date()
+    session=cal.date_to_session(pd.Timestamp(local),direction='previous')
+    if now<cal.session_close(session).to_pydatetime()+dt.timedelta(minutes=90):
+        session=cal.previous_session(session)
+    return session.date()
 
-    Exchange holidays can only make the real lag shorter. Never authorize
-    a fill from this approximation: fill_pending independently requires
-    a contemporaneous precommitted signal and an actually observed close.
-    """
-    start=day(last_observed)
+def elapsed_market_sessions(last_observed,through,ticker='EUNL.DE'):
+    start=day(last_observed)+dt.timedelta(days=1)
     stop=day(through)
-    if stop<=start:return 0
-    return sum((start+dt.timedelta(days=k)).weekday()<5
-               for k in range(1,(stop-start).days+1))
+    if stop<start:return 0
+    return len(listing_calendar(ticker).sessions_in_range(pd.Timestamp(start),pd.Timestamp(stop)))
+
+# Keep old helper name for existing clients; it now counts exchange sessions.
+def elapsed_weekday_sessions(last_observed,through):
+    return elapsed_market_sessions(last_observed,through)
 
 def num(x):
     q=float(x)
@@ -98,8 +109,10 @@ def yahoo_daily_with_secondary_endpoint(cfg,ticker,now):
     """Retry another Yahoo chart host using observed EUR adjusted closes only."""
     rows=v23.yahoo_daily(ticker,cfg['history_start'],cfg)
     rows=sorted([dict(r) for r in rows],key=lambda x:x['date'])
-    cutoff=completed_cutoff(now).isoformat()
-    if not rows or elapsed_weekday_sessions(rows[-1]['date'],cutoff)==0:
+    cutoff=completed_cutoff(now,ticker).isoformat()
+    cal=listing_calendar(ticker)
+    rows=[r for r in rows if r['date']<=cutoff and cal.is_session(pd.Timestamp(r['date']))]
+    if not rows or elapsed_market_sessions(rows[-1]['date'],cutoff,ticker)==0:
         return rows,'YAHOO_QUERY1'
     last=rows[-1]['date']
     start=dt.datetime.combine(day(last)-dt.timedelta(days=10),dt.time.min,tzinfo=dt.timezone.utc)
@@ -120,7 +133,7 @@ def yahoo_daily_with_secondary_endpoint(cfg,ticker,now):
             x=adj[i] if i<len(adj) and adj[i] is not None else (close[i] if i<len(close) else None)
             if x is None or not math.isfinite(float(x)) or float(x)<=0:continue
             session=dt.datetime.fromtimestamp(t,tz=dt.timezone.utc).date().isoformat()
-            if session<=cutoff:incoming[session]=float(x)
+            if session<=cutoff and cal.is_session(pd.Timestamp(session)):incoming[session]=float(x)
         original={r['date']:float(r['close']) for r in rows}
         overlap=sorted(set(incoming)&set(original))
         if overlap:
@@ -230,19 +243,19 @@ def historical_feeds(cfg,now):
     """Original Yahoo/FRED/French source functions. Cached copies persist.
     Never treat a cached close for a prior day as today's quote.
     """
-    cutoff=completed_cutoff(now).isoformat()
+    cutoff=completed_cutoff(now,cfg['signal_ticker']).isoformat()
     eq,equity_source=yahoo_daily_with_secondary_endpoint(cfg,cfg['signal_ticker'],now)
     eq=sorted([dict(r) for r in eq if r['date']<=cutoff],key=lambda x:x['date'])
     if len(eq)<160:raise InsufficientData('EQUITY_HISTORY_UNDER_160_SESSIONS')
     last=eq[-1]['date'];gap=(day(cutoff)-day(last)).days
-    if gap>4:raise InsufficientData('STALE_EQUITY_CLOSE_'+last)
+    if elapsed_market_sessions(last,cutoff,cfg['signal_ticker'])>3:raise InsufficientData('STALE_EQUITY_CLOSE_'+last)
     bond=[];bond_problem=None;bond_source=None
     try:
         bond,bond_source=yahoo_daily_with_secondary_endpoint(cfg,cfg['defensive_ticker'],now)
         bond=sorted([dict(r) for r in bond if r['date']<=last],key=lambda x:x['date'])
     except Exception as exc:bond_problem=str(exc)[:160]
     if bond:
-        recent_bond=(day(last)-day(bond[-1]['date'])).days<=4
+        recent_bond=elapsed_market_sessions(bond[-1]['date'],min(last,completed_cutoff(now,cfg['defensive_ticker']).isoformat()),cfg['defensive_ticker'])<=3
     else:recent_bond=False
     if not recent_bond:bond_problem='STALE_OR_MISSING_BOND_'+(bond[-1]['date'] if bond else 'NONE')
     macro_problem=None;macro_refresh={}
@@ -254,7 +267,7 @@ def historical_feeds(cfg,now):
             'bond_problem':bond_problem,'macro':macro,'macro_problem':macro_problem,
             'macro_refresh':macro_refresh,
             'cutoff':cutoff,'session':last,'quote_lag_days':gap,
-            'quote_lag_sessions':elapsed_weekday_sessions(last,cutoff),
+            'quote_lag_sessions':elapsed_market_sessions(last,cutoff,cfg['signal_ticker']),
             'equity_quote_source':equity_source,'bond_quote_source':bond_source}
 
 
@@ -443,7 +456,10 @@ def fill_pending(st,cfg,pending,price,session,now):
     if ds>=session:raise AssertionError('Cannot execute on decision session')
     # Quotes may arrive late: never invent an execution after the historical fact
     # if the order had not been precommitted by the market close being valued.
-    cutoff=dt.datetime.combine(day(session),dt.time(17,30),tzinfo=BERLIN).astimezone(dt.timezone.utc)
+    cal=listing_calendar(cfg['equity_ticker'])
+    if not cal.is_session(pd.Timestamp(session)):
+        raise ValueError('NON_TRADING_EQUITY_SESSION_'+session)
+    cutoff=cal.session_close(pd.Timestamp(session)).to_pydatetime()
     if created.astimezone(dt.timezone.utc)>=cutoff:
         st['blocked_actions'].append({'session':session,'reason':'ORDER_NOT_PRECOMMITTED_BEFORE_SESSION_CLOSE',
                                       'decision_session':ds})
@@ -457,6 +473,13 @@ def fill_pending(st,cfg,pending,price,session,now):
     acts=list(pending['proposed_orders'])
     for task in [a for a in acts if a['side']=='SELL']+[a for a in acts if a['side']=='BUY']:
         sleeve=task['sleeve']
+        listing=cfg['defensive_ticker'] if sleeve=='BOND' else cfg['equity_ticker']
+        local_cal=listing_calendar(listing)
+        if (not local_cal.is_session(pd.Timestamp(session)) or
+            created>=local_cal.session_close(pd.Timestamp(session)).to_pydatetime() or
+            now<local_cal.session_close(pd.Timestamp(session)).to_pydatetime()):
+            st['blocked_actions'].append({'session':session,'reason':'LOCAL_SESSION_CLOSED_OR_NOT_PRECOMMITTED_'+sleeve})
+            continue
         px=price['BOND' if sleeve=='BOND' else 'EQUITY']
         if px is None:
             st['blocked_actions'].append({'session':session,'reason':'MISSING_PRICE_FOR_'+sleeve})
@@ -524,7 +547,10 @@ def ledger_process(cfg,state,session,feeds,sig,now):
         raise ValueError('PRE_ACTIVATION_SESSION')
     # Do not fill a missed session based on future information. On first run,
     # value the latest verified close and plan initial orders for a later close.
-    missing_sessions=elapsed_weekday_sessions(session,completed_cutoff(now).isoformat())
+    cal=listing_calendar(cfg['equity_ticker'])
+    if not cal.is_session(pd.Timestamp(session)) or session>completed_cutoff(now,cfg['equity_ticker']).isoformat():
+        raise InsufficientData('NOT_COMPLETED_EQUITY_EXCHANGE_SESSION_'+session)
+    missing_sessions=elapsed_market_sessions(session,completed_cutoff(now,cfg['equity_ticker']).isoformat(),cfg['equity_ticker'])
     if missing_sessions>1:
         raise InsufficientData('OLD_DATA_NO_PROSPECTIVE_DECISION_'+session+
                                '_MISSING_WEEKDAYS_'+str(missing_sessions))
@@ -610,7 +636,8 @@ def main(now=None):
         feeds=historical_feeds(cfg,now)
         quality={'accounting_adjustment':'CORRECT_CASH_ONLY_SECURITY_STAMP_PROXY' if stamp_corrected else None,
                  'equity_last':feeds['session'],'quote_lag_days':feeds['quote_lag_days'],
-                 'quote_lag_sessions_weekday_approx':feeds['quote_lag_sessions'],
+                 'quote_lag_sessions_exchange_calendar':feeds['quote_lag_sessions'],
+                 'exchange_calendar':listing_calendar(cfg['equity_ticker']).name,
                  'equity_quote_source':feeds['equity_quote_source'],
                  'bond_quote_source':feeds['bond_quote_source'],
                  'bond_last':feeds['bond'][-1]['date'] if feeds['bond'] else None,
@@ -630,7 +657,7 @@ def main(now=None):
             status='PAPER_ORDERS_EXECUTED' if executed else 'V23_SIGNAL_PENDING_NEXT_COMPLETED_CLOSE'
         else:status='WAITING_NEW_EQUITY_ETF_CLOSE'
         if feeds['quote_lag_sessions']>=2:
-            status='PENDING_DATA: EQUITY_CLOSE_MISSING_'+str(feeds['quote_lag_sessions'])+'_WEEKDAY_SESSIONS'
+            status='PENDING_DATA: EQUITY_CLOSE_MISSING_'+str(feeds['quote_lag_sessions'])+'_EXCHANGE_SESSIONS'
             quality['blocker']='EQUITY_PROVIDER_STALE_BUT_LEDGER_PRESERVED'
         if sig['stress'].get('source','').startswith(('CARRIED_FROZEN_','CARRIED_OBSERVED_')):
             status+='__MACRO_PROXY_STALE'
@@ -649,6 +676,6 @@ def main(now=None):
                       'orders_total':report['orders_total'], 'last_nav_session':report['last_nav_session'],
                       'pending':bool(report['pending_orders']),'quality':report['source_quality']},ensure_ascii=False))
     # A green workflow must not certify a multi-session-old paper account.
-    return 2 if quality.get('quote_lag_sessions_weekday_approx',0)>=2 else 0
+    return 2 if quality.get('quote_lag_sessions_exchange_calendar',0)>=2 else 0
 
 if __name__=='__main__':raise SystemExit(main())
