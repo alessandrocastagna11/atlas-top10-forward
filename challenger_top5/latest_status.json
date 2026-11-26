@@ -2,7 +2,7 @@
   "archived_signal_input_sha256": "7334631b69fbdc5d06f3b8056d3190b0f527352320336152510e7f6bc6f01603",
   "archived_signal_matches_current_input": false,
   "cash_eur": 99.52999725796109,
-  "checked_at_utc": "2026-11-26T16:13:22.814828+00:00",
+  "checked_at_utc": "2026-11-26T16:52:36.738421+00:00",
   "current_indicative_targets": [
     {
       "rank": 3.0,
@@ -49,7 +49,7 @@
   "missed_decisions": [],
   "nav_all_holdings_fresh": true,
   "nav_eur": 10127.804045207993,
-  "nav_net_liquidation_eur": 10035.367068171729,
+  "nav_net_liquidation_eur": 10033.48944826831,
   "nav_valuation_session": "2026-11-25",
   "new_orders": 0,
   "original_nav_eur": 10047.0188,
