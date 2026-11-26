@@ -1,0 +1,26 @@
+{
+  "dataset": "Johnbrick123/sp500-data release data + Kenneth French daily US market research factors",
+  "method_version": "V67_US_PIT_PROXY_MATCHED_FIVE_PHASES_DAILY_SWAP_V1",
+  "sha256": {
+    "prices.parquet": "c5b5428e9402542e0effaf830e3b5a1460a62f1522294ef53b8cd7524157123f",
+    "ff_daily.zip": "96c23b88e651cbfff3740a53f8225e59ee39893371e96385a1d8125ec2cd9c89",
+    "recycled_tickers.csv": "58cf35bc54c5c7d93c5ea60039965bc4293cf8fdfb29bedef0b8aac369c16375",
+    "membership_intervals.parquet": "83141f0c7d9eb69793db60694432426ea94eaa8c92e7e50c741bb5f605c48d54"
+  },
+  "calendar_start": "2007-01-03",
+  "calendar_end": "2025-12-10",
+  "calendar_sessions": 4766,
+  "first_adequate_date": "2007-01-03",
+  "recycled_excluded": 0,
+  "limitations": [
+    "USA only; dated S&P500 membership instead of global market-cap universe; all contemporaneous members rather than Top100",
+    "No historical sectors: Hybrid sector factor is neutral zero; all variants use identical US-only proxy risk and price/trend/momentum screens",
+    "Market-only OLS residual with independent Fama-French broad-US total return",
+    "USD nominal account, zero cash yield; no historical EUR",
+    "Adjusted total-return units, no separate dividend withholding, historical engine tax schedule extrapolated before 2012",
+    "Execution at observed next session close (weekly baseline, daily adaptive swap); no carried-patch trading",
+    "Research-only observed exits after membership removal and 60-day stale off-index settlement at last known quote; cash recovery assumed, not verified; marks carried up to 60 sessions; 35-day lot lock preserved",
+    "Passive ETF proxy is Fama-French cap-weighted US market, synthetic 0.07% TER, 10bps each side, 1 currency-unit each side and same stamp/tax schedule; no fund-level withholding",
+    "Original risk sizing and tax simulator reused, not exact global Atlas replay; V6.7 one discretionary pair per month, 0.5% hurdle buffer, no tuning; FIFO holding restriction, weighted-average fiscal cost basis as in the proxy simulator"
+  ]
+}
