@@ -2,20 +2,20 @@
   "blocked_sales": 0,
   "capital_gains_tax_eur": 0.0,
   "capital_initial_eur": 10000.0,
-  "cash_eur": 99.52999725796086,
+  "cash_eur": 99.52999725796109,
   "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
   "equity_history": {
-    "2026-11-18": 10004.326565780728,
-    "2026-11-19": 9966.535959035959,
-    "2026-11-20": 9781.65726031887,
-    "2026-11-23": 9987.72584905281,
+    "2026-11-18": 10008.105224235238,
+    "2026-11-19": 9980.233128726473,
+    "2026-11-20": 9788.236130296991,
+    "2026-11-23": 10004.504958296544,
     "2026-11-24": 9978.054861666082,
-    "2026-11-25": 10030.679128547648
+    "2026-11-25": 10032.556748451065
   },
   "exposure": 0.9901725984415097,
   "fees_eur": 5.0,
-  "nav_eur": 10127.804045207993,
-  "nav_net_liquidation_eur": 10030.679128547648,
+  "nav_eur": 10127.804045207991,
+  "nav_net_liquidation_eur": 10032.556748451065,
   "orders": [
     {
       "action": "BUY",
@@ -113,59 +113,59 @@
       "shares": 5.902183376499873
     },
     "KO": {
-      "cost_basis_eur": 2000.9999999999986,
-      "first_entry_date": "2026-11-18",
-      "lots": [
-        {
-          "purchase_date": "2026-11-18",
-          "sale_eligible_date": "2026-12-23",
-          "shares": 22.429742279422094
-        }
-      ],
-      "market_value_eur": 1996.7751601469984,
-      "shares": 22.429742279422094
-    },
-    "MRK": {
-      "cost_basis_eur": 2000.9999999999995,
-      "first_entry_date": "2026-11-18",
-      "lots": [
-        {
-          "purchase_date": "2026-11-18",
-          "sale_eligible_date": "2026-12-23",
-          "shares": 15.574753246378126
-        }
-      ],
-      "market_value_eur": 1993.184262259717,
-      "shares": 15.574753246378126
-    },
-    "PANW": {
       "cost_basis_eur": 2001.0,
       "first_entry_date": "2026-11-18",
       "lots": [
         {
           "purchase_date": "2026-11-18",
           "sale_eligible_date": "2026-12-23",
-          "shares": 7.003798815920447
+          "shares": 22.429742279422108
         }
       ],
-      "market_value_eur": 2275.3804111857235,
-      "shares": 7.003798815920447
+      "market_value_eur": 1996.7751601469997,
+      "shares": 22.429742279422108
     },
-    "TXN": {
-      "cost_basis_eur": 1896.1199200799222,
+    "MRK": {
+      "cost_basis_eur": 2000.9999999999993,
       "first_entry_date": "2026-11-18",
       "lots": [
         {
           "purchase_date": "2026-11-18",
           "sale_eligible_date": "2026-12-23",
-          "shares": 6.9550668201503445
+          "shares": 15.574753246378124
         }
       ],
-      "market_value_eur": 1714.2342274051982,
-      "shares": 6.9550668201503445
+      "market_value_eur": 1993.1842622597167,
+      "shares": 15.574753246378124
+    },
+    "PANW": {
+      "cost_basis_eur": 2000.9999999999995,
+      "first_entry_date": "2026-11-18",
+      "lots": [
+        {
+          "purchase_date": "2026-11-18",
+          "sale_eligible_date": "2026-12-23",
+          "shares": 7.003798815920446
+        }
+      ],
+      "market_value_eur": 2275.380411185723,
+      "shares": 7.003798815920446
+    },
+    "TXN": {
+      "cost_basis_eur": 1896.1199200799213,
+      "first_entry_date": "2026-11-18",
+      "lots": [
+        {
+          "purchase_date": "2026-11-18",
+          "sale_eligible_date": "2026-12-23",
+          "shares": 6.955066820150342
+        }
+      ],
+      "market_value_eur": 1714.2342274051975,
+      "shares": 6.955066820150342
     }
   },
   "slippage_eur": 9.885234685394527,
-  "tax_eur": 0.38831916445009856,
+  "tax_eur": 0.3883191644500986,
   "valuation_session": "2026-11-25"
 }
