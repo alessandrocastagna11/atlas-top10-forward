@@ -1,7 +1,7 @@
 {
   "capital_initial_eur": 10000.0,
   "cash_eur": 6411.57,
-  "checked_at_utc": "2026-11-26T20:10:50.325951+00:00",
+  "checked_at_utc": "2026-11-26T20:53:28.738117+00:00",
   "completed_deferred_rotation_count": 0,
   "daily_performance_basis": "UNIQUE_EXCHANGE_CLOSE_SESSION_AFTER_FX_REVISIONS",
   "daily_performance_revision_guard": true,
@@ -82,7 +82,7 @@
   },
   "invested_eur": 3635.4488,
   "last_order_execution_mode": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
-  "last_report_recorded_at_utc": "2026-11-26T20:11:15.262765+00:00",
+  "last_report_recorded_at_utc": "2026-11-26T20:53:55.692036+00:00",
   "last_valuation_session": "2026-11-25",
   "latest_available_roster_recorded_date": "2026-11-25",
   "min_hold_calendar_days": 35,
@@ -94,18 +94,19 @@
   "nav_net_liquidation_eur": 10029.1437,
   "new_orders": 0,
   "next_full_rotation_decision_date": "2026-12-14",
+  "next_full_rotation_nominal_date": "2026-12-14",
   "next_preopen": {
     "any_market_preopen_eligible": true,
     "candidate_count": 300,
     "cutoff_utc": "2026-11-27T14:00:00+00:00",
-    "decision_model_sha256": "3a708501892464a4ed94ad8ae07bd8d8972971109f1973422b288bd903d4f12c",
+    "decision_model_sha256": "f33c5fe0620fd44cc5bf67451f7572128ad8ac3c31ec6c9dbe310c02c8c896bd",
     "decision_session": "2026-11-25",
     "earliest_open_utc": "2026-11-27T14:30:00+00:00",
     "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
     "exchange_execution_policy": "PER_SYMBOL_NEXT_UNOBSERVED_OPEN",
     "execution_session": "2026-11-27",
     "market_data_first_observed_before_open": true,
-    "model_source_sha256": "d77fc898dfea6cd9a4547f63da42354614dac9a6e61bbaa5397a2e9e35873a98",
+    "model_source_sha256": "6aee7273f4f3ffe196c737f29a74ef2b18679e4fd2bcb337f6aee46d6531807d",
     "original_proof_archived": true,
     "per_symbol_exchange_plan": {
       "CB": {
@@ -271,14 +272,14 @@
       "DE",
       "PM"
     ],
-    "produced_at_utc": "2026-11-26T20:10:50.325951+00:00",
+    "produced_at_utc": "2026-11-26T20:53:28.738117+00:00",
     "revision_reason": "CORRECTED_CAUSAL_ROSTER_AND_INITIAL_ALPHA",
-    "risk_state": 0.3833071856353466,
+    "risk_state": 0.38330718563534605,
     "roster_sha256": "b22dd65070cffb76d9d78d3c68e42af8a2b4ae38957997b22df38e4876c84934",
     "signal_published": true,
     "status": "ATTESTED_CORRECTION_BEFORE_OPEN",
-    "superseded_archive": "superseded/2026-11-25_52f08234ed7d2c95.json",
-    "supersedes_sha256": "52f08234ed7d2c957c51e9d6f98d488bd89659c2d8eacc45e46b868c3c6a7065"
+    "superseded_archive": "superseded/2026-11-25_3a708501892464a4.json",
+    "supersedes_sha256": "3a708501892464a4ed94ad8ae07bd8d8972971109f1973422b288bd903d4f12c"
   },
   "orders_cumulative": 4,
   "paper_only": true,
@@ -450,18 +451,19 @@
   "proxy_ledger_unchanged": true,
   "real_money_orders": 0,
   "reason": "Execution is ASSUMED at previous complete close, not verified market fill.",
+  "review_calendar_policy": "FIRST_ACTUAL_US_SESSION_OF_ANCHORED_WEEK_V1",
   "risk_universe_fidelity": "ETF_ACWI_AS_RECORDED_OR_VENDOR_MARKETCAP_PROXY_NOT_HISTORICAL_PIT",
   "shared_input": {
-    "bytes": 9938812,
+    "bytes": 9939621,
     "decision_session": "2026-11-25",
     "frame_count": 352,
     "lossless_roundtrip_verified": true,
     "path": "shared_inputs/latest.zip",
-    "recorded_at_utc": "2026-11-26T20:10:50.325951+00:00",
+    "recorded_at_utc": "2026-11-26T20:53:28.738117+00:00",
     "roster_recorded_date": "2026-11-25",
     "roster_sha256": "b22dd65070cffb76d9d78d3c68e42af8a2b4ae38957997b22df38e4876c84934",
     "schema": 1,
-    "sha256": "1b0ebc7245adc8184d498aef5de8a54753852722bf4c77e6bcf88f23cc81d1fc"
+    "sha256": "11f4deee948c704fc4b62a39bbcf5e0fd3a8e205f71ff5ba251306c4b6e2f23e"
   },
   "shared_input_status": "PUBLISHED_LOSSLESS",
   "short_history_excluded_from_daily_universe": [
@@ -1180,7 +1182,7 @@
   "tax_simulator": "FROZEN_T9_WITH_TERMINAL_LIQUIDATION_DISABLED",
   "universe_lock_recorded_date": "2026-11-05",
   "universe_market_cap_pit_certified": false,
-  "universe_observed_capture_at_utc": "2026-11-26T20:10:37.053390+00:00",
+  "universe_observed_capture_at_utc": "2026-11-26T20:53:14.895718+00:00",
   "universe_observed_capture_day": "2026-11-26",
   "universe_observed_is_historical_pit": false,
   "universe_observed_marketcap_nonusa_count": 201,
@@ -1210,6 +1212,7 @@
     "valuation_session": "2026-11-25"
   },
   "valuation_source_session": "2026-11-25",
-  "weekly_monday_review": true,
+  "weekly_first_actual_us_session_review": true,
+  "weekly_monday_review": false,
   "wrong_currency_excluded_from_daily_universe": []
 }
