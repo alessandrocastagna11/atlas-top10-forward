@@ -1,7 +1,8 @@
 import unittest
+import datetime as dt
 import numpy as np
 import pandas as pd
-from run import score_mom10, same_targets, reconcile_orders
+from run import score_mom10, same_targets, reconcile_orders, exchange_plan, holiday_correction
 
 class TestRankMom10(unittest.TestCase):
     def setUp(self):
@@ -36,6 +37,23 @@ class TestRankMom10(unittest.TestCase):
         self.assertFalse(same_targets(p,[{'ticker':'B','target_weight':.20},{'ticker':'A','target_weight':.18}]))
         self.assertFalse(same_targets(p,[{'ticker':'A','target_weight':.19},{'ticker':'B','target_weight':.18}]))
 
+
+class TestExchangeCalendar(unittest.TestCase):
+    def test_thanksgiving_and_original_proof(self):
+        utc=dt.timezone.utc
+        recorded=dt.datetime(2026,11,26,5,32,tzinfo=utc)
+        day,opens,eligible=exchange_plan(dt.date(2026,11,25),{'KO','CB'},{},recorded)
+        self.assertEqual(str(day),'2026-11-27')
+        self.assertTrue(eligible)
+        self.assertEqual(opens['KO']['utc'],'2026-11-27T14:30:00+00:00')
+        prior={'decision_session':'2026-11-25','execution_session':'2026-11-26',
+               'first_recorded_at_utc':recorded.isoformat(),'targets':[{'ticker':'KO','target_weight':.2}],
+               'candidate_exchange_opens':{'KO':{'date':'2026-11-26'}},'preopen_eligible':True}
+        fixed=holiday_correction(prior,dt.datetime(2026,11,26,20,tzinfo=utc))
+        self.assertEqual(fixed['execution_session'],'2026-11-27')
+        self.assertEqual(prior['execution_session'],'2026-11-26')
+        self.assertEqual(fixed['targets'],prior['targets'])
+        self.assertIsNone(holiday_correction(prior,dt.datetime(2026,11,27,15,tzinfo=utc)))
 
 class TestImmutablePaperLedger(unittest.TestCase):
     @staticmethod
