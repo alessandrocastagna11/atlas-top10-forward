@@ -46,6 +46,7 @@ def simulate_tax_aware(
     if rotation_phase not in range(5):raise ValueError('rotation phase must be 0..4')
     execution_map = v1._weekly_execution_map(index, pd.Timestamp(test_start))
     adaptive_audit=[]
+    last_adaptive_month=None
     # Valuations carry the last observed mark for at most 60 sessions.
     # Execution uses observations ONLY; no filled prices are substituted.
     close_values = raw_market.close_eur.ffill(limit=60)
@@ -409,6 +410,8 @@ def simulate_tax_aware(
                 }
             )
 
+        pre_exit_order_count=len(order_rows)
+        pre_exit_settlement_count=len(settlement_rows)
         # Before normal decisions, process actual exits on a fresh observed
         # price after membership is known to have ended. No voluntary sale
         # of immature lots. If a removed name has no observed quote for
@@ -514,7 +517,9 @@ def simulate_tax_aware(
         # priority; if it is active do not make a discretionary replacement.
         # A weekly cash-entry check remains separate, with no phase dependence.
         if (adaptive_selector is not None and di>0 and decision_type not in
-                {"full","core_risk_only","sleeve_only"}):
+                {"full","core_risk_only","sleeve_only"}
+                and len(order_rows)==pre_exit_order_count and len(settlement_rows)==pre_exit_settlement_count
+                and last_adaptive_month!=date.to_period("M")):
             signal_day=index[di-1]
             core={t:p for t,p in positions.items() if t!=v1.BENCHMARK}
             nav_signal=nav_at(signal_day,close_values)
@@ -536,17 +541,27 @@ def simulate_tax_aware(
                         reserve=cash_reserve_fraction*max(0.,nav_at(date,open_values))
                         spend=max(0.,min(proceeds,cash+proceeds-reserve))
                         threshold=max(cfg.minimum_trade_eur,cfg.rebalance_band_weight*nav_at(date,open_values))
-                        # No orphan sale if the matched buy would be too small.
-                        if (spend-fee)/(1+slip_bps(date,new)/10000)>=threshold:
+                        # Preflight real next-session prices on both legs.
+                        # Also cap position and sector exposure on the actual fill day,
+                        # and allow at most one discretionary pair per calendar month.
+                        marked_nav=nav_at(date,open_values)
+                        new_value=(spend-fee)/(1+slip_bps(date,new)/10000)
+                        new_sector=v1.TICKER_TO_SECTOR[new]
+                        sector_after=sum(position_value(date,t,open_values) for t in core
+                            if t!=old and v1.TICKER_TO_SECTOR[t]==new_sector)+new_value
+                        if (new_value>=threshold and marked_nav>0
+                            and new_value<=cfg.maximum_position_weight*marked_nav
+                            and sector_after<=cfg.maximum_sector_weight*marked_nav):
                             old_order_count=len(order_rows)
                             before_cash=cash
                             sell(date,signal_day,old,float(po),gross,"adaptive_economic_exit")
                             if old in positions:raise ValueError("Adaptive swap unexpectedly partial")
-                            budget=max(0.,min(cash-before_cash,cash-reserve))
+                            budget=max(0.,min(spend,cash-before_cash,cash-reserve))
                             buy(date,signal_day,new,float(pn),budget-fee,"adaptive_economic_entry")
                             if new not in positions or len(order_rows)!=old_order_count+2:
                                 raise ValueError("Adaptive swap not a matched sell and buy")
                             adaptive_audit.append({**swap,"execution_date":date,"actual_sell_tax":order_rows[-2]["capital_gains_tax_eur"]})
+                            last_adaptive_month=date.to_period("M")
                             # Avoid a second discretionary decision on the same day.
                             decision_date=None;decision_type=None
         if decision_date is not None and decision_type is not None:
