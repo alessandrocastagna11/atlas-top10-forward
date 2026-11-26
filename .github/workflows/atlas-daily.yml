@@ -7,6 +7,8 @@ on:
   schedule:
     - cron: '15 1 * * *'
     - cron: '35 5 * * *'
+    # Retry guarded rotations after the NYSE regular opening.
+    - cron: '40 15 * * 1-5'
 permissions:
   contents: write
 concurrency:
@@ -38,6 +40,7 @@ jobs:
       - name: Check source and execute independent paper challenger
         run: |
           python -m py_compile hybrid/hybrid_v66/run.py
+          python -m unittest discover -s hybrid/hybrid_v66 -p 'test_*.py' -v
           python hybrid/hybrid_v66/run.py --source confidence/strict_shadow/v4_exact_source
       - name: Persist only Hybrid ledger or failure diagnostics
         if: always()
