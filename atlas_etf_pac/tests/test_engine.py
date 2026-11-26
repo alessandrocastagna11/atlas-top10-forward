@@ -86,6 +86,16 @@ class TestOriginalV23(unittest.TestCase):
         self.assertIn('FF_BREADTH_3M',s['missing_inputs'])
 
 
+    def test_exchange_holidays_not_counted_as_missing_quotes(self):
+        self.assertEqual(pac.elapsed_market_sessions('2026-12-23','2026-12-27','EUNL.DE'),0)
+        self.assertEqual(pac.elapsed_market_sessions('2026-12-23','2026-12-27','CSBGE3.MI'),0)
+        self.assertEqual(pac.elapsed_market_sessions('2026-11-25','2026-11-26','EUNL.DE'),1)
+        now=dt.datetime(2026,12,25,20,0,tzinfo=dt.timezone.utc)
+        self.assertEqual(pac.completed_cutoff(now,'EUNL.DE'),dt.date(2026,12,23))
+        self.assertEqual(pac.completed_cutoff(now,'CSBGE3.MI'),dt.date(2026,12,23))
+        with self.assertRaisesRegex(pac.InsufficientData,'NOT_COMPLETED_EQUITY_EXCHANGE_SESSION'):
+            pac.ledger_process(CFG,pac.seed(CFG),'2026-12-25',feed('2026-12-25'),{},now)
+
     def test_weekend_friday_close_is_usable_for_monday_preclose_signal(self):
         """Friday close is the last completed session Monday morning."""
         monday=dt.datetime(2026,11,16,11,0,tzinfo=dt.timezone.utc)
