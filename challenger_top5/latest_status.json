@@ -2,7 +2,7 @@
   "archived_signal_input_sha256": "7334631b69fbdc5d06f3b8056d3190b0f527352320336152510e7f6bc6f01603",
   "archived_signal_matches_current_input": false,
   "cash_eur": 99.52999725796109,
-  "checked_at_utc": "2026-11-26T16:52:36.738421+00:00",
+  "checked_at_utc": "2026-11-26T20:07:17.776784+00:00",
   "current_indicative_targets": [
     {
       "rank": 3.0,
@@ -66,36 +66,48 @@
   "shared_input_sha256": "e15326d07cccb28826cdeaa29144dfe12078603dd28cf16da9b7a7e4ac4f5d9a",
   "shared_input_verified": true,
   "signal": {
+    "calendar_correction_recorded_at_utc": "2026-11-26T20:07:17.776784+00:00",
     "candidate_exchange_opens": {
       "CB": {
-        "date": "2026-11-26",
-        "utc": "2026-11-26T14:30:00+00:00"
+        "calendar": "XNYS",
+        "calendar_verified": true,
+        "date": "2026-11-27",
+        "utc": "2026-11-27T14:30:00+00:00"
       },
       "KO": {
-        "date": "2026-11-26",
-        "utc": "2026-11-26T14:30:00+00:00"
+        "calendar": "XNYS",
+        "calendar_verified": true,
+        "date": "2026-11-27",
+        "utc": "2026-11-27T14:30:00+00:00"
       },
       "MRK": {
-        "date": "2026-11-26",
-        "utc": "2026-11-26T14:30:00+00:00"
+        "calendar": "XNYS",
+        "calendar_verified": true,
+        "date": "2026-11-27",
+        "utc": "2026-11-27T14:30:00+00:00"
       },
       "PANW": {
-        "date": "2026-11-26",
-        "utc": "2026-11-26T14:30:00+00:00"
+        "calendar": "XNYS",
+        "calendar_verified": true,
+        "date": "2026-11-27",
+        "utc": "2026-11-27T14:30:00+00:00"
       },
       "TXN": {
-        "date": "2026-11-26",
-        "utc": "2026-11-26T14:30:00+00:00"
+        "calendar": "XNYS",
+        "calendar_verified": true,
+        "date": "2026-11-27",
+        "utc": "2026-11-27T14:30:00+00:00"
       }
     },
     "decision_session": "2026-11-25",
     "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
-    "execution_session": "2026-11-26",
+    "execution_session": "2026-11-27",
     "first_recorded_at_utc": "2026-11-26T04:24:34.987718+00:00",
     "preopen_eligible": true,
     "roster_sha256": "b22dd65070cffb76d9d78d3c68e42af8a2b4ae38957997b22df38e4876c84934",
     "shared_input_sha256": "7334631b69fbdc5d06f3b8056d3190b0f527352320336152510e7f6bc6f01603",
     "source_commit": "a31a9b2ccaec5cdccbe89c3131259ae8dec4ee37",
+    "superseded_invalid_execution_session": "2026-11-26",
     "targets": [
       {
         "rank": 3.0,
