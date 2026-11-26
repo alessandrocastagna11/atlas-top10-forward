@@ -14,7 +14,7 @@ from zoneinfo import ZoneInfo
 
 from live_model import HERE,ENGINE,INITIAL
 from paper_reporting import ORDER_FIELDS,write_report
-from review_calendar import review_slot,next_full_review,POLICY as REVIEW_POLICY
+from review_calendar import review_slot,next_full_review,processed_review_weeks,POLICY as REVIEW_POLICY
 
 UTC=dt.timezone.utc
 NY=ZoneInfo("America/New_York")
@@ -560,6 +560,8 @@ def run(now=None):
     # The first actual US trading session of each anchored week is the
     # review day. A Monday holiday must not erase a weekly review.
     # Consume only dated, actually published proposals, once per slot.
+    # If the first day's feed was missing, the first genuinely published
+    # later proposal in that week may serve as the review; no backdating.
     dated_folder=ROOT/"proposals_by_session"
     for dated_file in sorted(dated_folder.glob("*.json")):
         decision=dated_file.stem
@@ -568,7 +570,8 @@ def run(now=None):
         try:date=dt.date.fromisoformat(decision)
         except ValueError:continue
         slot=review_slot(date,FIRST_DECISION)
-        if slot is None or slot["week"]<1 or date!=slot["actual"] or date>=now.date():
+        if (slot is None or slot["week"]<1 or date<slot["actual"] or date>=now.date()
+                or slot["week"] in processed_review_weeks(state["processed_decision_dates"],FIRST_DECISION)):
             continue
         full=slot["full"]
         # Never overwrite an earlier pending full rotation with a new one.
