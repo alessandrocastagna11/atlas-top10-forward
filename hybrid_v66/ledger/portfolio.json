@@ -9,17 +9,17 @@
   "real_money_orders": 0,
   "initial_capital_eur": 10000.0,
   "cash_eur": 5849.87,
-  "invested_eur": 4198.0721,
-  "nav_mark_to_market_eur": 10047.9421,
-  "nav_net_liquidation_eur": 10028.6706,
-  "hypothetical_liquidation_sale_cost_eur": 9.1981,
-  "hypothetical_liquidation_tax_eur": 10.0734,
-  "hypothetical_liquidation_net_gain_eur": 38.744,
+  "invested_eur": 4176.1166,
+  "nav_mark_to_market_eur": 10025.9866,
+  "nav_net_liquidation_eur": 10012.4397,
+  "hypothetical_liquidation_sale_cost_eur": 9.1761,
+  "hypothetical_liquidation_tax_eur": 4.3707,
+  "hypothetical_liquidation_net_gain_eur": 16.8104,
   "hypothetical_liquidation_assumes_all_lots_mature": true,
   "hypothetical_liquidation_tax_method": "SIMULTANEOUS_COMPENSABLE_EQUITY_GAINS_LOSSES_26PCT",
-  "pnl_mark_to_market_pct": 0.47942,
-  "valuation_session": "2026-11-24",
-  "valuation_recorded_at_utc": "2026-11-25T16:05:31.721072+00:00",
+  "pnl_mark_to_market_pct": 0.25987,
+  "valuation_session": "2026-11-25",
+  "valuation_recorded_at_utc": "2026-11-26T09:32:19.763738+00:00",
   "valuation_method": "LAST_CONFIRMED_DAILY_CLOSE_WITH_STALE_FLAG",
   "stale_quote_tickers": [],
   "positions_count": 5,
@@ -29,11 +29,11 @@
       "market_symbol": "CB",
       "shares": 2.3415157049993387,
       "cost_basis_eur": 765.2,
-      "market_close_eur": 344.12043832,
-      "market_value_eur": 805.7634,
+      "market_close_eur": 347.10883351,
+      "market_value_eur": 812.7608,
       "sell_eligible_shares": 0,
       "locked_shares": 2.341515705,
-      "price_source_date": "2026-11-24",
+      "price_source_date": "2026-11-25",
       "price_quality": "LAST_VERIFIED_LOCAL_EXCHANGE_EOD",
       "lots": [
         {
@@ -45,18 +45,18 @@
           "fill_method": "HYBRID_SHARED_CONFIDENCE70_EOD_PROXY"
         }
       ],
-      "portfolio_weight_pct": 8.019
+      "portfolio_weight_pct": 8.107
     },
     {
       "ticker": "JNJ",
       "market_symbol": "JNJ",
       "shares": 3.0388233931335593,
       "cost_basis_eur": 770.82,
-      "market_close_eur": 253.4446937,
-      "market_value_eur": 770.1737,
+      "market_close_eur": 249.89354355,
+      "market_value_eur": 759.3823,
       "sell_eligible_shares": 0,
       "locked_shares": 3.0388233931,
-      "price_source_date": "2026-11-24",
+      "price_source_date": "2026-11-25",
       "price_quality": "LAST_VERIFIED_LOCAL_EXCHANGE_EOD",
       "lots": [
         {
@@ -68,18 +68,18 @@
           "fill_method": "HYBRID_SHARED_CONFIDENCE70_EOD_PROXY"
         }
       ],
-      "portfolio_weight_pct": 7.665
+      "portfolio_weight_pct": 7.574
     },
     {
       "ticker": "KO",
       "market_symbol": "KO",
       "shares": 14.830793689223235,
       "cost_basis_eur": 1279.9,
-      "market_close_eur": 89.49313629,
-      "market_value_eur": 1327.2542,
+      "market_close_eur": 89.02354451,
+      "market_value_eur": 1320.2898,
       "sell_eligible_shares": 0,
       "locked_shares": 14.8307936892,
-      "price_source_date": "2026-11-24",
+      "price_source_date": "2026-11-25",
       "price_quality": "LAST_VERIFIED_LOCAL_EXCHANGE_EOD",
       "lots": [
         {
@@ -91,18 +91,18 @@
           "fill_method": "HYBRID_SHARED_CONFIDENCE70_EOD_PROXY"
         }
       ],
-      "portfolio_weight_pct": 13.209
+      "portfolio_weight_pct": 13.169
     },
     {
       "ticker": "MRK",
       "market_symbol": "MRK",
       "shares": 5.177452454292283,
       "cost_basis_eur": 692.62,
-      "market_close_eur": 129.78430244,
-      "market_value_eur": 671.9521,
+      "market_close_eur": 127.97533487,
+      "market_value_eur": 662.5862,
       "sell_eligible_shares": 0,
       "locked_shares": 5.1774524543,
-      "price_source_date": "2026-11-24",
+      "price_source_date": "2026-11-25",
       "price_quality": "LAST_VERIFIED_LOCAL_EXCHANGE_EOD",
       "lots": [
         {
@@ -114,18 +114,18 @@
           "fill_method": "HYBRID_SHARED_CONFIDENCE70_EOD_PROXY"
         }
       ],
-      "portfolio_weight_pct": 6.687
+      "portfolio_weight_pct": 6.609
     },
     {
       "ticker": "PM",
       "market_symbol": "PM",
       "shares": 3.6939213342705086,
       "cost_basis_eur": 641.59,
-      "market_close_eur": 168.6361574,
-      "market_value_eur": 622.9287,
+      "market_close_eur": 168.1403934,
+      "market_value_eur": 621.0974,
       "sell_eligible_shares": 0,
       "locked_shares": 3.6939213343,
-      "price_source_date": "2026-11-24",
+      "price_source_date": "2026-11-25",
       "price_quality": "LAST_VERIFIED_LOCAL_EXCHANGE_EOD",
       "lots": [
         {
@@ -137,7 +137,7 @@
           "fill_method": "HYBRID_SHARED_CONFIDENCE70_EOD_PROXY"
         }
       ],
-      "portfolio_weight_pct": 6.2
+      "portfolio_weight_pct": 6.195
     }
   ],
   "strict_min_holding_calendar_days": 35,
