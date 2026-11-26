@@ -136,7 +136,21 @@ def validate_state(state):
             raise ValueError("Non-reconciled accounting total: "+field)
 
 
+def valid_execution_session(ticker,order_date,price_date=None):
+    """Previous-close proxy may be recorded only on a real listing session.
+    The price date must itself be an exchange session. Never attest a fill.
+    """
+    import pandas as pd
+    from run_live import listing_calendar
+    cal,verified=listing_calendar(str(ticker).removeprefix('G::'))
+    return (verified and cal.is_session(pd.Timestamp(order_date)) and
+            (price_date is None or
+             (dt.date.fromisoformat(str(price_date)[:10])<=order_date and
+              cal.is_session(pd.Timestamp(price_date)))))
+
 def buy(state,ticker,budget,reference,decision,now,price_date,price_source):
+    if not valid_execution_session(ticker,now.date(),price_date):
+        return False
     if ticker not in state["holdings"] and len(state["holdings"])>=10:
         return False  # Exposure/position cap is absolute, including locked lots.
     if ticker in state["holdings"]:
@@ -188,7 +202,7 @@ def sell(state,ticker,requested_value,reference,decision,now,price_date,price_so
     # A previous-day proxy close dated BEFORE sale eligibility cannot be
     # used to sell newly matured lots, even if the runner starts next day.
     # Apply this to ALL defensive and rotational sells, not only full rebalance.
-    if str(price_source).startswith("STALE"):
+    if str(price_source).startswith("STALE") or not valid_execution_session(ticker,now.date(),price_date):
         state["blocked_sell_requests"]+=1
         return False
     quote_day=dt.date.fromisoformat(str(price_date))
@@ -251,6 +265,21 @@ def execute_or_defer_five_week_rebalance(state,candidates,decision,quotes,now,
     requires immature shares, keep the WHOLE rotation as an explicit pending
     decision (rather than losing it for the next 5-week interval).
     """
+    # Do not consume a full rotation or sell anything if a required target
+    # cannot be priced on a real observed session or a venue is closed.
+    required=set(state["holdings"])|{x["ticker"] for x in candidates if float(x["weight_pct"])>0}
+    unavailable=[]
+    for ticker in sorted(required):
+        if ticker not in quotes.get("close_eur",{}):
+            unavailable.append(ticker)
+            continue
+        price_day=quotes.get("ticker_price_dates",{}).get(ticker,quotes.get("decision_session"))
+        if (not price_day or str(price_day)<decision or
+            not valid_execution_session(ticker,now.date(),price_day) or
+            (now.date()-dt.date.fromisoformat(str(price_day))).days>4):
+            unavailable.append(ticker)
+    if unavailable:
+        return {"completed":False,"blocked":unavailable,"reason":"LOCAL_SESSION_OR_REQUIRED_QUOTE_UNAVAILABLE"}
     nav=float(state["cash_eur"])
     priced={}
     for ticker,p in state["holdings"].items():
@@ -520,6 +549,8 @@ def run(now=None):
         eligible=[p for p in candidates if p["market_symbol"] in frozen and
                   p["meets_minimum_order_threshold"]]
         if not eligible:raise ValueError("Frozen signal generated zero executable paper proposals")
+        if any(not valid_execution_session(p["ticker"],now.date(),FIRST_DECISION) for p in eligible):
+            raise ValueError("Initial paper entry deferred: listing session unavailable")
         for p in eligible:
             buy(state,p["ticker"],p["indicative_allocation_eur"],
                 p["reference_previous_close_eur"],FIRST_DECISION,now,
@@ -548,6 +579,13 @@ def run(now=None):
         # missed review remains pending until a completed post-decision close.
         source_session=quote.get("decision_session","")
         if not source_session or source_session<decision:
+            break
+        # A weekly review remains unprocessed if the runner date is a
+        # holiday for a held listing (or candidate under weekly-buy mode).
+        review_tickers=set(state["holdings"])
+        if WEEKLY_BUYS_ENABLED:
+            review_tickers.update(x["ticker"] for x in current_proposal.get("possible_candidates",[]))
+        if not full and any(not valid_execution_session(t,now.date()) for t in review_tickers):
             break
         NAV=state.get("last_nav_eur",INITIAL)
         pricecache={}
