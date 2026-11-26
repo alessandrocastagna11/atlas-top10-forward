@@ -5,18 +5,18 @@
 **Stato:** `PAPER_APPROX_LEDGER_ACTIVE` — **Validità della valutazione:** `PAPER_LAST_EOD_CLOSE_APPROXIMATE_FILLS_NOT_REAL_BROKER_ORDERS`
 
 **Motore segnali:** SIGNAL_READY; errore: nessuno
-**Capitalizzazione osservata:** 2026-11-26; copertura USA/RoW: 277/204; NON PIT storico
+**Capitalizzazione osservata:** 2026-11-26; copertura USA/RoW: 280/201; NON PIT storico
 **Titoli sostituiti per storico insufficiente:** SPCX
 
 **Ultima sessione decisionale:** 2026-11-25
 **Ultima sessione valorizzata:** 2026-11-25
 **Dati mercato / universo:** MARKET_CAP_USD_AS_RECORDED_WITHIN_ACWI_NOT_HISTORICAL_PIT; fotografia utilizzata al 2026-11-25
 **Universo dinamico:** 20 fotografie cronologiche, ultima disponibile 2026-11-25; nuove società eleggibili SOLO dalla data registrata
-**Primo segnale / apertura successiva:** 2026-11-25 / 2026-11-26
+**Primo segnale / apertura successiva:** 2026-11-25 / 2026-11-27
 **Candidati segnalati (NON ORDINI):** CB, KO, JNJ, MRK, PANW, CRWD, TXN, UNP, DE, PM; verifica: ATTESTED_CORRECTION_BEFORE_OPEN
 **Segnale originale pubblicato:** SÌ; esito: ATTESTED_CORRECTION_BEFORE_OPEN
 **Contabilità paper:** FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY — prezzi degli ordini APPROSSIMATI; nessun ordine reale.
-**Ultimo aggiornamento portafoglio:** 2026-11-26T04:59:06.216941+00:00; fonte ultimo prezzo 2026-11-25.
+**Ultimo aggiornamento portafoglio:** 2026-11-26T16:12:34.426934+00:00; fonte ultimo prezzo 2026-11-25.
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
 
 ## Segnali, proposte e ordini: tre cose diverse
@@ -62,16 +62,16 @@
 
 | Titolo | Primo mercato utile | Stato del segnale | Prossima apertura locale prevista (UTC)* |
 |---|---|---|---|
-| CB | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
-| CRWD | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
-| DE | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
-| JNJ | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
-| KO | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
-| MRK | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
-| PANW | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
-| PM | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
-| TXN | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
-| UNP | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
+| CB | 2026-11-27 | PENDING_FIRST_LOCAL_OPEN | 2026-11-27T14:30:00+00:00 |
+| CRWD | 2026-11-27 | PENDING_FIRST_LOCAL_OPEN | 2026-11-27T14:30:00+00:00 |
+| DE | 2026-11-27 | PENDING_FIRST_LOCAL_OPEN | 2026-11-27T14:30:00+00:00 |
+| JNJ | 2026-11-27 | PENDING_FIRST_LOCAL_OPEN | 2026-11-27T14:30:00+00:00 |
+| KO | 2026-11-27 | PENDING_FIRST_LOCAL_OPEN | 2026-11-27T14:30:00+00:00 |
+| MRK | 2026-11-27 | PENDING_FIRST_LOCAL_OPEN | 2026-11-27T14:30:00+00:00 |
+| PANW | 2026-11-27 | PENDING_FIRST_LOCAL_OPEN | 2026-11-27T14:30:00+00:00 |
+| PM | 2026-11-27 | PENDING_FIRST_LOCAL_OPEN | 2026-11-27T14:30:00+00:00 |
+| TXN | 2026-11-27 | PENDING_FIRST_LOCAL_OPEN | 2026-11-27T14:30:00+00:00 |
+| UNP | 2026-11-27 | PENDING_FIRST_LOCAL_OPEN | 2026-11-27T14:30:00+00:00 |
 
 *Orari indicativi: festività, sospensioni e quotazioni reali devono essere verificate dal provider. Il segnale non equivale a un acquisto; un mercato già aperto non autorizza esecuzioni retroattive.*
 
