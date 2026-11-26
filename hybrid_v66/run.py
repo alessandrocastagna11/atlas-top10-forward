@@ -168,6 +168,7 @@ def run(source):
     from shared_inputs import load as load_inputs
     from model_proposal import proposal as planner
     from run_live import listing_calendar
+    from review_calendar import review_slot,next_full_review,POLICY as REVIEW_POLICY
     pa.ENGINE=ENGINE;pa.POLICY=POLICY
     vintages,frames,cash=load_inputs(forward,desc,desc["decision_session"],desc["roster_sha256"])
     m,meta=lm.build_model(vintages,asof.date(),frames,shared_cash_rate=cash)
@@ -250,11 +251,23 @@ def run(source):
         else:
             state["last_proposal_status"]="READY"
             state["last_proposal"]=p
-            weeks=(date-FIRST).days//7
-            if date.weekday()==0 and weeks>=1 and ds not in state["processed_decision_dates"] and state["pending"] is None:
-                # Do not rewrite an already frozen Monday decision on rerun.
-                state["pending"]={"kind":"full" if weeks%5==0 else "weekly","proposal":p,
-                                  "recorded_at_utc":now.isoformat(),"retrospective":bootstrap}
+            slot=review_slot(date.date(),FIRST.date())
+            if (slot is not None and slot["week"]>=1 and date.date()==slot["actual"]
+                    and ds not in state["processed_decision_dates"]):
+                # The actual first US session replaces a closed Monday.
+                # Preserve the frozen pending decision on same-day reruns.
+                if state["pending"] is None:
+                    state["pending"]={"kind":"full" if slot["full"] else "weekly","proposal":p,
+                                      "recorded_at_utc":now.isoformat(),"retrospective":bootstrap,
+                                      "nominal_review_date":slot["nominal"].isoformat(),"review_week":slot["week"]}
+                elif state["pending"]["proposal"]["decision_session"]!=ds:
+                    # Explicitly record the blocked review; do not silently
+                    # replace a previously committed target or backdate a fill.
+                    audit=state.setdefault("blocked_review_slots",{})
+                    audit.setdefault(ds,{"nominal_review_date":slot["nominal"].isoformat(),
+                        "full":slot["full"],"reason":"EARLIER_PENDING_DECISION",
+                        "pending_decision":state["pending"]["proposal"]["decision_session"],
+                        "observed_at_utc":now.isoformat()})
     if state["orders"][:len(previous)]!=previous:raise ValueError("Order prefix modified")
     pa.validate_state(state)
     port=pa.generate_portfolio(state,q,state.get("last_proposal",{}),now)
@@ -275,7 +288,12 @@ def run(source):
         pairs.append({"session":d,"confidence70_net_eur":a,"hybrid_net_eur":b,
                       "difference_eur":b-a,"difference_return_pp":(b-a)/100.,
                       "hybrid_phase":"RETROSPECTIVE_RECONSTRUCTION" if d<=state["bootstrap_through"] else "FORWARD_PAPER"})
+    next_slot=next_full_review(asof.date(),state["processed_decision_dates"],FIRST.date())
     result={"status":"PAPER_APPROX_LEDGER_ACTIVE","engine":ENGINE,"session":str(asof.date()),
+        "review_calendar_policy":REVIEW_POLICY,
+        "next_full_rotation_nominal_date":next_slot["nominal"].isoformat(),
+        "next_full_rotation_decision_date":next_slot["actual"].isoformat(),
+        "blocked_review_slots":state.get("blocked_review_slots",{}),
         "recorded_at_utc":now.isoformat(),"shared_input":desc,"portfolio":port,
         "comparison_latest":pairs[-1] if pairs else None,"comparison_sessions":pairs,
         "new_orders":state["orders"] if bootstrap else state["orders"][len(previous):],
