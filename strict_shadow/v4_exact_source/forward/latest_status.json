@@ -1,7 +1,7 @@
 {
   "capital_initial_eur": 10000.0,
   "cash_eur": 6411.57,
-  "checked_at_utc": "2026-11-26T04:23:07.635778+00:00",
+  "checked_at_utc": "2026-11-26T04:58:39.576187+00:00",
   "completed_deferred_rotation_count": 0,
   "daily_performance_basis": "UNIQUE_EXCHANGE_CLOSE_SESSION_AFTER_FX_REVISIONS",
   "daily_performance_revision_guard": true,
@@ -73,6 +73,7 @@
       "ticker": "MRK"
     }
   ],
+  "immutable_historical_proposal_preserved": "2026-11-25",
   "indicative_order_test": {
     "actual_fills": 0,
     "decision_session": "2026-11-25",
@@ -81,7 +82,7 @@
   },
   "invested_eur": 3635.4488,
   "last_order_execution_mode": "FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY",
-  "last_report_recorded_at_utc": "2026-11-26T04:23:37.923591+00:00",
+  "last_report_recorded_at_utc": "2026-11-26T04:59:06.216941+00:00",
   "last_valuation_session": "2026-11-25",
   "latest_available_roster_recorded_date": "2026-11-25",
   "min_hold_calendar_days": 35,
@@ -97,14 +98,15 @@
     "any_market_preopen_eligible": true,
     "candidate_count": 300,
     "cutoff_utc": "2026-11-26T14:00:00+00:00",
-    "decision_model_sha256": "7d870172bb04f445d442bd6be4e1e3a1432400bf8a93470e56b0eb986826c7d8",
+    "decision_model_sha256": "75fdf1e179f2df8ec4c7142048ed9b6e9de4b0dd2004246049fbb026252d57e1",
     "decision_session": "2026-11-25",
     "earliest_open_utc": "2026-11-26T14:30:00+00:00",
     "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
     "exchange_execution_policy": "PER_SYMBOL_NEXT_UNOBSERVED_OPEN",
     "execution_session": "2026-11-26",
     "market_data_first_observed_before_open": true,
-    "model_source_sha256": "38324a096999011889f47bbdf1a11d5685b02f459170aba55976f0c32133a44d",
+    "model_source_sha256": "5489b4aa1dc2942d8c86acd8ad9b0137fab42397e9eef2464aec67c94fcced23",
+    "original_proof_archived": true,
     "per_symbol_exchange_plan": {
       "CB": {
         "attested_before_first_candidate_open": true,
@@ -229,11 +231,14 @@
       "DE",
       "PM"
     ],
-    "produced_at_utc": "2026-11-26T04:23:07.635778+00:00",
-    "risk_state": 0.3833071839758607,
+    "produced_at_utc": "2026-11-26T04:58:39.576187+00:00",
+    "revision_reason": "CORRECTED_CAUSAL_ROSTER_AND_INITIAL_ALPHA",
+    "risk_state": 0.383307197251759,
     "roster_sha256": "b22dd65070cffb76d9d78d3c68e42af8a2b4ae38957997b22df38e4876c84934",
     "signal_published": true,
-    "status": "SIGNAL_PUBLISHED_PER_EXCHANGE"
+    "status": "ATTESTED_CORRECTION_BEFORE_OPEN",
+    "superseded_archive": "superseded/2026-11-25_7d870172bb04f445.json",
+    "supersedes_sha256": "7d870172bb04f445d442bd6be4e1e3a1432400bf8a93470e56b0eb986826c7d8"
   },
   "orders_cumulative": 4,
   "paper_only": true,
@@ -361,21 +366,22 @@
     "2026-11-16",
     "2026-11-23"
   ],
+  "proposal_revised_after_recording": true,
   "proxy_ledger_unchanged": true,
   "real_money_orders": 0,
   "reason": "Execution is ASSUMED at previous complete close, not verified market fill.",
   "risk_universe_fidelity": "ETF_ACWI_AS_RECORDED_OR_VENDOR_MARKETCAP_PROXY_NOT_HISTORICAL_PIT",
   "shared_input": {
-    "bytes": 9941527,
+    "bytes": 9937599,
     "decision_session": "2026-11-25",
     "frame_count": 352,
     "lossless_roundtrip_verified": true,
     "path": "shared_inputs/latest.zip",
-    "recorded_at_utc": "2026-11-26T04:23:07.635778+00:00",
+    "recorded_at_utc": "2026-11-26T04:58:39.576187+00:00",
     "roster_recorded_date": "2026-11-25",
     "roster_sha256": "b22dd65070cffb76d9d78d3c68e42af8a2b4ae38957997b22df38e4876c84934",
     "schema": 1,
-    "sha256": "7334631b69fbdc5d06f3b8056d3190b0f527352320336152510e7f6bc6f01603"
+    "sha256": "3ef3c3e3d41a481a05c3bc3fec91d52884d991842919d9da788eec14b1962b1f"
   },
   "shared_input_status": "PUBLISHED_LOSSLESS",
   "short_history_excluded_from_daily_universe": [
@@ -384,7 +390,7 @@
   "signal_engine_error": null,
   "signal_engine_status": "SIGNAL_READY",
   "signal_published": true,
-  "signal_status": "SIGNAL_PUBLISHED_PER_EXCHANGE",
+  "signal_status": "ATTESTED_CORRECTION_BEFORE_OPEN",
   "source": {
     "active_roster_names": 300,
     "dated_vintages_applied": 20,
@@ -1094,7 +1100,7 @@
   "tax_simulator": "FROZEN_T9_WITH_TERMINAL_LIQUIDATION_DISABLED",
   "universe_lock_recorded_date": "2026-11-05",
   "universe_market_cap_pit_certified": false,
-  "universe_observed_capture_at_utc": "2026-11-26T04:22:50.285296+00:00",
+  "universe_observed_capture_at_utc": "2026-11-26T04:58:27.469693+00:00",
   "universe_observed_capture_day": "2026-11-26",
   "universe_observed_is_historical_pit": false,
   "universe_observed_marketcap_nonusa_count": 204,
