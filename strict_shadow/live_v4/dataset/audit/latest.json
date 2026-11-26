@@ -1,15 +1,15 @@
 {
   "base_date": "2024-01-01",
   "cached_required_quotes_complete": true,
-  "checked_at_utc": "2026-11-25T05:26:03.286708+00:00",
+  "checked_at_utc": "2026-11-26T04:22:50.211921+00:00",
   "data_ready_for_confidence70_model": false,
   "dataset_use": "FORWARD_RESEARCH_NOT_PIT_CERTIFIED",
   "forward_universe": {
     "count": 500,
     "mapped_symbols": 500,
-    "raw_sha256": "2912392eaac236b2eb0c0793c1064cf8c52e59ab9b7952271e3e04b124b1fa7d",
+    "raw_sha256": "594baa5c3c8cef1ae8dfae482fcfcd39945d8f5968984befd839452a36c3a37e",
     "recorded_on": "2026-11-25",
-    "source_as_of": "Nov 23, 2026",
+    "source_as_of": "Nov 24, 2026",
     "type": "ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP"
   },
   "fx_observation_provenance": "first_seen_at_utc on newly inserted rows; legacy blanks not retroactively certified",
@@ -25,17 +25,17 @@
   "older_provisional_bars_removed": 0,
   "original_288_symbols_cached": 287,
   "original_288_symbols_missing": [],
-  "price_symbols_cached": 579,
-  "processed_price_symbols": 556,
+  "price_symbols_cached": 582,
+  "processed_price_symbols": 557,
   "provider_errors": [],
-  "provisional_bars_blocked": 111,
+  "provisional_bars_blocked": 96,
   "quote_prices_in_declared_currency_units": true,
   "quotes_cache_status": "ALL_ACTIVE_SYMBOLS_HAVE_SOME_DATA",
   "reason_not_model_ready": "PIT validated forward USA100 rankings, RoW issuer scores, full technical features, independent daily FX provenance and true engine forward signal still missing",
-  "required_symbols_fresh_7_calendar_days": 554,
+  "required_symbols_fresh_7_calendar_days": 555,
   "round_robin_cursor": 223,
   "source": "Yahoo Chart unofficial",
-  "total_candidate_symbols": 556,
+  "total_candidate_symbols": 557,
   "verified_terminal_delisted_symbols": [
     "WBD"
   ]

@@ -5,18 +5,18 @@
 **Stato:** `PAPER_APPROX_LEDGER_ACTIVE` — **Validità della valutazione:** `PAPER_LAST_EOD_CLOSE_APPROXIMATE_FILLS_NOT_REAL_BROKER_ORDERS`
 
 **Motore segnali:** SIGNAL_READY; errore: nessuno
-**Capitalizzazione osservata:** 2026-11-25; copertura USA/RoW: 281/201; NON PIT storico
+**Capitalizzazione osservata:** 2026-11-26; copertura USA/RoW: 277/204; NON PIT storico
 **Titoli sostituiti per storico insufficiente:** SPCX
 
-**Ultima sessione decisionale:** 2026-11-24
-**Ultima sessione valorizzata:** 2026-11-24
-**Dati mercato / universo:** MARKET_CAP_USD_AS_RECORDED_WITHIN_ACWI_NOT_HISTORICAL_PIT; fotografia utilizzata al 2026-11-24
-**Universo dinamico:** 19 fotografie cronologiche, ultima disponibile 2026-11-24; nuove società eleggibili SOLO dalla data registrata
-**Primo segnale / apertura successiva:** 2026-11-24 / 2026-11-25
-**Candidati segnalati (NON ORDINI):** KO, CB, JNJ, MRK, PANW, CRWD, DE, UNP, ADP, WELL; verifica: ATTESTED_CORRECTION_BEFORE_OPEN
-**Segnale originale pubblicato:** SÌ; esito: ATTESTED_CORRECTION_BEFORE_OPEN
+**Ultima sessione decisionale:** 2026-11-25
+**Ultima sessione valorizzata:** 2026-11-25
+**Dati mercato / universo:** MARKET_CAP_USD_AS_RECORDED_WITHIN_ACWI_NOT_HISTORICAL_PIT; fotografia utilizzata al 2026-11-25
+**Universo dinamico:** 20 fotografie cronologiche, ultima disponibile 2026-11-25; nuove società eleggibili SOLO dalla data registrata
+**Primo segnale / apertura successiva:** 2026-11-25 / 2026-11-26
+**Candidati segnalati (NON ORDINI):** CB, KO, JNJ, MRK, PANW, CRWD, TXN, UNP, DE, PM; verifica: SIGNAL_PUBLISHED_PER_EXCHANGE
+**Segnale originale pubblicato:** SÌ; esito: SIGNAL_PUBLISHED_PER_EXCHANGE
 **Contabilità paper:** FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY — prezzi degli ordini APPROSSIMATI; nessun ordine reale.
-**Ultimo aggiornamento portafoglio:** 2026-11-25T05:26:46.712728+00:00; fonte ultimo prezzo 2026-11-24.
+**Ultimo aggiornamento portafoglio:** 2026-11-26T04:23:37.923591+00:00; fonte ultimo prezzo 2026-11-25.
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
 
 ## Segnali, proposte e ordini: tre cose diverse
@@ -29,19 +29,19 @@
 
 ## Audit delle valutazioni e cambi
 
-**Numero di chiusure di mercato distinte:** 11; **revisioni di valutazione:** 2.
+**Numero di chiusure di mercato distinte:** 12; **revisioni di valutazione:** 2.
 **Revisione della stessa chiusura durante il run:** NO. Una revisione non genera una seconda giornata di rendimento.
-**Cambio EUR/USD:** 1.0908099413 USD per EUR; seduta FX 2026-11-24. Il fixing giornaliero non e un cambio di broker.
-**Fingerprint dei dati:** 222db0a45598aa375bbed55ef2f343339a78e7c5049a2e3728e0b1e6ebccc0a5.
+**Cambio EUR/USD:** 1.0962268114 USD per EUR; seduta FX 2026-11-25. Il fixing giornaliero non e un cambio di broker.
+**Fingerprint dei dati:** 4402c7e532cf3e9d6f8e6458fb3cc421cdee0a36107dd805282ef1e7f861c840.
 **Attenzione:** l’universo ACWI attuale è un proxy, non la classifica originale PIT per capitalizzazione.
 
 | Portafoglio virtuale | Importo |
 |---|---:|
 | Capitale iniziale | 10,000.00 € |
-| NAV netto liquidabile ipotetico* | 10,043.77 € |
-| NAV a prezzi di mercato | 10,066.81 € |
+| NAV netto liquidabile ipotetico* | 10,029.14 € |
+| NAV a prezzi di mercato | 10,047.02 € |
 | Liquidità | 6,411.57 € |
-| Valore titoli | 3,655.24 € |
+| Valore titoli | 3,635.45 € |
 | Posizioni | 4 |
 | Ordini complessivi | 4 |
 | Nuovi ordini verificati | 0 |
@@ -53,25 +53,25 @@
 
 | Titolo | Quote | Valore € | Peso | Quote vincolate | Prima data vendibile |
 |---|---:|---:|---:|---:|---|
-| CB | 2.74054 | 943.08 | 9.37% | 2.74054 | 2026-12-15 |
-| JNJ | 3.55665 | 901.41 | 8.95% | 3.55665 | 2026-12-15 |
-| KO | 12.7129 | 1,137.72 | 11.30% | 12.7129 | 2026-12-15 |
-| MRK | 5.18576 | 673.03 | 6.69% | 5.18576 | 2026-12-15 |
+| CB | 2.74054 | 951.27 | 9.47% | 2.74054 | 2026-12-15 |
+| JNJ | 3.55665 | 888.78 | 8.85% | 3.55665 | 2026-12-15 |
+| KO | 12.7129 | 1,131.75 | 11.27% | 12.7129 | 2026-12-15 |
+| MRK | 5.18576 | 663.65 | 6.61% | 5.18576 | 2026-12-15 |
 
 ## Piano delle aperture per singolo mercato
 
 | Titolo | Primo mercato utile | Stato del segnale | Prossima apertura locale prevista (UTC)* |
 |---|---|---|---|
-| ADP | 2026-11-25 | PENDING_FIRST_LOCAL_OPEN | 2026-11-25T14:30:00+00:00 |
-| CB | 2026-11-25 | PENDING_FIRST_LOCAL_OPEN | 2026-11-25T14:30:00+00:00 |
-| CRWD | 2026-11-25 | PENDING_FIRST_LOCAL_OPEN | 2026-11-25T14:30:00+00:00 |
-| DE | 2026-11-25 | PENDING_FIRST_LOCAL_OPEN | 2026-11-25T14:30:00+00:00 |
-| JNJ | 2026-11-25 | PENDING_FIRST_LOCAL_OPEN | 2026-11-25T14:30:00+00:00 |
-| KO | 2026-11-25 | PENDING_FIRST_LOCAL_OPEN | 2026-11-25T14:30:00+00:00 |
-| MRK | 2026-11-25 | PENDING_FIRST_LOCAL_OPEN | 2026-11-25T14:30:00+00:00 |
-| PANW | 2026-11-25 | PENDING_FIRST_LOCAL_OPEN | 2026-11-25T14:30:00+00:00 |
-| UNP | 2026-11-25 | PENDING_FIRST_LOCAL_OPEN | 2026-11-25T14:30:00+00:00 |
-| WELL | 2026-11-25 | PENDING_FIRST_LOCAL_OPEN | 2026-11-25T14:30:00+00:00 |
+| CB | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
+| CRWD | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
+| DE | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
+| JNJ | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
+| KO | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
+| MRK | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
+| PANW | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
+| PM | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
+| TXN | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
+| UNP | 2026-11-26 | PENDING_FIRST_LOCAL_OPEN | 2026-11-26T14:30:00+00:00 |
 
 *Orari indicativi: festività, sospensioni e quotazioni reali devono essere verificate dal provider. Il segnale non equivale a un acquisto; un mercato già aperto non autorizza esecuzioni retroattive.*
 
