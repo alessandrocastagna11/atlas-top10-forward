@@ -1,40 +1,40 @@
 {
   "archived_signal_input_sha256": "7334631b69fbdc5d06f3b8056d3190b0f527352320336152510e7f6bc6f01603",
-  "archived_signal_matches_current_input": true,
+  "archived_signal_matches_current_input": false,
   "cash_eur": 99.52999725796109,
-  "checked_at_utc": "2026-11-26T04:24:34.987718+00:00",
+  "checked_at_utc": "2026-11-26T04:59:46.256005+00:00",
   "current_indicative_targets": [
     {
       "rank": 3.0,
-      "score": 2.34030963,
+      "score": 2.34097643,
       "sector": "XLK",
       "target_weight": 0.2,
       "ticker": "PANW"
     },
     {
       "rank": 9.0,
-      "score": 1.33038497,
+      "score": 1.33105111,
       "sector": "XLK",
       "target_weight": 0.2,
       "ticker": "TXN"
     },
     {
-      "rank": 21.0,
-      "score": 0.95561653,
+      "rank": 22.0,
+      "score": 0.95561605,
       "sector": "XLF",
       "target_weight": 0.2,
       "ticker": "CB"
     },
     {
-      "rank": 24.0,
-      "score": 0.93021444,
+      "rank": 25.0,
+      "score": 0.93087941,
       "sector": "XLP",
       "target_weight": 0.2,
       "ticker": "KO"
     },
     {
-      "rank": 41.0,
-      "score": 0.67679995,
+      "rank": 42.0,
+      "score": 0.6774659,
       "sector": "XLV",
       "target_weight": 0.19,
       "ticker": "MRK"
@@ -48,8 +48,8 @@
   "limitation": "Prospective replay with shared as-recorded ACWI cap proxy, preopen proof and conservative all-exchange gate; first-cohort calibration proxy, no certified 2012-2025 parity.",
   "missed_decisions": [],
   "nav_all_holdings_fresh": true,
-  "nav_eur": 10127.804045207991,
-  "nav_net_liquidation_eur": 10032.556748451065,
+  "nav_eur": 10127.804045207993,
+  "nav_net_liquidation_eur": 10035.367068171729,
   "nav_valuation_session": "2026-11-25",
   "new_orders": 0,
   "original_nav_eur": 10047.0188,
@@ -63,7 +63,7 @@
   },
   "real_money_orders": 0,
   "same_price_dates_and_fx": true,
-  "shared_input_sha256": "7334631b69fbdc5d06f3b8056d3190b0f527352320336152510e7f6bc6f01603",
+  "shared_input_sha256": "3ef3c3e3d41a481a05c3bc3fec91d52884d991842919d9da788eec14b1962b1f",
   "shared_input_verified": true,
   "signal": {
     "candidate_exchange_opens": {
@@ -179,16 +179,16 @@
     "roster_sha256": "b22dd65070cffb76d9d78d3c68e42af8a2b4ae38957997b22df38e4876c84934",
     "roster_source_asof": "2026-11-25",
     "shared_input": {
-      "bytes": 9941527,
+      "bytes": 9937599,
       "decision_session": "2026-11-25",
       "frame_count": 352,
       "lossless_roundtrip_verified": true,
       "path": "shared_inputs/latest.zip",
-      "recorded_at_utc": "2026-11-26T04:23:07.635778+00:00",
+      "recorded_at_utc": "2026-11-26T04:58:39.576187+00:00",
       "roster_recorded_date": "2026-11-25",
       "roster_sha256": "b22dd65070cffb76d9d78d3c68e42af8a2b4ae38957997b22df38e4876c84934",
       "schema": 1,
-      "sha256": "7334631b69fbdc5d06f3b8056d3190b0f527352320336152510e7f6bc6f01603"
+      "sha256": "3ef3c3e3d41a481a05c3bc3fec91d52884d991842919d9da788eec14b1962b1f"
     },
     "ticker_price_dates": {
       "AAPL": "2026-11-25",
