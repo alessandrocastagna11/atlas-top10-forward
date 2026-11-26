@@ -36,12 +36,16 @@ def simulate_tax_aware(
     target_weight_builder: Optional[Callable] = None,
     liquidate_on_final_session: bool = False,
     weekly_core_entries: bool = False,
+    rotation_phase: int = 0,
+    adaptive_selector: Optional[Callable] = None,
 ) -> TaxAwareResult:
     if not 0.0 <= cash_reserve_fraction < 1.0:
         raise ValueError("cash_reserve_fraction must be in [0, 1)")
     index = features.close_eur.index
     sim_index = index[index >= pd.Timestamp(test_start)]
+    if rotation_phase not in range(5):raise ValueError('rotation phase must be 0..4')
     execution_map = v1._weekly_execution_map(index, pd.Timestamp(test_start))
+    adaptive_audit=[]
     # Valuations carry the last observed mark for at most 60 sessions.
     # Execution uses observations ONLY; no filled prices are substituted.
     close_values = raw_market.close_eur.ffill(limit=60)
@@ -483,7 +487,7 @@ def simulate_tax_aware(
             core_exposure_preview = core_value_preview / nav_open_preview if nav_open_preview > 0.0 else 0.0
             preview_overlay = float(overlay.loc[decision_date])
             preview_regime = float(regime.loc[decision_date]) * preview_overlay
-            scheduled = decision_count == 1 or decision_count % max(1, cfg.decision_interval_weeks) == 0
+            scheduled = decision_count == 1 or (adaptive_selector is None and decision_count % max(1, cfg.decision_interval_weeks) == rotation_phase)
             emergency = core_exposure_preview > preview_regime + 0.25
             overlay_check = weekly_risk_overlay is not None and preview_overlay < 1.0
             sleeve_needed = bear_floor is not None and (
@@ -491,6 +495,8 @@ def simulate_tax_aware(
             )
             if scheduled:
                 decision_type = "full"
+            elif adaptive_selector is not None and (overlay_check or emergency) and any(t != v1.BENCHMARK for t in positions):
+                decision_type = "core_risk_only"
             elif weekly_core_entries and preview_regime > 0.0:
                 # Challenger: allow NEW purchases between five-week rotations
                 # without increasing risk above the current portfolio target.
@@ -503,6 +509,46 @@ def simulate_tax_aware(
             else:
                 decision_date = None
 
+        # Daily adaptive substitution. The selector only sees the previous
+        # complete session (no fill-day data). Weekly exposure protection has
+        # priority; if it is active do not make a discretionary replacement.
+        # A weekly cash-entry check remains separate, with no phase dependence.
+        if (adaptive_selector is not None and di>0 and decision_type not in
+                {"full","core_risk_only","sleeve_only"}):
+            signal_day=index[di-1]
+            core={t:p for t,p in positions.items() if t!=v1.BENCHMARK}
+            nav_signal=nav_at(signal_day,close_values)
+            risk_signal=float(regime.loc[signal_day])*float(overlay.loc[signal_day])
+            invested_signal=sum(position_value(signal_day,t,close_values) for t in core)
+            # Do not rotate when the risk controller instead needs a reduction.
+            if core and nav_signal>0 and invested_signal/nav_signal<=risk_signal+.25:
+                swap=adaptive_selector(signal_day,date,core,lot_inventory,cash,risk_signal,nav_signal)
+                if swap is not None:
+                    old,new=swap["old"],swap["new"]
+                    po,pn=open_values.at[date,old],open_values.at[date,new]
+                    if (np.isfinite(po) and po>0 and np.isfinite(pn) and pn>0
+                        and all((date-l["date"]).days>=required_hold_days for l in lot_inventory[old])):
+                        gross=float(core[old].shares*po)
+                        fee=cfg.fixed_fee_eur
+                        conservative_sale=gross*(1-slip_bps(date,old)/10000)-fee
+                        est_tax=max(0.,conservative_sale-core[old].cost_basis_eur)*(italian_financial_rate(date) if tax_config.enabled else 0.)
+                        proceeds=conservative_sale-est_tax
+                        reserve=cash_reserve_fraction*max(0.,nav_at(date,open_values))
+                        spend=max(0.,min(proceeds,cash+proceeds-reserve))
+                        threshold=max(cfg.minimum_trade_eur,cfg.rebalance_band_weight*nav_at(date,open_values))
+                        # No orphan sale if the matched buy would be too small.
+                        if (spend-fee)/(1+slip_bps(date,new)/10000)>=threshold:
+                            old_order_count=len(order_rows)
+                            before_cash=cash
+                            sell(date,signal_day,old,float(po),gross,"adaptive_economic_exit")
+                            if old in positions:raise ValueError("Adaptive swap unexpectedly partial")
+                            budget=max(0.,min(cash-before_cash,cash-reserve))
+                            buy(date,signal_day,new,float(pn),budget-fee,"adaptive_economic_entry")
+                            if new not in positions or len(order_rows)!=old_order_count+2:
+                                raise ValueError("Adaptive swap not a matched sell and buy")
+                            adaptive_audit.append({**swap,"execution_date":date,"actual_sell_tax":order_rows[-2]["capital_gains_tax_eur"]})
+                            # Avoid a second discretionary decision on the same day.
+                            decision_date=None;decision_type=None
         if decision_date is not None and decision_type is not None:
             nav_open = nav_at(date, open_values)
             core_positions = {ticker: position for ticker, position in positions.items() if ticker != v1.BENCHMARK}
@@ -753,6 +799,7 @@ def simulate_tax_aware(
                 for lot in lot_inventory.get(ticker,[]) if lot['shares']>1e-9]}
         for ticker,p in positions.items()}
     result.research_settlements = pd.DataFrame(settlement_rows)
+    result.adaptive_audit = pd.DataFrame(adaptive_audit)
     return result
 
 
