@@ -79,6 +79,48 @@ def make_proposal(m,meta,date,state,quote,pa,lm,planner,reg):
     p["regime"]=str(reg.loc[date])
     return p
 
+def validate_execution_quotes(tickers,quote,decision,recorded,now,calendar_for):
+    """Check all required quotes before any ledger mutation.
+    The actual order remains a disclosed previous-close PAPER proxy.
+    A later observed completed close must postdate the frozen decision and
+    its publication, and the runner must be on a real local trading session.
+    """
+    blocked={}
+    for ticker in sorted(set(tickers)):
+        symbol=ticker.removeprefix('G::')
+        cal,verified=calendar_for(symbol)
+        price_day=quote.get("ticker_price_dates",{}).get(ticker)
+        if not verified:
+            blocked[ticker]="UNVERIFIED_LISTING_CALENDAR"
+            continue
+        if ticker not in quote.get("close_eur",{}) or not price_day:
+            blocked[ticker]="MISSING_OBSERVED_LOCAL_CLOSE"
+            continue
+        if not np.isfinite(quote["close_eur"][ticker]) or quote["close_eur"][ticker]<=0:
+            blocked[ticker]="INVALID_LOCAL_CLOSE"
+            continue
+        day=pd.Timestamp(price_day)
+        if not cal.is_session(day):
+            blocked[ticker]="QUOTE_ON_NON_TRADING_SESSION"
+            continue
+        close=cal.session_close(day).to_pydatetime()
+        if price_day<=decision or close<=recorded or close>now:
+            blocked[ticker]="NO_COMPLETED_POST_PUBLICATION_LOCAL_CLOSE"
+            continue
+        # The append-only adapter records the UTC runner date as order date.
+        # Do not record a simulated order on a date with no local session.
+        runner=pd.Timestamp(now.date())
+        if not cal.is_session(runner) or now<cal.session_open(runner).to_pydatetime():
+            blocked[ticker]="LOCAL_MARKET_NOT_OPENED_ON_ORDER_DATE"
+            continue
+        # Reject carried prices when a more recent local session has finished.
+        expected=cal.date_to_session(runner,direction='previous')
+        if cal.session_close(expected).to_pydatetime()>now:
+            expected=cal.previous_session(expected)
+        if day<expected:
+            blocked[ticker]="STALE_COMPLETED_LOCAL_CLOSE"
+    return blocked
+
 def execute(state,p,quote,now,pa,kind):
     if not p:return False
     decision=p["decision_session"]
@@ -124,6 +166,7 @@ def run(source):
     import paper_account as pa
     from shared_inputs import load as load_inputs
     from model_proposal import proposal as planner
+    from run_live import listing_calendar
     pa.ENGINE=ENGINE;pa.POLICY=POLICY
     vintages,frames,cash=load_inputs(forward,desc,desc["decision_session"],desc["roster_sha256"])
     m,meta=lm.build_model(vintages,asof.date(),frames,shared_cash_rate=cash)
@@ -166,7 +209,28 @@ def run(source):
         pending=state.get("pending")
         if pending and pending["proposal"]["decision_session"]<ds:
             before=len(state["orders"])
-            done=execute(state,pending["proposal"],q,clock,pa,pending["kind"])
+            blocked={}
+            if not bootstrap:
+                recorded=dt.datetime.fromisoformat(pending["recorded_at_utc"])
+                if recorded.tzinfo is None:raise ValueError("Pending signal timestamp is not timezone aware")
+                required=set(state["holdings"])
+                if pending["kind"]=="full":
+                    required.update(x["ticker"] for x in pending["proposal"]["possible_candidates"] if float(x["weight_pct"])>0)
+                blocked=validate_execution_quotes(required,q,pending["proposal"]["decision_session"],recorded,clock,listing_calendar)
+            if blocked:
+                pending["last_execution_check"]={"checked_at_utc":now.isoformat(),"blocked_tickers":blocked}
+                done=False
+            else:
+                pending.pop("last_execution_check",None)
+                # Full rotation is attempted on a copy: no partial mutation if
+                # any validation or execution step subsequently fails.
+                trial=copy.deepcopy(state)
+                done=execute(trial,pending["proposal"],q,clock,pa,pending["kind"])
+                if done:
+                    pa.validate_state(trial)
+                    state=trial
+                else:
+                    pending["last_execution_check"]={"checked_at_utc":now.isoformat(),"reason":"ROTATION_DEFERRED_BY_FIFO_OR_EXECUTION_GUARD"}
             for o in state["orders"][before:]:
                 o["strategy"]=ENGINE;o["phase"]="RETROSPECTIVE_RECONSTRUCTION" if bootstrap else "FORWARD_PAPER"
                 o["simulation_recorded_at_utc"]=now.isoformat()
@@ -216,7 +280,8 @@ def run(source):
         "new_orders":state["orders"] if bootstrap else state["orders"][len(previous):],
         "bootstrap":bootstrap,"pending":state.get("pending"),"proposal":state.get("last_proposal"),
         "proposal_status":state.get("last_proposal_status"),
-        "limitations":["Retrospective bootstrap uses later-ingested historical bars and observed dated rosters, not contemporaneously recorded Hybrid signals.",
+        "limitations":["Prospective rotations require verified post-publication local closes and a real runner-date market opening; blocked rotations remain pending.",
+        "Retrospective bootstrap uses later-ingested historical bars and observed dated rosters, not contemporaneously recorded Hybrid signals.",
         "Shared universe not certified historical PIT; previous completed close proxy, no broker fills.",
         "Same forward ledger adapter as Confidence70, no SPY sleeve, cash interest or dividend cash flows; not exact historical simulator parity."]}
     save(OUT/"state.json",state);save(OUT/"portfolio.json",port);save(OUT/"latest.json",result)
