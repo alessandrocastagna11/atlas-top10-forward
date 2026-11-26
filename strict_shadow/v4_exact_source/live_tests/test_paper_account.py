@@ -16,6 +16,31 @@ def fixture_state():
         "blocked_sell_requests":0,"processed_decision_dates":[],"equity_points":[]}
 
 class PaperAccountTests(unittest.TestCase):
+    def test_no_paper_order_on_market_holiday(self):
+        state=fixture_state()
+        holiday=dt.datetime(2026,11,26,20,0,tzinfo=UTC)
+        self.assertFalse(pa.buy(state,"KO",1000.,85.,"2026-11-25",holiday,
+                                "2026-11-25","EOD"))
+        self.assertEqual(state["orders"],[])
+        friday=holiday+dt.timedelta(days=1)
+        self.assertTrue(pa.buy(state,"KO",1000.,85.,"2026-11-25",friday,
+                                "2026-11-25","EOD"))
+        self.assertFalse(pa.buy(state,"CB",1000.,85.,"2026-11-25",friday,
+                                 "2026-11-26","EOD"))
+
+    def test_rotation_missing_target_preserves_ledger(self):
+        state=fixture_state()
+        now=dt.datetime(2026,11,10,20,0,tzinfo=UTC)
+        pa.buy(state,"KO",1000.,85.,"2026-11-09",now,"2026-11-09","EOD")
+        original=json.dumps(state,sort_keys=True)
+        quote={"decision_session":"2026-12-15","close_eur":{"KO":90.}}
+        result=pa.execute_or_defer_five_week_rebalance(state,
+            [{"ticker":"CB","weight_pct":15.}],"2026-12-14",quote,
+            dt.datetime(2026,12,16,20,0,tzinfo=UTC))
+        self.assertFalse(result["completed"])
+        self.assertIn("CB",result["blocked"])
+        self.assertEqual(original,json.dumps(state,sort_keys=True))
+
     def test_lock_absolute_defensive_and_next_day(self):
         s=fixture_state();now=dt.datetime(2026,11,10,20,0,tzinfo=UTC)
         self.assertTrue(pa.buy(s,"KO",1000.,85.,"2026-11-09",now,"2026-11-09","FROZEN_PREVIOUS_CLOSE"))
