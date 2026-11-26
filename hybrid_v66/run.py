@@ -168,7 +168,7 @@ def run(source):
     from shared_inputs import load as load_inputs
     from model_proposal import proposal as planner
     from run_live import listing_calendar
-    from review_calendar import review_slot,next_full_review,POLICY as REVIEW_POLICY
+    from review_calendar import review_slot,next_full_review,processed_review_weeks,POLICY as REVIEW_POLICY
     pa.ENGINE=ENGINE;pa.POLICY=POLICY
     vintages,frames,cash=load_inputs(forward,desc,desc["decision_session"],desc["roster_sha256"])
     m,meta=lm.build_model(vintages,asof.date(),frames,shared_cash_rate=cash)
@@ -252,19 +252,19 @@ def run(source):
             state["last_proposal_status"]="READY"
             state["last_proposal"]=p
             slot=review_slot(date.date(),FIRST.date())
-            if (slot is not None and slot["week"]>=1 and date.date()==slot["actual"]
-                    and ds not in state["processed_decision_dates"]):
+            if (slot is not None and slot["week"]>=1 and date.date()>=slot["actual"]
+                    and slot["week"] not in processed_review_weeks(state["processed_decision_dates"],FIRST.date())):
                 # The actual first US session replaces a closed Monday.
                 # Preserve the frozen pending decision on same-day reruns.
                 if state["pending"] is None:
                     state["pending"]={"kind":"full" if slot["full"] else "weekly","proposal":p,
                                       "recorded_at_utc":now.isoformat(),"retrospective":bootstrap,
                                       "nominal_review_date":slot["nominal"].isoformat(),"review_week":slot["week"]}
-                elif state["pending"]["proposal"]["decision_session"]!=ds:
+                elif review_slot(state["pending"]["proposal"]["decision_session"],FIRST.date())["week"]!=slot["week"]:
                     # Explicitly record the blocked review; do not silently
                     # replace a previously committed target or backdate a fill.
                     audit=state.setdefault("blocked_review_slots",{})
-                    audit.setdefault(ds,{"nominal_review_date":slot["nominal"].isoformat(),
+                    audit.setdefault(slot["nominal"].isoformat(),{"nominal_review_date":slot["nominal"].isoformat(),
                         "full":slot["full"],"reason":"EARLIER_PENDING_DECISION",
                         "pending_decision":state["pending"]["proposal"]["decision_session"],
                         "observed_at_utc":now.isoformat()})
