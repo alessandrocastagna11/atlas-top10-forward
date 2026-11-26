@@ -1,0 +1,124 @@
+name: Atlas V6.7 Adaptive — matched five phases x eight starts (US PIT proxy)
+on:
+  push:
+    branches: ['research/atlas-v67-adaptive-rotation']
+    paths: ['.github/workflows/atlas-v67-adaptive.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: atlas-v67-adaptive-research
+  cancel-in-progress: false
+jobs:
+  compare:
+    if: github.ref == 'refs/heads/research/atlas-v67-adaptive-rotation'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        start: ['2022-01-03','2022-02-01','2012-01-03','2016-01-04','2016-02-01','2018-01-02','2020-01-02','2020-02-03']
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install research dependencies and test economic gate
+        run: |
+          python -m pip install -r strict_shadow/v4_exact_source/requirements-live.txt
+          python -m pip install 'pyarrow==18.1.0'
+          python -m py_compile research_long/run_v67_matched.py research_long/research_simulator.py research_long/adaptive_rotation.py
+          python -m unittest discover -s research_long -p 'test_adaptive_rotation.py' -v
+      - name: Acquire dated constituents, historical prices and independent benchmark
+        run: |
+          mkdir -p /tmp/atlas-long
+          for f in membership_intervals.parquet prices.parquet recycled_tickers.csv; do
+            curl --fail --location --retry 3 --max-time 300 "https://github.com/Johnbrick123/sp500-data/releases/download/data/$f" -o "/tmp/atlas-long/$f"
+          done
+          curl --fail --location --retry 3 --max-time 120 'https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Research_Data_Factors_daily_CSV.zip' -o /tmp/atlas-long/ff_daily.zip
+          sha256sum /tmp/atlas-long/*
+      - name: Run matched five phase controls and adaptive challenger
+        run: python -u research_long/run_v67_matched.py /tmp/atlas-long "${{ matrix.start }}"
+      - name: Preserve only this start's research outputs (including partial results)
+        if: always()
+        run: |
+          p="research_long/results_v67/${{ matrix.start }}"
+          if [ -d "$p" ]; then
+            git config user.name "Atlas research bot"
+            git config user.email "atlas-research@users.noreply.github.com"
+            git add -- "$p"
+            if ! git diff --cached --quiet; then
+              git commit -m "V6.7 research results ${{ matrix.start }}"
+              for n in 1 2 3 4 5; do
+                git pull --rebase origin research/atlas-v67-adaptive-rotation
+                if git push origin HEAD:research/atlas-v67-adaptive-rotation; then exit 0; fi
+                sleep 5
+              done
+              exit 1
+            fi
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: atlas-v67-${{ matrix.start }}
+          path: research_long/results_v67/${{ matrix.start }}
+          if-no-files-found: warn
+  summarize:
+    needs: compare
+    if: always() && github.ref == 'refs/heads/research/atlas-v67-adaptive-rotation'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/atlas-v67-adaptive-rotation
+          fetch-depth: 0
+      - name: Aggregate matched starts, do not claim global parity
+        run: |
+          python - <<'PY'
+          import json,statistics as s
+          from pathlib import Path
+          root=Path('research_long/results_v67')
+          rows=[];missing=[]
+          starts=['2012-01-03','2016-01-04','2016-02-01','2018-01-02','2020-01-02','2020-02-03','2022-01-03','2022-02-01']
+          for start in starts:
+              d=root/start
+              if not (d/'complete.json').exists():
+                  missing.append(start);continue
+              values=json.loads((d/'comparison.json').read_text())
+              fixed=[r for r in values if r['strategy'].startswith('V66_PROXY_PHASE_')]
+              adaptive=[r for r in values if r['strategy']=='V67_ADAPTIVE']
+              if len(fixed)!=5 or len(adaptive)!=1:
+                  missing.append(start);continue
+              a=adaptive[0]
+              row={'start':start,'adaptive':a,'fixed':fixed,'passive':values[0]}
+              for metric in ['net_cagr_pct','max_drawdown_pct','orders','sharpe_zero_cash','calmar','fees','slippage','realized_capital_tax']:
+                  row['fixed_median_'+metric]=s.median(r[metric] for r in fixed)
+                  row['adaptive_minus_fixed_median_'+metric]=a[metric]-row['fixed_median_'+metric]
+              rows.append(row)
+          overall={'status':'COMPLETE_US_PROXY_ONLY' if not missing else 'PARTIAL_US_PROXY_ONLY','completed_starts':len(rows),'missing_starts':missing,'matched':rows}
+          if rows:
+              for metric in ['net_cagr_pct','max_drawdown_pct','orders','sharpe_zero_cash','calmar','fees','slippage','realized_capital_tax']:
+                  overall['adaptive_median_'+metric]=s.median(r['adaptive'][metric] for r in rows)
+                  overall['fixed_all_phases_median_'+metric]=s.median(x[metric] for r in rows for x in r['fixed'])
+                  overall['paired_delta_median_'+metric]=s.median(r['adaptive_minus_fixed_median_'+metric] for r in rows)
+              overall['cagr_wins_vs_fixed_phase_median']=sum(r['adaptive_minus_fixed_median_net_cagr_pct']>0 for r in rows)
+          root.mkdir(parents=True,exist_ok=True)
+          (root/'summary.json').write_text(json.dumps(overall,indent=2,allow_nan=False)+'\n')
+          print(json.dumps({k:v for k,v in overall.items() if k!='matched'},indent=2))
+          PY
+          git config user.name "Atlas research bot"
+          git config user.email "atlas-research@users.noreply.github.com"
+          git add research_long/results_v67/summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m "V6.7 aggregate matched phase research"
+            git pull --rebase origin research/atlas-v67-adaptive-rotation
+            git push origin HEAD:research/atlas-v67-adaptive-rotation
+          fi
