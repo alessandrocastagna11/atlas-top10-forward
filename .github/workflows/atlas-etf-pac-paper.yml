@@ -26,6 +26,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Install exchange calendar
+        run: pip install 'numpy==1.26.4' 'pandas==2.2.3' 'exchange-calendars==4.13.1'
       - name: Exact original V2.3 source audit and paper account regression
         run: python -m unittest discover -s atlas_etf_pac/tests -p 'test_*.py' -v
       - name: Refresh real EUNL and EuroGov prices, causal macro, and prospective V2.3 virtual ledger
