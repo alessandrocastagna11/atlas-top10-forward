@@ -1,0 +1,7 @@
+{
+  "status": "COMPLETE_US_PROXY_ONLY",
+  "requested_start": "2020-02-03",
+  "runs": 7,
+  "fixed_phases": 5,
+  "adaptive_variants": 1
+}

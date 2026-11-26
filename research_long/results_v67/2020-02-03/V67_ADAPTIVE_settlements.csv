@@ -1,0 +1,2 @@
+date,ticker,last_observation,last_adjusted_mark,shares,assumed_cash_proceeds,basis,tax_proxy,days_since_quote,youngest_lot_age,type
+2021-03-08,TIF,2021-01-06,131.4600067138672,8.367601515542763,1100.0049514122168,1100.3901404405824,0.0,61,84,UNVERIFIED_LAST_MARK_CASH_SETTLEMENT_PROXY
