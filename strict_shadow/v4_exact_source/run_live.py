@@ -15,6 +15,8 @@ from live_model import HERE,CACHE,LIVE,START_PAPER,ENGINE,INITIAL,SECTOR,latest_
 from live_model import v1,v2,t9,inc,frozen,LIVE
 if str(LIVE) not in sys.path:sys.path.insert(0,str(LIVE))
 from paper import earliest_open_utc
+from market_sessions import venue
+import exchange_calendars as xcals
 from paper_reporting import to_portfolio,initial_portfolio,write_report
 from shared_inputs import publish as publish_shared_inputs
 
@@ -100,23 +102,37 @@ def positions_asof(ledger,decision):
     return positions
 
 
-def symbol_next_open(symbol, first_date, not_before=None):
-    """Exchange-local indicative open. Only an actual provider bar certifies a fill.
+# Exchange calendars for the actual listing venue, not the issuer's domicile.
+# NSE is not supplied by exchange_calendars; XBOM is an explicitly indicative
+# proxy for .NS, never a certified exchange calendar.
+EXCHANGE_CALENDARS={
+    'USA':'XNYS','.T':'XTKS','.HK':'XHKG','.KS':'XKRX','.KQ':'XKRX',
+    '.TW':'XTAI','.L':'XLON','.SW':'XSWX','.TO':'XTSE','.V':'XTSX',
+    '.AS':'XAMS','.PA':'XPAR','.BR':'XBRU','.DE':'XETR','.F':'XFRA',
+    '.AX':'XASX','.BO':'XBOM','.NS':'XBOM','.ST':'XSTO','.CO':'XCSE',
+    '.OL':'XOSL','.HE':'XHEL','.MI':'XMIL','.MC':'XMAD','.SI':'XSES',
+    '.SR':'XSAU','.SA':'BVMF',
+}
 
-    Use the exchange-specific trading week: Saudi Riyadh Sunday-Thursday;
-    all other currently supported exchanges Monday-Friday. Unlisted exchange
-    holidays remain unverified and must be checked against the actual quote.
-    """
-    day=first_date if isinstance(first_date,dt.date) else dt.date.fromisoformat(str(first_date))
+def listing_calendar(symbol):
+    name,_=venue(symbol)
+    if name not in EXCHANGE_CALENDARS:
+        raise ValueError('No equity exchange calendar for '+str(symbol))
+    return xcals.get_calendar(EXCHANGE_CALENDARS[name]),name!='.NS'
+
+def symbol_next_open(symbol, first_date, not_before=None):
+    """Next scheduled exchange session; a schedule never certifies a fill."""
+    day=dt.date.fromisoformat(str(first_date)[:10])
+    if not_before is not None and not_before.tzinfo is None:
+        raise ValueError('A timezone-aware cutoff is required')
+    cal,_=listing_calendar(symbol)
+    session=cal.date_to_session(pd.Timestamp(day),direction='next')
     for _ in range(15):
-        trading_weekday=(day.weekday() in (6,0,1,2,3)
-                         if str(symbol).upper().endswith('.SR') else day.weekday()<5)
-        if trading_weekday:
-            opening=earliest_open_utc([symbol],day)
-            if not_before is None or opening>not_before:
-                return day,opening
-        day+=dt.timedelta(days=1)
-    raise ValueError('No exchange opening in 15 calendar days: '+str(symbol))
+        opening=cal.session_open(session).to_pydatetime()
+        if not_before is None or opening>not_before:
+            return session.date(),opening
+        session=cal.next_session(session)
+    raise ValueError('No eligible exchange opening: '+str(symbol))
 
 
 def preview(m,meta,asof,now,old_orders):
@@ -144,7 +160,12 @@ def preview(m,meta,asof,now,old_orders):
         on_time=now<deadline
         next_date,next_open=(first,opening) if on_time else symbol_next_open(
             symbol,first,not_before=now+dt.timedelta(minutes=30))
+        calendar,calendar_verified=listing_calendar(symbol)
         per_symbol[symbol]={
+            'exchange_calendar':calendar.name,
+            'exchange_calendar_source':'exchange_calendars_'+xcals.__version__,
+            'first_candidate_close_utc':calendar.session_close(pd.Timestamp(first)).isoformat(),
+            'next_eligible_close_utc':calendar.session_close(pd.Timestamp(next_date)).isoformat(),
             'first_candidate_session':str(first),
             'first_candidate_open_utc':opening.isoformat(),
             'first_candidate_cutoff_utc':deadline.isoformat(),
@@ -153,9 +174,9 @@ def preview(m,meta,asof,now,old_orders):
             'next_eligible_local_session':str(next_date),
             'next_eligible_open_utc':next_open.isoformat(),
             'execution_quote_required':True,
-            'exchange_holiday_calendar_verified':False}
-    tomorrow=asof+dt.timedelta(days=1)
-    while tomorrow.weekday()>=5:tomorrow+=dt.timedelta(days=1)
+            'exchange_holiday_calendar_verified':calendar_verified}
+    # The model's common date index is SPY; per-listing plans remain independent.
+    tomorrow,_=symbol_next_open('SPY',first_date)
     earliest=min(dt.datetime.fromisoformat(item['first_candidate_open_utc']) for item in per_symbol.values())
     cutoff=earliest-dt.timedelta(minutes=30)
     source_files=list(CACHE.glob('*.csv.gz'))
@@ -188,8 +209,24 @@ def preview(m,meta,asof,now,old_orders):
                 for symbol,item in per_symbol.items():
                     old_item=frozen_plan.get(symbol,{})
                     published=bool(old_item.get('attested_before_first_candidate_open'))
+                    proof_time=prior.get('produced_at_utc')
+                    # The immutable prior proof may have used a fictitious
+                    # holiday opening. Revalidate only its recorded timestamp,
+                    # never rewrite it or backdate a new observation.
+                    if (old_item and proof_time and item['exchange_holiday_calendar_verified']
+                            and old_item.get('first_candidate_open_utc')!=item['first_candidate_open_utc']):
+                        proof_dt=dt.datetime.fromisoformat(proof_time)
+                        published=proof_dt<dt.datetime.fromisoformat(item['first_candidate_cutoff_utc'])
+                        item['original_calendar_plan_revalidated']=True
                     item['attested_before_first_candidate_open']=published
-                    item['original_proof_utc']=prior.get('produced_at_utc')
+                    item['original_proof_utc']=proof_time
+                    if published and now<dt.datetime.fromisoformat(item['first_candidate_open_utc']):
+                        item['status']='PENDING_FIRST_LOCAL_OPEN'
+                        item['next_eligible_local_session']=item['first_candidate_session']
+                        item['next_eligible_open_utc']=item['first_candidate_open_utc']
+                        item['next_eligible_close_utc']=item['first_candidate_close_utc']
+            record['market_data_first_observed_before_open']=all(x['attested_before_first_candidate_open'] for x in per_symbol.values())
+            record['any_market_preopen_eligible']=any(x['status']=='PENDING_FIRST_LOCAL_OPEN' for x in per_symbol.values())
             signal={'status':'ATTESTED_PREVIOUS_RUN','signal_published':True,
                     **record,'per_symbol_exchange_plan':per_symbol,
                     'original_proof_sha256':prior.get('decision_model_sha256'),
