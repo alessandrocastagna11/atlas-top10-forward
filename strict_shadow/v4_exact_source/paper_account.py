@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 
 from live_model import HERE,ENGINE,INITIAL
 from paper_reporting import ORDER_FIELDS,write_report
+from review_calendar import review_slot,next_full_review,POLICY as REVIEW_POLICY
 
 UTC=dt.timezone.utc
 NY=ZoneInfo("America/New_York")
@@ -556,9 +557,9 @@ def run(now=None):
                 p["reference_previous_close_eur"],FIRST_DECISION,now,
                 FIRST_DECISION,"FROZEN_PREVIOUS_CLOSE_NOT_EXCHANGE_FILL")
         state["processed_decision_dates"].append(FIRST_DECISION)
-    # Persisted daily source vintages make Monday decisions available on
-    # Tuesday. Never use a Tuesday signal as a substitute for Monday's review.
-    # Evaluate each dated Monday at most once, in chronological order.
+    # The first actual US trading session of each anchored week is the
+    # review day. A Monday holiday must not erase a weekly review.
+    # Consume only dated, actually published proposals, once per slot.
     dated_folder=ROOT/"proposals_by_session"
     for dated_file in sorted(dated_folder.glob("*.json")):
         decision=dated_file.stem
@@ -566,12 +567,13 @@ def run(now=None):
             continue
         try:date=dt.date.fromisoformat(decision)
         except ValueError:continue
-        if date.weekday()!=0 or date>=now.date():
+        slot=review_slot(date,FIRST_DECISION)
+        if slot is None or slot["week"]<1 or date!=slot["actual"] or date>=now.date():
             continue
-        base=dt.date.fromisoformat(FIRST_DECISION)
-        weeks=(date-base).days//7
-        if weeks<1:continue
-        full=(weeks%5)==0
+        full=slot["full"]
+        # Never overwrite an earlier pending full rotation with a new one.
+        if full and state.get("pending_full_rotation"):
+            break
         current_proposal=load(dated_file,{})
         if current_proposal.get("decision_session")!=decision:
             raise ValueError("Dated original model proposal does not match its filename: "+decision)
@@ -709,10 +711,8 @@ def run(now=None):
                "prior_net_liquidation_nav_eur","new_net_liquidation_nav_eur",
                "prior_evidence_sha256","new_evidence_sha256"],
               state.get("valuation_revisions",[]))
-    first_rotation=dt.date.fromisoformat(FIRST_DECISION)
-    next_rotation=first_rotation+dt.timedelta(days=35)
-    while next_rotation<=now.date() and next_rotation.isoformat() in state["processed_decision_dates"]:
-        next_rotation+=dt.timedelta(days=35)
+    next_slot=next_full_review(now.date(),state["processed_decision_dates"],FIRST_DECISION)
+    next_rotation=next_slot["actual"]
     published.update({
        "status":"PAPER_APPROX_LEDGER_ACTIVE",
        "next_full_rotation_decision_date":next_rotation.isoformat(),
@@ -744,7 +744,10 @@ def run(now=None):
        "pending_full_rotation":{k:v for k,v in state.get("pending_full_rotation",{}).items()
                                 if k!="frozen_candidates"} if state.get("pending_full_rotation") else None,
        "completed_deferred_rotation_count":len(state.get("completed_deferred_rotations",[])),
-       "weekly_monday_review":True,"full_rebalance_every_five_weeks":True,
+       "weekly_monday_review":False,"weekly_first_actual_us_session_review":True,
+       "review_calendar_policy":REVIEW_POLICY,
+       "next_full_rotation_nominal_date":next_slot["nominal"].isoformat(),
+       "full_rebalance_every_five_weeks":True,
        "risk_universe_fidelity":"ETF_ACWI_AS_RECORDED_OR_VENDOR_MARKETCAP_PROXY_NOT_HISTORICAL_PIT",
        "reason":"Execution is ASSUMED at previous complete close, not verified market fill.",
        "holdings_summary":[{"ticker":p["ticker"],"market_value_eur":p["market_value_eur"]}
