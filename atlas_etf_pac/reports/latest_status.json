@@ -40,12 +40,12 @@
     }
   ],
   "cash_eur": 500.0,
-  "checked_at_utc": "2026-11-26T17:15:33.153440+00:00",
+  "checked_at_utc": "2026-11-26T20:06:13.044745+00:00",
   "contributed_eur": 1000.0,
-  "cumulative_twr_pct": -1.86025,
+  "cumulative_twr_pct": -0.44867,
   "historical_frozen_v23_parity": "ORIGINAL_LIVE_SHA256_VERIFIED; TRADABLE_ETF_PROXY_DIFFERS_FROM_1926_FF",
-  "invested_eur": 481.40295,
-  "last_nav_session": "2026-11-25",
+  "invested_eur": 495.52132,
+  "last_nav_session": "2026-11-26",
   "last_orders": [
     {
       "asset": "EUNL.DE",
@@ -64,22 +64,22 @@
       "units": 3.9381786719
     }
   ],
-  "last_signal_session": "2026-11-25",
-  "latest_day_pct": -0.924628,
+  "last_signal_session": "2026-11-26",
+  "latest_day_pct": 1.438329,
   "latest_signal": {
     "bull": false,
     "core_in": true,
     "data_mode": "OBSERVED_EQUITY_ETF_EOD",
-    "decision_session": "2026-11-25",
+    "decision_session": "2026-11-26",
     "defensive": {
-      "momentum_126": 0.00602984,
+      "momentum_126": 0.00707018,
       "recommendation": "BOND",
       "source": "OBSERVED_BOND_ADJUSTED_CLOSE",
       "ticker": "CSBGE3.MI"
     },
-    "equity_eod": 122.23999786376953,
-    "fast10_pct": -6.655,
-    "market_drawdown_pct": -7.569,
+    "equity_eod": 125.82499694824219,
+    "fast10_pct": -4.4101,
+    "market_drawdown_pct": -4.8582,
     "method": "ATLAS_V23_OCT_01_2026_ORIGINAL_LIVE_UNMODIFIED",
     "original_live_sha256": "703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e",
     "pending_original_actions": [],
@@ -111,7 +111,7 @@
   "mode": "PAPER_ONLY_ORIGINAL_V23",
   "model": "ATLAS_ETF_PAC_V23_ORIGINAL_LIVE_V1",
   "monthly_cash_contributions": 0,
-  "nav_eur": 981.39754,
+  "nav_eur": 995.51327,
   "no_real_orders": true,
   "notes": "Original V2.3 LIVE replay EUNL.DE + CSBGE3.MI; planned next completed-session CLOSE paper fills. Macro may be carried with explicit warning; no real trades.",
   "orders_total": 1,
@@ -136,12 +136,13 @@
   "real_broker_orders": 0,
   "source_quality": {
     "accounting_adjustment": null,
-    "bond_last": "2026-11-25",
+    "bond_last": "2026-11-26",
     "bond_quality": "OK",
     "bond_quote_source": "YAHOO_QUERY1",
     "defensive_source": "OBSERVED_BOND_ADJUSTED_CLOSE",
-    "equity_last": "2026-11-25",
+    "equity_last": "2026-11-26",
     "equity_quote_source": "YAHOO_QUERY1",
+    "exchange_calendar": "XETR",
     "macro_previous_month": "2026-10",
     "macro_quality": "SOURCE_BY_SOURCE_VERIFIED",
     "macro_sources": {
@@ -182,9 +183,9 @@
     ],
     "observed_macro_month": "2026-09",
     "quote_lag_days": 0,
-    "quote_lag_sessions_weekday_approx": 0,
+    "quote_lag_sessions_exchange_calendar": 0,
     "stress_source": "CARRIED_OBSERVED_2026-09"
   },
-  "stamp_proxy_eur": 0.005417,
-  "status": "WAITING_NEW_EQUITY_ETF_CLOSE__MACRO_PROXY_STALE"
+  "stamp_proxy_eur": 0.008053,
+  "status": "V23_SIGNAL_PENDING_NEXT_COMPLETED_CLOSE__MACRO_PROXY_STALE"
 }
