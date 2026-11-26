@@ -2,7 +2,7 @@
   "status": "PAPER_APPROX_LEDGER_ACTIVE",
   "engine": "ATLAS_V66_HYBRID_MULTIFACTOR",
   "session": "2026-11-25",
-  "recorded_at_utc": "2026-11-26T09:32:19.763738+00:00",
+  "recorded_at_utc": "2026-11-26T15:41:03.223886+00:00",
   "shared_input": {
     "bytes": 9937599,
     "decision_session": "2026-11-25",
@@ -36,7 +36,7 @@
     "hypothetical_liquidation_tax_method": "SIMULTANEOUS_COMPENSABLE_EQUITY_GAINS_LOSSES_26PCT",
     "pnl_mark_to_market_pct": 0.25987,
     "valuation_session": "2026-11-25",
-    "valuation_recorded_at_utc": "2026-11-26T09:32:19.763738+00:00",
+    "valuation_recorded_at_utc": "2026-11-26T15:41:03.223886+00:00",
     "valuation_method": "LAST_CONFIRMED_DAILY_CLOSE_WITH_STALE_FLAG",
     "stale_quote_tickers": [],
     "positions_count": 5,
