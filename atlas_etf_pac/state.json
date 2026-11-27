@@ -61,11 +61,11 @@
   "contributions": [],
   "data_digest": null,
   "last_deposit_month": "2026-11",
-  "last_price_session": "2026-11-26",
-  "last_processed_session": "2026-11-26",
+  "last_price_session": "2026-11-27",
+  "last_processed_session": "2026-11-27",
   "last_quotes": {
-    "BOND": 116.80000305175781,
-    "EQUITY": 125.82499694824219
+    "BOND": 116.8499984741211,
+    "EQUITY": 127.19999694824219
   },
   "last_status": "SIGNAL_PRECOMMITTED_FOR_FUTURE_CLOSE",
   "mode": "PAPER_ONLY_ORIGINAL_V23",
@@ -213,6 +213,19 @@
       "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
       "twr_day_pct": 1.438329,
       "twr_index": 0.995513271
+    },
+    {
+      "bond_eur": 0.0,
+      "cash_eur": 500.0,
+      "contribution_eur": 0.0,
+      "date": "2026-11-27",
+      "drawdown_pct": 0.0,
+      "equity_eur": 500.93632,
+      "holdings_eur": 500.93632,
+      "nav_eur": 1000.92555,
+      "source_status": "OBSERVED_COMPLETED_EUR_ETF_CLOSE",
+      "twr_day_pct": 0.543667,
+      "twr_index": 1.0009255495
     }
   ],
   "orders": [
@@ -683,7 +696,48 @@
         "term_spread": 2.438108801230893
       },
       "target_equity_fraction": 0.5
+    },
+    {
+      "bull": true,
+      "core_in": true,
+      "data_mode": "OBSERVED_EQUITY_ETF_EOD",
+      "decision_session": "2026-11-27",
+      "defensive": {
+        "momentum_126": 0.00672007,
+        "recommendation": "BOND",
+        "source": "OBSERVED_BOND_ADJUSTED_CLOSE",
+        "ticker": "CSBGE3.MI"
+      },
+      "equity_eod": 127.19999694824219,
+      "fast10_pct": -2.4839,
+      "market_drawdown_pct": -3.8185,
+      "method": "ATLAS_V23_OCT_01_2026_ORIGINAL_LIVE_UNMODIFIED",
+      "original_live_sha256": "703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e",
+      "pending_original_actions": [],
+      "satellite_in": false,
+      "signal_ticker": "EUNL.DE",
+      "state_label": "CORE_ONLY",
+      "stress": {
+        "breadth": true,
+        "breadth_healthy": 1,
+        "credit": false,
+        "credit_change_3m": -0.040000000000000924,
+        "credit_p80": 1.042,
+        "credit_spread": 0.4399999999999995,
+        "missing_inputs": [
+          "FF_RF",
+          "FF_BREADTH_3M"
+        ],
+        "month": "2026-10",
+        "observed_macro_month": "2026-09",
+        "rates": false,
+        "score": 1,
+        "source": "CARRIED_OBSERVED_2026-09",
+        "term_p20": -0.89022352948323,
+        "term_spread": 2.438108801230893
+      },
+      "target_equity_fraction": 0.5
     }
   ],
-  "stamp_accrued_eur": 0.008053184449007529
+  "stamp_accrued_eur": 0.010766511321013004
 }
