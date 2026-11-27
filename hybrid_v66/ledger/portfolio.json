@@ -19,7 +19,7 @@
   "hypothetical_liquidation_tax_method": "SIMULTANEOUS_COMPENSABLE_EQUITY_GAINS_LOSSES_26PCT",
   "pnl_mark_to_market_pct": 0.25987,
   "valuation_session": "2026-11-25",
-  "valuation_recorded_at_utc": "2026-11-27T15:30:54.477999+00:00",
+  "valuation_recorded_at_utc": "2026-11-27T23:44:19.661529+00:00",
   "valuation_method": "LAST_CONFIRMED_DAILY_CLOSE_WITH_STALE_FLAG",
   "stale_quote_tickers": [],
   "positions_count": 5,
