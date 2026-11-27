@@ -40,7 +40,7 @@
     }
   ],
   "cash_eur": 500.0,
-  "checked_at_utc": "2026-11-26T22:57:32.662647+00:00",
+  "checked_at_utc": "2026-11-27T02:25:44.000370+00:00",
   "contributed_eur": 1000.0,
   "cumulative_twr_pct": -0.44867,
   "historical_frozen_v23_parity": "ORIGINAL_LIVE_SHA256_VERIFIED; TRADABLE_ETF_PROXY_DIFFERS_FROM_1926_FF",
@@ -136,12 +136,12 @@
   "real_broker_orders": 0,
   "source_quality": {
     "accounting_adjustment": null,
-    "bond_last": "2026-11-26",
+    "bond_last": "2026-11-25",
     "bond_quality": "OK",
-    "bond_quote_source": "YAHOO_QUERY1",
+    "bond_quote_source": "YAHOO_BOTH_ENDPOINTS_NO_NEW_COMPLETED_CLOSE",
     "defensive_source": "OBSERVED_BOND_ADJUSTED_CLOSE",
-    "equity_last": "2026-11-26",
-    "equity_quote_source": "YAHOO_QUERY1",
+    "equity_last": "2026-11-25",
+    "equity_quote_source": "YAHOO_BOTH_ENDPOINTS_NO_NEW_COMPLETED_CLOSE",
     "exchange_calendar": "XETR",
     "macro_previous_month": "2026-10",
     "macro_quality": "SOURCE_BY_SOURCE_VERIFIED",
@@ -182,8 +182,8 @@
       "FF_BREADTH_3M"
     ],
     "observed_macro_month": "2026-09",
-    "quote_lag_days": 0,
-    "quote_lag_sessions_exchange_calendar": 0,
+    "quote_lag_days": 1,
+    "quote_lag_sessions_exchange_calendar": 1,
     "stress_source": "CARRIED_OBSERVED_2026-09"
   },
   "stamp_proxy_eur": 0.008053,
