@@ -12,6 +12,9 @@ class TestKeylessShadow(unittest.TestCase):
         self.assertEqual(m.us_cutoff(before),'2026-11-25')
         self.assertEqual(m.us_cutoff(after),'2026-11-27')
         self.assertEqual(m.us_cutoff(dt.datetime(2026,11,28,12,tzinfo=dt.timezone.utc)),'2026-11-27')
+    def test_calendar_covers_research_history(self):
+        cal=m.xcals.get_calendar('XNYS',start='2000-01-01',end='2035-12-31')
+        self.assertTrue(cal.is_session(m.pd.Timestamp('2001-01-02')))
     def test_missing_is_not_zero_stress(self):
         self.assertIsNone(m.score({},'2026-11-27')['score'])
     def test_cache_regression_rejected(self):
