@@ -53,6 +53,13 @@ def latest_vintages(asof, excluded_symbols=None):
     This is NOT the unrestricted historically certified Top200-by-market-cap.
     """
     excluded={str(x).upper() for x in (excluded_symbols or ())}
+    expanded_effective=dt.date(2026,11,30)
+    # Last published pre-migration snapshot (Nov 27) excluded SPCX for short
+    # history, with no currency exclusions. Freeze that historical selection
+    # policy across the migration, independently of new candidate failures.
+    legacy_excluded={'SPCX'}
+    def exclusions_for(recorded):
+        return legacy_excluded if asof>=expanded_effective and recorded<expanded_effective else excluded
     folder=LIVE/'dataset'/'universe'/'snapshots'
     byday={}
     for source in folder.glob('*/source.json'):
@@ -65,8 +72,9 @@ def latest_vintages(asof, excluded_symbols=None):
             if len(df)!=500:continue
             rows=[r for r in df.to_dict('records') if pd.notna(r['symbol']) and str(r['symbol']).strip()]
             if len(rows)<450:continue
-            u=[r for r in rows if r['country']=='United States' and str(r['symbol']).upper() not in excluded][:100]
-            g=[r for r in rows if r['country']!='United States' and str(r['symbol']).upper() not in excluded][:200]
+            historical_exclusions=exclusions_for(recorded)
+            u=[r for r in rows if r['country']=='United States' and str(r['symbol']).upper() not in historical_exclusions][:100]
+            g=[r for r in rows if r['country']!='United States' and str(r['symbol']).upper() not in historical_exclusions][:200]
             if len(u)!=100 or len(g)!=200:continue
             h=hashlib.sha256((source.parent/'global500.csv').read_bytes()).hexdigest()
             byday[recorded]=(recorded,observed,h,u,g)
@@ -78,7 +86,6 @@ def latest_vintages(asof, excluded_symbols=None):
     # Prospective migration only. The first expanded capture was Saturday
     # 2026-11-28, after the last published Friday decision. Preserve all
     # already observed vintages; activate expanded ranking on Monday 30.
-    expanded_effective=dt.date(2026,11,30)
     expanded_byday={}
     expanded_seen=False
     for source in sorted(capdir.glob('*/source.json')):
@@ -102,8 +109,9 @@ def latest_vintages(asof, excluded_symbols=None):
             df['market_cap_usd']=pd.to_numeric(df['market_cap_usd'],errors='coerce')
             if df.market_cap_usd.isna().any() or not (df.market_cap_usd>0).all():continue
             ordered=df.sort_values('market_cap_usd',ascending=False).to_dict('records')
-            u=[r for r in ordered if r['country']=='United States' and str(r['symbol']).upper() not in excluded][:100]
-            g=[r for r in ordered if r['country']!='United States' and str(r['symbol']).upper() not in excluded][:200]
+            historical_exclusions=exclusions_for(recorded)
+            u=[r for r in ordered if r['country']=='United States' and str(r['symbol']).upper() not in historical_exclusions][:100]
+            g=[r for r in ordered if r['country']!='United States' and str(r['symbol']).upper() not in historical_exclusions][:200]
             if len(u)!=100 or len(g)!=200:continue
             h=hashlib.sha256(datafile.read_bytes()).hexdigest()
             # Keep the first qualifying expanded observation per effective
@@ -111,7 +119,10 @@ def latest_vintages(asof, excluded_symbols=None):
             if is_expanded:
                 effective=max(recorded,expanded_effective)
                 if effective<=asof:
-                    expanded_byday.setdefault(effective,(effective,recorded,h,u,g,cap_kind))
+                    new_u=[r for r in ordered if r['country']=='United States' and str(r['symbol']).upper() not in excluded][:100]
+                    new_g=[r for r in ordered if r['country']!='United States' and str(r['symbol']).upper() not in excluded][:200]
+                    if len(new_u)==100 and len(new_g)==200:
+                        expanded_byday.setdefault(effective,(effective,recorded,h,new_u,new_g,cap_kind))
             old=byday.get(recorded)
             # Prefer the FIRST qualifying market-cap observation of the day.
             if old is None or len(old)==5:
