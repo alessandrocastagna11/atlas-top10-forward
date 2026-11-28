@@ -165,6 +165,9 @@ jobs:
               print('::error::Multi-source audit missing or from another session')
               raise SystemExit(1)
           print('MULTISOURCE AUDIT',multi.get('status'),multi.get('independent_agreements',0))
+          if multi.get('status')=='AUDIT_ERROR':
+              print('::warning::Optional source audit failed: '+str(multi.get('error_type','unknown')))
+          print('RECIPROCAL FX RECOVERY',sorted((status.get('fx_recovery_audit') or {}).keys()))
           if multi.get('status')=='REVIEW_REQUIRED':
               print('::warning::Independent source disagreement; no automatic price substitution')
           print('FX AUDIT',fx['status'],'ECB DFR',cash['status'],cash['last_observation'])
