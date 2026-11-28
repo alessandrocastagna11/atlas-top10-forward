@@ -11,7 +11,7 @@ HERE=Path(__file__).resolve().parent
 ECB=HERE.parent/'live_v4'/'dataset'/'fx_ecb'
 KEYS={'massive':'MASSIVE_API_KEY','twelve':'TWELVE_DATA_API_KEY',
       'eodhd':'EODHD_API_KEY','fmp':'FMP_API_KEY'}
-EOD_MAP={'.DE':'XETRA','.PA':'PA','.AS':'AS','.L':'LSE','.MI':'MI',
+EOD_MAP={'.DE':'XETRA','.PA':'PA','.AS':'AS','.MI':'MI', # London excluded until GBp/GBP parity verified
          '.MC':'MC','.ST':'ST','.CO':'CO','.HE':'HE','.OL':'OL','.TO':'TO'}
 US=re.compile(r'^[A-Z][A-Z0-9-]{0,9}$')
 FX=re.compile(r'^EUR([A-Z]{3})=X$')
@@ -57,7 +57,7 @@ def ecb_reference(currency,day,folder=ECB):
         rows=list(csv.DictReader(f))
     return exact_row(rows,day,price_field='units_per_eur')
 
-def audit(frames,active,fx_symbols,asof,expected,now,missing=(),getter=get_json,ecb_folder=ECB):
+def _audit(frames,active,fx_symbols,asof,expected,now,missing=(),getter=get_json,ecb_folder=ECB):
     day=str(asof)
     keys={p:os.environ.get(k,'').strip() for p,k in KEYS.items()}
     enabled=os.environ.get('ATLAS_MULTISOURCE_OPT_IN')=='1' and os.environ.get('ATLAS_EXACT_OFFLINE')!='1'
@@ -157,3 +157,14 @@ def audit(frames,active,fx_symbols,asof,expected,now,missing=(),getter=get_json,
     result['status']='REVIEW_REQUIRED' if result['independent_disagreements'] else (
         'AUDITED' if result['independent_agreements'] else 'NO_INDEPENDENT_MATCH')
     return result
+
+def audit(frames,active,fx_symbols,asof,expected,now,missing=(),getter=get_json,ecb_folder=ECB):
+    """Optional audit failures must not stop a healthy primary feed."""
+    try:
+        return _audit(frames,active,fx_symbols,asof,expected,now,missing,getter,ecb_folder)
+    except Exception as exc:
+        # Never publish exception text which might contain credentials or licensed data.
+        return {'schema':1,'decision_session':str(asof),'recorded_at_utc':now.isoformat(),
+                'status':'AUDIT_ERROR','error_type':type(exc).__name__,
+                'policy':'AUDIT_ONLY_NO_SUBSTITUTION_NO_VENDOR_PRICE_PUBLICATION',
+                'providers':{},'independent_agreements':0,'independent_disagreements':0}
