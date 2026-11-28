@@ -1,7 +1,7 @@
 {
   "base_date": "2024-01-01",
   "cached_required_quotes_complete": true,
-  "checked_at_utc": "2026-11-28T18:11:31.952934+00:00",
+  "checked_at_utc": "2026-11-28T18:14:35.024612+00:00",
   "data_ready_for_confidence70_model": false,
   "dataset_use": "FORWARD_RESEARCH_NOT_PIT_CERTIFIED",
   "forward_universe": {
@@ -26,7 +26,7 @@
   "original_288_symbols_cached": 287,
   "original_288_symbols_missing": [],
   "price_symbols_cached": 584,
-  "processed_price_symbols": 300,
+  "processed_price_symbols": 556,
   "provider_errors": [],
   "provisional_bars_blocked": 9,
   "quote_prices_in_declared_currency_units": true,
