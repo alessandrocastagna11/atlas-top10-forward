@@ -45,6 +45,38 @@ def exact_row(rows,day,date_field='date',price_field='close'):
     matches=[r for r in rows if isinstance(r,dict) and str(r.get(date_field,''))==str(day)]
     return positive(matches[0].get(price_field)) if len(matches)==1 else None
 
+def adjusted_overlap(primary,rows,expected,min_overlap=60):
+    """Diagnostic only: compare adjusted daily returns and exact closing date.
+    No secondary prices, returns or adjustment ratios leave this function.
+    """
+    outcome={'status':'INSUFFICIENT_OVERLAP','overlap_sessions':0}
+    if primary is None or 'adj_close' not in primary or not isinstance(rows,list):return outcome
+    parsed={}
+    for row in rows:
+        if not isinstance(row,dict):continue
+        value=positive(row.get('adjusted_close'))
+        if value is None:continue
+        try:day=pd.Timestamp(dt.date.fromisoformat(str(row['date'])))
+        except (ValueError,TypeError,KeyError):continue
+        if day>pd.Timestamp(expected):return {'status':'FUTURE_ROW','overlap_sessions':0}
+        if day in parsed:return {'status':'DUPLICATE_DATE','overlap_sessions':0}
+        parsed[day]=value
+    if not parsed or max(parsed)!=pd.Timestamp(expected):
+        return {'status':'MISSING_TARGET_SESSION','overlap_sessions':0}
+    alt=pd.Series(parsed,dtype=float).sort_index()
+    p=pd.to_numeric(primary['adj_close'],errors='coerce').dropna().sort_index()
+    common=p.index.intersection(alt.index)
+    common=common[(p.loc[common]>0).to_numpy()]
+    outcome['overlap_sessions']=len(common)
+    if len(common)<min_overlap:return outcome
+    a=p.loc[common].pct_change().dropna()
+    b=alt.loc[common].pct_change().dropna()
+    # Do not compare returns across missing sessions without noting gaps.
+    if not len(a) or not len(b):return outcome
+    errors=(a-b).abs()
+    outcome['status']='OVERLAP_CONSISTENT_SHADOW_ONLY' if errors.max()<=.005 and errors.median()<=.0005 else 'ADJUSTMENT_MISMATCH'
+    return outcome
+
 def eod_symbol(symbol):
     for suffix,exchange in EOD_MAP.items():
         if symbol.endswith(suffix):return symbol[:-len(suffix)]+'.'+exchange
@@ -132,13 +164,16 @@ def _audit(frames,active,fx_symbols,asof,expected,now,missing=(),getter=get_json
             add(s,symbol,exact_close(frames.get(symbol),day,'adj_close' if m else 'raw_close'),alt,.02 if m else .01)
     s=summary('eodhd',bool(keys['eodhd']))
     s['basis']='EXPLICIT_VENUE_MAPPING_RAW_EOD_DIAGNOSTIC_1_PERCENT'
+    s['adjusted_history_checks']={}
     if enabled and keys['eodhd']:
         # 4 calls per run; 3 scheduled runs <=12/day, manual runs share provider quota.
         for symbol in prioritize([x for x in active if eod_symbol(x) and x not in us and x in expected],4):
             target=str(expected[symbol])
             data=request(s,'https://eodhd.com/api/eod/'+urllib.parse.quote(eod_symbol(symbol),safe=''),
-                {'from':target,'to':target,'fmt':'json','api_token':keys['eodhd']})
+                {'from':str(dt.date.fromisoformat(target)-dt.timedelta(days=150)),
+                 'to':target,'fmt':'json','api_token':keys['eodhd']})
             add(s,symbol,exact_close(frames.get(symbol),target),exact_row(data,target),.01)
+            s['adjusted_history_checks'][symbol]=adjusted_overlap(frames.get(symbol),data,target)
     s=summary('fmp',bool(keys['fmp']))
     s['basis']='US_RAW_EOD_DIAGNOSTIC_1_PERCENT'
     if enabled and keys['fmp']:
