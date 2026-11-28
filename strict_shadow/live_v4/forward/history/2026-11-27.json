@@ -1,0 +1,123 @@
+{
+  "authorization": {
+    "real_money_authorized": false
+  },
+  "decision_session": "2026-11-27",
+  "engine_id": "ATLAS_UNIFIED_REGION_ROTATE_V4_CONFIDENCE_BETA070_2026-10-07",
+  "execution_session": "2026-11-30",
+  "feature_source": "CURRENT_COHORT_H4_APPROX_NOT_ORIGINAL_OLS",
+  "historical_engine_equivalent": false,
+  "mode": "SHADOW",
+  "model_variant": "V4_CONF70_FORWARD_COHORT_PROXY_V1",
+  "produced_at_utc": "2026-11-28T18:11:35.900719+00:00",
+  "provenance_sha256": {
+    "benchmark_price_file_sha256": "7bdb43b7e92960c28b9914e8c97fff430d60787f356d37b200c79a6374df1e3e",
+    "fx_files_sha256": "abc6e435b83428a4cde2d564817060d084ed94fadaeadcf48950eceb759ea5cb",
+    "price_files_sha256": "564018bc8e9e9ea8453b9de9c8bbc58488e3f529473609064bd0e3d903bff450",
+    "roster_sha256": "5d6ff6a4af96e064276099637319403357a679be64261839f87ff62d937b985c"
+  },
+  "region_strength_proxy": -0.084804,
+  "risk_regime": "DEFENSIVE_PROXY",
+  "row_slots": 2,
+  "schema_version": "research-forward-1",
+  "target_exposure": 0.29999996,
+  "targets": [
+    {
+      "market_symbol": "CRWD",
+      "price_eur": 197.956086,
+      "region": "USA",
+      "score": 2.13933307,
+      "sector": "Information Technology",
+      "ticker": "CRWD",
+      "weight": 0.02945979
+    },
+    {
+      "market_symbol": "PANW",
+      "price_eur": 334.265088,
+      "region": "USA",
+      "score": 1.90435594,
+      "sector": "Information Technology",
+      "ticker": "PANW",
+      "weight": 0.02579603
+    },
+    {
+      "market_symbol": "COP",
+      "price_eur": 124.679528,
+      "region": "USA",
+      "score": 1.29569164,
+      "sector": "Energy",
+      "ticker": "COP",
+      "weight": 0.04385088
+    },
+    {
+      "market_symbol": "TXN",
+      "price_eur": 256.878107,
+      "region": "USA",
+      "score": 0.8778918,
+      "sector": "Information Technology",
+      "ticker": "TXN",
+      "weight": 0.01899597
+    },
+    {
+      "market_symbol": "XOM",
+      "price_eur": 145.988052,
+      "region": "USA",
+      "score": 0.82896459,
+      "sector": "Energy",
+      "ticker": "XOM",
+      "weight": 0.03217723
+    },
+    {
+      "market_symbol": "CVX",
+      "price_eur": 193.626936,
+      "region": "USA",
+      "score": 0.75648258,
+      "sector": "Energy",
+      "ticker": "CVX",
+      "weight": 0.02987474
+    },
+    {
+      "market_symbol": "AMGN",
+      "price_eur": 432.076519,
+      "region": "USA",
+      "score": 0.68866325,
+      "sector": "Health Care",
+      "ticker": "AMGN",
+      "weight": 0.0180398
+    },
+    {
+      "market_symbol": "ABBV",
+      "price_eur": 266.019448,
+      "region": "USA",
+      "score": 0.5744824,
+      "sector": "Health Care",
+      "ticker": "ABBV",
+      "weight": 0.02578187
+    },
+    {
+      "market_symbol": "6098.T",
+      "price_eur": 95.579314,
+      "region": "ROW",
+      "score": 2.27531242,
+      "sector": "Industrials",
+      "ticker": "6098.T",
+      "weight": 0.04715152
+    },
+    {
+      "market_symbol": "2891.TW",
+      "price_eur": 1.908037,
+      "region": "ROW",
+      "score": 1.26508827,
+      "sector": "Financials",
+      "ticker": "2891.TW",
+      "weight": 0.02887213
+    }
+  ],
+  "universe_source": {
+    "asof": "2026-11-25",
+    "provider": "ISHARES_ACWI",
+    "recorded_on": "2026-11-27",
+    "sha256": "5d6ff6a4af96e064276099637319403357a679be64261839f87ff62d937b985c",
+    "type": "ETF_HOLDING_VALUE_PROXY_NOT_MARKET_CAP"
+  }
+}

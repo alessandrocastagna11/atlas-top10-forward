@@ -1,11 +1,11 @@
 # Atlas V4 forward — research PROXY paper account
 
-**Status: PROXY_PAPER_EXECUTED**
+**Status: BLOCKED_PROXY_EXECUTION**
 
-All next-session opens verified
+stale/future proxy signal
 
 Model: V4_CONF70_FORWARD_COHORT_PROXY_V1 — NOT historically identical to the frozen V4 engine.
-Virtual NAV: EUR 10050.27
+Virtual NAV: EUR 9869.15
 Paper orders: 17
 Real broker orders: 0
 Strict Confidence70 model remains separate and fail-closed.
