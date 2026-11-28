@@ -12,7 +12,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 from scipy import optimize
 from live_model import HERE,CACHE,LIVE,START_PAPER,ENGINE,INITIAL,SECTOR,latest_vintages,get_adjusted,build_model,evaluate_model,check_required_us_closes,requires_same_us_close
-from live_model import v1,v2,t9,inc,frozen,LIVE,check_required_local_closes,check_fx_freshness,_cache_filename
+from live_model import v1,v2,t9,inc,frozen,LIVE,check_required_local_closes,check_fx_freshness,_cache_filename,universe_transition_audit
 if str(LIVE) not in sys.path:sys.path.insert(0,str(LIVE))
 from paper import earliest_open_utc
 from market_sessions import venue
@@ -480,6 +480,9 @@ def main(now=None):
         # capture date. Replaying after downtime uses that same dated history.
         # A newly captured 2026 roster never changes yesterday's membership.
         vintage=vintages[-1]
+        status['universe_transition_audit']=universe_transition_audit(vintages,asof)
+        if asof>=dt.date(2026,11,30) and status['universe_transition_audit']['status']!='EXPANDED_ACTIVE':
+            raise ValueError('Expanded universe not verified; no new model signal')
         locked_roster_date=str(vintages[0][0])  # legacy state only; NOT selection policy
         status['universe_lock_recorded_date']=locked_roster_date
         status['latest_available_roster_recorded_date']=str(vintage[0])
