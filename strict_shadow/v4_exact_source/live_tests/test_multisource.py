@@ -7,7 +7,7 @@ from pathlib import Path
 from unittest.mock import patch
 import pandas as pd
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from multisource import audit,compare,exact_row,eod_symbol
+from multisource import audit,compare,exact_row,eod_symbol,adjusted_overlap
 
 class MultiSourceTests(unittest.TestCase):
     def test_comparisons_and_dates(self):
@@ -17,6 +17,17 @@ class MultiSourceTests(unittest.TestCase):
         self.assertIsNone(exact_row([{'date':'2026-11-25','close':100}],'2026-11-27'))
         self.assertIsNone(exact_row([{'date':'2026-11-27','close':float('nan')}],'2026-11-27'))
         self.assertEqual(eod_symbol('SAP.DE'),'SAP.XETRA')
+    def test_adjusted_history_overlap(self):
+        dates=pd.bdate_range('2026-07-01',periods=90)
+        values=[100+i*.2 for i in range(len(dates))]
+        primary=pd.DataFrame({'adj_close':values},index=dates)
+        rows=[{'date':str(day.date()),'adjusted_close':v*2} for day,v in zip(dates,values)]
+        expected=dates[-1].date()
+        self.assertEqual(adjusted_overlap(primary,rows,expected)['status'],'OVERLAP_CONSISTENT_SHADOW_ONLY')
+        rows[70]['adjusted_close']*=.8
+        self.assertEqual(adjusted_overlap(primary,rows,expected)['status'],'ADJUSTMENT_MISMATCH')
+        self.assertEqual(adjusted_overlap(primary,rows[:-1],expected)['status'],'MISSING_TARGET_SESSION')
+        self.assertEqual(adjusted_overlap(primary,rows+[rows[-1]],expected)['status'],'DUPLICATE_DATE')
     def test_disabled_no_requests_ecb_only(self):
         now=dt.datetime(2026,11,28,12,tzinfo=dt.timezone.utc)
         with tempfile.TemporaryDirectory() as root, patch.dict(os.environ,{},clear=True):
