@@ -5,6 +5,7 @@ import datetime as dt
 import hashlib
 import json
 import math
+import random
 import time
 import urllib.error
 import urllib.parse
@@ -40,17 +41,27 @@ class YahooChart:
         if key in self.cache: return self.cache[key]
         since=int(dt.datetime.combine(_date(start),dt.time.min,dt.timezone.utc).timestamp())-86400
         until=int(dt.datetime.combine(_date(end)+dt.timedelta(days=3),dt.time.min,dt.timezone.utc).timestamp())
-        url='https://query1.finance.yahoo.com/v8/finance/chart/'+urllib.parse.quote(symbol,safe='')+'?'+urllib.parse.urlencode({
+        route='/v8/finance/chart/'+urllib.parse.quote(symbol,safe='')+'?'+urllib.parse.urlencode({
             'period1':since,'period2':until,'interval':'1d','events':'div,splits','includeAdjustedClose':'false'})
         data=None
-        for attempt in range(3):
+        for attempt in range(4):
+            host='query1.finance.yahoo.com' if attempt%2==0 else 'query2.finance.yahoo.com'
             try:
-                req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 (AtlasV4 research-paper/1.0)','Accept':'application/json'})
-                with urllib.request.urlopen(req,timeout=self.timeout) as res: data=res.read(10_000_000)
+                req=urllib.request.Request('https://'+host+route,headers={'User-Agent':'Mozilla/5.0 (AtlasV4 research-paper/1.0)','Accept':'application/json','Cache-Control':'no-cache','Pragma':'no-cache'})
+                with urllib.request.urlopen(req,timeout=self.timeout) as res: data=res.read(10_000_001)
+                if len(data)>10_000_000:raise DataUnavailable('oversized response')
+                parsed=json.loads(data)
+                result=(parsed.get('chart',{}).get('result') or [None])[0]
+                if not result or not result.get('timestamp'):
+                    raise DataUnavailable('empty chart payload')
                 break
-            except (urllib.error.URLError,TimeoutError,OSError) as exc:
-                if attempt==2: raise DataUnavailable(f'provider unavailable: {symbol}: {type(exc).__name__}') from exc
-                time.sleep(2*(attempt+1))
+            except (urllib.error.URLError,TimeoutError,OSError,ValueError,TypeError) as exc:
+                if attempt==3: raise DataUnavailable(f'provider unavailable: {symbol}: {type(exc).__name__}: {exc}') from exc
+                retry_after=0
+                if getattr(exc,'code',None)==429:
+                    try:retry_after=min(30,max(0,int(exc.headers.get('Retry-After','0'))))
+                    except (TypeError,ValueError,AttributeError):pass
+                time.sleep(max(retry_after,min(12,2**attempt+random.random())))
         try:
             payload=json.loads(data); result=(payload['chart'].get('result') or [None])[0]
             if not result: raise DataUnavailable(f'provider returned no series for {symbol}')
