@@ -12,7 +12,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 from scipy import optimize
 from live_model import HERE,CACHE,LIVE,START_PAPER,ENGINE,INITIAL,SECTOR,latest_vintages,get_adjusted,build_model,evaluate_model,check_required_us_closes,requires_same_us_close
-from live_model import v1,v2,t9,inc,frozen,LIVE
+from live_model import v1,v2,t9,inc,frozen,LIVE,check_required_local_closes
 if str(LIVE) not in sys.path:sys.path.insert(0,str(LIVE))
 from paper import earliest_open_utc
 from market_sessions import venue
@@ -114,11 +114,12 @@ EXCHANGE_CALENDARS={
     '.SR':'XSAU','.SA':'BVMF',
 }
 
-def listing_calendar(symbol):
+def listing_calendar(symbol, vendor_exchange=None):
     name,_=venue(symbol)
     if name not in EXCHANGE_CALENDARS:
         raise ValueError('No equity exchange calendar for '+str(symbol))
-    return xcals.get_calendar(EXCHANGE_CALENDARS[name]),name!='.NS'
+    calendar_name=('XNAS' if name=='USA' and vendor_exchange in {'NMS','NGM','NCM','NASDAQ','NAS'} else EXCHANGE_CALENDARS[name])
+    return xcals.get_calendar(calendar_name),name!='.NS'
 
 def symbol_next_open(symbol, first_date, not_before=None):
     """Next scheduled exchange session; a schedule never certifies a fill."""
@@ -160,8 +161,14 @@ def preview(m,meta,asof,now,old_orders):
         on_time=now<deadline
         next_date,next_open=(first,opening) if on_time else symbol_next_open(
             symbol,first,not_before=now+dt.timedelta(minutes=30))
-        calendar,calendar_verified=listing_calendar(symbol)
+        vendor_exchange=meta.get('listing_exchange_by_symbol',{}).get(symbol,'UNKNOWN')
+        calendar,calendar_verified=listing_calendar(symbol,vendor_exchange)
+        requested_calendar=('XNAS' if venue(symbol)[0]=='USA' and vendor_exchange in
+                            {'NMS','NGM','NCM','NASDAQ','NAS'} else EXCHANGE_CALENDARS[venue(symbol)[0]])
         per_symbol[symbol]={
+            'listing_exchange_vendor':vendor_exchange,
+            'exchange_calendar_requested':requested_calendar,
+            'exchange_calendar_alias':requested_calendar!=calendar.name,
             'exchange_calendar':calendar.name,
             'exchange_calendar_source':'exchange_calendars_'+xcals.__version__,
             'first_candidate_close_utc':calendar.session_close(pd.Timestamp(first)).isoformat(),
@@ -341,7 +348,7 @@ def main(now=None):
         ny=now.astimezone(NY)
         candidate=ny.date() if (ny.hour,ny.minute)>=(17,30) else ny.date()-dt.timedelta(days=1)
         # SPY completed EOD is authoritative for US calendar closure, not a guessed weekday.
-        base,fail=get_adjusted(['SPY'],candidate,max_workers=1)
+        base,fail=get_adjusted(['SPY'],candidate,max_workers=1,require_current_us={'SPY'})
         if 'SPY' not in base:raise ValueError('US EOD benchmark unavailable: '+str(fail))
         spy=base['SPY'];dates=[d.date() for d in spy.index if d.date()<=candidate]
         if not dates:raise ValueError('No completed benchmark history')
@@ -371,9 +378,16 @@ def main(now=None):
                              if isinstance(row,dict) and row.get('ticker'))
             strict_us={ticker for ticker in active_us
                        if requires_same_us_close(ticker)}
-            fetched,failed=get_adjusted(required-set(frames),asof,max_workers=8,
-                                        require_current_us=strict_us)
+            active_local=active_us|{str(row['symbol']).upper() for row in vintages[-1][4]}|{'SPY'}
+            required.update(active_local)
+            # Retry a previously cached frame if it now belongs to the active roster.
+            previous_audit=check_required_local_closes(frames,active_local,asof,now)
+            refresh=(required-set(frames))|set(previous_audit['stale_or_missing'])
+            fetched,failed=get_adjusted(refresh,asof,max_workers=8,
+                                        require_current_us=active_local)
             frames.update(fetched)
+            status['local_eod_quote_audit']=check_required_local_closes(frames,active_local,asof,now)
+            status['local_eod_quote_audit']['provider_errors']={k:v for k,v in failed.items() if k in active_local}
             status['us_eod_quote_audit']={
                 'expected_session':str(asof),
                 'required_us_count':len(strict_us),
@@ -423,6 +437,9 @@ def main(now=None):
         status['daily_universe_replacement_rounds']=attempt
         # The feed must be complete before we publish a snapshot or signal.
         status['us_eod_quote_audit']=check_required_us_closes(frames,strict_us,asof)
+        status['local_eod_quote_audit']=check_required_local_closes(frames,active_local,asof,now)
+        if status['local_eod_quote_audit']['stale_or_missing']:
+            raise ValueError('STALE_REQUIRED_LOCAL_EOD '+str(status['local_eod_quote_audit']['stale_or_missing']))
         # Each immutable recorded vintage becomes active only from its own
         # capture date. Replaying after downtime uses that same dated history.
         # A newly captured 2026 roster never changes yesterday's membership.
@@ -433,6 +450,8 @@ def main(now=None):
         status['universe_policy']='DAILY_CAUSAL_AS_RECORDED_ROSTERS_WITH_GAP_REPLAY'
         status['historical_universe_vintages']=len(vintages)
         m,meta=build_model(vintages,asof,frames)
+        meta['listing_exchange_by_symbol']={symbol:str(frame['listing_exchange_vendor'].iloc[-1])
+            for symbol,frame in frames.items() if not frame.empty and 'listing_exchange_vendor' in frame}
         status.update({'decision_session':str(asof),'source':meta})
         # Export only actual model inputs; publication failure must not
         # alter original model decisions. The challenger blocks without it.
