@@ -75,6 +75,11 @@ def latest_vintages(asof, excluded_symbols=None):
     # accepted. Incomplete matches do not replace the existing ETF universe.
     capdir=LIVE/'dataset'/'marketcap_observed'/'observations'
     cap_kind='MARKET_CAP_USD_AS_RECORDED_WITHIN_ACWI_NOT_HISTORICAL_PIT'
+    # Prospective migration only. The first expanded capture was Saturday
+    # 2026-11-28, after the last published Friday decision. Preserve all
+    # already observed vintages; activate expanded ranking on Monday 30.
+    expanded_effective=dt.date(2026,11,30)
+    expanded_byday={}
     for source in sorted(capdir.glob('*/source.json')):
         try:
             meta=json.loads(source.read_text(encoding='utf8'))
@@ -95,11 +100,28 @@ def latest_vintages(asof, excluded_symbols=None):
             g=[r for r in ordered if r['country']!='United States' and str(r['symbol']).upper() not in excluded][:200]
             if len(u)!=100 or len(g)!=200:continue
             h=hashlib.sha256(datafile.read_bytes()).hexdigest()
+            # Keep the first qualifying expanded observation per effective
+            # date. Its capture date remains distinct from activation date.
+            if (asof>=expanded_effective and recorded>=dt.date(2026,11,28)
+                    and meta.get('candidate_pool_status')=='EXPANDED_UP_TO_750_VERIFIED_CANDIDATES'
+                    and int(meta.get('candidate_pool_size',0))>=750
+                    and int(meta.get('crosswalk_non_usa',0))>=200):
+                effective=max(recorded,expanded_effective)
+                if effective<=asof:
+                    expanded_byday.setdefault(effective,(effective,recorded,h,u,g,cap_kind))
             old=byday.get(recorded)
             # Prefer the FIRST qualifying market-cap observation of the day.
             if old is None or len(old)==5:
                 byday[recorded]=(recorded,recorded,h,u,g,cap_kind)
         except (KeyError,ValueError,TypeError,FileNotFoundError):continue
+    if expanded_byday:
+        activation=min(expanded_byday)
+        # A temporary narrow-pool acquisition must not undo the expanded
+        # universe. Carry the last qualifying expanded vintage, subject to
+        # the existing maximum age gate.
+        for day in list(byday):
+            if day>=activation:del byday[day]
+        byday.update(expanded_byday)
     # Once the cap-ranked source has activated, use its most recent dated
     # observation during temporary vendor gaps. Never silently revert to the
     # ETF-weight ranking on an ordinary day just because today's cap page fails.
