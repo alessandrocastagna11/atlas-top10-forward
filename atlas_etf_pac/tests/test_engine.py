@@ -310,13 +310,13 @@ class TestOriginalV23(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             cache=Path(tmp)/'yahoo_EUNL_DE.csv'
             cache.write_text('date,close\n2026-11-18,100\n2026-11-19,101\n2026-11-20,102\n')
-            with mock.patch.object(pac.v23,'CACHE',Path(tmp)), \\
+            with mock.patch.object(pac.v23,'CACHE',Path(tmp)), \
                  mock.patch.object(pac,'yahoo_chart_rows',return_value={'2026-11-19':101}):
                 out,source=pac.yahoo_daily_with_secondary_endpoint(CFG,'EUNL.DE',now)
                 self.assertEqual(len(out),3)
                 self.assertEqual(out[-1]['date'],'2026-11-20')
                 self.assertEqual(source,'YAHOO_CACHE_NEWER_THAN_PROVIDER')
-            with mock.patch.object(pac.v23,'CACHE',Path(tmp)), \\
+            with mock.patch.object(pac.v23,'CACHE',Path(tmp)), \
                  mock.patch.object(pac,'yahoo_chart_rows',side_effect=TimeoutError('offline')):
                 out,source=pac.yahoo_daily_with_secondary_endpoint(CFG,'EUNL.DE',now)
                 self.assertEqual(source,'YAHOO_CACHE_ONLY')
@@ -327,8 +327,8 @@ class TestOriginalV23(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             d=Path(tmp);state=d/'state.json';report=d/'status.json';audit=d/'audit.json'
             state.write_text(json.dumps(pac.seed(CFG)))
-            with mock.patch.object(pac,'STATE',state),mock.patch.object(pac,'REPORT',report), \\
-                 mock.patch.object(pac,'AUDIT',audit), \\
+            with mock.patch.object(pac,'STATE',state),mock.patch.object(pac,'REPORT',report), \
+                 mock.patch.object(pac,'AUDIT',audit), \
                  mock.patch.object(pac,'historical_feeds',side_effect=pac.InsufficientData('TEST_NO_QUOTES')):
                 self.assertEqual(pac.main(now),2)
             a=json.loads(audit.read_text());r=json.loads(report.read_text())
