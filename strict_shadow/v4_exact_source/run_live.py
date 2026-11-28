@@ -12,7 +12,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 from scipy import optimize
 from live_model import HERE,CACHE,LIVE,START_PAPER,ENGINE,INITIAL,SECTOR,latest_vintages,get_adjusted,build_model,evaluate_model,check_required_us_closes,requires_same_us_close
-from live_model import v1,v2,t9,inc,frozen,LIVE,check_required_local_closes
+from live_model import v1,v2,t9,inc,frozen,LIVE,check_required_local_closes,check_fx_freshness
 if str(LIVE) not in sys.path:sys.path.insert(0,str(LIVE))
 from paper import earliest_open_utc
 from market_sessions import venue
@@ -360,7 +360,7 @@ def main(now=None):
         # Do not suppress missing benchmark/FX data or transient vendor errors.
         excluded_short_history=set()
         excluded_quote_currency=set()
-        frames={}
+        frames={'SPY':spy}
         for attempt in range(40):
             vintages=latest_vintages(asof, excluded_symbols=excluded_short_history|excluded_quote_currency)
             all_constituents=[row for v in vintages for row in v[3]+v[4]]
@@ -380,14 +380,17 @@ def main(now=None):
                        if requires_same_us_close(ticker)}
             active_local=active_us|{str(row['symbol']).upper() for row in vintages[-1][4]}|{'SPY'}
             required.update(active_local)
+            fx_symbols={s for s in required if s.endswith('=X')}
             # Retry a previously cached frame if it now belongs to the active roster.
             previous_audit=check_required_local_closes(frames,active_local,asof,now)
-            refresh=(required-set(frames))|set(previous_audit['stale_or_missing'])
+            previous_fx=check_fx_freshness(frames,fx_symbols,asof,now)
+            refresh=(required-set(frames))|set(previous_audit['stale_or_missing'])|set(previous_fx['blocked'])
             fetched,failed=get_adjusted(refresh,asof,max_workers=8,
-                                        require_current_us=active_local)
+                                        require_current_us=active_local|fx_symbols)
             frames.update(fetched)
             status['local_eod_quote_audit']=check_required_local_closes(frames,active_local,asof,now)
             status['local_eod_quote_audit']['provider_errors']={k:v for k,v in failed.items() if k in active_local}
+            status['fx_freshness_audit']=check_fx_freshness(frames,fx_symbols,asof,now)
             status['us_eod_quote_audit']={
                 'expected_session':str(asof),
                 'required_us_count':len(strict_us),
@@ -440,6 +443,9 @@ def main(now=None):
         status['local_eod_quote_audit']=check_required_local_closes(frames,active_local,asof,now)
         if status['local_eod_quote_audit']['stale_or_missing']:
             raise ValueError('STALE_REQUIRED_LOCAL_EOD '+str(status['local_eod_quote_audit']['stale_or_missing']))
+        status['fx_freshness_audit']=check_fx_freshness(frames,fx_symbols,asof,now)
+        if status['fx_freshness_audit']['blocked']:
+            raise ValueError('STALE_REQUIRED_FX '+str(status['fx_freshness_audit']['blocked']))
         # Each immutable recorded vintage becomes active only from its own
         # capture date. Replaying after downtime uses that same dated history.
         # A newly captured 2026 roster never changes yesterday's membership.
@@ -452,7 +458,7 @@ def main(now=None):
         m,meta=build_model(vintages,asof,frames)
         meta['listing_exchange_by_symbol']={symbol:str(frame['listing_exchange_vendor'].iloc[-1])
             for symbol,frame in frames.items() if not frame.empty and 'listing_exchange_vendor' in frame}
-        status.update({'decision_session':str(asof),'source':meta})
+        status.update({'decision_session':str(asof),'source':meta,'cash_rate_audit':meta.get('cash_rate_audit')})
         # Export only actual model inputs; publication failure must not
         # alter original model decisions. The challenger blocks without it.
         try:
