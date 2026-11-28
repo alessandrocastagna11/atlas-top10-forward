@@ -132,7 +132,9 @@ def universe_snapshot(today):
             ranked[key]['symbol']=ticker;ranked[key]['primary_market_value_usd']=value
     allrows=sorted(ranked.values(),key=lambda r:r['holding_market_value_usd'],reverse=True)
     if len(allrows)<500:raise DataUnavailable('ETF constituent sample under 500: insufficient universe')
-    allrows=allrows[:500]
+    # Preserve the legacy 500-name ETF proxy, while providing a deeper
+    # candidate pool for forward observed issuer capitalization matching.
+    allrows=allrows[:750]
     for i,row in enumerate(allrows,1):
         row['etf_holding_rank']=i
         del row['primary_market_value_usd']
@@ -144,6 +146,14 @@ def universe_snapshot(today):
     dated=active/'snapshots'/str(today)
     fields=['etf_holding_rank','issuer_key','company_name','symbol','sector','country','currency',
             'holding_market_value_usd','source_as_of','first_recorded_at_utc','provider','ranking_type']
+    cap_rows=allrows
+    allrows=allrows[:500]
+    cap_latest=active/'global750_cap_candidates_latest.csv'
+    csv_write(cap_latest,cap_rows,fields)
+    json_save(active/'global750_cap_candidates_source.json',
+              {'source_as_of':asof,'recorded_on':str(today),'count':len(cap_rows),
+               'raw_sha256':sha(raw),'candidate_file_sha256':sha(cap_latest.read_bytes()),
+               'purpose':'OBSERVED_MARKET_CAP_CROSSWALK_NOT_ETF_PROXY'})
     latest=active/'global500_latest.csv'
     first_capture=not (dated/'global500.csv').exists()
     meta={'source_as_of':asof,'recorded_on':str(today),'count':len(allrows),
