@@ -738,4 +738,9 @@ def main(now=None):
     # A green workflow must not certify a multi-session-old paper account.
     return 2 if failed or not quality['audit_ledger_aligned'] or quality.get('quote_lag_sessions_exchange_calendar',0)>=2 else 0
 
-if __name__=='__main__':raise SystemExit(main())
+if __name__=='__main__':
+    exit_original=main()
+    # Independent read-only shadow; preserve the original exit status if it failed.
+    from macro_keyless import report as keyless_report
+    exit_shadow=keyless_report(original_status=read(REPORT))
+    raise SystemExit(exit_original or exit_shadow)
