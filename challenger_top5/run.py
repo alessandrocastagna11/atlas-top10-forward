@@ -90,6 +90,13 @@ def load_model():
     vintages,frames,cash_rate=load_shared_inputs(SOURCE/'forward',descriptor,asof,source_meta.get('roster_sha256'))
     lm.START_PAPER=START
     model,meta=lm.build_model(vintages,asof,frames,shared_cash_rate=cash_rate)
+    if asof>=dt.date(2026,11,30):
+        migration=source_status.get('universe_transition_audit') or {}
+        actual={str(r['symbol']).upper() for r in vintages[-1][3]+vintages[-1][4]}
+        if (migration.get('status')!='EXPANDED_ACTIVE' or migration.get('decision_session')!=str(asof)
+            or migration.get('active_roster_sha256')!=descriptor['roster_sha256']
+            or actual!=set(migration.get('active_symbols',[])) or len(actual)!=300):
+            raise ValueError('Expanded shared universe audit mismatch')
     source_meta=source_status.get('source',{})
     if not source_meta.get('roster_sha256') or meta['roster_sha256']!=source_meta['roster_sha256'] or meta['roster_recorded_date']!=source_meta.get('roster_recorded_date'):
         raise ValueError('Roster hash/date differs from original; fail closed')
@@ -272,7 +279,7 @@ def main():
     try:
         m,meta,cfg,asof,original=load_model()
         status.update({'decision_session':str(asof.date()),'source':meta,'universe_same_hash':True,'shared_input_sha256':meta['shared_input']['sha256'],'shared_input_verified':True,'same_price_dates_and_fx':True,'universe_kind':meta['universe_kind'],'original_nav_eur':original.get('nav_eur')})
-        status['source_data_audit']={k:original.get(k) for k in ('local_eod_quote_audit','fx_freshness_audit','cash_rate_audit','multisource_audit','fx_recovery_audit')}
+        status['source_data_audit']={k:original.get(k) for k in ('local_eod_quote_audit','fx_freshness_audit','cash_rate_audit','multisource_audit','fx_recovery_audit','universe_transition_audit')}
         # Do not revalue a live US holding with yesterday's carried close.
         # A successful source run or common SHA alone is not a freshness proof.
         # Non-US holdings use their exchange-specific session policy.
