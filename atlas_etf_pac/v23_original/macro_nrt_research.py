@@ -114,6 +114,9 @@ def breadth(etfs,decision,lag=1):
 def main():
     source,digest=ref.check_reference()
     native=ref.load_original_engine(source);native.xirr=ref.stable_xirr_factory(native)
+    # Native initialization requires these files although stress is fully supplied by the explicit adapter below.
+    native.load_fred_monthly=lambda filename:{}
+    native.load_six_portfolios_monthly=lambda :{}
     cfg=json.loads((ref.EXTRACT/'config.json').read_text())
     # exact live macro class and frozen signal engine from immutable snapshot
     root=ref.HERE/'macro_nrt_snapshot';p=root/'v23_original';p.mkdir(parents=True,exist_ok=True)
