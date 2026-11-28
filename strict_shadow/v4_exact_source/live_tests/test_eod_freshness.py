@@ -19,7 +19,8 @@ import live_model
 def frame(last):
     dates=pd.date_range('2026-11-17',last,freq='B',name='Date')
     return pd.DataFrame({'adj_open':100.,'adj_close':101.,
-                         'raw_close':101.,'volume':1000.},index=dates)
+                         'raw_close':101.,'volume':1000.,
+                         'adjustment_source':'VENDOR_ADJUSTED_CLOSE'},index=dates)
 
 
 class ExactUSPriceFreshnessTests(unittest.TestCase):
@@ -52,6 +53,19 @@ class ExactUSPriceFreshnessTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             cache=Path(folder)
             frame('2026-11-18').to_csv(
+                cache/live_model._cache_filename('PANW'),compression='gzip')
+            with mock.patch.object(live_model,'CACHE',cache),mock.patch.object(
+                live_model.urllib.request,'urlopen',
+                side_effect=RuntimeError('vendor unavailable')),mock.patch.object(
+                live_model.time,'sleep',return_value=None):
+                with self.assertRaisesRegex(RuntimeError,'Yahoo adjusted chart unavailable'):
+                    live_model._chart('PANW',dt.date(2026,11,19),
+                                      require_current_us=True)
+
+    def test_same_session_legacy_cache_without_adjustment_proof_rejected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            cache=Path(folder)
+            frame('2026-11-19').drop(columns=['adjustment_source']).to_csv(
                 cache/live_model._cache_filename('PANW'),compression='gzip')
             with mock.patch.object(live_model,'CACHE',cache),mock.patch.object(
                 live_model.urllib.request,'urlopen',
