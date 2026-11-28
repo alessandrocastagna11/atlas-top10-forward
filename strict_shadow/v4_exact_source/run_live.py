@@ -451,6 +451,17 @@ def main(now=None):
         if status['local_eod_quote_audit']['stale_or_missing']:
             raise ValueError('STALE_REQUIRED_LOCAL_EOD '+str(status['local_eod_quote_audit']['stale_or_missing']))
         status['fx_freshness_audit']=check_fx_freshness(frames,fx_symbols,asof,now)
+        status['fx_recovery_audit']={}
+        for symbol in sorted(fx_symbols):
+            frame=frames.get(symbol)
+            if frame is None or frame.empty or 'source_symbol' not in frame:continue
+            last=frame.iloc[-1]
+            if last.get('adjustment_source')!='FX_RECIPROCAL_VERIFIED_OVERLAP':continue
+            status['fx_recovery_audit'][symbol]={'source_symbol':str(last['source_symbol']),
+                'source_session':str(frame.index[-1].date()),
+                'overlap_sessions':int(last['inverse_overlap_sessions']),
+                'max_overlap_error':float(last['inverse_max_overlap_error']),
+                'independent_provider':False}
         if status['fx_freshness_audit']['blocked']:
             raise ValueError('STALE_REQUIRED_FX '+str(status['fx_freshness_audit']['blocked']))
         # Each immutable recorded vintage becomes active only from its own
