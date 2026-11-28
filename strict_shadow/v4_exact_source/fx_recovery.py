@@ -11,9 +11,9 @@ def inverse_symbol(symbol):
     return m.group(1)+'EUR=X' if m and m.group(1)!='EUR' else None
 
 def validate_inverse(symbol,inverse,primary,expected,*,min_overlap=60):
-    """Return a full transformed frame only after empirical overlap validation.
+    """Append only the missing recent FX sessions after empirical overlap validation.
     Same vendor, opposite currency pair; not an independent price source.
-    Never append to the existing adjusted series or guess missing FX bars.
+    Never change historical direct quotes or guess missing FX bars.
     """
     alt=inverse_symbol(symbol)
     if not alt or primary is None or inverse is None:
@@ -57,4 +57,20 @@ def validate_inverse(symbol,inverse,primary,expected,*,min_overlap=60):
     inv['inverse_max_overlap_error']=max(errors)
     inv['dividend']=0.
     inv['volume']=0.
-    return inv
+    old=primary.sort_index().copy(deep=True)
+    old=old.loc[:pd.Timestamp(expected)]
+    if len(old)<300 or old.index[-1]>=pd.Timestamp(expected):
+        raise ValueError('FX direct history incomplete or no recovery needed')
+    missing=pd.bdate_range(old.index[-1]+pd.Timedelta(days=1),pd.Timestamp(expected))
+    if not 1<=len(missing)<=3 or not missing.isin(inv.index).all():
+        raise ValueError('FX recovery limited to three contiguous weekday observations')
+    # Preserve the entire direct history exactly; only append observed missing FX bars.
+    # No equity adjustments are inferred and no historical observations are replaced.
+    tail=inv.loc[missing].copy()
+    old['source_symbol']=symbol
+    old['inverse_overlap_sessions']=0
+    old['inverse_max_overlap_error']=0.
+    if 'adjustment_source' not in old:old['adjustment_source']='DIRECT_FX_LEGACY_CACHE'
+    out=pd.concat([old,tail],sort=False)
+    out.index.name=primary.index.name
+    return out
