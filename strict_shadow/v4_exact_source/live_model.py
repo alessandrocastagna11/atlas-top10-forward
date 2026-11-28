@@ -167,12 +167,43 @@ LOCAL_CALENDARS={
     '.SR':'XSAU','.SA':'BVMF',
 }
 
+def expected_fx_close(end_day,observed_utc=None):
+    observed_utc=observed_utc or dt.datetime.now(dt.timezone.utc)
+    day=pd.Timestamp(end_day).date()
+    while day.weekday()>=5 or not is_final_bar('EURUSD=X',day,observed_utc):
+        day-=dt.timedelta(days=1)
+    return day
+
+def fx_missed_weekdays(actual,expected):
+    if actual is None or actual>expected:return 999
+    return sum((actual+dt.timedelta(days=i)).weekday()<5
+               for i in range(1,(expected-actual).days+1))
+
+def check_fx_freshness(frames,symbols,asof,observed_utc=None):
+    expected=expected_fx_close(asof,observed_utc)
+    audit={'expected_weekday_close':str(expected),'calendar_policy':'FX_WEEKDAYS_NO_EXACT_HOLIDAY_CALENDAR',
+           'pairs':{},'blocked':[],'degraded':[]}
+    for symbol in sorted(set(symbols)):
+        frame=frames.get(symbol)
+        x=(pd.to_numeric(frame['adj_close'].loc[:pd.Timestamp(asof)],errors='coerce')
+           if frame is not None and 'adj_close' in frame else pd.Series(dtype=float))
+        x=x[(x>0)&np.isfinite(x)]
+        x=x[x.index.dayofweek<5] if len(x) else x
+        actual=x.index.max().date() if len(x) else None
+        lag=fx_missed_weekdays(actual,expected)
+        audit['pairs'][symbol]={'observed':str(actual) if actual else None,'missed_weekdays':lag}
+        if lag>1:audit['blocked'].append(symbol)
+        elif lag:audit['degraded'].append(symbol)
+    audit['status']='BLOCKED' if audit['blocked'] else 'DEGRADED' if audit['degraded'] else 'COMPLETE'
+    return audit
+
 def expected_local_close(symbol,end_day,observed_utc=None):
     """Last scheduled and released local session on or before decision date.
     NSE has no exact calendar in the pinned package; never certify its proxy.
     """
     import exchange_calendars as xcals
     name,_=venue(symbol)
+    if name=='FOREX_NY_ROLLOVER':return expected_fx_close(end_day,observed_utc)
     if name not in LOCAL_CALENDARS:return None
     observed_utc=observed_utc or dt.datetime.now(dt.timezone.utc)
     cal=xcals.get_calendar(LOCAL_CALENDARS[name])
@@ -225,18 +256,28 @@ def _chart(symbol,end_day,refresh=True,require_current_us=False):
     end=int((dt.datetime.combine(end_day,dt.time(0),dt.timezone.utc)+dt.timedelta(days=3)).timestamp())
     params=urllib.parse.urlencode({'period1':beg,'period2':end,'interval':'1d','events':'div,splits','includeAdjustedClose':'true'})
     last=None
+    fx_pair=venue(symbol)[0]=='FOREX_NY_ROLLOVER'
+    recent_fx=None
     for attempt in range(4):
         host='query1.finance.yahoo.com' if attempt%2==0 else 'query2.finance.yahoo.com'
         url=f'https://{host}/v8/finance/chart/{urllib.parse.quote(symbol,safe="")}?{params}'
         try:
             req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 (compatible; AtlasV4ExactPaper/1.0)','Accept':'application/json','Cache-Control':'no-cache','Pragma':'no-cache'})
-            with urllib.request.urlopen(req,timeout=22) as f: payload=json.load(f)
+            with urllib.request.urlopen(req,timeout=22) as f: body=f.read(12_000_001)
+            if len(body)>12_000_000:raise RuntimeError('oversized chart response')
+            payload=json.loads(body)
             raw=payload['chart']['result'][0]
             if not raw:raise RuntimeError('empty result')
             timestamps=raw.get('timestamp') or []
             q=(raw['indicators'].get('quote') or [{}])[0]
-            aj=(raw['indicators'].get('adjclose') or [{}])[0].get('adjclose') or q.get('close')
-            if len(timestamps)<300 or not aj or len(aj)!=len(timestamps):raise RuntimeError('insufficient history')
+            aj=(raw['indicators'].get('adjclose') or [{}])[0].get('adjclose')
+            adjustment_source='VENDOR_ADJUSTED_CLOSE'
+            if not aj and fx_pair:
+                aj=q.get('close')
+                adjustment_source='FX_RAW_CLOSE_NO_CORPORATE_ACTIONS'
+            if not aj or len(aj)!=len(timestamps):
+                raise RuntimeError('ADJUSTED_SERIES_MISSING_OR_MALFORMED')
+            if len(timestamps)<300:raise RuntimeError('insufficient history')
             zone=raw.get('meta',{}).get('exchangeTimezoneName','UTC')
             try:timezone=ZoneInfo(zone)
             except Exception:raise RuntimeError('unknown exchange timezone '+str(zone))
@@ -264,6 +305,10 @@ def _chart(symbol,end_day,refresh=True,require_current_us=False):
             quote_ccy,unit=normalize_currency(raw.get('meta',{}).get('currency',''))
             if unit!=1.0:
                 frame[['adj_open','adj_close','raw_close','dividend']]*=unit
+            frame['adjustment_source']=adjustment_source
+            frame['source_host']=host
+            frame['source_sha256']=hashlib.sha256(body).hexdigest()
+            frame['observed_at_utc']=dt.datetime.now(dt.timezone.utc).isoformat()
             frame['listing_exchange_vendor']=str(raw.get('meta',{}).get('exchangeName') or 'UNKNOWN')
             frame['quote_currency']=quote_ccy
             frame['quote_unit_scale']=unit
@@ -274,19 +319,34 @@ def _chart(symbol,end_day,refresh=True,require_current_us=False):
                       for day in frame.index]
             frame=frame.loc[complete]
             frame=frame.loc[:pd.Timestamp(end_day)].dropna(subset=['adj_open','adj_close'])
-            frame=frame[(frame.adj_open>0)&(frame.adj_close>0)]
+            frame=frame[(frame.adj_open>0)&(frame.adj_close>0)&(frame.raw_close>0)&np.isfinite(frame.adj_open)&np.isfinite(frame.adj_close)&np.isfinite(frame.raw_close)]
+            if fx_pair:frame=frame[frame.index.dayofweek<5]
             if len(frame)<300:raise RuntimeError('few clean adjusted closes')
             if expected is not None:
                 latest=frame.index[-1].date() if len(frame) else None
                 if latest!=expected:
+                    if fx_pair and fx_missed_weekdays(latest,expected)==1:
+                        recent_fx=frame
                     raise RuntimeError('STALE_REQUIRED_LOCAL_EOD '+symbol+
                                        ' expected='+str(expected)+' observed='+str(latest)+
                                        ' provider='+host)
-            frame.to_csv(path,compression='gzip',float_format='%.10g')
+            temporary=path.with_suffix('.tmp')
+            frame.to_csv(temporary,compression='gzip',float_format='%.10g')
+            os.replace(temporary,path)
             return frame
         except Exception as exc:
             last=exc
-            time.sleep((attempt+1)*0.8)
+            import random
+            retry_after=0
+            if getattr(exc,'code',None)==429:
+                try:retry_after=min(30,max(0,int(exc.headers.get('Retry-After','0'))))
+                except (TypeError,ValueError,AttributeError):pass
+            time.sleep(max(retry_after,min(12,2**attempt+random.random())))
+    if recent_fx is not None:
+        temporary=path.with_suffix('.tmp')
+        recent_fx.to_csv(temporary,compression='gzip',float_format='%.10g')
+        os.replace(temporary,path)
+        return recent_fx
     if existing is not None:
         old=existing.loc[:str(end_day)].sort_index()
         now_utc=dt.datetime.now(dt.timezone.utc)
@@ -294,7 +354,9 @@ def _chart(symbol,end_day,refresh=True,require_current_us=False):
         # Cached charts are acceptable only when they contain the required
         # closed US session. Never quietly substitute yesterday's US quote.
         if (not old.empty and (end_day-old.index[-1].date()).days<=4
-                and (expected is None or old.index[-1].date()==expected)):
+                and 'adjustment_source' in old.columns
+                and (expected is None or old.index[-1].date()==expected
+                     or (fx_pair and fx_missed_weekdays(old.index[-1].date(),expected)==1))):
             return old
     raise RuntimeError(f'Yahoo adjusted chart unavailable: {symbol}: {last}')
 
@@ -310,6 +372,38 @@ def get_adjusted(symbols,asof,max_workers=8,require_current_us=None):
             except Exception as exc:failed[symbol]=str(exc)
     return d,failed
 
+
+def refresh_ecb_cash_cache(asof):
+    """Refresh outside the frozen engine; never replace a validated cache on error."""
+    path=CACHE/'ecb_deposit_facility_rate.csv'
+    CACHE.mkdir(parents=True,exist_ok=True)
+    cutoff=pd.Timestamp(asof)
+    def validate(raw):
+        table=pd.read_csv(io.BytesIO(raw),usecols=['TIME_PERIOD','OBS_VALUE'])
+        dates=pd.to_datetime(table['TIME_PERIOD'],errors='coerce')
+        rates=pd.to_numeric(table['OBS_VALUE'],errors='coerce')
+        good=dates[(dates<=cutoff)&rates.notna()&np.isfinite(rates)]
+        if good.empty:raise ValueError('ECB DFR has no valid observation')
+        latest=good.max()
+        if (cutoff-latest).days>7:raise ValueError('ECB DFR stale: '+str(latest.date()))
+        return str(latest.date())
+    error=None
+    if os.environ.get('ATLAS_EXACT_OFFLINE')!='1':
+        for attempt in range(2):
+            try:
+                req=urllib.request.Request(v2.ECB_DFR_URL,headers={'User-Agent':'AtlasV4Paper/1.0','Accept':'text/csv'})
+                with urllib.request.urlopen(req,timeout=30) as f:raw=f.read(8_000_001)
+                if len(raw)>8_000_000:raise ValueError('ECB DFR response too large')
+                date=validate(raw)
+                tmp=path.with_suffix('.tmp');tmp.write_bytes(raw);os.replace(tmp,path)
+                return {'status':'REFRESHED','last_observation':date,'sha256':hashlib.sha256(raw).hexdigest()}
+            except Exception as exc:
+                error=str(exc);time.sleep(attempt+1)
+    if path.exists():
+        raw=path.read_bytes();date=validate(raw)
+        return {'status':'VERIFIED_CACHE','last_observation':date,
+                'sha256':hashlib.sha256(raw).hexdigest(),'refresh_error':error}
+    raise ValueError('ECB DFR unavailable without valid cache: '+str(error))
 
 def _fx(frames,code,index):
     if code=='EUR':return pd.Series(1.0,index=index)
@@ -527,7 +621,9 @@ def build_model(snapshot,asof,frames,*,shared_cash_rate=None):
     m.base_t8=overlays.t8_volatility_overlay(d,index)[0]
     bear=t9.bear_exposure_signals(d,usf,m.base_t8)
     m.bear_floor=bear['t9a_exposure_floor']
+    cash_rate_audit={'status':'SHARED_INPUT'}
     if shared_cash_rate is None:
+        cash_rate_audit=refresh_ecb_cash_cache(asof)
         m.cash_rate,ecb_source=v2.fetch_ecb_cash_rate(index,CACHE,refresh=False,haircut_bps=50)
         if ecb_source.startswith('cash yield disabled'):
             raise ValueError('Cannot replicate frozen EUR cash model without ECB: '+ecb_source)
@@ -587,6 +683,7 @@ def build_model(snapshot,asof,frames,*,shared_cash_rate=None):
         fx_source_dates[c]=str(observed_fx.index[-1].date())
         fx_rates_eur[c]=round(float(fx[c].loc[pd.Timestamp(asof)]),10)
     return m,{'roster_recorded_date':str(last),'roster_source_asof':str(observed),'roster_sha256':vintage_hash,
+                'cash_rate_audit':cash_rate_audit,
                 'fx_currency_source_sessions':fx_source_dates,
                 'fx_units_per_eur_asof':fx_rates_eur,
                 'fx_rate_source':'YAHOO_DAILY_FX_COMPLETED_EOD_NOT_BROKER_CONVERSION',
