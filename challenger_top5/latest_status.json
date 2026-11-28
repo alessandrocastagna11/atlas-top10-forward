@@ -2,7 +2,7 @@
   "archived_signal_input_sha256": "09045408ba4816cccf134b0811da5327463781a64eeca319725c5099df379a1d",
   "archived_signal_matches_current_input": false,
   "cash_eur": 99.42823997678904,
-  "checked_at_utc": "2026-11-28T18:15:48.314850+00:00",
+  "checked_at_utc": "2026-11-28T18:41:27.387055+00:00",
   "current_indicative_targets": [
     {
       "rank": 2.0,
@@ -48,8 +48,8 @@
   "limitation": "Prospective replay with shared as-recorded ACWI cap proxy, preopen proof and conservative all-exchange gate; first-cohort calibration proxy, no certified 2012-2025 parity.",
   "missed_decisions": [],
   "nav_all_holdings_fresh": true,
-  "nav_eur": 10273.869906610435,
-  "nav_net_liquidation_eur": 10158.765996333243,
+  "nav_eur": 10273.869906610436,
+  "nav_net_liquidation_eur": 10162.1186130295,
   "nav_valuation_session": "2026-11-27",
   "new_orders": 0,
   "original_nav_eur": 10052.7809,
