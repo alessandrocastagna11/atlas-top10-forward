@@ -689,7 +689,7 @@
       "net_liquidation_nav_eur": 10024.0395,
       "approximate_fills": true,
       "first_observed_at_utc": "2026-11-28T08:56:41.049549+00:00",
-      "last_observed_at_utc": "2026-11-28T08:56:41.049549+00:00",
+      "last_observed_at_utc": "2026-11-28T14:28:35.483326+00:00",
       "quote_evidence_sha256": "48c37b98059a63adc69d7e9e5a8d457b0d0e733abca0ee7eb9a0034386b0e0b7",
       "fx_source_sessions": {
         "AUD": "2026-11-27",

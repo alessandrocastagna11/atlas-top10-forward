@@ -6,7 +6,7 @@
   "next_full_rotation_nominal_date": "2026-12-14",
   "next_full_rotation_decision_date": "2026-12-14",
   "blocked_review_slots": {},
-  "recorded_at_utc": "2026-11-28T08:56:41.049549+00:00",
+  "recorded_at_utc": "2026-11-28T14:28:35.483326+00:00",
   "shared_input": {
     "bytes": 10020735,
     "decision_session": "2026-11-27",
@@ -40,7 +40,7 @@
     "hypothetical_liquidation_tax_method": "SIMULTANEOUS_COMPENSABLE_EQUITY_GAINS_LOSSES_26PCT",
     "pnl_mark_to_market_pct": 0.41678,
     "valuation_session": "2026-11-27",
-    "valuation_recorded_at_utc": "2026-11-28T08:56:41.049549+00:00",
+    "valuation_recorded_at_utc": "2026-11-28T14:28:35.483326+00:00",
     "valuation_method": "LAST_CONFIRMED_DAILY_CLOSE_WITH_STALE_FLAG",
     "stale_quote_tickers": [],
     "positions_count": 5,
