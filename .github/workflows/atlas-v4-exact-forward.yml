@@ -128,6 +128,13 @@ jobs:
           if status.get('shared_input_status')!='PUBLISHED_LOSSLESS' or not status.get('shared_input',{}).get('sha256'):
               print('::error::Common snapshot unavailable: '+str(status.get('shared_input_error')))
               raise SystemExit(1)
+          local=status.get('local_eod_quote_audit') or {}
+          if local.get('status') not in ('COMPLETE','PARTIAL_CALENDAR_COVERAGE') or local.get('stale_or_missing'):
+              print('::error::Local exchange EOD freshness audit failed: '+str(local.get('stale_or_missing')))
+              raise SystemExit(1)
+          if local.get('calendar_unverified'):
+              print('::warning::Exact calendar not available: '+str(local['calendar_unverified']))
+          print('LOCAL EOD AUDIT',local['status'],len(local.get('expected_session_by_symbol',{})))
           print('COMMON INPUT SHA256',status['shared_input']['sha256'])
           print('V4 ORIGINAL SIGNAL HEALTHY',status.get('decision_session'),
                 status.get('data_universe'),
