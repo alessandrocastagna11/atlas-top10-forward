@@ -150,9 +150,10 @@ class TestOriginalV23(unittest.TestCase):
             'indicators':{'adjclose':[{'adjclose':[126.79,126.55,126.0]}],
                           'quote':[{'close':[126.79,126.55,126.0]}]}
         }]}}
+        original_chart=pac.yahoo_chart_rows
         with tempfile.TemporaryDirectory() as temp:
             with mock.patch.object(pac.v23,'CACHE',Path(temp)), \
-                 mock.patch.object(pac.v23,'yahoo_daily',return_value=rows), \
+                 mock.patch.object(pac,'yahoo_chart_rows',side_effect=lambda c,t,n,h,s: {r['date']:r['close'] for r in rows} if h=='query1' else original_chart(c,t,n,h,s)), \
                  mock.patch.object(pac.v23,'fetch_bytes',return_value=json.dumps(bars).encode('utf-8')):
                 output,source=pac.yahoo_daily_with_secondary_endpoint(CFG,'EUNL.DE',now)
                 self.assertEqual(source,'YAHOO_QUERY2_OBSERVED_CLOSE')
@@ -302,5 +303,39 @@ class TestOriginalV23(unittest.TestCase):
         self.assertEqual(CFG['min_hold_days_before_sell'],0)
         self.assertIsNone(CFG['max_total_orders_per_month'])
         self.assertTrue(CFG['no_broker_execution'])
+
+
+    def test_partial_provider_does_not_erase_cache_or_mislabel_freshness(self):
+        now=dt.datetime(2026,11,21,10,0,tzinfo=dt.timezone.utc)
+        with tempfile.TemporaryDirectory() as tmp:
+            cache=Path(tmp)/'yahoo_EUNL_DE.csv'
+            cache.write_text('date,close\n2026-11-18,100\n2026-11-19,101\n2026-11-20,102\n')
+            with mock.patch.object(pac.v23,'CACHE',Path(tmp)), \\
+                 mock.patch.object(pac,'yahoo_chart_rows',return_value={'2026-11-19':101}):
+                out,source=pac.yahoo_daily_with_secondary_endpoint(CFG,'EUNL.DE',now)
+                self.assertEqual(len(out),3)
+                self.assertEqual(out[-1]['date'],'2026-11-20')
+                self.assertEqual(source,'YAHOO_CACHE_NEWER_THAN_PROVIDER')
+            with mock.patch.object(pac.v23,'CACHE',Path(tmp)), \\
+                 mock.patch.object(pac,'yahoo_chart_rows',side_effect=TimeoutError('offline')):
+                out,source=pac.yahoo_daily_with_secondary_endpoint(CFG,'EUNL.DE',now)
+                self.assertEqual(source,'YAHOO_CACHE_ONLY')
+                self.assertEqual(len(out),3)
+
+    def test_failed_feed_writes_fresh_blocked_audit_and_fails_run(self):
+        now=dt.datetime(2026,11,21,10,0,tzinfo=dt.timezone.utc)
+        with tempfile.TemporaryDirectory() as tmp:
+            d=Path(tmp);state=d/'state.json';report=d/'status.json';audit=d/'audit.json'
+            state.write_text(json.dumps(pac.seed(CFG)))
+            with mock.patch.object(pac,'STATE',state),mock.patch.object(pac,'REPORT',report), \\
+                 mock.patch.object(pac,'AUDIT',audit), \\
+                 mock.patch.object(pac,'historical_feeds',side_effect=pac.InsufficientData('TEST_NO_QUOTES')):
+                self.assertEqual(pac.main(now),2)
+            a=json.loads(audit.read_text());r=json.loads(report.read_text())
+            self.assertEqual(a['checked_at_utc'],r['checked_at_utc'])
+            self.assertEqual(a['source_quality'],r['source_quality'])
+            self.assertEqual(r['pipeline_health'],'BLOCKED')
+            self.assertIsNone(a['market_session'])
+            self.assertIn('TEST_NO_QUOTES',a['status'])
 
 if __name__=='__main__':unittest.main()

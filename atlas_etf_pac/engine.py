@@ -13,6 +13,7 @@ from __future__ import annotations
 import copy,csv,datetime as dt,hashlib,json,math,os,sys,urllib.parse,zipfile
 from pathlib import Path
 from zoneinfo import ZoneInfo
+from concurrent.futures import ThreadPoolExecutor
 import exchange_calendars as xcals
 import pandas as pd
 
@@ -105,56 +106,80 @@ def seed(cfg):
 
 
 
-def yahoo_daily_with_secondary_endpoint(cfg,ticker,now):
-    """Retry another Yahoo chart host using observed EUR adjusted closes only."""
-    rows=v23.yahoo_daily(ticker,cfg['history_start'],cfg)
-    rows=sorted([dict(r) for r in rows],key=lambda x:x['date'])
-    cutoff=completed_cutoff(now,ticker).isoformat()
-    cal=listing_calendar(ticker)
-    rows=[r for r in rows if r['date']<=cutoff and cal.is_session(pd.Timestamp(r['date']))]
-    if not rows or elapsed_market_sessions(rows[-1]['date'],cutoff,ticker)==0:
-        return rows,'YAHOO_QUERY1'
-    last=rows[-1]['date']
-    start=dt.datetime.combine(day(last)-dt.timedelta(days=10),dt.time.min,tzinfo=dt.timezone.utc)
+def yahoo_chart_rows(cfg,ticker,now,host,start_date):
+    """Fetch independently of the frozen writer; cache is never overwritten by a provider."""
+    start=dt.datetime.combine(day(start_date),dt.time.min,tzinfo=dt.timezone.utc)
     end=now.astimezone(dt.timezone.utc)+dt.timedelta(days=2)
-    url=('https://query2.finance.yahoo.com/v8/finance/chart/'
-         +urllib.parse.quote(ticker,safe='')
-         +'?period1='+str(int(start.timestamp()))+'&period2='+str(int(end.timestamp()))
+    url=('https://'+host+'.finance.yahoo.com/v8/finance/chart/'
+         +urllib.parse.quote(ticker,safe='')+'?period1='+str(int(start.timestamp()))
+         +'&period2='+str(int(end.timestamp()))
          +'&interval=1d&events=div%2Csplits&includeAdjustedClose=true')
-    try:
-        data=json.loads(v23.fetch_bytes(url,timeout=30).decode('utf-8'))['chart']['result'][0]
-        if data.get('meta',{}).get('currency')!='EUR':
-            raise ValueError('Unexpected Yahoo currency')
-        indicator=data['indicators']
-        adj=((indicator.get('adjclose') or [{}])[0].get('adjclose') or [])
-        close=indicator['quote'][0].get('close') or []
-        incoming={}
-        for i,t in enumerate(data.get('timestamp') or []):
-            x=adj[i] if i<len(adj) and adj[i] is not None else (close[i] if i<len(close) else None)
-            if x is None or not math.isfinite(float(x)) or float(x)<=0:continue
-            session=dt.datetime.fromtimestamp(t,tz=dt.timezone.utc).date().isoformat()
-            if session<=cutoff and cal.is_session(pd.Timestamp(session)):incoming[session]=float(x)
-        original={r['date']:float(r['close']) for r in rows}
-        overlap=sorted(set(incoming)&set(original))
-        if overlap:
-            d=overlap[-1]
-            if abs(incoming[d]/original[d]-1)>0.005:
-                raise ValueError('Inconsistent adjusted close between Yahoo endpoints')
-        added={k:v for k,v in incoming.items() if k>last}
-        if not added:
-            return rows,'YAHOO_BOTH_ENDPOINTS_NO_NEW_COMPLETED_CLOSE'
-        merged=[{'date':k,'close':v} for k,v in sorted({**original,**added}.items())]
-        cache=v23.CACHE/('yahoo_'+v23.safe_ticker_name(ticker)+'.csv')
-        tmp=cache.with_name(cache.name+'.tmp')
-        with tmp.open('w',encoding='utf-8',newline='') as stream:
-            writer=csv.DictWriter(stream,fieldnames=['date','close'])
-            writer.writeheader();writer.writerows(merged)
-        tmp.replace(cache)
-        return merged,'YAHOO_QUERY2_OBSERVED_CLOSE'
-    except (OSError,ValueError,KeyError,IndexError,TypeError,RuntimeError) as exc:
-        print('WARNING: Secondary Yahoo unavailable for',ticker,str(exc)[:180])
-        return rows,'YAHOO_QUERY1_SECONDARY_UNAVAILABLE'
+    data=json.loads(v23.fetch_bytes(url,timeout=30).decode('utf-8'))['chart']['result'][0]
+    if data.get('meta',{}).get('currency')!='EUR':
+        raise ValueError('Unexpected Yahoo currency')
+    cutoff=completed_cutoff(now,ticker).isoformat();cal=listing_calendar(ticker)
+    indicator=data['indicators']
+    adj=((indicator.get('adjclose') or [{}])[0].get('adjclose') or [])
+    close=indicator['quote'][0].get('close') or []
+    rows={}
+    for i,ts in enumerate(data.get('timestamp') or []):
+        x=adj[i] if i<len(adj) and adj[i] is not None else (close[i] if i<len(close) else None)
+        if x is None or not math.isfinite(float(x)) or float(x)<=0:continue
+        d=dt.datetime.fromtimestamp(ts,tz=dt.timezone.utc).date().isoformat()
+        if cfg['history_start']<=d<=cutoff and cal.is_session(pd.Timestamp(d)):rows[d]=float(x)
+    if not rows:raise ValueError('Yahoo returned no completed EUR session')
+    return rows
 
+
+def yahoo_daily_with_secondary_endpoint(cfg,ticker,now):
+    """Use verified exchange sessions, retain history on incomplete downloads.
+    A full adjusted-history refresh is allowed; partial data must match overlapping prices.
+    Never label cached quotes as an online observation or create missing prices.
+    """
+    cache=v23.CACHE/('yahoo_'+v23.safe_ticker_name(ticker)+'.csv')
+    cutoff=completed_cutoff(now,ticker).isoformat();cal=listing_calendar(ticker)
+    saved={}
+    if cache.exists():
+        with cache.open(encoding='utf-8',newline='') as f:
+            for r in csv.DictReader(f):
+                d=r['date'];x=float(r['close'])
+                if cfg['history_start']<=d<=cutoff and cal.is_session(pd.Timestamp(d)) and math.isfinite(x) and x>0:
+                    saved[d]=x
+    rows=dict(saved);source='YAHOO_CACHE_ONLY';errors=[]
+    for host in ('query1','query2'):
+        try:
+            # First request full history. Secondary request also uses full history
+            # after an empty cache; otherwise an overlapping recent window suffices.
+            start=cfg['history_start'] if host=='query1' or not rows else (day(max(rows))-dt.timedelta(days=14)).isoformat()
+            incoming=yahoo_chart_rows(cfg,ticker,now,host,start)
+            overlap=set(rows)&set(incoming)
+            if rows and not set(rows).issubset(incoming):
+                if not overlap or any(abs(incoming[d]/rows[d]-1)>0.005 for d in overlap):
+                    raise ValueError('Partial history incompatible with cached adjusted prices')
+                # Preserve accepted historical rows exactly, append actual new observations.
+                merged={**incoming,**rows}
+            else:
+                merged=dict(incoming)
+            if rows and max(merged)<max(rows):raise ValueError('History regression')
+            old_last=max(rows) if rows else None
+            rows=merged
+            if max(rows) in incoming:
+                source='YAHOO_QUERY1' if host=='query1' else 'YAHOO_QUERY2_OBSERVED_CLOSE'
+            elif old_last is not None:
+                source='YAHOO_CACHE_NEWER_THAN_PROVIDER'
+            if max(rows)==cutoff:break
+        except Exception as exc:
+            errors.append(host+': '+type(exc).__name__+': '+str(exc)[:140])
+    if not rows:raise InsufficientData('NO_VERIFIED_YAHOO_HISTORY_'+ticker+' '+('; '.join(errors))[:180])
+    if errors:print('WARNING: Yahoo source',ticker,'; '.join(errors))
+    output=[{'date':k,'close':v} for k,v in sorted(rows.items())]
+    cache.parent.mkdir(parents=True,exist_ok=True)
+    tmp=cache.with_name(cache.name+'.tmp')
+    with tmp.open('w',encoding='utf-8',newline='') as f:
+        writer=csv.DictWriter(f,fieldnames=['date','close'])
+        writer.writeheader();writer.writerows(output)
+    tmp.replace(cache)
+    return output,source
 
 
 def refresh_macro_independently(now):
@@ -177,6 +202,19 @@ def refresh_macro_independently(now):
         'rf_annualized':v23.french_daily_rf_monthly,
         'six':v23.french_six_monthly,
     }
+    # Retry each source independently and concurrently; no invented monthly values.
+    def download(fetcher):
+        error=None
+        for attempt in range(2):
+            try:
+                payload=fetcher()
+                if not isinstance(payload,dict) or not payload:raise ValueError('Provider returned empty series')
+                return payload,attempt+1,None
+            except Exception as exc:error=exc
+        return None,2,error
+    with ThreadPoolExecutor(max_workers=len(provider_methods)) as pool:
+        futures={k:pool.submit(download,f) for k,f in provider_methods.items()}
+        downloads={k:f.result() for k,f in futures.items()}
     for name,fetcher in provider_methods.items():
         previous=cached.get(name,{})
         if not isinstance(previous,dict):previous={}
@@ -184,9 +222,8 @@ def refresh_macro_independently(now):
                 len(k)==7 and k[4]=='-' and k<=allowed}
         online=False;error=None
         try:
-            payload=fetcher()
-            if not isinstance(payload,dict) or not payload:
-                raise ValueError('Provider returned empty series')
+            payload,attempts,download_error=downloads[name]
+            if download_error is not None:raise download_error
             clean={}
             for key,value in payload.items():
                 if not (isinstance(key,str) and len(key)==7 and key[4]=='-' and
@@ -213,7 +250,7 @@ def refresh_macro_independently(now):
             print('WARNING: macro provider',name,'unavailable:',error)
         result[name]=usable
         last=max(usable) if usable else None
-        refresh[name]={'last_month':last,'online_checked':online,
+        refresh[name]={'last_month':last,'online_checked':online,'attempts':downloads[name][1],
                        'status':('ONLINE_LATEST_MONTH_AVAILABLE' if last==allowed else
                                  'ONLINE_UPSTREAM_BEHIND_REQUESTED_MONTH') if online else
                                  ('CACHED_PROVIDER_ERROR' if last else 'UNAVAILABLE'),
@@ -631,7 +668,7 @@ def main(now=None):
     cfg=read(CONFIG);st=read(STATE);validate(cfg,st)
     stamp_corrected=correct_cash_only_stamp(st,now)
     if stamp_corrected:save(STATE,st)
-    quality={};status='WAITING_COMPLETED_EOD_SESSION'
+    quality={};status='WAITING_COMPLETED_EOD_SESSION';feeds=None;sig=None;failed=False
     try:
         feeds=historical_feeds(cfg,now)
         quality={'accounting_adjustment':'CORRECT_CASH_ONLY_SECURITY_STAMP_PROXY' if stamp_corrected else None,
@@ -644,12 +681,18 @@ def main(now=None):
                  'bond_quality':feeds['bond_problem'] or 'OK',
                  'macro_quality':feeds['macro_problem'] or 'SOURCE_BY_SOURCE_VERIFIED',
                  'macro_sources':feeds['macro_refresh']}
+        if st['last_processed_session'] and feeds['session']<st['last_processed_session']:
+            raise InsufficientData('OBSERVED_CLOSE_OLDER_THAN_LEDGER_'+feeds['session'])
         sig=signal(feeds,cfg)
         quality['stress_source']=sig['stress'].get('source')
         quality['missing_macro_inputs']=sig['stress'].get('missing_inputs',[])
         quality['observed_macro_month']=sig['stress'].get('observed_macro_month',sig['stress'].get('month'))
         quality['macro_previous_month']=sig['stress'].get('month')
         quality['defensive_source']=sig['defensive'].get('source')
+        quality['macro_quality']=('MACRO_PROXY_STALE' if quality['missing_macro_inputs']
+             or str(quality['stress_source']).startswith('CARRIED_') else
+             'MACRO_CURRENT_MONTH_CACHED' if any(not x['online_checked'] for x in feeds['macro_refresh'].values())
+             else 'MACRO_CURRENT_MONTH_OBSERVED')
         if feeds['session']>=(st['last_processed_session'] or cfg['activation_date']) and \
           feeds['session']!=st['last_processed_session']:
             st,executed=ledger_process(cfg,st,feeds['session'],feeds,sig,now)
@@ -661,21 +704,38 @@ def main(now=None):
             quality['blocker']='EQUITY_PROVIDER_STALE_BUT_LEDGER_PRESERVED'
         if sig['stress'].get('source','').startswith(('CARRIED_FROZEN_','CARRIED_OBSERVED_')):
             status+='__MACRO_PROXY_STALE'
-        save(AUDIT,{'checked_at_utc':now.astimezone(dt.timezone.utc).isoformat(),
-                    'market_session':feeds['session'], 'source_quality':quality,
-                    'first_quote_date':feeds['equity'][0]['date'],
-                    'quote_samples':len(feeds['equity']),
-                    'provider':'Yahoo adjusted close EUR; FRED and Kenneth French monthly',
-                    'original_live_sha256':ORIGINAL_LIVE_SHA})
     except (InsufficientData,ValueError,KeyError,OSError,RuntimeError) as exc:
+        failed=True
         status='PENDING_DATA: '+str(exc)[:160]
         quality['blocker']=str(exc)[:160]
+    # Audit every attempt, including exceptions; explicitly separate observed
+    # feed date from the immutable ledger date. Both reports share one run ID.
+    checked=now.astimezone(dt.timezone.utc).isoformat()
+    nav_session=st.get('last_processed_session')
+    observed=feeds['session'] if feeds else None
+    quality['audit_ledger_aligned']=bool(observed and observed==nav_session)
+    quality['expected_equity_session']=completed_cutoff(now,cfg['equity_ticker']).isoformat()
+    quality['ledger_session']=nav_session
+    quality['pipeline_health']=('BLOCKED' if failed or not quality['audit_ledger_aligned']
+          or quality.get('quote_lag_sessions_exchange_calendar',0)>0 else
+          'DEGRADED_MACRO' if quality.get('macro_quality')!='MACRO_CURRENT_MONTH_OBSERVED' else
+          'CURRENT')
+    audit={'checked_at_utc':checked,'market_session':observed,
+           'ledger_session':nav_session,'status':status,'source_quality':quality,
+           'first_quote_date':feeds['equity'][0]['date'] if feeds else None,
+           'quote_samples':len(feeds['equity']) if feeds else None,
+           'provider':'Yahoo adjusted close EUR; FRED and Kenneth French monthly',
+           'original_live_sha256':ORIGINAL_LIVE_SHA}
     report=build_report(cfg,st,status,now,quality)
+    # A same-session recheck can update macro without rewriting historical signals.
+    report['current_recomputed_signal']=sig
+    report['pipeline_health']=quality['pipeline_health']
+    save(AUDIT,audit)
     save(REPORT,report)
     print(json.dumps({'status':status,'model':report['model'],'nav_eur':report['nav_eur'],
                       'orders_total':report['orders_total'], 'last_nav_session':report['last_nav_session'],
                       'pending':bool(report['pending_orders']),'quality':report['source_quality']},ensure_ascii=False))
     # A green workflow must not certify a multi-session-old paper account.
-    return 2 if quality.get('quote_lag_sessions_exchange_calendar',0)>=2 else 0
+    return 2 if failed or not quality['audit_ledger_aligned'] or quality.get('quote_lag_sessions_exchange_calendar',0)>=2 else 0
 
 if __name__=='__main__':raise SystemExit(main())
