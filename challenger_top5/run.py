@@ -77,6 +77,12 @@ def load_model():
     asof=dt.date.fromisoformat(source_status['decision_session'])
     if (dt.datetime.now(UTC).date()-asof).days>4:
         raise ValueError('Confidence70 source too stale')
+    for key in ('local_eod_quote_audit','fx_freshness_audit'):
+        item=source_status.get(key) or {}
+        if item.get('status')=='BLOCKED' or item.get('stale_or_missing') or item.get('blocked'):
+            raise ValueError('Source data freshness failed: '+key)
+    multi=source_status.get('multisource_audit') or {}
+    if multi and multi.get('decision_session')!=str(asof):raise ValueError('Source multisource audit session mismatch')
     source_meta=source_status.get('source',{})
     if source_status.get('shared_input_status')!='PUBLISHED_LOSSLESS':
         raise ValueError('No verified common input snapshot from Confidence70')
@@ -266,6 +272,7 @@ def main():
     try:
         m,meta,cfg,asof,original=load_model()
         status.update({'decision_session':str(asof.date()),'source':meta,'universe_same_hash':True,'shared_input_sha256':meta['shared_input']['sha256'],'shared_input_verified':True,'same_price_dates_and_fx':True,'universe_kind':meta['universe_kind'],'original_nav_eur':original.get('nav_eur')})
+        status['source_data_audit']={k:original.get(k) for k in ('local_eod_quote_audit','fx_freshness_audit','cash_rate_audit','multisource_audit','fx_recovery_audit')}
         # Do not revalue a live US holding with yesterday's carried close.
         # A successful source run or common SHA alone is not a freshness proof.
         # Non-US holdings use their exchange-specific session policy.
