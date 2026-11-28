@@ -1,0 +1,61 @@
+name: Atlas universe A-B research 2026-11-27
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/atlas-universe-ab-research.yml']
+permissions:
+  contents: write
+concurrency:
+  group: atlas-universe-ab-20261127
+  cancel-in-progress: false
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: research/universe-ab-20261127
+          path: research
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          ref: aad4eccca5b7989aad6b7c55305dc55a5e680691
+          path: hybrid
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: 28da2bc3196248a8b32c99d9d4f04ba9b2d71620
+          path: top5
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install original pinned requirements
+        run: pip install -r research/strict_shadow/v4_exact_source/requirements-live.txt
+      - name: Compare both universes (no ledger writes)
+        run: |
+          python research/strict_shadow/v4_exact_source/research_universe_ab.py --hybrid hybrid/hybrid_v66/run.py --top5 top5/challenger_top5/run.py
+      - name: Persist research diagnostics only
+        if: always()
+        working-directory: research
+        run: |
+          file=strict_shadow/v4_exact_source/research_universe_ab_result.json
+          test -f "$file" || exit 1
+          git config user.name "Atlas Research Bot"
+          git config user.email "atlas-research-bot@users.noreply.github.com"
+          git add -- "$file"
+          if ! git diff --cached --quiet; then
+            git commit -m "Universe A-B research result"
+            git push origin HEAD:research/universe-ab-20261127
+          fi
+          python - <<'PY'
+          import json,os
+          j=json.load(open('strict_shadow/v4_exact_source/research_universe_ab_result.json'))
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
+              f.write('## Universe A/B: '+j['status']+'\n')
+              f.write(str(j.get('reason',''))+'\n')
+              for k,v in j.get('engines',{}).items():
+                  f.write(k+': '+str(v['comparison'])+'\n')
+          PY
