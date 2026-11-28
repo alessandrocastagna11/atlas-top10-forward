@@ -80,6 +80,7 @@ def latest_vintages(asof, excluded_symbols=None):
     # already observed vintages; activate expanded ranking on Monday 30.
     expanded_effective=dt.date(2026,11,30)
     expanded_byday={}
+    expanded_seen=False
     for source in sorted(capdir.glob('*/source.json')):
         try:
             meta=json.loads(source.read_text(encoding='utf8'))
@@ -89,6 +90,11 @@ def latest_vintages(asof, excluded_symbols=None):
             if observed.date()!=recorded or recorded>asof:continue
             if not meta.get('sufficient_for_100_usa_200_nonusa',False):continue
             if meta.get('historical_pit_market_cap_verified') is not False:continue
+            is_expanded=(asof>=expanded_effective and recorded>=dt.date(2026,11,28)
+                         and meta.get('candidate_pool_status')=='EXPANDED_UP_TO_750_VERIFIED_CANDIDATES'
+                         and int(meta.get('candidate_pool_size',0))>=750
+                         and int(meta.get('crosswalk_non_usa',0))>=200)
+            if is_expanded:expanded_seen=True
             datafile=source.parent/'ranking.csv'
             df=pd.read_csv(datafile)
             if not {'market_cap_usd','symbol','sector','country','currency','market_cap_vendor_rank'}.issubset(df.columns):continue
@@ -102,10 +108,7 @@ def latest_vintages(asof, excluded_symbols=None):
             h=hashlib.sha256(datafile.read_bytes()).hexdigest()
             # Keep the first qualifying expanded observation per effective
             # date. Its capture date remains distinct from activation date.
-            if (asof>=expanded_effective and recorded>=dt.date(2026,11,28)
-                    and meta.get('candidate_pool_status')=='EXPANDED_UP_TO_750_VERIFIED_CANDIDATES'
-                    and int(meta.get('candidate_pool_size',0))>=750
-                    and int(meta.get('crosswalk_non_usa',0))>=200):
+            if is_expanded:
                 effective=max(recorded,expanded_effective)
                 if effective<=asof:
                     expanded_byday.setdefault(effective,(effective,recorded,h,u,g,cap_kind))
@@ -114,6 +117,8 @@ def latest_vintages(asof, excluded_symbols=None):
             if old is None or len(old)==5:
                 byday[recorded]=(recorded,recorded,h,u,g,cap_kind)
         except (KeyError,ValueError,TypeError,FileNotFoundError):continue
+    if expanded_seen and not expanded_byday:
+        raise ValueError('Expanded universe observed but no valid 100/200 cohort after exclusions; no narrow fallback')
     if expanded_byday:
         activation=min(expanded_byday)
         # A temporary narrow-pool acquisition must not undo the expanded
@@ -135,6 +140,45 @@ def latest_vintages(asof, excluded_symbols=None):
     if not groups:raise ValueError('No as-recorded contemporary universe snapshots')
     if (asof-groups[-1][1]).days>10:raise ValueError('Universe vintage stale >10 days')
     return groups
+
+
+def universe_transition_audit(vintages,asof):
+    """Report the actual selected roster, not just vendor pool counts."""
+    latest=vintages[-1]
+    def symbols(v,region):return {str(row['symbol']).upper() for row in v[region]}
+    u,g=symbols(latest,3),symbols(latest,4)
+    if len(u)!=100 or len(g)!=200 or u&g:
+        raise ValueError('Active universe must have 300 unique listing symbols')
+    effective=dt.date(2026,11,30)
+    before=[v for v in vintages if v[0]<effective]
+    baseline=before[-1] if before else None
+    result={'decision_session':str(asof),'activation_not_before':str(effective),
+            'active_roster_effective_date':str(latest[0]),'active_source_date':str(latest[1]),
+            'active_roster_sha256':latest[2],'active_usa':len(u),'active_nonusa':len(g),
+            'active_symbols':sorted(u|g),'historical_pit_certified':False,
+            'status':'LEGACY_PRE_CUTOVER' if asof<effective else 'EXPANDED_SOURCE_NOT_CONFIRMED'}
+    if baseline:
+        old_u,old_g=symbols(baseline,3),symbols(baseline,4)
+        result.update({'baseline_roster_effective_date':str(baseline[0]),
+            'baseline_roster_sha256':baseline[2],
+            'common_usa':len(u&old_u),'common_nonusa':len(g&old_g),
+            'entered':sorted((u|g)-(old_u|old_g)),'exited':sorted((old_u|old_g)-(u|g))})
+    # Resolve the selected source by hash; metadata distinguishes candidate
+    # coverage from the final cohort. No mutable latest file is trusted here.
+    for source in sorted((LIVE/'dataset'/'marketcap_observed'/'observations').glob('*/source.json')):
+        try:
+            path=source.parent/'ranking.csv'
+            if hashlib.sha256(path.read_bytes()).hexdigest()!=latest[2]:continue
+            meta=json.loads(source.read_text())
+            result.update({'capture_timestamp_utc':meta.get('observed_at_utc'),
+                'candidate_pool_size':meta.get('candidate_pool_size',500),
+                'matched_issuers':meta.get('crosswalk_total_verified'),
+                'nonusa_reserve_before_price_filters':meta.get('nonusa_ranked_replacement_buffer')})
+            if (latest[0]>=effective and meta.get('candidate_pool_status')=='EXPANDED_UP_TO_750_VERIFIED_CANDIDATES'):
+                result['status']='EXPANDED_ACTIVE'
+            break
+        except (OSError,ValueError,TypeError):continue
+    return result
 
 
 def _quote_unit_scale(symbol, vendor_currency):
