@@ -12,7 +12,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 from scipy import optimize
 from live_model import HERE,CACHE,LIVE,START_PAPER,ENGINE,INITIAL,SECTOR,latest_vintages,get_adjusted,build_model,evaluate_model,check_required_us_closes,requires_same_us_close
-from live_model import v1,v2,t9,inc,frozen,LIVE,check_required_local_closes,check_fx_freshness
+from live_model import v1,v2,t9,inc,frozen,LIVE,check_required_local_closes,check_fx_freshness,_cache_filename
 if str(LIVE) not in sys.path:sys.path.insert(0,str(LIVE))
 from paper import earliest_open_utc
 from market_sessions import venue
@@ -430,8 +430,20 @@ def main(now=None):
             other={ticker:reason for ticker,reason in failed.items()
                    if ticker not in removable}
             if other:
-                status['multisource_audit']=independent_data_audit(frames,active_local,fx_symbols,asof,
-                    status['local_eod_quote_audit']['expected_session_by_symbol'],now,missing=other)
+                # Stale historical cache may validate independent returns for
+                # research, but it never becomes the model's missing input.
+                diagnostic_frames=dict(frames)
+                expected_map=status['local_eod_quote_audit']['expected_session_by_symbol']
+                for symbol in sorted(other):
+                    if symbol in diagnostic_frames:continue
+                    target=expected_map.get(symbol,str(asof))
+                    try:
+                        history=pd.read_csv(CACHE/_cache_filename(symbol),parse_dates=['Date'],index_col='Date')
+                        history=history.loc[history.index<pd.Timestamp(target)].sort_index()
+                        if not history.empty:diagnostic_frames[symbol]=history
+                    except (OSError,ValueError,KeyError):pass
+                status['multisource_audit']=independent_data_audit(diagnostic_frames,active_local,fx_symbols,asof,
+                    expected_map,now,missing=other)
                 raise ValueError('Required market/FX data unavailable; no fake substitute: '
                                  +str(sorted(other.items())[:10]))
             if not removable-excluded_short_history:
