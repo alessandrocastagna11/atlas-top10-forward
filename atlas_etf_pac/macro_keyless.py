@@ -155,7 +155,7 @@ def breadth(etfs,decision,lag=1):
 
 def us_cutoff(now):
     if now.tzinfo is None:raise ValueError('timezone required')
-    cal=xcals.get_calendar('XNYS')
+    cal=xcals.get_calendar('XNYS',start='2000-01-01',end='2035-12-31')
     sess=cal.date_to_session(pd.Timestamp(now.astimezone(NY).date()),direction='previous')
     if now<cal.session_close(sess).to_pydatetime()+dt.timedelta(minutes=90):
         sess=cal.previous_session(sess)
@@ -193,7 +193,7 @@ def acquire(now):
         if prior:return t,*prior
         k,rows,meta=load_etf(t)
         # Discard any non-session timestamps, and never accept incomplete history as fresh.
-        cal=xcals.get_calendar('XNYS')
+        cal=xcals.get_calendar('XNYS',start='2000-01-01',end='2035-12-31')
         rows={d:v for d,v in rows.items() if cal.is_session(pd.Timestamp(d))}
         if rows:meta=dict(meta,first=min(rows),last=max(rows),count=len(rows))
         return k,*use_cache_or_new(k,rows,meta,now)
