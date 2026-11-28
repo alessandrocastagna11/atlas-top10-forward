@@ -237,4 +237,97 @@ def main():
       'xirr_pct':round(z['passive_same_ff_proxy']['xirr']*100,4),'final_eur':round(z['passive_same_ff_proxy']['final_liquidated_eur'],2)},
       'unknown_months':len(z['unknown_macro_months'])} for k,z in runs.items()}},indent=2))
 
-if __name__=='__main__':main()
+
+def audit_reentry_ath(output):
+    """Research only: native frozen engine and immutable real-ETF snapshot."""
+    import ast, copy, subprocess, types
+    engine_path, digest=check_reference()
+    src=engine_path.read_text(encoding='utf-8')
+    needle='if self.dd10[i]>=trough+c["satellite_rebound"] and self.dd5[i]>self.dd10[i]:p_sat="ENTRY"'
+    assert src.count(needle)==1
+    patched=src.replace(needle,'if (self.dd10[i]>=trough+c["satellite_rebound"] and self.dd5[i]>self.dd10[i]) or self.dd[i]>=-1e-12:p_sat="ENTRY"',1)
+    def mod(name,source,file):
+        v=types.ModuleType(name);v.__file__=str(file);sys.modules[name]=v
+        exec(compile(source,str(file),'exec'),v.__dict__)
+        return v
+    native=load_original_engine(engine_path)
+    fix=mod('atlas_v231_ath_native',patched,engine_path)
+    cfg=json.loads((EXTRACT/'config.json').read_text())
+    expected=json.loads((EXTRACT/'meta/expected_frozen_results.json').read_text())['expected']
+    pinned=json.loads((EXTRACT/'data/stress_scores_precomputed.json').read_text())
+    y,m=map(int,pinned['start'].split('-'));scores={}
+    for s in pinned['scores']:
+        scores[f'{y:04d}-{m:02d}']=int(s);m+=1
+        if m==13:m=1;y+=1
+    def run(v,c,data=None,bond=None,stress=None):
+        v.xirr=stable_xirr_factory(v)
+        stress_override(v,'carry',scores)
+        if data is not None:v.load_ff=lambda start,end:[dict(q) for q in data if start<=q['date']<=end]
+        if stress is not None:v.Simulator.stress_regime=lambda self,i:stress.regime(self.rows[i]['date'])
+        sim=v.Simulator(copy.deepcopy(c),output)
+        if bond is not None:sim.bond=[bond[q['date']] for q in sim.rows]
+        z,nav,flows=sim.run()
+        assert z['orders_total']==sum(z['order_breakdown'].values()) and all(q['nav_eur']>0 for q in nav)
+        result={k:z[k] for k in ('start_date','end_date','twr_cagr_net','max_drawdown','xirr','final_liquidated_eur','orders_total','orders_strategy','orders_pac','realized_taxes_eur')}
+        result.update(sessions=len(nav),sales=sum(q['side']=='SELL' for q in sim.events),
+                      core_exits=[q['date'] for q in sim.events if q['note']=='core exit'])
+        return result,z
+    hist=[]
+    for start in ('1926-07-01','1950-01-01','1980-01-01','2000-01-01','2016-01-04','2020-01-02'):
+        c=dict(cfg,start_date=start,end_date='2025-12-31')
+        a,z=run(native,c)
+        if start=='1926-07-01':
+            for k,want in expected.items():assert math.isclose(float(z[k]),float(want),rel_tol=1e-10,abs_tol=1e-6),(k,z[k],want)
+        b,_=run(fix,c);pair={'start':start,'base':a,'fix':b};hist.append(pair)
+        print('ATH_NATIVE_PAIR',json.dumps(pair,allow_nan=False),flush=True)
+    (output/'reentry_ath_native.json').write_text(json.dumps(hist,indent=2,allow_nan=False))
+    live_commit='58a747385159cd2b984912a36469e72b340037f6'
+    def gitfile(p):return subprocess.check_output(['git','show',live_commit+':atlas_etf_pac/'+p])
+    snapshot=output/'live_snapshot';directory=snapshot/'v23_original';directory.mkdir(parents=True,exist_ok=True)
+    live_path=directory/'atlas_v23_live.py';live_bytes=gitfile('v23_original/atlas_v23_live.py')
+    assert hashlib.sha256(live_bytes).hexdigest()=='703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e'
+    live_path.write_bytes(live_bytes);(directory/'pinned_reference.zip').write_bytes(gitfile('v23_original/pinned_reference.zip'))
+    s=live_bytes.decode('utf-8')
+    live_orig=mod('atlas_live_original_research',s,live_path)
+    n='if dd10[i] >= trough + float(cfg["satellite_rebound"]) and dd5[i] > dd10[i]:'
+    assert s.count(n)==1
+    live_fix=mod('atlas_live_ath_research',s.replace(n,'if (dd10[i] >= trough + float(cfg["satellite_rebound"]) and dd5[i] > dd10[i]) or dd[i] >= -1e-12:',1),live_path)
+    cfg_live=json.loads(gitfile('config.json'));macro=json.loads(gitfile('live_cache/macro_v23.json'))
+    tree=ast.parse(gitfile('engine.py').decode('utf-8'))
+    cls=next(n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=='CausalStress')
+    ns={'v23':live_orig,'ROOT':snapshot,'json':json,'zipfile':zipfile}
+    exec(compile(ast.Module(body=[cls],type_ignores=[]),'CausalStress_snapshot','exec'),ns)
+    stress=ns['CausalStress'](cfg_live,macro)
+    def prices(p):
+        a=[{'date':q['date'],'close':float(q['close'])} for q in csv.DictReader(io.StringIO(gitfile(p).decode('utf-8-sig')))]
+        assert all(q['close']>0 for q in a) and [q['date'] for q in a]==sorted(set(q['date'] for q in a))
+        return a
+    eq=prices('live_cache/yahoo_EUNL_DE.csv');bd=prices('live_cache/yahoo_CSBGE3_MI.csv')
+    end=min(eq[-1]['date'],bd[-1]['date'],'2026-11-27');eq=[q for q in eq if q['date']<=end]
+    assert eq[-1]['date']=='2026-11-27'
+    bond={};j=-1
+    for q in eq:
+        while j+1<len(bd) and bd[j+1]['date']<=q['date']:j+=1
+        assert j>=0
+        bond[q['date']]=bd[j]['close']
+    a=live_orig.replay_strategy(eq,cfg_live,stress);b=live_fix.replay_strategy(eq,cfg_live,stress)
+    signals={'last':end,'sessions':len(eq),'base':a.latest,'fix':b.latest,
+             'different_sessions':sum((x['core_in'],x['satellite_in'])!=(y['core_in'],y['satellite_in']) for x,y in zip(a.history,b.history))}
+    print('ATH_LIVE_SIGNAL',json.dumps(signals,allow_nan=False),flush=True)
+    data=[{'date':q['date'],'ret':q['close']/eq[i-1]['close']-1 if i else 0.,'rf':0.} for i,q in enumerate(eq)]
+    modern=[]
+    for start in ('2010-01-04','2016-01-04','2020-01-02','2022-01-03'):
+        c=dict(cfg,start_date=start,end_date=end)
+        a,_=run(native,c,data,bond,stress);b,_=run(fix,c,data,bond,stress)
+        pair={'start':start,'base':a,'fix':b};modern.append(pair)
+        print('ATH_REAL_ETF_PAIR',json.dumps(pair,allow_nan=False),flush=True)
+    report={'native_parity':True,'native_source_sha256':digest,'fix_source_sha256':hashlib.sha256(patched.encode()).hexdigest(),
+            'native':hist,'real_etf':modern,'live_signal':signals,'live_commit':live_commit,
+            'assumptions':'Native TWR before final liquidation tax; XIRR includes final tax. ETF adjusted close, zero interest on cash, causal previous-month macro with explicit carry; each financial window cold start. No paper writes.'}
+    (output/'reentry_ath_audit.json').write_text(json.dumps(report,indent=2,allow_nan=False))
+    print('ATH_VALIDATION_COMPLETE',flush=True)
+
+if __name__=='__main__':
+    main()
+    if '--no-online' in sys.argv and '--end' in sys.argv and sys.argv[sys.argv.index('--end')+1]=='2025-12-31' and '--out' in sys.argv:
+        audit_reentry_ath(Path(sys.argv[sys.argv.index('--out')+1]))
