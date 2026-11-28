@@ -22,6 +22,8 @@ class InverseFXTests(unittest.TestCase):
         self.assertEqual(result.quote_currency.iloc[-1],'USD')
         self.assertEqual(result.source_symbol.iloc[-1],'USDEUR=X')
         self.assertEqual(len(result),400)
+        cols=['adj_open','adj_close','raw_close']
+        pd.testing.assert_frame_equal(result.loc[self.primary.index,cols],self.primary[cols])
         self.assertAlmostEqual(self.inverse.raw_close.iloc[-1],1/1.15)
     def test_mismatch_rejected(self):
         broken=self.inverse.copy()
@@ -31,6 +33,9 @@ class InverseFXTests(unittest.TestCase):
     def test_stale_rejected(self):
         with self.assertRaisesRegex(ValueError,'stale'):
             validate_inverse('EURUSD=X',self.inverse.iloc[:-1],self.primary,self.expected)
+    def test_long_gap_rejected(self):
+        with self.assertRaisesRegex(ValueError,'three contiguous'):
+            validate_inverse('EURUSD=X',self.inverse,self.primary.iloc[:-5],self.expected)
     def test_no_equity_or_wrong_currency(self):
         self.assertIsNone(inverse_symbol('KO'))
         bad=self.inverse.copy();bad['quote_currency']='USD'
