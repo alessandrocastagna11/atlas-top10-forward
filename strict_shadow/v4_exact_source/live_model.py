@@ -157,6 +157,53 @@ def check_required_us_closes(frames, symbols, asof):
             'stale_or_missing_us':{},'status':'COMPLETE'}
 
 
+# Current-roster freshness is exchange-local, not simply SPY's date.
+LOCAL_CALENDARS={
+    'USA':'XNYS','.T':'XTKS','.HK':'XHKG','.KS':'XKRX','.KQ':'XKRX',
+    '.TW':'XTAI','.L':'XLON','.SW':'XSWX','.TO':'XTSE','.V':'XTSX',
+    '.AS':'XAMS','.PA':'XPAR','.BR':'XBRU','.DE':'XETR','.F':'XFRA',
+    '.AX':'XASX','.BO':'XBOM','.ST':'XSTO','.CO':'XCSE',
+    '.OL':'XOSL','.HE':'XHEL','.MI':'XMIL','.MC':'XMAD','.SI':'XSES',
+    '.SR':'XSAU','.SA':'BVMF',
+}
+
+def expected_local_close(symbol,end_day,observed_utc=None):
+    """Last scheduled and released local session on or before decision date.
+    NSE has no exact calendar in the pinned package; never certify its proxy.
+    """
+    import exchange_calendars as xcals
+    name,_=venue(symbol)
+    if name not in LOCAL_CALENDARS:return None
+    observed_utc=observed_utc or dt.datetime.now(dt.timezone.utc)
+    cal=xcals.get_calendar(LOCAL_CALENDARS[name])
+    session=cal.date_to_session(pd.Timestamp(end_day),direction='previous')
+    while not is_final_bar(symbol,session.date(),observed_utc):
+        session=cal.previous_session(session)
+    return session.date()
+
+def check_required_local_closes(frames,symbols,asof,observed_utc=None):
+    audit={'expected_session_by_symbol':{},'observed_session_by_symbol':{},
+           'stale_or_missing':{},'calendar_unverified':[]}
+    for symbol in sorted(set(symbols)):
+        expected=expected_local_close(symbol,asof,observed_utc)
+        frame=frames.get(symbol)
+        close=(pd.to_numeric(frame['raw_close'].loc[:pd.Timestamp(asof)],
+                             errors='coerce').dropna()
+               if frame is not None and not frame.empty and 'raw_close' in frame
+               else pd.Series(dtype=float))
+        close=close[close>0]
+        actual=close.index.max().date() if len(close) else None
+        audit['observed_session_by_symbol'][symbol]=str(actual) if actual else None
+        if expected is None:
+            audit['calendar_unverified'].append(symbol)
+            continue
+        audit['expected_session_by_symbol'][symbol]=str(expected)
+        if actual!=expected:
+            audit['stale_or_missing'][symbol]={'expected':str(expected),'observed':str(actual)}
+    audit['status']=('BLOCKED' if audit['stale_or_missing'] else
+                     'PARTIAL_CALENDAR_COVERAGE' if audit['calendar_unverified'] else 'COMPLETE')
+    return audit
+
 def _chart(symbol,end_day,refresh=True,require_current_us=False):
     import gzip
     CACHE.mkdir(parents=True,exist_ok=True)
@@ -167,6 +214,8 @@ def _chart(symbol,end_day,refresh=True,require_current_us=False):
             existing=pd.read_csv(path,parse_dates=['Date'],index_col='Date')
             if 'adj_close' not in existing.columns:existing=None
         except Exception: existing=None
+    # Keep the legacy keyword for callers, but it now requests local-session freshness.
+    expected=expected_local_close(symbol,end_day) if require_current_us else None
     if os.environ.get('ATLAS_EXACT_OFFLINE')=='1':
         if existing is None:raise RuntimeError('Missing offline adjusted chart: '+symbol)
         return existing.loc[:str(end_day)].sort_index()
@@ -215,6 +264,7 @@ def _chart(symbol,end_day,refresh=True,require_current_us=False):
             quote_ccy,unit=normalize_currency(raw.get('meta',{}).get('currency',''))
             if unit!=1.0:
                 frame[['adj_open','adj_close','raw_close','dividend']]*=unit
+            frame['listing_exchange_vendor']=str(raw.get('meta',{}).get('exchangeName') or 'UNKNOWN')
             frame['quote_currency']=quote_ccy
             frame['quote_unit_scale']=unit
             # Prevent an incomplete local stock/FX daily bar entering the
@@ -226,11 +276,11 @@ def _chart(symbol,end_day,refresh=True,require_current_us=False):
             frame=frame.loc[:pd.Timestamp(end_day)].dropna(subset=['adj_open','adj_close'])
             frame=frame[(frame.adj_open>0)&(frame.adj_close>0)]
             if len(frame)<300:raise RuntimeError('few clean adjusted closes')
-            if require_current_us and requires_same_us_close(symbol):
-                latest = str(frame.index[-1].date()) if len(frame) else 'MISSING'
-                if latest != str(end_day):
-                    raise RuntimeError('STALE_REQUIRED_US_EOD '+symbol+
-                                       ' expected='+str(end_day)+' observed='+latest+
+            if expected is not None:
+                latest=frame.index[-1].date() if len(frame) else None
+                if latest!=expected:
+                    raise RuntimeError('STALE_REQUIRED_LOCAL_EOD '+symbol+
+                                       ' expected='+str(expected)+' observed='+str(latest)+
                                        ' provider='+host)
             frame.to_csv(path,compression='gzip',float_format='%.10g')
             return frame
@@ -244,8 +294,7 @@ def _chart(symbol,end_day,refresh=True,require_current_us=False):
         # Cached charts are acceptable only when they contain the required
         # closed US session. Never quietly substitute yesterday's US quote.
         if (not old.empty and (end_day-old.index[-1].date()).days<=4
-                and (not require_current_us or not requires_same_us_close(symbol)
-                     or old.index[-1].date()==end_day)):
+                and (expected is None or old.index[-1].date()==expected)):
             return old
     raise RuntimeError(f'Yahoo adjusted chart unavailable: {symbol}: {last}')
 
