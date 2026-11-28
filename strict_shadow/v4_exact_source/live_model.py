@@ -370,6 +370,23 @@ def get_adjusted(symbols,asof,max_workers=8,require_current_us=None):
             symbol=jobs[future]
             try:d[symbol]=future.result()
             except Exception as exc:failed[symbol]=str(exc)
+    # Recover direct EUR crosses from the mathematically inverse instrument
+    # only if the historical direct cache independently validates the basis.
+    # This is still Yahoo, not an independent provider.
+    from fx_recovery import inverse_symbol,validate_inverse
+    for symbol in sorted(set(failed)&strict):
+        inverse=inverse_symbol(symbol)
+        if not inverse:continue
+        try:
+            path=CACHE/_cache_filename(symbol)
+            if not path.exists():continue
+            primary=pd.read_csv(path,parse_dates=['Date'],index_col='Date')
+            expected=expected_fx_close(asof)
+            candidate=_chart(inverse,asof,True,True)
+            d[symbol]=validate_inverse(symbol,candidate,primary,expected)
+            failed.pop(symbol,None)
+        except Exception as exc:
+            failed[symbol]+='; inverse recovery rejected: '+str(exc)[:180]
     return d,failed
 
 
