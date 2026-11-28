@@ -82,8 +82,19 @@ def derive(t,exchange,country):
 
 def universe_snapshot(today):
     """iShares ETF holdings are a dated cross-section, NOT market cap or USA PIT universe."""
-    req=urllib.request.Request(ISHARES,headers={'User-Agent':'Mozilla/5.0','Accept':'text/csv'})
-    with urllib.request.urlopen(req,timeout=25) as reply:raw=reply.read(5_000_000)
+    raw=None
+    for attempt in range(3):
+        try:
+            req=urllib.request.Request(ISHARES,headers={'User-Agent':'Mozilla/5.0','Accept':'text/csv','Cache-Control':'no-cache','Pragma':'no-cache'})
+            with urllib.request.urlopen(req,timeout=25) as reply:payload=reply.read(5_000_001)
+            if len(payload)>5_000_000 or b'Ticker,Name,Sector,Asset Class' not in payload:
+                raise DataUnavailable('Invalid iShares CSV payload')
+            raw=payload
+            break
+        except (OSError,ValueError) as exc:
+            if attempt==2:raise DataUnavailable('iShares unavailable after retries: '+str(exc)) from exc
+            time.sleep(2**attempt)
+    if raw is None:raise DataUnavailable('iShares source missing')
     text=raw.decode('utf-8-sig',errors='replace')
     lines=text.splitlines()
     h=next((i for i,line in enumerate(lines) if line.startswith('Ticker,Name,Sector,Asset Class')),-1)
@@ -231,7 +242,16 @@ def update_history(provider,symbol,kind,today,base_date,overlap_days=10):
             row['last_verified_at_utc']=prev.get('last_verified_at_utc','')
             old[row['date']]=row;upgraded+=1
     ordered=[old[d] for d in sorted(old)]
-    if inserted or revised or upgraded or provisional_purged or normalized_legacy or not file.exists():
+    # Revalidate the latest unchanged observation without rewriting historical
+    # timestamps on every run. Do not mark an absent vendor bar as rechecked.
+    verified_latest=False
+    if ordered:
+        latest=ordered[-1]
+        latest_day=dt.date.fromisoformat(latest['date'])
+        if latest_day in candles and is_final_bar(symbol,latest_day,observed_utc):
+            latest['last_verified_at_utc']=observed_utc.isoformat()
+            verified_latest=True
+    if inserted or revised or upgraded or provisional_purged or normalized_legacy or verified_latest or not file.exists():
         csv_write(file,ordered,FIELDS)
     if not ordered:raise DataUnavailable('provider returned no valid rows: '+symbol)
     return {'symbol':symbol,'kind':kind,'status':'OK','inserted':inserted,'revised':revised,'volume_rows_updated':upgraded,
@@ -241,6 +261,7 @@ def update_history(provider,symbol,kind,today,base_date,overlap_days=10):
             'prices_in_declared_currency_units':True,
             'market_session_rule':venue(symbol)[0],
             'records':len(ordered),'first':ordered[0]['date'],'last':ordered[-1]['date'],
+            'latest_bar_reverified_this_run':verified_latest,
             'latest_file_sha256':sha(file.read_bytes())}
 
 def choose_symbols(historical,universe,limit,status):
