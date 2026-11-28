@@ -5,7 +5,7 @@ Separate from official live cohort until mapping and PIT coverage are proven.
 Source is a third-party contemporaneous public ranking, not filing-grade shares.
 """
 from __future__ import annotations
-import csv,datetime as dt,hashlib,html,io,json,re,urllib.request,unicodedata
+import csv,datetime as dt,hashlib,html,io,json,re,time,urllib.request,unicodedata
 from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
@@ -110,11 +110,16 @@ def fetch_pages(count=25,fetch=None):
     return sorted(ranks.values(),key=lambda x:x["vendor_rank"]),page_hashes,retrieved
 
 def _fetch(url):
-    r=urllib.request.Request(url,headers={"User-Agent":UA,"Accept":"text/html"})
-    with urllib.request.urlopen(r,timeout=22) as response:
-        data=response.read(3_000_000)
-        if response.status!=200:raise ValueError("non-200 market-cap source")
-        return data
+    for attempt in range(3):
+        try:
+            r=urllib.request.Request(url,headers={"User-Agent":UA,"Accept":"text/html","Cache-Control":"no-cache"})
+            with urllib.request.urlopen(r,timeout=22) as response:
+                data=response.read(3_000_001)
+                if response.status!=200 or len(data)>3_000_000:raise ValueError("invalid market-cap source")
+                return data
+        except (OSError,ValueError):
+            if attempt==2:raise
+            time.sleep(2**attempt)
 
 def _country(s):
     t=unicodedata.normalize("NFKD",str(s)).encode("ascii","ignore").decode("ascii")
@@ -223,8 +228,31 @@ def run(now=None,fetch=None):
     day=now.date().isoformat()
     latest=ROOT/"universe"/"global500_latest.csv"
     if not latest.exists():raise ValueError("ACWI crosswalk missing")
+    expanded=ROOT/"universe"/"global750_cap_candidates_latest.csv"
+    manifest=ROOT/"universe"/"global750_cap_candidates_source.json"
+    pool_status="LEGACY_500_CANDIDATES"
+    pool_error=None
+    if expanded.exists() and manifest.exists():
+        try:
+            meta=json.loads(manifest.read_text())
+            recorded=dt.date.fromisoformat(meta["recorded_on"])
+            source_day=dt.datetime.strptime(meta["source_as_of"],"%b %d, %Y").date()
+            if not (source_day<=recorded<=now.date() and (now.date()-source_day).days<=14):
+                raise ValueError("stale/future expanded candidate pool")
+            if hashlib.sha256(expanded.read_bytes()).hexdigest()!=meta["candidate_file_sha256"]:
+                raise ValueError("expanded candidate pool hash mismatch")
+            latest=expanded
+            pool_status="EXPANDED_UP_TO_750_VERIFIED_CANDIDATES"
+        except (OSError,ValueError,KeyError) as exc:pool_error=str(exc)
     with latest.open(encoding="utf-8",newline="") as f:etf=list(csv.DictReader(f))
-    vendor,page_hashes,seen=fetch_pages(fetch=fetch)
+    ranking_depth=35 if latest==expanded else 25
+    depth_error=None
+    try:vendor,page_hashes,seen=fetch_pages(count=ranking_depth,fetch=fetch)
+    except Exception as exc:
+        if ranking_depth==25:raise
+        depth_error=str(exc)
+        ranking_depth=25
+        vendor,page_hashes,seen=fetch_pages(count=ranking_depth,fetch=fetch)
     matches=crosswalk(vendor,etf)
     usa=sum(x["country"]=="United States" for x in matches)
     row=sum(x["country"]!="United States" for x in matches)
@@ -242,6 +270,9 @@ def run(now=None,fetch=None):
     coverage={"observed_at_utc":seen.isoformat(),"capture_day":day,
               "vendor":URL,"type":CAPTURED_TYPE,
               "vendor_rankings_fetched":len(vendor),
+              "candidate_pool_status":pool_status,"candidate_pool_size":len(etf),
+              "candidate_pool_error":pool_error,"vendor_requested_pages":ranking_depth,
+              "vendor_extended_depth_error":depth_error,
               "crosswalk_exact_ticker":len(matches), # legacy field; includes all match methods
               "crosswalk_total_verified":len(matches),
               "crosswalk_match_methods":dict(sorted(methods.items())),
