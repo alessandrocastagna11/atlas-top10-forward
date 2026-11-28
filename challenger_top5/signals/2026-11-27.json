@@ -1,0 +1,79 @@
+{
+  "candidate_exchange_opens": {
+    "CB": {
+      "calendar": "XNYS",
+      "calendar_verified": true,
+      "date": "2026-11-30",
+      "utc": "2026-11-30T14:30:00+00:00"
+    },
+    "KO": {
+      "calendar": "XNYS",
+      "calendar_verified": true,
+      "date": "2026-11-30",
+      "utc": "2026-11-30T14:30:00+00:00"
+    },
+    "MRK": {
+      "calendar": "XNYS",
+      "calendar_verified": true,
+      "date": "2026-11-30",
+      "utc": "2026-11-30T14:30:00+00:00"
+    },
+    "PANW": {
+      "calendar": "XNYS",
+      "calendar_verified": true,
+      "date": "2026-11-30",
+      "utc": "2026-11-30T14:30:00+00:00"
+    },
+    "TXN": {
+      "calendar": "XNYS",
+      "calendar_verified": true,
+      "date": "2026-11-30",
+      "utc": "2026-11-30T14:30:00+00:00"
+    }
+  },
+  "decision_session": "2026-11-27",
+  "engine": "ATLAS_TOP5_ALWAYS_RANK_MOM10_V1",
+  "execution_session": "2026-11-30",
+  "first_recorded_at_utc": "2026-11-28T04:16:39.128440+00:00",
+  "preopen_eligible": true,
+  "roster_sha256": "569eb5f4044031c4e32304cbf280c4768d32096cf184f50b45ff5c4813ae82b5",
+  "shared_input_sha256": "09045408ba4816cccf134b0811da5327463781a64eeca319725c5099df379a1d",
+  "source_commit": "97541033bd8867d0a7ced25837b080b864a2d6e2",
+  "targets": [
+    {
+      "rank": 2.0,
+      "score": 2.11156086,
+      "sector": "XLK",
+      "target_weight": 0.2,
+      "ticker": "PANW"
+    },
+    {
+      "rank": 10.0,
+      "score": 1.29230451,
+      "sector": "XLK",
+      "target_weight": 0.2,
+      "ticker": "TXN"
+    },
+    {
+      "rank": 21.0,
+      "score": 0.96620474,
+      "sector": "XLP",
+      "target_weight": 0.2,
+      "ticker": "KO"
+    },
+    {
+      "rank": 22.0,
+      "score": 0.9307798,
+      "sector": "XLF",
+      "target_weight": 0.2,
+      "ticker": "CB"
+    },
+    {
+      "rank": 57.0,
+      "score": 0.46466165,
+      "sector": "XLV",
+      "target_weight": 0.19,
+      "ticker": "MRK"
+    }
+  ]
+}
