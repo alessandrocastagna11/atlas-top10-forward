@@ -369,7 +369,7 @@
   "local_exchange_session_may_be_prior_date": true,
   "not_executable_intraday_quotes": true,
   "price_model": "RAW_UNADJUSTED_EUR_LAST_COMPLETED_PER_EXCHANGE_CLOSE",
-  "recorded_at_utc": "2026-11-28T04:15:11.927902+00:00",
+  "recorded_at_utc": "2026-11-28T04:45:17.229480+00:00",
   "ticker_price_dates": {
     "AAPL": "2026-11-27",
     "ABBV": "2026-11-27",
