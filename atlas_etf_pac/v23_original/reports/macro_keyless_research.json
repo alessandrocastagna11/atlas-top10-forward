@@ -1,0 +1,1687 @@
+{
+  "source_sha256": "aef2809b8a3bfe01e3b0fa6b3f0d564b8ad0db90340a04a7480d7266d9141c7a",
+  "snapshot": "58a747385159cd2b984912a36469e72b340037f6",
+  "last": "2026-11-27",
+  "sessions": 4295,
+  "source_audit": {
+    "DAAA": {
+      "errors": [
+        "ALFRED_CSV:TimeoutError",
+        "FRED_GRAPH_CSV:TimeoutError",
+        "FRED_TABLE:TimeoutError"
+      ]
+    },
+    "DBAA": {
+      "errors": [
+        "ALFRED_CSV:TimeoutError",
+        "FRED_GRAPH_CSV:TimeoutError",
+        "FRED_TABLE:TimeoutError"
+      ]
+    },
+    "DGS10": {
+      "errors": [
+        "ALFRED_CSV:TimeoutError",
+        "FRED_GRAPH_CSV:TimeoutError",
+        "FRED_TABLE:TimeoutError"
+      ]
+    },
+    "DGS1MO": {
+      "errors": [
+        "ALFRED_CSV:TimeoutError",
+        "FRED_GRAPH_CSV:TimeoutError",
+        "FRED_TABLE:TimeoutError"
+      ]
+    },
+    "IWD": {
+      "source": "YAHOO_QUERY1_ADJCLOSE_USD",
+      "first": "2001-01-02",
+      "last": "2026-11-27",
+      "count": 6515,
+      "sha256": "95d26706a5022b185255d148a83fc759148a324116a8d23a0871a8fdd8f89965",
+      "errors": []
+    },
+    "IWB": {
+      "source": "YAHOO_QUERY1_ADJCLOSE_USD",
+      "first": "2001-01-02",
+      "last": "2026-11-27",
+      "count": 6515,
+      "sha256": "e61ade4fc320c29c02dad4901d366aba30c0b18ceb7c0f17a6e744eac65b87f1",
+      "errors": []
+    },
+    "IWF": {
+      "source": "YAHOO_QUERY1_ADJCLOSE_USD",
+      "first": "2001-01-02",
+      "last": "2026-11-27",
+      "count": 6515,
+      "sha256": "68e3f1994a4223ab7f7eb2e15cd14ee031d5b075efd86cc1b96c93654fbcb98d",
+      "errors": []
+    },
+    "IWN": {
+      "source": "YAHOO_QUERY1_ADJCLOSE_USD",
+      "first": "2001-01-02",
+      "last": "2026-11-27",
+      "count": 6515,
+      "sha256": "995c590214db34ede134cb33e9a5c4b5e1d00383231cfac1e750144cc9766f38",
+      "errors": []
+    },
+    "IWM": {
+      "source": "YAHOO_QUERY1_ADJCLOSE_USD",
+      "first": "2001-01-02",
+      "last": "2026-11-27",
+      "count": 6515,
+      "sha256": "359c639c13d5fd0187937717ca5b96b1aba69159850cb702b15e3e92a9bf7096",
+      "errors": []
+    },
+    "IWO": {
+      "source": "YAHOO_QUERY1_ADJCLOSE_USD",
+      "first": "2001-01-02",
+      "last": "2026-11-27",
+      "count": 6515,
+      "sha256": "9d2410124afcaa3ec0b73fbbd058b8b6c01609e7c995bc0f2e25d06000c6310a",
+      "errors": []
+    },
+    "HYG": {
+      "source": "YAHOO_QUERY1_ADJCLOSE_USD",
+      "first": "2007-04-11",
+      "last": "2026-11-27",
+      "count": 4941,
+      "sha256": "28a03cb192813b09620081200dabc34adef6000f429c11cb6e7f5dba7e08265c",
+      "errors": []
+    },
+    "IEI": {
+      "source": "YAHOO_QUERY1_ADJCLOSE_USD",
+      "first": "2007-01-11",
+      "last": "2026-11-27",
+      "count": 5002,
+      "sha256": "21effdc3975836310900529de9501789d59c181362589c770864b6ce032f0a5c",
+      "errors": []
+    },
+    "^TNX": {
+      "source": "YAHOO_QUERY1_YIELD_INDEX",
+      "first": "2001-01-02",
+      "last": "2026-11-27",
+      "count": 6509,
+      "sha256": "47a79d6d352c11348d64cd63fdffbaa9f459551537347aeaa2002996fd9507d1",
+      "errors": []
+    },
+    "^IRX": {
+      "source": "YAHOO_QUERY1_YIELD_INDEX",
+      "first": "2001-01-02",
+      "last": "2026-11-27",
+      "count": 6502,
+      "sha256": "12f92a2ac7b4a2be4e0b4b0864039d535128d8602508e2f0d4bdc7129b5e5a39",
+      "errors": []
+    },
+    "UST10": {
+      "source": "US_TREASURY_CMT_OFFICIAL",
+      "first": "2001-07-31",
+      "last": "2026-11-27",
+      "count": 6333,
+      "sha256_sources": [
+        "a37e0a945f074a2246cd17eec5f70494c563d4696d08d6ad47c38150850c7020",
+        "74d9d43e3c18ea8c5b5d982af0915838610c629c134d9f68a6b8c75b77cd9ed8",
+        "b0fb75f9518b1e532a80399517ad0a8fe37be7d7bf695a0b1df3d59d17099140",
+        "edf7e4bf55cf4da2fa47de0f723dea651a244e87fb144a84c2166d58ca86c125",
+        "55f37b701b14dd6fb99f1f82e0fc407d0656a95334a5e726bd3d3b2130b4ce42",
+        "81919802bea40c30c8d94d2fe8075a6bb77c5abbaf98494664ce980568ebdf44",
+        "3054dcc9c3590b51eb311ae83594706ad2b26f6eccb7131e1eb30110b979c952",
+        "74adc613cc492db832e2118a474cf65f32f44e5d93a83c962f819d97d67208c2",
+        "17ac41c802820f774da7f57f602507346d26b82b5090fd014cefc4873b0d4bcd",
+        "e2039e041f1ab783ac80594454c6a771c14ac420215010794c32584aba28d750",
+        "a275a44424ada02fb0fdb24c6e59b1ba5b194e7bcefea17a0ca9f56a813dee4d",
+        "41f77f7b282430277dd2d0edd1d2c1393f42c0314b69f0e1c8362ad64805bf80",
+        "25c35a86264bdfdc26f52aeba4c289458b461442bd7036c74de44d147c39b79f",
+        "2676d5dcd4fefaed2f0bd48169fe6c5882ce71b1c3465abee447213cf86b52c1",
+        "8aacd19132ac1e2c44fb6b1cbc559d505f12cb11b4a86d84b2efda72432eea20",
+        "af59c97c0f3ccbf64d8aa68675018dc9d81e4f2dd7d319d60f146ba98484eecf",
+        "a136c9ea06acaf74db125799e3948c4c16d7fe9687acc60598478ca30ac116fb",
+        "512db913daef493a21642ef3cc70918fd5137d5e636cae02bc2dcd0725d30477",
+        "534cf2b710c3fd221a73d5f8e14ff897f4db0edb52dbc848567d6a62e0e87111",
+        "5088734bc7b38ad543b3c45ad188d3e075f8caecbf03adfdcf56bccfacc80b2b",
+        "ae880a1fbf370d0cfb230bf9b4498da8b9e67776226def1deaee17727a0ab549",
+        "cc55b210a9cde6933595b263a5e1e444fb137065c6f406178cfa2e0d4cfc52db",
+        "5c4ce694d8e1904685ef70b4b78259e53ec76812dcef3e734b1202d2eb719476",
+        "9e493916f373a6a80a7d8e649e96781489582884572baa5cfd9041dc004d2e48",
+        "863995755c368407d6c3f0f86c583dee8d8cda2472cba9749077bf0ed9146711",
+        "022d2dc0091860e054d057839a7aa3a38a7af15fcf3465b9e1c1bcadfdeaf92b",
+        "748f0217211390ec2450e17ee23931485ad867fd6e01ac51738c16d2ebeaa1ba"
+      ],
+      "errors": [
+        "HTTPError"
+      ]
+    },
+    "UST1M": {
+      "source": "US_TREASURY_CMT_OFFICIAL",
+      "first": "2001-07-31",
+      "last": "2026-11-27",
+      "count": 6333,
+      "sha256_sources": [
+        "a37e0a945f074a2246cd17eec5f70494c563d4696d08d6ad47c38150850c7020",
+        "74d9d43e3c18ea8c5b5d982af0915838610c629c134d9f68a6b8c75b77cd9ed8",
+        "b0fb75f9518b1e532a80399517ad0a8fe37be7d7bf695a0b1df3d59d17099140",
+        "edf7e4bf55cf4da2fa47de0f723dea651a244e87fb144a84c2166d58ca86c125",
+        "55f37b701b14dd6fb99f1f82e0fc407d0656a95334a5e726bd3d3b2130b4ce42",
+        "81919802bea40c30c8d94d2fe8075a6bb77c5abbaf98494664ce980568ebdf44",
+        "3054dcc9c3590b51eb311ae83594706ad2b26f6eccb7131e1eb30110b979c952",
+        "74adc613cc492db832e2118a474cf65f32f44e5d93a83c962f819d97d67208c2",
+        "17ac41c802820f774da7f57f602507346d26b82b5090fd014cefc4873b0d4bcd",
+        "e2039e041f1ab783ac80594454c6a771c14ac420215010794c32584aba28d750",
+        "a275a44424ada02fb0fdb24c6e59b1ba5b194e7bcefea17a0ca9f56a813dee4d",
+        "41f77f7b282430277dd2d0edd1d2c1393f42c0314b69f0e1c8362ad64805bf80",
+        "25c35a86264bdfdc26f52aeba4c289458b461442bd7036c74de44d147c39b79f",
+        "2676d5dcd4fefaed2f0bd48169fe6c5882ce71b1c3465abee447213cf86b52c1",
+        "8aacd19132ac1e2c44fb6b1cbc559d505f12cb11b4a86d84b2efda72432eea20",
+        "af59c97c0f3ccbf64d8aa68675018dc9d81e4f2dd7d319d60f146ba98484eecf",
+        "a136c9ea06acaf74db125799e3948c4c16d7fe9687acc60598478ca30ac116fb",
+        "512db913daef493a21642ef3cc70918fd5137d5e636cae02bc2dcd0725d30477",
+        "534cf2b710c3fd221a73d5f8e14ff897f4db0edb52dbc848567d6a62e0e87111",
+        "5088734bc7b38ad543b3c45ad188d3e075f8caecbf03adfdcf56bccfacc80b2b",
+        "ae880a1fbf370d0cfb230bf9b4498da8b9e67776226def1deaee17727a0ab549",
+        "cc55b210a9cde6933595b263a5e1e444fb137065c6f406178cfa2e0d4cfc52db",
+        "5c4ce694d8e1904685ef70b4b78259e53ec76812dcef3e734b1202d2eb719476",
+        "9e493916f373a6a80a7d8e649e96781489582884572baa5cfd9041dc004d2e48",
+        "863995755c368407d6c3f0f86c583dee8d8cda2472cba9749077bf0ed9146711",
+        "022d2dc0091860e054d057839a7aa3a38a7af15fcf3465b9e1c1bcadfdeaf92b",
+        "748f0217211390ec2450e17ee23931485ad867fd6e01ac51738c16d2ebeaa1ba"
+      ],
+      "errors": [
+        "HTTPError"
+      ]
+    }
+  },
+  "availability": {
+    "A": false,
+    "B": false,
+    "C": false,
+    "BREADTH_ONLY": true,
+    "CREDIT_PROXY": true,
+    "RATE_ONLY": true,
+    "FULL_KEYLESS": true
+  },
+  "rate_source": "US_TREASURY_10Y_1M",
+  "method": "EUNL/CSBGE3 actual EUR adjusted closes, original native two sleeves and fee rules, zero cash interest. Macro reference current-vintage prior completed month; alternate reference 45 calendar days after month end. Daily FRED 21 observation averages compared with prior 120 completed monthly averages, min 60; credit change 63 obs; FRED lag 3 or 7 calendar days. US breadth 63 prior sessions; lag 1 calendar day or 3 for sensitivity. No vintage certification; no synthetic fill.",
+  "runs": [
+    {
+      "case": "original_daily3",
+      "mode": "BASE",
+      "start": "2010-01-04",
+      "cagr": 0.07596623930030177,
+      "dd": -0.25365506850658626,
+      "xirr": 0.07949570015432095,
+      "final": 106791.12220243768,
+      "active": 63,
+      "sales": 32,
+      "core_exits": [
+        "2010-07-02",
+        "2011-11-22",
+        "2023-01-03"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "BREADTH_ONLY",
+      "start": "2010-01-04",
+      "cagr": 0.07687714336204543,
+      "dd": -0.2539702909705277,
+      "xirr": 0.07962285916871348,
+      "final": 106922.44418117688,
+      "active": 63,
+      "sales": 32,
+      "core_exits": [
+        "2010-07-02",
+        "2011-11-29",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "CREDIT_PROXY",
+      "start": "2010-01-04",
+      "cagr": 0.07680898967743244,
+      "dd": -0.25365506850658626,
+      "xirr": 0.08067816424408741,
+      "final": 108019.24449478043,
+      "active": 63,
+      "sales": 32,
+      "core_exits": [
+        "2010-07-02",
+        "2011-11-22",
+        "2023-01-17"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "RATE_ONLY",
+      "start": "2010-01-04",
+      "cagr": 0.07579267203589724,
+      "dd": -0.25365506850658626,
+      "xirr": 0.07926844479747763,
+      "final": 106556.87296843885,
+      "active": 63,
+      "sales": 32,
+      "core_exits": [
+        "2010-07-02",
+        "2011-11-22",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "FULL_KEYLESS",
+      "start": "2010-01-04",
+      "cagr": 0.07579267203589724,
+      "dd": -0.25365506850658626,
+      "xirr": 0.07926844479747763,
+      "final": 106556.87296843885,
+      "active": 63,
+      "sales": 32,
+      "core_exits": [
+        "2010-07-02",
+        "2011-11-22",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "BASE",
+      "start": "2013-01-02",
+      "cagr": 0.09709817281337219,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08270872634279433,
+      "final": 78771.69678044104,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2023-01-03"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "BREADTH_ONLY",
+      "start": "2013-01-02",
+      "cagr": 0.09689592080001574,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08246244897590654,
+      "final": 78621.22347173368,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "CREDIT_PROXY",
+      "start": "2013-01-02",
+      "cagr": 0.09809494928856544,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08405131907455135,
+      "final": 79597.61149645847,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2023-01-17"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "RATE_ONLY",
+      "start": "2013-01-02",
+      "cagr": 0.09689592080001574,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08246244897590654,
+      "final": 78621.22347173368,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "FULL_KEYLESS",
+      "start": "2013-01-02",
+      "cagr": 0.09689592080001574,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08246244897590654,
+      "final": 78621.22347173368,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "BASE",
+      "start": "2016-01-04",
+      "cagr": 0.08388461152016036,
+      "dd": -0.251325399050351,
+      "xirr": 0.0818425896914387,
+      "final": 53759.95329986781,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2023-01-03"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "BREADTH_ONLY",
+      "start": "2016-01-04",
+      "cagr": 0.08358497625447736,
+      "dd": -0.251325399050351,
+      "xirr": 0.08152603534704009,
+      "final": 53659.20065236963,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "CREDIT_PROXY",
+      "start": "2016-01-04",
+      "cagr": 0.08505988796950348,
+      "dd": -0.251325399050351,
+      "xirr": 0.08334343084060672,
+      "final": 54240.44308170853,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2023-01-17"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "RATE_ONLY",
+      "start": "2016-01-04",
+      "cagr": 0.08358497625447736,
+      "dd": -0.251325399050351,
+      "xirr": 0.08152603534704009,
+      "final": 53659.20065236963,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "FULL_KEYLESS",
+      "start": "2016-01-04",
+      "cagr": 0.08358497625447736,
+      "dd": -0.251325399050351,
+      "xirr": 0.08152603534704009,
+      "final": 53659.20065236963,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "BASE",
+      "start": "2020-01-02",
+      "cagr": 0.09981236198227128,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08488754507393245,
+      "final": 29250.55917233435,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2023-01-03"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "BREADTH_ONLY",
+      "start": "2020-01-02",
+      "cagr": 0.09929826209155301,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08449977952502327,
+      "final": 29209.299480279333,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "CREDIT_PROXY",
+      "start": "2020-01-02",
+      "cagr": 0.10166581348918169,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08661257520804888,
+      "final": 29434.825601678105,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2023-01-17"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "RATE_ONLY",
+      "start": "2020-01-02",
+      "cagr": 0.09929826209155301,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08449977952502327,
+      "final": 29209.299480279333,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "FULL_KEYLESS",
+      "start": "2020-01-02",
+      "cagr": 0.09929826209155301,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08449977952502327,
+      "final": 29209.299480279333,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "BASE",
+      "start": "2022-01-03",
+      "cagr": 0.04169083286226338,
+      "dd": -0.2405685634790019,
+      "xirr": 0.07725008774474848,
+      "final": 18928.106167399954,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-05-10",
+        "2023-01-03"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "BREADTH_ONLY",
+      "start": "2022-01-03",
+      "cagr": 0.04108498061338439,
+      "dd": -0.2426694189300127,
+      "xirr": 0.0770056024145438,
+      "final": 18916.22737759761,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-05-10",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "CREDIT_PROXY",
+      "start": "2022-01-03",
+      "cagr": 0.051207222810930375,
+      "dd": -0.20600065613193452,
+      "xirr": 0.08040958683607058,
+      "final": 19082.235799184884,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-04-27",
+        "2023-01-17"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "RATE_ONLY",
+      "start": "2022-01-03",
+      "cagr": 0.04108498061338439,
+      "dd": -0.2426694189300127,
+      "xirr": 0.0770056024145438,
+      "final": 18916.22737759761,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-05-10",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "original_daily3",
+      "mode": "FULL_KEYLESS",
+      "start": "2022-01-03",
+      "cagr": 0.04736747511279016,
+      "dd": -0.22098042854564248,
+      "xirr": 0.07857562301185009,
+      "final": 18992.62954129462,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-04-27",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "BASE",
+      "start": "2010-01-04",
+      "cagr": 0.08005832226076914,
+      "dd": -0.2535526990508714,
+      "xirr": 0.08028724983418892,
+      "final": 107611.50917701179,
+      "active": 61,
+      "sales": 31,
+      "core_exits": [
+        "2011-12-07",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "BREADTH_ONLY",
+      "start": "2010-01-04",
+      "cagr": 0.07884058356561185,
+      "dd": -0.2543764917683534,
+      "xirr": 0.08014197142896506,
+      "final": 107460.41518101573,
+      "active": 65,
+      "sales": 33,
+      "core_exits": [
+        "2010-07-19",
+        "2011-12-13",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "CREDIT_PROXY",
+      "start": "2010-01-04",
+      "cagr": 0.0805026136103737,
+      "dd": -0.2535526990508714,
+      "xirr": 0.08088955307871601,
+      "final": 108240.44336074573,
+      "active": 61,
+      "sales": 31,
+      "core_exits": [
+        "2011-12-07",
+        "2023-01-04"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "RATE_ONLY",
+      "start": "2010-01-04",
+      "cagr": 0.08005832226076914,
+      "dd": -0.2535526990508714,
+      "xirr": 0.08028724983418892,
+      "final": 107611.50917701179,
+      "active": 61,
+      "sales": 31,
+      "core_exits": [
+        "2011-12-07",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "FULL_KEYLESS",
+      "start": "2010-01-04",
+      "cagr": 0.08005832226076914,
+      "dd": -0.2535526990508714,
+      "xirr": 0.08028724983418892,
+      "final": 107611.50917701179,
+      "active": 61,
+      "sales": 31,
+      "core_exits": [
+        "2011-12-07",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "BASE",
+      "start": "2013-01-02",
+      "cagr": 0.09689592080001574,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08246244897590654,
+      "final": 78621.22347173368,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "BREADTH_ONLY",
+      "start": "2013-01-02",
+      "cagr": 0.09689592080001574,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08246244897590654,
+      "final": 78621.22347173368,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "CREDIT_PROXY",
+      "start": "2013-01-02",
+      "cagr": 0.09741804861192405,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08313394950645983,
+      "final": 79032.25233129987,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2023-01-04"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "RATE_ONLY",
+      "start": "2013-01-02",
+      "cagr": 0.09689592080001574,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08246244897590654,
+      "final": 78621.22347173368,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "FULL_KEYLESS",
+      "start": "2013-01-02",
+      "cagr": 0.09689592080001574,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08246244897590654,
+      "final": 78621.22347173368,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "BASE",
+      "start": "2016-01-04",
+      "cagr": 0.08358497625447736,
+      "dd": -0.251325399050351,
+      "xirr": 0.08152603534704009,
+      "final": 53659.20065236963,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "BREADTH_ONLY",
+      "start": "2016-01-04",
+      "cagr": 0.08358497625447736,
+      "dd": -0.251325399050351,
+      "xirr": 0.08152603534704009,
+      "final": 53659.20065236963,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "CREDIT_PROXY",
+      "start": "2016-01-04",
+      "cagr": 0.08421129064642896,
+      "dd": -0.251325399050351,
+      "xirr": 0.08227097163538263,
+      "final": 53896.625576506536,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2023-01-04"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "RATE_ONLY",
+      "start": "2016-01-04",
+      "cagr": 0.08358497625447736,
+      "dd": -0.251325399050351,
+      "xirr": 0.08152603534704009,
+      "final": 53659.20065236963,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "FULL_KEYLESS",
+      "start": "2016-01-04",
+      "cagr": 0.08358497625447736,
+      "dd": -0.251325399050351,
+      "xirr": 0.08152603534704009,
+      "final": 53659.20065236963,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "BASE",
+      "start": "2020-01-02",
+      "cagr": 0.09929826209155301,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08449977952502327,
+      "final": 29209.299480279333,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "BREADTH_ONLY",
+      "start": "2020-01-02",
+      "cagr": 0.09929826209155301,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08449977952502327,
+      "final": 29209.299480279333,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "CREDIT_PROXY",
+      "start": "2020-01-02",
+      "cagr": 0.10043930451494787,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08545434274018004,
+      "final": 29310.974820033105,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2023-01-04"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "RATE_ONLY",
+      "start": "2020-01-02",
+      "cagr": 0.09929826209155301,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08449977952502327,
+      "final": 29209.299480279333,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "FULL_KEYLESS",
+      "start": "2020-01-02",
+      "cagr": 0.09929826209155301,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08449977952502327,
+      "final": 29209.299480279333,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "BASE",
+      "start": "2022-01-03",
+      "cagr": 0.04245823750210587,
+      "dd": -0.23786481981265706,
+      "xirr": 0.07733819458451754,
+      "final": 18932.388691641485,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-05-11",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "BREADTH_ONLY",
+      "start": "2022-01-03",
+      "cagr": 0.04108498061338439,
+      "dd": -0.2426694189300127,
+      "xirr": 0.0770056024145438,
+      "final": 18916.22737759761,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-05-10",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "CREDIT_PROXY",
+      "start": "2022-01-03",
+      "cagr": 0.042841745827167266,
+      "dd": -0.23670793259991152,
+      "xirr": 0.07782254392073115,
+      "final": 18955.94693566564,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-05-10",
+        "2023-01-04"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "RATE_ONLY",
+      "start": "2022-01-03",
+      "cagr": 0.04245823750210587,
+      "dd": -0.23786481981265706,
+      "xirr": 0.07733819458451754,
+      "final": 18932.388691641485,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-05-11",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily3",
+      "mode": "FULL_KEYLESS",
+      "start": "2022-01-03",
+      "cagr": 0.04736747511279016,
+      "dd": -0.22098042854564248,
+      "xirr": 0.07857562301185009,
+      "final": 18992.62954129462,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-04-27",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "BASE",
+      "start": "2010-01-04",
+      "cagr": 0.08005832226076914,
+      "dd": -0.2535526990508714,
+      "xirr": 0.08028724983418892,
+      "final": 107611.50917701179,
+      "active": 61,
+      "sales": 31,
+      "core_exits": [
+        "2011-12-07",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "BREADTH_ONLY",
+      "start": "2010-01-04",
+      "cagr": 0.07884058356561185,
+      "dd": -0.2543764917683534,
+      "xirr": 0.08014197142896506,
+      "final": 107460.41518101573,
+      "active": 65,
+      "sales": 33,
+      "core_exits": [
+        "2010-07-19",
+        "2011-12-13",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "CREDIT_PROXY",
+      "start": "2010-01-04",
+      "cagr": 0.0805026136103737,
+      "dd": -0.2535526990508714,
+      "xirr": 0.08088955307871601,
+      "final": 108240.44336074573,
+      "active": 61,
+      "sales": 31,
+      "core_exits": [
+        "2011-12-07",
+        "2023-01-04"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "RATE_ONLY",
+      "start": "2010-01-04",
+      "cagr": 0.08005832226076914,
+      "dd": -0.2535526990508714,
+      "xirr": 0.08028724983418892,
+      "final": 107611.50917701179,
+      "active": 61,
+      "sales": 31,
+      "core_exits": [
+        "2011-12-07",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "FULL_KEYLESS",
+      "start": "2010-01-04",
+      "cagr": 0.08005832226076914,
+      "dd": -0.2535526990508714,
+      "xirr": 0.08028724983418892,
+      "final": 107611.50917701179,
+      "active": 61,
+      "sales": 31,
+      "core_exits": [
+        "2011-12-07",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "BASE",
+      "start": "2013-01-02",
+      "cagr": 0.09689592080001574,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08246244897590654,
+      "final": 78621.22347173368,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "BREADTH_ONLY",
+      "start": "2013-01-02",
+      "cagr": 0.09689592080001574,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08246244897590654,
+      "final": 78621.22347173368,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "CREDIT_PROXY",
+      "start": "2013-01-02",
+      "cagr": 0.09741804861192405,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08313394950645983,
+      "final": 79032.25233129987,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2023-01-04"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "RATE_ONLY",
+      "start": "2013-01-02",
+      "cagr": 0.09689592080001574,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08246244897590654,
+      "final": 78621.22347173368,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "FULL_KEYLESS",
+      "start": "2013-01-02",
+      "cagr": 0.09689592080001574,
+      "dd": -0.2528566922075258,
+      "xirr": 0.08246244897590654,
+      "final": 78621.22347173368,
+      "active": 41,
+      "sales": 21,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "BASE",
+      "start": "2016-01-04",
+      "cagr": 0.08358497625447736,
+      "dd": -0.251325399050351,
+      "xirr": 0.08152603534704009,
+      "final": 53659.20065236963,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "BREADTH_ONLY",
+      "start": "2016-01-04",
+      "cagr": 0.08358497625447736,
+      "dd": -0.251325399050351,
+      "xirr": 0.08152603534704009,
+      "final": 53659.20065236963,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "CREDIT_PROXY",
+      "start": "2016-01-04",
+      "cagr": 0.08421129064642896,
+      "dd": -0.251325399050351,
+      "xirr": 0.08227097163538263,
+      "final": 53896.625576506536,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2023-01-04"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "RATE_ONLY",
+      "start": "2016-01-04",
+      "cagr": 0.08358497625447736,
+      "dd": -0.251325399050351,
+      "xirr": 0.08152603534704009,
+      "final": 53659.20065236963,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "FULL_KEYLESS",
+      "start": "2016-01-04",
+      "cagr": 0.08358497625447736,
+      "dd": -0.251325399050351,
+      "xirr": 0.08152603534704009,
+      "final": 53659.20065236963,
+      "active": 35,
+      "sales": 18,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "BASE",
+      "start": "2020-01-02",
+      "cagr": 0.09929826209155301,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08449977952502327,
+      "final": 29209.299480279333,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "BREADTH_ONLY",
+      "start": "2020-01-02",
+      "cagr": 0.09929826209155301,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08449977952502327,
+      "final": 29209.299480279333,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "CREDIT_PROXY",
+      "start": "2020-01-02",
+      "cagr": 0.10043930451494787,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08545434274018004,
+      "final": 29310.974820033105,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2023-01-04"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "RATE_ONLY",
+      "start": "2020-01-02",
+      "cagr": 0.09929826209155301,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08449977952502327,
+      "final": 29209.299480279333,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "FULL_KEYLESS",
+      "start": "2020-01-02",
+      "cagr": 0.09929826209155301,
+      "dd": -0.2083510518521028,
+      "xirr": 0.08449977952502327,
+      "final": 29209.299480279333,
+      "active": 25,
+      "sales": 13,
+      "core_exits": [
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "BASE",
+      "start": "2022-01-03",
+      "cagr": 0.04245823750210587,
+      "dd": -0.23786481981265706,
+      "xirr": 0.07733819458451754,
+      "final": 18932.388691641485,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-05-11",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "BREADTH_ONLY",
+      "start": "2022-01-03",
+      "cagr": 0.04108498061338439,
+      "dd": -0.2426694189300127,
+      "xirr": 0.0770056024145438,
+      "final": 18916.22737759761,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-05-10",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "CREDIT_PROXY",
+      "start": "2022-01-03",
+      "cagr": 0.04364032558019737,
+      "dd": -0.23392823673874064,
+      "xirr": 0.07801567235627216,
+      "final": 18965.34802722437,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-05-09",
+        "2023-01-04"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "RATE_ONLY",
+      "start": "2022-01-03",
+      "cagr": 0.04245823750210587,
+      "dd": -0.23786481981265706,
+      "xirr": 0.07733819458451754,
+      "final": 18932.388691641485,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-05-11",
+        "2022-12-19"
+      ]
+    },
+    {
+      "case": "lag45_daily7",
+      "mode": "FULL_KEYLESS",
+      "start": "2022-01-03",
+      "cagr": 0.045989670224946266,
+      "dd": -0.22552939181811327,
+      "xirr": 0.07819714885313969,
+      "final": 18974.185839570462,
+      "active": 23,
+      "sales": 12,
+      "core_exits": [
+        "2022-05-02",
+        "2022-12-19"
+      ]
+    }
+  ],
+  "scores": {
+    "original_daily3_BASE": {
+      "coverage": 0,
+      "fallback": 0,
+      "different": 0,
+      "up": 0,
+      "down": 0,
+      "latest": {
+        "month": "2026-10",
+        "score": 1,
+        "credit": false,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 1,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "CARRIED_OBSERVED_2026-09",
+        "observed_macro_month": "2026-09",
+        "missing_inputs": [
+          "FF_RF",
+          "FF_BREADTH_3M"
+        ]
+      }
+    },
+    "original_daily3_BREADTH_ONLY": {
+      "coverage": 4295,
+      "fallback": 0,
+      "different": 599,
+      "up": 298,
+      "down": 301,
+      "latest": {
+        "month": "2026-10",
+        "score": 1,
+        "credit": false,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 0,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "NRT_PROXY",
+        "observed_macro_month": "2026-09",
+        "missing_inputs": [
+          "FF_RF",
+          "FF_BREADTH_3M"
+        ],
+        "nrt_dates": [
+          "2026-11-25"
+        ]
+      }
+    },
+    "original_daily3_CREDIT_PROXY": {
+      "coverage": 3655,
+      "fallback": 640,
+      "different": 768,
+      "up": 430,
+      "down": 338,
+      "latest": {
+        "month": "2026-10",
+        "score": 2,
+        "credit": true,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 1,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "NRT_PROXY",
+        "observed_macro_month": "2026-09",
+        "missing_inputs": [
+          "FF_RF",
+          "FF_BREADTH_3M"
+        ],
+        "nrt_dates": [
+          "2026-11-25"
+        ]
+      }
+    },
+    "original_daily3_RATE_ONLY": {
+      "coverage": 4295,
+      "fallback": 0,
+      "different": 736,
+      "up": 561,
+      "down": 175,
+      "latest": {
+        "month": "2026-10",
+        "score": 1,
+        "credit": false,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 1,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "NRT_PROXY",
+        "observed_macro_month": "2026-09",
+        "missing_inputs": [
+          "FF_RF",
+          "FF_BREADTH_3M"
+        ],
+        "nrt_dates": [
+          "2026-11-24"
+        ]
+      }
+    },
+    "original_daily3_FULL_KEYLESS": {
+      "coverage": 3655,
+      "fallback": 640,
+      "different": 1462,
+      "up": 968,
+      "down": 494,
+      "latest": {
+        "month": "2026-10",
+        "score": 2,
+        "credit": true,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 0,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "NRT_PROXY",
+        "observed_macro_month": "2026-09",
+        "missing_inputs": [
+          "FF_RF",
+          "FF_BREADTH_3M"
+        ],
+        "nrt_dates": [
+          "2026-11-25",
+          "2026-11-24",
+          "2026-11-25"
+        ]
+      }
+    },
+    "lag45_daily3_BASE": {
+      "coverage": 0,
+      "fallback": 0,
+      "different": 0,
+      "up": 0,
+      "down": 0,
+      "latest": {
+        "month": "2026-09",
+        "score": 1,
+        "credit": false,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 1,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "OBSERVED_COMPLETED_MONTH",
+        "missing_inputs": []
+      }
+    },
+    "lag45_daily3_BREADTH_ONLY": {
+      "coverage": 4295,
+      "fallback": 0,
+      "different": 1268,
+      "up": 651,
+      "down": 617,
+      "latest": {
+        "month": "2026-09",
+        "score": 1,
+        "credit": false,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 0,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "NRT_PROXY",
+        "missing_inputs": [],
+        "nrt_dates": [
+          "2026-11-25"
+        ]
+      }
+    },
+    "lag45_daily3_CREDIT_PROXY": {
+      "coverage": 3655,
+      "fallback": 640,
+      "different": 838,
+      "up": 463,
+      "down": 375,
+      "latest": {
+        "month": "2026-09",
+        "score": 2,
+        "credit": true,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 1,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "NRT_PROXY",
+        "missing_inputs": [],
+        "nrt_dates": [
+          "2026-11-25"
+        ]
+      }
+    },
+    "lag45_daily3_RATE_ONLY": {
+      "coverage": 4295,
+      "fallback": 0,
+      "different": 773,
+      "up": 587,
+      "down": 186,
+      "latest": {
+        "month": "2026-09",
+        "score": 1,
+        "credit": false,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 1,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "NRT_PROXY",
+        "missing_inputs": [],
+        "nrt_dates": [
+          "2026-11-24"
+        ]
+      }
+    },
+    "lag45_daily3_FULL_KEYLESS": {
+      "coverage": 3655,
+      "fallback": 640,
+      "different": 1713,
+      "up": 1068,
+      "down": 645,
+      "latest": {
+        "month": "2026-09",
+        "score": 2,
+        "credit": true,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 0,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "NRT_PROXY",
+        "missing_inputs": [],
+        "nrt_dates": [
+          "2026-11-25",
+          "2026-11-24",
+          "2026-11-25"
+        ]
+      }
+    },
+    "lag45_daily7_BASE": {
+      "coverage": 0,
+      "fallback": 0,
+      "different": 0,
+      "up": 0,
+      "down": 0,
+      "latest": {
+        "month": "2026-09",
+        "score": 1,
+        "credit": false,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 1,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "OBSERVED_COMPLETED_MONTH",
+        "missing_inputs": []
+      }
+    },
+    "lag45_daily7_BREADTH_ONLY": {
+      "coverage": 4295,
+      "fallback": 0,
+      "different": 1243,
+      "up": 644,
+      "down": 599,
+      "latest": {
+        "month": "2026-09",
+        "score": 1,
+        "credit": false,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 0,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "NRT_PROXY",
+        "missing_inputs": [],
+        "nrt_dates": [
+          "2026-11-24"
+        ]
+      }
+    },
+    "lag45_daily7_CREDIT_PROXY": {
+      "coverage": 3653,
+      "fallback": 642,
+      "different": 844,
+      "up": 470,
+      "down": 374,
+      "latest": {
+        "month": "2026-09",
+        "score": 2,
+        "credit": true,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 1,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "NRT_PROXY",
+        "missing_inputs": [],
+        "nrt_dates": [
+          "2026-11-24"
+        ]
+      }
+    },
+    "lag45_daily7_RATE_ONLY": {
+      "coverage": 4295,
+      "fallback": 0,
+      "different": 773,
+      "up": 585,
+      "down": 188,
+      "latest": {
+        "month": "2026-09",
+        "score": 1,
+        "credit": false,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 1,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "NRT_PROXY",
+        "missing_inputs": [],
+        "nrt_dates": [
+          "2026-11-20"
+        ]
+      }
+    },
+    "lag45_daily7_FULL_KEYLESS": {
+      "coverage": 3653,
+      "fallback": 642,
+      "different": 1712,
+      "up": 1070,
+      "down": 642,
+      "latest": {
+        "month": "2026-09",
+        "score": 2,
+        "credit": true,
+        "breadth": true,
+        "rates": false,
+        "credit_spread": 0.4399999999999995,
+        "credit_p80": 1.042,
+        "credit_change_3m": -0.040000000000000924,
+        "breadth_healthy": 0,
+        "term_spread": 2.438108801230893,
+        "term_p20": -0.89022352948323,
+        "source": "NRT_PROXY",
+        "missing_inputs": [],
+        "nrt_dates": [
+          "2026-11-24",
+          "2026-11-20",
+          "2026-11-24"
+        ]
+      }
+    }
+  },
+  "keyless_method": "HYG/IEI 63-session relative total return, bottom 20th percentile of prior 120 completed monthly observations, min 60. Rates US Treasury official 10Y-1M preferred, Yahoo 10Y-13W yield index if unavailable; not identical to FF RF. Any missing required daily signal falls back to original, reported explicitly."
+}
