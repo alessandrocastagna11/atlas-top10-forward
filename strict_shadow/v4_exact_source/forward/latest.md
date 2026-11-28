@@ -16,7 +16,7 @@
 **Candidati segnalati (NON ORDINI):** KO, CB, JNJ, MRK, PANW, CRWD, TXN, UNP, DE, ABBV; verifica: ATTESTED_CORRECTION_BEFORE_OPEN
 **Segnale originale pubblicato:** SÌ; esito: ATTESTED_CORRECTION_BEFORE_OPEN
 **Contabilità paper:** FROZEN_ORIGINAL_SIGNAL_PREVIOUS_COMPLETED_CLOSE_PROXY — prezzi degli ordini APPROSSIMATI; nessun ordine reale.
-**Ultimo aggiornamento portafoglio:** 2026-11-28T04:45:45.174514+00:00; fonte ultimo prezzo 2026-11-27.
+**Ultimo aggiornamento portafoglio:** 2026-11-28T18:09:21.783451+00:00; fonte ultimo prezzo 2026-11-27.
 **Recuperi dopo interruzioni:** 0 sedute; in attesa
 
 ## Segnali, proposte e ordini: tre cose diverse
