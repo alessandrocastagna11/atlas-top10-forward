@@ -8,7 +8,7 @@ Yahoo-derived execution quotes remain separately attributed; never silently
 replace them with interpolated annual currency values.
 """
 from __future__ import annotations
-import argparse,csv,datetime as dt,hashlib,io,json,math,urllib.parse,urllib.request
+import argparse,csv,datetime as dt,hashlib,io,json,math,time,urllib.parse,urllib.request
 from pathlib import Path
 from dataset_daily import DATA,atomic,json_save,csv_write,rows_load
 
@@ -50,9 +50,15 @@ def api_url(start:dt.date,end:dt.date):
 def download(start,end):
     request=urllib.request.Request(api_url(start,end),
         headers={'Accept':'text/csv','User-Agent':'Atlas-V4-independent-paper-research/1.0'})
-    with urllib.request.urlopen(request,timeout=85) as response:raw=response.read(18_000_000)
-    if len(raw)>=18_000_000:raise ValueError('ECB download exceeded conservative size bound')
-    return raw
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(request,timeout=45) as response:raw=response.read(18_000_000)
+            if len(raw)>=18_000_000:raise ValueError('ECB download exceeded conservative size bound')
+            parse_ecb_csv(raw,end)
+            return raw
+        except (OSError,ValueError,UnicodeDecodeError):
+            if attempt==2:raise
+            time.sleep(2**attempt)
 
 def published_prior(series, currency, decision_day, max_age_days=7):
     """Strict previous observation date: never use same-day unpublished FX."""
@@ -102,7 +108,10 @@ def run(now=None, getter=None, base='2012-01-01'):
     day=now.date()
     meta=ROOT/'audit/latest.json'
     start=dt.date.fromisoformat(base)
-    if meta.exists():start=max(start,day-dt.timedelta(days=45))
+    # A failed first run creates audit metadata but not historical series.
+    # Only switch to incremental mode when the core reference history exists.
+    if all((ROOT/(cur+'.csv')).exists() for cur in ('USD','JPY','GBP','CHF')):
+        start=max(start,day-dt.timedelta(days=45))
     output={'checked_at_utc':now.isoformat(),'source':'ECB EXR daily reference, fetched retrospectively',
         'reference_only':True,'original_confidence70_pit_certified':False,
         'execution_quote_source_unchanged':True,'no_annual_interpolation':True,
