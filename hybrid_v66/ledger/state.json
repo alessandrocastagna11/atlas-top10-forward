@@ -18,8 +18,8 @@
           "fill_method": "HYBRID_SHARED_CONFIDENCE70_EOD_PROXY"
         }
       ],
-      "last_price_eur": 89.02354451,
-      "last_price_date": "2026-11-25"
+      "last_price_eur": 88.77036535,
+      "last_price_date": "2026-11-27"
     },
     "JNJ": {
       "shares": 3.0388233931335593,
@@ -34,8 +34,8 @@
           "fill_method": "HYBRID_SHARED_CONFIDENCE70_EOD_PROXY"
         }
       ],
-      "last_price_eur": 249.89354355,
-      "last_price_date": "2026-11-25"
+      "last_price_eur": 251.0998341,
+      "last_price_date": "2026-11-27"
     },
     "CB": {
       "shares": 2.3415157049993387,
@@ -50,8 +50,8 @@
           "fill_method": "HYBRID_SHARED_CONFIDENCE70_EOD_PROXY"
         }
       ],
-      "last_price_eur": 347.10883351,
-      "last_price_date": "2026-11-25"
+      "last_price_eur": 347.26163347,
+      "last_price_date": "2026-11-27"
     },
     "MRK": {
       "shares": 5.177452454292283,
@@ -66,8 +66,8 @@
           "fill_method": "HYBRID_SHARED_CONFIDENCE70_EOD_PROXY"
         }
       ],
-      "last_price_eur": 127.97533487,
-      "last_price_date": "2026-11-25"
+      "last_price_eur": 128.79906042,
+      "last_price_date": "2026-11-27"
     },
     "PM": {
       "shares": 3.6939213342705086,
@@ -82,8 +82,8 @@
           "fill_method": "HYBRID_SHARED_CONFIDENCE70_EOD_PROXY"
         }
       ],
-      "last_price_eur": 168.1403934,
-      "last_price_date": "2026-11-25"
+      "last_price_eur": 171.16093041,
+      "last_price_date": "2026-11-27"
     }
   },
   "orders": [
@@ -208,7 +208,7 @@
       "phase": "RETROSPECTIVE_RECONSTRUCTION"
     }
   ],
-  "last_nav_eur": 10025.9866,
+  "last_nav_eur": 10041.6776,
   "fees_eur_total": 5.0,
   "estimated_slippage_eur": 4.14098901098868,
   "tax_eur_total": 0.0,
@@ -681,6 +681,70 @@
           "exchange_session": "2026-11-25"
         }
       }
+    },
+    {
+      "report_date": "2026-11-28",
+      "source_close_session": "2026-11-27",
+      "mark_to_market_nav_eur": 10041.6776,
+      "net_liquidation_nav_eur": 10024.0395,
+      "approximate_fills": true,
+      "first_observed_at_utc": "2026-11-28T08:56:41.049549+00:00",
+      "last_observed_at_utc": "2026-11-28T08:56:41.049549+00:00",
+      "quote_evidence_sha256": "48c37b98059a63adc69d7e9e5a8d457b0d0e733abca0ee7eb9a0034386b0e0b7",
+      "fx_source_sessions": {
+        "AUD": "2026-11-27",
+        "CAD": "2026-11-27",
+        "CHF": "2026-11-27",
+        "DKK": "2026-11-27",
+        "EUR": "NATIVE_EUR",
+        "GBP": "2026-11-27",
+        "HKD": "2026-11-27",
+        "INR": "2026-11-27",
+        "JPY": "2026-11-27",
+        "KRW": "2026-11-27",
+        "SAR": "2026-11-27",
+        "SGD": "2026-11-27",
+        "TWD": "2026-11-27",
+        "USD": "2026-11-27"
+      },
+      "fx_units_per_eur": {
+        "AUD": 1.6530400515,
+        "CAD": 1.562590003,
+        "CHF": 0.9154999852,
+        "DKK": 7.4731898308,
+        "EUR": 1.0,
+        "GBP": 0.8368899822,
+        "HKD": 8.5961999893,
+        "INR": 101.3420028687,
+        "JPY": 174.7239990234,
+        "KRW": 1473.2900390625,
+        "SAR": 3.9814999104,
+        "SGD": 1.4151300192,
+        "TWD": 36.1104202271,
+        "USD": 1.0972130299
+      },
+      "held_quotes": {
+        "CB": {
+          "price_eur": 347.26163347,
+          "exchange_session": "2026-11-27"
+        },
+        "JNJ": {
+          "price_eur": 251.0998341,
+          "exchange_session": "2026-11-27"
+        },
+        "KO": {
+          "price_eur": 88.77036535,
+          "exchange_session": "2026-11-27"
+        },
+        "MRK": {
+          "price_eur": 128.79906042,
+          "exchange_session": "2026-11-27"
+        },
+        "PM": {
+          "price_eur": 171.16093041,
+          "exchange_session": "2026-11-27"
+        }
+      }
     }
   ],
   "processed_decision_dates": [
@@ -693,177 +757,177 @@
   "comparison_start": "2026-11-10",
   "pending": null,
   "bootstrap_through": "2026-11-24",
-  "last_valuation_session": "2026-11-25",
+  "last_valuation_session": "2026-11-27",
   "valuation_revisions": [],
   "last_proposal_status": "READY",
   "last_proposal": {
     "status": "INDICATIVE_ONLY_NO_ORDER_NO_FILL",
     "source_original_engine": false,
-    "decision_session": "2026-11-25",
+    "decision_session": "2026-11-27",
     "computed_from_last_complete_close": true,
     "execution_price_is_not_yesterdays_close": true,
-    "capital_eur": 10025.9866,
+    "capital_eur": 10041.6776,
     "existing_position_count": 5,
-    "existing_equity_value_eur": 4176.1166,
-    "target_total_equity_value_eur": 3843.0327,
-    "exposure_room_before_buys_eur": 0.0,
+    "existing_equity_value_eur": 4191.8076,
+    "target_total_equity_value_eur": 4533.4756,
+    "exposure_room_before_buys_eur": 341.668,
     "cash_room_before_buys_eur": 5749.87,
-    "unused_budget_after_planned_buys_eur": 0.0,
+    "unused_budget_after_planned_buys_eur": 341.668,
     "selection_considers_existing_lots": true,
     "proposal_budget_is_incremental": true,
     "engine_source": "V6.6 Hybrid score + original RegionSlotAtlas callbacks",
-    "regime_multiplier": 0.3833072,
-    "unscaled_risky_volatility": 0.1409002,
-    "min_order_eur": 601.56,
+    "regime_multiplier": 0.451466,
+    "unscaled_risky_volatility": 0.140966,
+    "min_order_eur": 602.5,
     "possible_buys_meeting_threshold": 0,
     "possible_candidates": [
       {
-        "market_symbol": "CB",
-        "ticker": "CB",
-        "weight_pct": 6.60774,
-        "indicative_allocation_eur": 662.49,
-        "existing_position_value_eur": 812.76,
+        "market_symbol": "KO",
+        "ticker": "KO",
+        "weight_pct": 9.23617,
+        "indicative_allocation_eur": 927.47,
+        "existing_position_value_eur": 1316.53,
         "increment_required_to_reach_target_eur": 0.0,
         "indicative_new_buy_eur": 0.0,
-        "reference_previous_close_eur": 347.10883351,
-        "indicative_shares_at_previous_close": 1.90859879,
+        "reference_previous_close_eur": 88.77036535,
+        "indicative_shares_at_previous_close": 10.44792413,
         "indicative_new_shares_at_previous_close": 0.0,
-        "trade_threshold_eur": 601.56,
+        "trade_threshold_eur": 602.5,
+        "meets_minimum_order_threshold": false,
+        "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
+      },
+      {
+        "market_symbol": "CB",
+        "ticker": "CB",
+        "weight_pct": 7.579,
+        "indicative_allocation_eur": 761.06,
+        "existing_position_value_eur": 813.12,
+        "increment_required_to_reach_target_eur": 0.0,
+        "indicative_new_buy_eur": 0.0,
+        "reference_previous_close_eur": 347.26163347,
+        "indicative_shares_at_previous_close": 2.191599,
+        "indicative_new_shares_at_previous_close": 0.0,
+        "trade_threshold_eur": 602.5,
         "meets_minimum_order_threshold": false,
         "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
       },
       {
         "market_symbol": "UNP",
         "ticker": "UNP",
-        "weight_pct": 6.16015,
-        "indicative_allocation_eur": 617.62,
+        "weight_pct": 5.17603,
+        "indicative_allocation_eur": 519.76,
         "existing_position_value_eur": 0.0,
-        "increment_required_to_reach_target_eur": 617.62,
+        "increment_required_to_reach_target_eur": 519.76,
         "indicative_new_buy_eur": 0.0,
-        "reference_previous_close_eur": 272.18820209,
-        "indicative_shares_at_previous_close": 2.26907454,
+        "reference_previous_close_eur": 271.49697146,
+        "indicative_shares_at_previous_close": 1.91442542,
         "indicative_new_shares_at_previous_close": 0.0,
-        "trade_threshold_eur": 601.56,
-        "meets_minimum_order_threshold": false,
-        "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
-      },
-      {
-        "market_symbol": "KO",
-        "ticker": "KO",
-        "weight_pct": 4.32461,
-        "indicative_allocation_eur": 433.58,
-        "existing_position_value_eur": 1320.29,
-        "increment_required_to_reach_target_eur": 0.0,
-        "indicative_new_buy_eur": 0.0,
-        "reference_previous_close_eur": 89.02354451,
-        "indicative_shares_at_previous_close": 4.87044581,
-        "indicative_new_shares_at_previous_close": 0.0,
-        "trade_threshold_eur": 601.56,
-        "meets_minimum_order_threshold": false,
-        "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
-      },
-      {
-        "market_symbol": "PM",
-        "ticker": "PM",
-        "weight_pct": 4.22099,
-        "indicative_allocation_eur": 423.2,
-        "existing_position_value_eur": 621.1,
-        "increment_required_to_reach_target_eur": 0.0,
-        "indicative_new_buy_eur": 0.0,
-        "reference_previous_close_eur": 168.1403934,
-        "indicative_shares_at_previous_close": 2.51691719,
-        "indicative_new_shares_at_previous_close": 0.0,
-        "trade_threshold_eur": 601.56,
-        "meets_minimum_order_threshold": false,
-        "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
-      },
-      {
-        "market_symbol": "PANW",
-        "ticker": "PANW",
-        "weight_pct": 3.54894,
-        "indicative_allocation_eur": 355.82,
-        "existing_position_value_eur": 0.0,
-        "increment_required_to_reach_target_eur": 355.82,
-        "indicative_new_buy_eur": 0.0,
-        "reference_previous_close_eur": 324.87803705,
-        "indicative_shares_at_previous_close": 1.09523084,
-        "indicative_new_shares_at_previous_close": 0.0,
-        "trade_threshold_eur": 601.56,
-        "meets_minimum_order_threshold": false,
-        "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
-      },
-      {
-        "market_symbol": "TXN",
-        "ticker": "TXN",
-        "weight_pct": 3.15451,
-        "indicative_allocation_eur": 316.27,
-        "existing_position_value_eur": 0.0,
-        "increment_required_to_reach_target_eur": 316.27,
-        "indicative_new_buy_eur": 0.0,
-        "reference_previous_close_eur": 246.47271863,
-        "indicative_shares_at_previous_close": 1.2831862,
-        "indicative_new_shares_at_previous_close": 0.0,
-        "trade_threshold_eur": 601.56,
-        "meets_minimum_order_threshold": false,
-        "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
-      },
-      {
-        "market_symbol": "CRWD",
-        "ticker": "CRWD",
-        "weight_pct": 2.9438,
-        "indicative_allocation_eur": 295.14,
-        "existing_position_value_eur": 0.0,
-        "increment_required_to_reach_target_eur": 295.14,
-        "indicative_new_buy_eur": 0.0,
-        "reference_previous_close_eur": 190.9276446,
-        "indicative_shares_at_previous_close": 1.54584609,
-        "indicative_new_shares_at_previous_close": 0.0,
-        "trade_threshold_eur": 601.56,
-        "meets_minimum_order_threshold": false,
-        "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
-      },
-      {
-        "market_symbol": "DE",
-        "ticker": "DE",
-        "weight_pct": 2.83235,
-        "indicative_allocation_eur": 283.97,
-        "existing_position_value_eur": 0.0,
-        "increment_required_to_reach_target_eur": 283.97,
-        "indicative_new_buy_eur": 0.0,
-        "reference_previous_close_eur": 584.75126941,
-        "indicative_shares_at_previous_close": 0.48562635,
-        "indicative_new_shares_at_previous_close": 0.0,
-        "trade_threshold_eur": 601.56,
+        "trade_threshold_eur": 602.5,
         "meets_minimum_order_threshold": false,
         "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
       },
       {
         "market_symbol": "JNJ",
         "ticker": "JNJ",
-        "weight_pct": 2.61774,
-        "indicative_allocation_eur": 262.45,
-        "existing_position_value_eur": 759.38,
+        "weight_pct": 4.10362,
+        "indicative_allocation_eur": 412.07,
+        "existing_position_value_eur": 763.05,
         "increment_required_to_reach_target_eur": 0.0,
         "indicative_new_buy_eur": 0.0,
-        "reference_previous_close_eur": 249.89354355,
-        "indicative_shares_at_previous_close": 1.05026478,
+        "reference_previous_close_eur": 251.0998341,
+        "indicative_shares_at_previous_close": 1.64107146,
         "indicative_new_shares_at_previous_close": 0.0,
-        "trade_threshold_eur": 601.56,
+        "trade_threshold_eur": 602.5,
+        "meets_minimum_order_threshold": false,
+        "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
+      },
+      {
+        "market_symbol": "PANW",
+        "ticker": "PANW",
+        "weight_pct": 4.07462,
+        "indicative_allocation_eur": 409.16,
+        "existing_position_value_eur": 0.0,
+        "increment_required_to_reach_target_eur": 409.16,
+        "indicative_new_buy_eur": 0.0,
+        "reference_previous_close_eur": 334.2650878,
+        "indicative_shares_at_previous_close": 1.22405841,
+        "indicative_new_shares_at_previous_close": 0.0,
+        "trade_threshold_eur": 602.5,
+        "meets_minimum_order_threshold": false,
+        "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
+      },
+      {
+        "market_symbol": "TXN",
+        "ticker": "TXN",
+        "weight_pct": 3.60496,
+        "indicative_allocation_eur": 362.0,
+        "existing_position_value_eur": 0.0,
+        "increment_required_to_reach_target_eur": 362.0,
+        "indicative_new_buy_eur": 0.0,
+        "reference_previous_close_eur": 256.87810702,
+        "indicative_shares_at_previous_close": 1.40922155,
+        "indicative_new_shares_at_previous_close": 0.0,
+        "trade_threshold_eur": 602.5,
+        "meets_minimum_order_threshold": false,
+        "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
+      },
+      {
+        "market_symbol": "CRWD",
+        "ticker": "CRWD",
+        "weight_pct": 3.38612,
+        "indicative_allocation_eur": 340.02,
+        "existing_position_value_eur": 0.0,
+        "increment_required_to_reach_target_eur": 340.02,
+        "indicative_new_buy_eur": 0.0,
+        "reference_previous_close_eur": 197.95608604,
+        "indicative_shares_at_previous_close": 1.71767019,
+        "indicative_new_shares_at_previous_close": 0.0,
+        "trade_threshold_eur": 602.5,
+        "meets_minimum_order_threshold": false,
+        "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
+      },
+      {
+        "market_symbol": "PM",
+        "ticker": "PM",
+        "weight_pct": 3.01228,
+        "indicative_allocation_eur": 302.48,
+        "existing_position_value_eur": 632.26,
+        "increment_required_to_reach_target_eur": 0.0,
+        "indicative_new_buy_eur": 0.0,
+        "reference_previous_close_eur": 171.16093041,
+        "indicative_shares_at_previous_close": 1.76724849,
+        "indicative_new_shares_at_previous_close": 0.0,
+        "trade_threshold_eur": 602.5,
+        "meets_minimum_order_threshold": false,
+        "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
+      },
+      {
+        "market_symbol": "DE",
+        "ticker": "DE",
+        "weight_pct": 2.76956,
+        "indicative_allocation_eur": 278.11,
+        "existing_position_value_eur": 0.0,
+        "increment_required_to_reach_target_eur": 278.11,
+        "indicative_new_buy_eur": 0.0,
+        "reference_previous_close_eur": 596.27435368,
+        "indicative_shares_at_previous_close": 0.4664134,
+        "indicative_new_shares_at_previous_close": 0.0,
+        "trade_threshold_eur": 602.5,
         "meets_minimum_order_threshold": false,
         "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
       },
       {
         "market_symbol": "MRK",
         "ticker": "MRK",
-        "weight_pct": 1.91991,
-        "indicative_allocation_eur": 192.49,
-        "existing_position_value_eur": 662.59,
+        "weight_pct": 2.20424,
+        "indicative_allocation_eur": 221.34,
+        "existing_position_value_eur": 666.85,
         "increment_required_to_reach_target_eur": 0.0,
         "indicative_new_buy_eur": 0.0,
-        "reference_previous_close_eur": 127.97533487,
-        "indicative_shares_at_previous_close": 1.50411423,
+        "reference_previous_close_eur": 128.79906042,
+        "indicative_shares_at_previous_close": 1.71850785,
         "indicative_new_shares_at_previous_close": 0.0,
-        "trade_threshold_eur": 601.56,
+        "trade_threshold_eur": 602.5,
         "meets_minimum_order_threshold": false,
         "proposed_action": "HOLD_OR_TOO_SMALL_NO_ORDER"
       }
