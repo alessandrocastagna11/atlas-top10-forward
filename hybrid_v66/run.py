@@ -163,7 +163,7 @@ def run(source):
     asof=pd.Timestamp(desc["decision_session"])
     if status.get("decision_session")!=desc["decision_session"]:raise ValueError("Shared decision mismatch")
     if status.get("signal_engine_status")!="SIGNAL_READY":raise ValueError("Confidence70 source signal not ready")
-    source_data_audit={k:status.get(k) for k in ("local_eod_quote_audit","fx_freshness_audit","cash_rate_audit","multisource_audit","fx_recovery_audit")}
+    source_data_audit={k:status.get(k) for k in ("local_eod_quote_audit","fx_freshness_audit","cash_rate_audit","multisource_audit","fx_recovery_audit","universe_transition_audit")}
     for key in ("local_eod_quote_audit","fx_freshness_audit"):
         item=source_data_audit.get(key) or {}
         if item.get("status")=="BLOCKED" or item.get("stale_or_missing") or item.get("blocked"):
@@ -180,6 +180,13 @@ def run(source):
     pa.ENGINE=ENGINE;pa.POLICY=POLICY
     vintages,frames,cash=load_inputs(forward,desc,desc["decision_session"],desc["roster_sha256"])
     m,meta=lm.build_model(vintages,asof.date(),frames,shared_cash_rate=cash)
+    if asof.date()>=dt.date(2026,11,30):
+        migration=status.get("universe_transition_audit") or {}
+        actual={str(r["symbol"]).upper() for r in vintages[-1][3]+vintages[-1][4]}
+        if (migration.get("status")!="EXPANDED_ACTIVE" or migration.get("decision_session")!=str(asof.date())
+            or migration.get("active_roster_sha256")!=desc["roster_sha256"]
+            or actual!=set(migration.get("active_symbols",[])) or len(actual)!=300):
+            raise ValueError("Expanded shared universe audit mismatch")
     # Keep original alpha calibration; only replace ranking score.
     m.path_score,reg=hybrid_score(m.path_score,m.features.close_eur,m.membership,
         {t:lm.v1.TICKER_TO_SECTOR[t] for t in m.path_score.columns},m.pr_regime,m.pr_t8,lm.v1.robust_cross_sectional_z)
