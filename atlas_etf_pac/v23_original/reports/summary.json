@@ -17,7 +17,7 @@
     "market_proxy": {
       "ticker": "SPY",
       "provider": "Yahoo adjusted daily close",
-      "sha256": "af49ccc2ae0590b593d74008b83097a17c8b4001dd3d51e55c1d89e4ba62b5d1",
+      "sha256": "111863e8c2bfc1f05f9baeb5aed7ba244152742e50ff373ede58399496d66585",
       "max_session": "2026-11-13"
     },
     "proxy_start": "2026-10-01",
