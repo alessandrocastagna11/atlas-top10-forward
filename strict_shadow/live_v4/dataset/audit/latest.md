@@ -1,13 +1,13 @@
 # Atlas V4 daily research dataset
 
-Checked: 2026-11-27T04:58:34.758126+00:00
+Checked: 2026-11-28T04:14:51.462284+00:00
 Original symbols cached: 287/288
 Originals accounted incl. delistings: 288/288
 Inactive verified delistings: WBD
 All ACTIVE cached prices: 555 / 555
 FX cached: 17 / 17
 Provider errors: 0
-Unique symbols with a quote dated within 7 days: 554/556
+Unique symbols with a quote dated within 7 days: 553/556
 Cache status: ALL_ACTIVE_SYMBOLS_HAVE_SOME_DATA
 Forward universe: Nov 25, 2026
 La qualita del dataset indipendente non sostituisce lo stato del motore ufficiale: consultare v4_exact_source/forward/latest_status.json.
