@@ -171,6 +171,18 @@ jobs:
           if multi.get('status')=='REVIEW_REQUIRED':
               print('::warning::Independent source disagreement; no automatic price substitution')
           print('FX AUDIT',fx['status'],'ECB DFR',cash['status'],cash['last_observation'])
+          migration=status.get('universe_transition_audit') or {}
+          if (migration.get('active_roster_sha256')!=status['shared_input']['roster_sha256']
+              or migration.get('decision_session')!=status.get('decision_session')
+              or migration.get('active_usa')!=100 or migration.get('active_nonusa')!=200
+              or len(set(migration.get('active_symbols',[])))!=300):
+              print('::error::Shared universe transition audit mismatch')
+              raise SystemExit(1)
+          if status['decision_session']>='2026-11-30' and migration.get('status')!='EXPANDED_ACTIVE':
+              print('::error::Expanded source not active')
+              raise SystemExit(1)
+          print('UNIVERSE MIGRATION',migration['status'],migration.get('candidate_pool_size'),
+                migration.get('common_usa'),migration.get('common_nonusa'))
           print('COMMON INPUT SHA256',status['shared_input']['sha256'])
           print('V4 ORIGINAL SIGNAL HEALTHY',status.get('decision_session'),
                 status.get('data_universe'),
