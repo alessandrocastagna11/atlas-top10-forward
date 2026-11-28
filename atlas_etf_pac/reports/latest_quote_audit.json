@@ -1,5 +1,5 @@
 {
-  "checked_at_utc": "2026-11-28T02:12:35.988712+00:00",
+  "checked_at_utc": "2026-11-28T07:55:50.065288+00:00",
   "first_quote_date": "2010-01-04",
   "market_session": "2026-11-26",
   "original_live_sha256": "703e4ecc9509ec8278ecd39e008cdc12f53091cdf8c833e3f7aadc4032cb196e",
@@ -18,22 +18,22 @@
     "macro_quality": "SOURCE_BY_SOURCE_VERIFIED",
     "macro_sources": {
       "aaa": {
-        "error": null,
+        "error": "TimeoutError: The read operation timed out",
         "last_month": "2026-10",
-        "online_checked": true,
-        "status": "ONLINE_LATEST_MONTH_AVAILABLE"
+        "online_checked": false,
+        "status": "CACHED_PROVIDER_ERROR"
       },
       "baa": {
-        "error": null,
+        "error": "TimeoutError: The read operation timed out",
         "last_month": "2026-10",
-        "online_checked": true,
-        "status": "ONLINE_LATEST_MONTH_AVAILABLE"
+        "online_checked": false,
+        "status": "CACHED_PROVIDER_ERROR"
       },
       "gs10": {
-        "error": null,
+        "error": "TimeoutError: The read operation timed out",
         "last_month": "2026-10",
-        "online_checked": true,
-        "status": "ONLINE_LATEST_MONTH_AVAILABLE"
+        "online_checked": false,
+        "status": "CACHED_PROVIDER_ERROR"
       },
       "rf_annualized": {
         "error": null,
