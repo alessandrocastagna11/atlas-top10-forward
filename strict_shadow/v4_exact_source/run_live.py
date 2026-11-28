@@ -19,6 +19,7 @@ from market_sessions import venue
 import exchange_calendars as xcals
 from paper_reporting import to_portfolio,initial_portfolio,write_report
 from shared_inputs import publish as publish_shared_inputs
+from multisource import audit as independent_data_audit
 
 UTC=dt.timezone.utc
 NY=ZoneInfo('America/New_York')
@@ -361,6 +362,7 @@ def main(now=None):
         excluded_short_history=set()
         excluded_quote_currency=set()
         frames={'SPY':spy}
+        active_local={'SPY'};fx_symbols=set()
         for attempt in range(40):
             vintages=latest_vintages(asof, excluded_symbols=excluded_short_history|excluded_quote_currency)
             all_constituents=[row for v in vintages for row in v[3]+v[4]]
@@ -428,6 +430,8 @@ def main(now=None):
             other={ticker:reason for ticker,reason in failed.items()
                    if ticker not in removable}
             if other:
+                status['multisource_audit']=independent_data_audit(frames,active_local,fx_symbols,asof,
+                    status['local_eod_quote_audit']['expected_session_by_symbol'],now,missing=other)
                 raise ValueError('Required market/FX data unavailable; no fake substitute: '
                                  +str(sorted(other.items())[:10]))
             if not removable-excluded_short_history:
@@ -441,6 +445,9 @@ def main(now=None):
         # The feed must be complete before we publish a snapshot or signal.
         status['us_eod_quote_audit']=check_required_us_closes(frames,strict_us,asof)
         status['local_eod_quote_audit']=check_required_local_closes(frames,active_local,asof,now)
+        status['multisource_audit']=independent_data_audit(frames,active_local,fx_symbols,asof,
+            status['local_eod_quote_audit']['expected_session_by_symbol'],now,
+            missing=status['local_eod_quote_audit']['stale_or_missing'])
         if status['local_eod_quote_audit']['stale_or_missing']:
             raise ValueError('STALE_REQUIRED_LOCAL_EOD '+str(status['local_eod_quote_audit']['stale_or_missing']))
         status['fx_freshness_audit']=check_fx_freshness(frames,fx_symbols,asof,now)
