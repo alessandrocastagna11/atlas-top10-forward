@@ -162,6 +162,14 @@ def run(source):
         raise ValueError("Confidence70 shared input not published")
     asof=pd.Timestamp(desc["decision_session"])
     if status.get("decision_session")!=desc["decision_session"]:raise ValueError("Shared decision mismatch")
+    if status.get("signal_engine_status")!="SIGNAL_READY":raise ValueError("Confidence70 source signal not ready")
+    source_data_audit={k:status.get(k) for k in ("local_eod_quote_audit","fx_freshness_audit","cash_rate_audit","multisource_audit","fx_recovery_audit")}
+    for key in ("local_eod_quote_audit","fx_freshness_audit"):
+        item=source_data_audit.get(key) or {}
+        if item.get("status")=="BLOCKED" or item.get("stale_or_missing") or item.get("blocked"):
+            raise ValueError("Source data freshness failed: "+key)
+    if source_data_audit.get("multisource_audit") and source_data_audit["multisource_audit"].get("decision_session")!=desc["decision_session"]:
+        raise ValueError("Source multisource audit session mismatch")
     sys.path.insert(0,str(source))
     import live_model as lm
     import paper_account as pa
@@ -295,6 +303,7 @@ def run(source):
         "next_full_rotation_decision_date":next_slot["actual"].isoformat(),
         "blocked_review_slots":state.get("blocked_review_slots",{}),
         "recorded_at_utc":now.isoformat(),"shared_input":desc,"portfolio":port,
+        "source_data_audit":source_data_audit,
         "comparison_latest":pairs[-1] if pairs else None,"comparison_sessions":pairs,
         "new_orders":state["orders"] if bootstrap else state["orders"][len(previous):],
         "bootstrap":bootstrap,"pending":state.get("pending"),"proposal":state.get("last_proposal"),
